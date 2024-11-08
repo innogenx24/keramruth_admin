@@ -128,14 +128,14 @@ const ProductPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {productsList.map((product, index) => (
+            {productsList.map((product, index)=> (
               <TableRow key={product.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell style={{ display: "flex", alignItems: "center" }}>
                   {product.image ? (
                     <img
-                      src={product.image} // Assuming product.image contains the URL
-                      style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
+                    src={product.image} // Use the base URL
+                    style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
                     />
                   ) : (
                     <span>No Image Available</span>

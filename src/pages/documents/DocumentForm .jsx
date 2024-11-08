@@ -1,296 +1,247 @@
-import { useState, useRef } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Grid,
-  Typography,
-  Switch,
-  InputLabel,
-  IconButton,
-} from "@mui/material";
+import React, { useState, useRef } from "react";
+import { Box, TextField, Button, Grid, FormControl, Typography, Switch, InputLabel, IconButton, MenuItem, Select } from "@mui/material";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
-const AddProductForm = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
-  const [autoUpdate, setAutoUpdate] = useState(false);
-  const [status, setStatus] = useState(true);
-  const [formValues, setFormValues] = useState({
-    product_code: "",
-    name: "",
-    description: "",
-    productVolume: "",
-    price: "",
-    adoPrice: "",
-    mdPrice: "",
-    sdPrice: "",
-    distributorPrice: "",
-    stock_quantity: "",
-    quantity_type: "",
+const DocumentForm = () => {
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imageName, setImageName] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
+
+  // Formik setup with validation schema
+  const formik = useFormik({
+    initialValues: {
+      documentID: "",
+      heading: "",
+      description: "",
+      link: "",
+      receiver: "",
+      fromDate: "",
+      toDate: "",
+      autoUpdate: false,
+      activateStatus: true,
+      image: "",
+    },
+    validationSchema: Yup.object({
+      heading: Yup.string().required("Heading is required"),
+      description: Yup.string().required("Description is required"),
+      link: Yup.string().required("Link is required"),
+      receiver: Yup.string().required("Receiver is required"),
+    }),
+    onSubmit: (values) => {
+      const formData = new FormData();
+      formData.append("documentID", values.documentID);
+      formData.append("heading", values.heading);
+      formData.append("description", values.description);
+      formData.append("link", values.link);
+      formData.append("receiver", values.receiver);
+      formData.append("autoUpdate", values.autoUpdate);
+      formData.append("activateStatus", values.activateStatus);
+      if (values.fromDate) formData.append("fromDate", values.fromDate);
+      if (values.toDate) formData.append("toDate", values.toDate);
+      if (selectedFile) {
+        formData.append("image", selectedFile);
+        formData.append("imageName", selectedFile.name);
+      }
+
+      fetch("http://88.222.245.236:3002/documents/create", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          navigate("/dashboard/documents");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
   });
-  const [image, setImage] = useState(null); // State for selected image
-  const [imageName, setImageName] = useState(""); // State for image name
-  const fileInputRef = useRef(null); // Reference for file input
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
     if (file) {
-      setImage(file);
-      setImageName(file.name); // Update the image name
+      formik.setFieldValue("image", file.name);
+      setSelectedFile(file);
+      setImageName(file.name);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("product_code", formValues.product_code);
-    formData.append("name", formValues.name);
-    formData.append("description", formValues.description);
-    formData.append("productVolume", formValues.productVolume);
-    formData.append("price", formValues.price);
-    formData.append("adoPrice", formValues.adoPrice);
-    formData.append("mdPrice", formValues.mdPrice);
-    formData.append("sdPrice", formValues.sdPrice);
-    formData.append("distributorPrice", formValues.distributorPrice);
-    formData.append("stock_quantity", formValues.stock_quantity);
-    formData.append("quantity_type", formValues.quantity_type);
-    formData.append("autoUpdate", autoUpdate);
-    formData.append("status", status);
-
-    if (image) {
-      formData.append("image", image); // Append the image file
-      formData.append("imageSize", image.size); // Append the image size
-    }
-
-    fetch("http://localhost:3002/products", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Success:", data);
-        navigate("/dashboard/products"); // Navigate to products page after successful creation
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        // Optionally, display an error message to the user
-      });
   };
 
   return (
-    <Box
-      sx={{
-        padding: "20px",
-        maxWidth: "1200px",
-        margin: "0 auto",
-        backgroundColor: "#f5f5f5",
-        borderRadius: "8px",
-      }}
-    >
+    <Box sx={{ padding: "20px", maxWidth: "1200px", margin: "0 auto", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-        Product / Add Product
+        Add Document
       </Typography>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={3}>
-          {/* Product Details Section (Left Side) */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                backgroundColor: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-              }}
-            >
+            <Box sx={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
               <Typography variant="h6" gutterBottom>
-                Product Details
+                Document Details
               </Typography>
-              <InputLabel>Add Images</InputLabel>
+
+              {/* Image Upload Section */}
+              <InputLabel>Add Image</InputLabel>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
                   <AddPhotoAlternateIcon />
                 </IconButton>
-                {/* Hidden file input */}
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
                   ref={fileInputRef}
-                  style={{ display: 'none' }} // Hide the input
+                  style={{ display: "none" }}
                 />
               </Box>
               {imageName && <Typography variant="body2" sx={{ marginTop: 1 }}>{imageName}</Typography>}
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Selected"
+                  style={{ marginTop: "10px", maxWidth: "100%", height: "auto", borderRadius: "8px" }}
+                />
+              )}
 
-              {/* Other input fields */}
+              {/* Document Fields */}
               <TextField
                 fullWidth
-                variant="outlined"
-                name="product_code"
-                label="Product ID*"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.product_code}
-                onChange={handleChange}
+                label="Document ID"
+                name="documentID"
+                value={formik.values.documentID}
+                onChange={formik.handleChange}
+                margin="normal"
               />
               <TextField
                 fullWidth
-                variant="outlined"
-                name="name"
-                label="Product Name*"
-                placeholder="Enter Product Name"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.name}
-                onChange={handleChange}
+                label="Heading"
+                name="heading"
+                value={formik.values.heading}
+                onChange={formik.handleChange}
+                error={formik.touched.heading && Boolean(formik.errors.heading)}
+                helperText={formik.touched.heading && formik.errors.heading}
+                margin="normal"
+                required
               />
               <TextField
                 fullWidth
-                variant="outlined"
-                name="description"
                 label="Description"
-                placeholder="Enter Description"
+                name="description"
                 multiline
                 rows={3}
-                sx={{ marginBottom: "16px" }}
-                value={formValues.description}
-                onChange={handleChange}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                error={formik.touched.description && Boolean(formik.errors.description)}
+                helperText={formik.touched.description && formik.errors.description}
+                margin="normal"
+                required
               />
               <TextField
                 fullWidth
-                variant="outlined"
-                name="productVolume"
-                label="Product Volume*"
-                placeholder="Enter Product Volume (200ml, 500ml, 1L)"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.productVolume}
-                onChange={handleChange}
+                label="Link"
+                name="link"
+                value={formik.values.link}
+                onChange={formik.handleChange}
+                error={formik.touched.link && Boolean(formik.errors.link)}
+                helperText={formik.touched.link && formik.errors.link}
+                margin="normal"
+                required
               />
             </Box>
           </Grid>
 
-          {/* Price Details Section (Right Side) */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                backgroundColor: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-              }}
-            >
+            <Box sx={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
               <Typography variant="h6" gutterBottom>
-                Price Details
+                Additional Settings
               </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="price"
-                label="MRP Price (Customer)*"
-                placeholder="Enter MRP Price"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.price}
-                onChange={handleChange}
-              />
-              <Typography variant="subtitle1" gutterBottom>
-                For Distributors Price:
-              </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="adoPrice"
-                label="Area Development Officer (ADO) Price*"
-                placeholder="Enter ADO Price"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.adoPrice}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="mdPrice"
-                label="Master Distributor (MD) Price*"
-                placeholder="Enter MD Price"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.mdPrice}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="sdPrice"
-                label="Super Distributor (SD) Price*"
-                placeholder="Enter SD Price"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.sdPrice}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="distributorPrice"
-                label="Distributor Price*"
-                placeholder="Enter Distributor Price"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.distributorPrice}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="stock_quantity"
-                label="Stock Quantity*"
-                placeholder="Enter Stock Quantity"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.stock_quantity}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="quantity_type"
-                label="Quantity Type*"
-                placeholder="e.g., pcs, ml, kg"
-                sx={{ marginBottom: "16px" }}
-                value={formValues.quantity_type}
-                onChange={handleChange}
-              />
 
-              {/* Switches: Auto Update and Stock Status */}
-              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
+              {/* Receiver Selection */}
+              <InputLabel>Receiver</InputLabel>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Applying on</InputLabel>
+                <Select
+                  value={formik.values.receiver}
+                  onChange={formik.handleChange}
+                  name="receiver"
+                  required
+                >
+                  <MenuItem value="All Users">All Users</MenuItem>
+                  <MenuItem value="ADO">Area Development Officer (ADO)</MenuItem>
+                  <MenuItem value="MD">Master Distributor (MD)</MenuItem>
+                  <MenuItem value="SD">Super Distributor (SD)</MenuItem>
+                  <MenuItem value="Distributor">Distributor</MenuItem>
+                  <MenuItem value="Customers">Customers</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Auto Update Switch */}
+              <Box sx={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
                 <Switch
-                  checked={autoUpdate}
-                  onChange={() => setAutoUpdate(!autoUpdate)}
+                  checked={formik.values.autoUpdate}
+                  onChange={() => formik.setFieldValue("autoUpdate", !formik.values.autoUpdate)}
                   color="primary"
                 />
+                <Typography variant="body1" sx={{ marginLeft: 1 }}>
+                  Auto Update
+                </Typography>
               </Box>
 
-              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <Typography sx={{ marginRight: "8px" }}>Active Status</Typography>
+              {/* Date Range Fields for Auto Update */}
+              {formik.values.autoUpdate && (
+                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="From Date"
+                      type="date"
+                      name="fromDate"
+                      value={formik.values.fromDate}
+                      onChange={formik.handleChange}
+                      InputLabelProps={{ shrink: true }}
+                      margin="normal"
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="To Date"
+                      type="date"
+                      name="toDate"
+                      value={formik.values.toDate}
+                      onChange={formik.handleChange}
+                      InputLabelProps={{ shrink: true }}
+                      margin="normal"
+                    />
+                  </Grid>
+                </Grid>
+              )}
+
+              {/* Activate Status Switch */}
+              <Box sx={{ display: "flex", alignItems: "center", marginTop: 2 }}>
                 <Switch
-                  checked={status}
-                  onChange={() => setStatus(!status)}
+                  checked={formik.values.activateStatus}
+                  onChange={() => formik.setFieldValue("activateStatus", !formik.values.activateStatus)}
                   color="primary"
                 />
+                <Typography variant="body1" sx={{ marginLeft: 1 }}>
+                  Activate Status
+                </Typography>
               </Box>
 
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                sx={{ marginTop: "20px" }}
-              >
-                Add Product
+              {/* Submit Button */}
+              <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>
+                Submit
               </Button>
             </Box>
           </Grid>
@@ -300,4 +251,4 @@ const AddProductForm = () => {
   );
 };
 
-export default AddProductForm;
+export default DocumentForm;

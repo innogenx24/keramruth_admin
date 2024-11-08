@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -20,7 +20,18 @@ function UserProfile() {
   const navigate = useNavigate(); // Initialize navigate
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
-  // console.log("users", users);
+  const [selectedImage, setSelectedImage] = useState(""); // State for selected image
+  const imageBaseURL = "http://localhost:3002/";
+
+  // Set the selected image to the existing image if present
+  useEffect(() => {
+    if (users?.image) {
+      const imageUrl = users.image.includes("http")
+        ? users.image
+        : `${imageBaseURL}${users.image}`;
+      setSelectedImage(imageUrl);
+    }
+  }, [users]);
 
   useEffect(() => {
     dispatch(fetchUsersRequest());
@@ -44,8 +55,8 @@ function UserProfile() {
           <CardContent>
             <Box display="flex" justifyContent="center">
               <Avatar
-                alt="Ajay Kumar"
-                src="path_to_avatar_image.jpg"
+                alt={users?.full_name || "User"}
+                src={selectedImage || "default-avatar.jpg"} // Use the selected image or a default
                 sx={{ width: 100, height: 100 }}
               />
             </Box>
@@ -73,9 +84,6 @@ function UserProfile() {
               <Typography variant="body2" align="center">
               {users?.email}
               </Typography>
-              {/* <Typography variant="body2" align="center">
-                Password12
-              </Typography> */}
             </Box>
             <Box display="flex" justifyContent="space-between" mt={2}>
               <Button variant="contained" color="error" onClick={handleLogout}>
@@ -145,8 +153,8 @@ function UserProfile() {
           <CardContent>
             <Box display="flex" justifyContent="center" mb={2}>
               <Avatar
-                alt="Ajay Kumar"
-                src="path_to_avatar_image.jpg"
+                alt={users?.full_name || "User"}
+                src={selectedImage || "default-avatar.jpg"} // Use the selected image or a default
                 sx={{ width: 80, height: 80 }}
               />
             </Box>

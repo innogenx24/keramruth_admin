@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -33,10 +33,10 @@ import StockIcon from "@mui/icons-material/Inventory";
 import RolesIcon from "@mui/icons-material/AssignmentInd";
 import { Avatar } from "@mui/material";
 import UserProfile from "./UserProfile"; // Import UserProfile component
-import { useDispatch } from "react-redux";
 import { signOut } from "../../redux/slices/authSlice";
 import { MdAccessTimeFilled } from "react-icons/md";
-
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
 // Drawer width
 const drawerWidth = 240;
 // const drawerWidth = 300;
@@ -124,7 +124,13 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.users);
+  // console.log("users", users);
+  const [selectedImage, setSelectedImage] = useState(""); // Initialize the selectedImage state
 
+  useEffect(() => {
+    dispatch(fetchUsersRequest());
+  }, [dispatch]);
   const handleLogout = () => {
     localStorage.removeItem('token');
     dispatch(signOut());
@@ -177,7 +183,17 @@ export default function AdminDashboard() {
       navigate(selectedItem.path);
     }
   };
+  const imageBaseURL = "http://localhost:3002/";
 
+  // Set the selected image to the existing image if present
+  useEffect(() => {
+    if (users?.image) {
+      const imageUrl = users.image.includes("http")
+        ? users.image
+        : `${imageBaseURL}${users.image}`;
+      setSelectedImage(imageUrl);
+    }
+  }, [users]);
   const handleItemClick = (path) => {
     navigate(path);
   };
@@ -385,6 +401,7 @@ export default function AdminDashboard() {
     </React.Fragment>
   );
 
+
   return (
     <Box sx={{ display: "flex" }}>
       <AppBar position="fixed" open={open}>
@@ -410,9 +427,9 @@ export default function AdminDashboard() {
             Admin Dashboard
           </Typography>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <Avatar
+           <Avatar
               alt="Profile Picture"
-              src="/static/images/avatar/1.jpg"
+              src={selectedImage}  // Use the selectedImage state
               onClick={handleAvatarClick}
               style={{ cursor: "pointer" }}
             />
@@ -420,8 +437,8 @@ export default function AdminDashboard() {
               variant="body1"
               sx={{ marginLeft: 2, color: "#989FA9" }}
             >
-              John Doe
-            </Typography>
+              {users?.full_name}
+              </Typography>
             <Typography
         style={{ cursor: "pointer", marginLeft: 10, color: "#989FA9" }}
         onClick={handleLogout}

@@ -7,7 +7,10 @@ const EditClubForm = ({ onCancel }) => {
   const navigate = useNavigate(); // Initialize navigate
   const { club } = location.state || {}; // Destructure club data from state
   const [clubName, setClubName] = useState(club?.club_name || "");
-  const [litreQuantity, setLitreQuantity] = useState(club?.litre_quantity || "");
+  // Convert litre_quantity to an integer for display without decimals
+  const [litreQuantity, setLitreQuantity] = useState(
+    club?.litre_quantity ? parseInt(club.litre_quantity, 10) : ""
+  );
   const [loading, setLoading] = useState(false); // Loading state for the button
   const [error, setError] = useState(""); // Error state for API response
 
@@ -69,7 +72,7 @@ const EditClubForm = ({ onCancel }) => {
         <TextField
           label="Litre Quantity"
           value={litreQuantity}
-          onChange={(e) => setLitreQuantity(e.target.value)}
+          onChange={(e) => setLitreQuantity(parseInt(e.target.value, 10) || "")} // Convert input to integer
           fullWidth
           margin="normal"
           type="number" // Set type to number for litre quantity

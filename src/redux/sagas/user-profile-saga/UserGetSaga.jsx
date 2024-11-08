@@ -5,7 +5,7 @@ import {
 } from "../../slices/user-profile-slice/UserGetSlice";
 
 function* fetchAdminUser() {
-  const API_URL = "http://88.222.245.236:3002/api/admin/admin-details";
+  const API_URL = "http://localhost:3002/api/admin/admin-details";
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");
