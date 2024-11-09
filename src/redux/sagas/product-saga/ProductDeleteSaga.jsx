@@ -4,7 +4,7 @@ import { deleteProductFailure, deleteProductRequest, deleteProductSuccess } from
 import { fetchProductsRequest } from "../../slices/product-slice/ProductGetSlice";
 
 function deleteProductApi(productId, token) {
-  // console.log("productId", token);
+  console.log("productId", productId);
   return axios.delete(`http://88.222.245.236:3002/products/${productId}`, {
     headers: {
       Authorization: `Bearer ${token}`,

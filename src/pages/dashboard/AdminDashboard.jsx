@@ -183,7 +183,7 @@ export default function AdminDashboard() {
       navigate(selectedItem.path);
     }
   };
-  const imageBaseURL = "http://localhost:3002/";
+  const imageBaseURL = "http://88.222.245.236:3002/";
 
   // Set the selected image to the existing image if present
   useEffect(() => {

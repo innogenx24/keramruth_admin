@@ -27,7 +27,7 @@ const EditOrderLimit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:3002/api/order-limits/${limit.id}`, { hours });
+      await axios.put(`http://88.222.245.236:3002/api/order-limits/${limit.id}`, { hours });
       setOpenSnackbar(true); // Show success message
       setTimeout(() => navigate("/dashboard/orders_time_set"), 1500); // Redirect after a short delay
     } catch (error) {

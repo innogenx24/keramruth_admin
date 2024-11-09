@@ -28,7 +28,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5004/forgot-password", {
+      const response = await fetch("http://88.222.245.236:3002/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

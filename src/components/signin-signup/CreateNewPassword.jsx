@@ -57,7 +57,7 @@ const CreateNewPassword = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5004/reset-password", {
+      const response = await fetch("http://88.222.245.236:3002/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -55,18 +55,7 @@ const AddMemberForm = () => {
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
       image: Yup.mixed(),
-      // .test('fileSize', 'File size is too large', (value) => {
-      //   if (value) {
-      //     return value.size <= 1000000; // 1MB
-      //   }
-      //   return true;
-      // })
-      // .test('fileType', 'Unsupported file format', (value) => {
-      //   if (value) {
-      //     return ['image/jpeg', 'image/jpg', 'image/png'].includes(value.type);
-      //   }
-      //   return true;
-      // }),
+     
       full_name: Yup.string().required("Required"),
       username: Yup.string().required("Required"),
       mobile_number: Yup.number().required("Required"),
@@ -133,9 +122,7 @@ const AddMemberForm = () => {
                     name="role_id"
                     value={selectedRole}
                     onChange={handleRoleChange}
-                    // {...formik.getFieldProps("role_id")}
-                    // error={formik.touched.role_id && Boolean(formik.errors.role_id)}
-                    // helperText={formik.touched.role_id && formik.errors.role_id}
+                   
                   >
                     <MenuItem value="">Select Role</MenuItem>
                     <MenuItem value="2">Area Developemnt Officer(ADO)</MenuItem>

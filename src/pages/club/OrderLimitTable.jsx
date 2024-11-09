@@ -24,7 +24,7 @@ const OrderLimitsTable = () => {
   useEffect(() => {
     const fetchOrderLimits = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/order-limits');
+        const response = await axios.get('http://88.222.245.236:3002/api/order-limits');
         setOrderLimits(response.data.data);
       } catch (err) {
         setError('Failed to fetch order limits');

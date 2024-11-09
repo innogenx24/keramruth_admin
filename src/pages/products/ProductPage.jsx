@@ -36,6 +36,7 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);  
   const [selectedProduct, setSelectedProduct] = useState(null);  
+  const imageBaseURL = "http://88.222.245.236:3002/";
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
@@ -74,7 +75,7 @@ const ProductPage = () => {
     dispatch(deleteProductRequest(productToDelete?.id));
     setOpenDeleteModal(false);
     setProductToDelete(null); 
-    window.location.reload();
+    // window.location.reload();
   };
 
   const handleCloseDeleteModal = () => {
@@ -134,7 +135,7 @@ const ProductPage = () => {
                 <TableCell style={{ display: "flex", alignItems: "center" }}>
                   {product.image ? (
                     <img
-                    src={product.image} // Use the base URL
+                    src={`${imageBaseURL}${product.image}`} // Use the base URL
                     style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
                     />
                   ) : (

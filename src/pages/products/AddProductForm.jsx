@@ -14,22 +14,20 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { makePostProduct } from "../../redux/slices/product-slice/ProductPostSlice";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AddProductForm = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const dispatch = useDispatch();
-
-  const fileInputRef = useRef(null); // Ref to reset file input
+  const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [imageName, setImageName] = useState(""); // State for the image name
-  const [imagePreview, setImagePreview] = useState(""); // State for the image preview
+  const [imagePreview, setImagePreview] = useState("");
 
-  // Formik form setup
   const formik = useFormik({
     initialValues: {
       autoUpdate: false,
       status: false,
       product_code: "",
-      image: "", // Set initial image value as an empty string
       name: "",
       description: "",
       productVolume: "",
@@ -44,13 +42,9 @@ const AddProductForm = () => {
       category_id: "",
     },
     validationSchema: Yup.object({
-      autoUpdate: Yup.boolean(),
-      status: Yup.boolean(),
       product_code: Yup.number().required("Required"),
-      image: Yup.string().required("Required"), // Update validation to expect a string
       name: Yup.string().required("Required"),
       productVolume: Yup.string().required("Required"),
-      description: Yup.string(),
       price: Yup.number().required("Required"),
       distributorPrice: Yup.number().required("Required"),
       sdPrice: Yup.number().required("Required"),
@@ -58,45 +52,50 @@ const AddProductForm = () => {
       adoPrice: Yup.number().required("Required"),
     }),
     onSubmit: (values, { resetForm }) => {
-      const parsedValues = {
-        ...values,
-        autoUpdate: Boolean(values.autoUpdate),
-        status: Boolean(values.status),
-        image: selectedFile ? selectedFile.name : "", // Set image to file name
-        price: parseInt(values.price, 10),
-        sdPrice: parseInt(values.sdPrice, 10),
-        mdPrice: parseInt(values.mdPrice, 10),
-        adoPrice: parseInt(values.adoPrice, 10),
-        distributorPrice: parseInt(values.distributorPrice, 10),
-      };
-      dispatch(makePostProduct(parsedValues));
+      const formData = new FormData();
+      formData.append("autoUpdate", values.autoUpdate);
+      formData.append("status", values.status);
+      formData.append("product_code", values.product_code);
+      formData.append("name", values.name);
+      formData.append("description", values.description);
+      formData.append("productVolume", values.productVolume);
+      formData.append("price", values.price);
+      formData.append("distributorPrice", values.distributorPrice);
+      formData.append("sdPrice", values.sdPrice);
+      formData.append("mdPrice", values.mdPrice);
+      formData.append("adoPrice", values.adoPrice);
+      formData.append("quantity_type", values.quantity_type); // Ensure this is included
+
+      if (selectedFile) {
+        formData.append("image", selectedFile); // Attach the selected file
+      }
+      dispatch(makePostProduct(formData));
       resetForm();
       setSelectedFile(null);
-      setImageName(""); // Reset image name
-      setImagePreview(""); // Reset image preview
+      setImagePreview("");
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      navigate("/dashboard/products");
+
     },
   });
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      formik.setFieldValue("image", file.name); // Set image name directly to formik state
-      setSelectedFile(file); // Update local state if needed
-      setImageName(file.name); // Set image name for display
+      formik.setFieldValue("image", file);
+      setSelectedFile(file);
 
-      // Create a preview URL for the selected image
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result); // Set preview image URL
+        setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  return (
+  return(
     <Box
       sx={{
         padding: "20px",
@@ -137,7 +136,7 @@ const AddProductForm = () => {
                   style={{ display: 'none' }} // Hide the input
                 />
               </Box>
-              {imageName && <Typography variant="body2" sx={{ marginTop: 1 }}>{imageName}</Typography>} {/* Display the image name */}
+              {selectedFile && <Typography variant="body2" sx={{ marginTop: 1 }}>{selectedFile.name}</Typography>} {/* Display the image name */}
               {imagePreview && (
                 <div>
                   <img
