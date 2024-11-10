@@ -10,14 +10,11 @@ import {
   IconButton,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
-import { useDispatch } from "react-redux";
-import { makeEditProduct } from "../../redux/slices/product-slice/ProductEditSlice";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 
 const EditProductForm = ({ handleBackToProducts }) => {
   const { state } = useLocation();
   const navigate = useNavigate(); // Initialize navigate
-  const dispatch = useDispatch();
   const fileInputRef = useRef(null); // Reference for hidden file input
 
   const initialProductDetails = {
@@ -75,33 +72,67 @@ const EditProductForm = ({ handleBackToProducts }) => {
     }));
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
-    const parsedValues = {
-      ...productDetails,
-      image: selectedImage instanceof File ? selectedImage.name : productDetails.image,
-      autoUpdate: Boolean(autoUpdate),
-      status: Boolean(stockStatus ? "Active" : "Inactive"),
-      price: parseInt(productDetails.price, 10),
-      sdPrice: parseInt(productDetails.sdPrice, 10),
-      mdPrice: parseInt(productDetails.mdPrice, 10),
-      adoPrice: parseInt(productDetails.adoPrice, 10),
-      distributorPrice: parseInt(productDetails.distributorPrice, 10),
-    };
-    dispatch(makeEditProduct({ ...parsedValues }));
-
-    // Reset form fields
-    setProductDetails(initialProductDetails);
-    setSelectedImage(null);
-    setImagePreview(null);
-    setImageName(""); // Reset image name
-    setAutoUpdate(true);
-    setStockStatus(true);
-
-    // Navigate back to products page
-    navigate("/dashboard/products");
+  
+    // Ensure the product ID exists
+    if (!productDetails.id) {
+      console.error("Product ID is missing");
+      return; // Exit if ID is missing
+    }
+  
+    // Create FormData to handle file uploads
+    const formData = new FormData();
+    
+    // Append product data fields
+    formData.append("id", productDetails.id);
+    formData.append("name", productDetails.name);
+    formData.append("productVolume", productDetails.productVolume);
+    formData.append("distributorPrice", productDetails.distributorPrice);
+    formData.append("price", productDetails.price);
+    formData.append("description", productDetails.description);
+    formData.append("sdPrice", productDetails.sdPrice);
+    formData.append("mdPrice", productDetails.mdPrice);
+    formData.append("adoPrice", productDetails.adoPrice);
+    formData.append("autoUpdate", autoUpdate);
+    
+    // Convert stock status to integer (1 for Active, 0 for Inactive)
+    formData.append("status", stockStatus ? 1 : 0);
+  
+    // Check if an image is selected and append to formData
+    if (selectedImage) {
+      formData.append("image", selectedImage);
+    }
+  
+    // Log the form data for debugging
+    console.log("Form data: ", formData);
+  
+    try {
+      // Direct API URL without token
+      const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
+        method: 'PUT',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error("Error updating product");
+      }
+  
+      // Reset form fields upon success
+      setProductDetails(initialProductDetails);
+      setSelectedImage(null);
+      setImagePreview(null);
+      setImageName(""); // Reset image name
+      setAutoUpdate(true);
+      setStockStatus(true);
+  
+      // Navigate back to products page
+      navigate("/dashboard/products");
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
   };
-
+  
   return (
     <Box
       sx={{
@@ -269,46 +300,30 @@ const EditProductForm = ({ handleBackToProducts }) => {
               onChange={handleInputChange}
             />
 
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Distributor Price*"
-              name="distributorPrice"
-              value={productDetails.distributorPrice}
-              onChange={handleInputChange}
-              placeholder="Enter Distributor Price"
-              sx={{ marginBottom: "16px" }}
-            />
-
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-              <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
+            <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+              <InputLabel sx={{ marginRight: "8px" }}>Stock Status</InputLabel>
               <Switch
-                name="autoUpdate"
-                checked={autoUpdate}
-                onChange={() => setAutoUpdate((prev) => !prev)}
-                color="primary"
-              />
-            </Box>
-
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-              <Typography sx={{ marginRight: "8px" }}>Stock Status</Typography>
-              <Switch
+                value={stockStatus}
+                onChange={(e) => setStockStatus(e.target.checked)}
                 name="stockStatus"
-                checked={stockStatus}
-                onChange={() => setStockStatus((prev) => !prev)}
-                color="primary"
               />
             </Box>
 
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
-            >
-              Save
-            </Button>
+            <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+              <InputLabel sx={{ marginRight: "8px" }}>Auto Update</InputLabel>
+              <Switch
+                value={autoUpdate}
+                onChange={(e) => setAutoUpdate(e.target.checked)}
+                name="autoUpdate"
+              />
+            </Box>
+
+            <Box sx={{ marginTop: "20px", display: "flex", justifyContent: "flex-start" }}>
+            <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>
+                Submit
+              </Button>
+             
+            </Box>
           </Box>
         </Grid>
       </Grid>
