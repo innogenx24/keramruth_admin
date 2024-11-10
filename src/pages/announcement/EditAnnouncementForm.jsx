@@ -20,6 +20,7 @@ const EditAnnouncementForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const announcement = location.state?.announcement || {};
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   // State variables
   const [autoUpdate, setAutoUpdate] = useState(false);
@@ -31,10 +32,10 @@ const EditAnnouncementForm = () => {
   const [receiver, setReceiver] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [image, setImage] = useState(null); // Keep as a file object
+  const [image, setImage] = useState(null); // New image file object
   const [imageName, setImageName] = useState("");
+  const [existingImage, setExistingImage] = useState(""); // URL of the existing image
 
-  // Effect to initialize state based on announcement details
   useEffect(() => {
     if (announcement) {
       setAutoUpdate(announcement.autoUpdate || false);
@@ -46,7 +47,8 @@ const EditAnnouncementForm = () => {
       setReceiver(announcement.receiver || "");
       setFromDate(announcement.fromDate ? announcement.fromDate.split("T")[0] : "");
       setToDate(announcement.toDate ? announcement.toDate.split("T")[0] : "");
-      setImageName(announcement.image ? announcement.image.split('/').pop() : ""); // Set image name based on URL
+      setImageName(announcement.image ? announcement.image.split('/').pop() : ""); // Extract image name
+      setExistingImage(announcement.image ? `${imageBaseURL}${announcement.image}` : ""); // Set the full URL of the existing image
     }
   }, [announcement]);
 
@@ -54,49 +56,49 @@ const EditAnnouncementForm = () => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(file); // Store the file object
-      setImageName(file.name); // Set the image name
+      setImage(file); // Store the new file
+      setImageName(file.name); // Update the displayed image name
+      setExistingImage(null); // Clear the existing image preview
     }
   };
 
   // Handle form submission
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const updatedAnnouncement = new FormData();
-  updatedAnnouncement.append("documentID", documentID);
-  updatedAnnouncement.append("heading", heading);
-  updatedAnnouncement.append("description", description);
-  updatedAnnouncement.append("link", link);
-  updatedAnnouncement.append("receiver", receiver);
-  updatedAnnouncement.append("autoUpdate", autoUpdate);
-  updatedAnnouncement.append("activateStatus", activateStatus);
-  updatedAnnouncement.append("fromDate", fromDate);
-  updatedAnnouncement.append("toDate", toDate);
+    const updatedAnnouncement = new FormData();
+    updatedAnnouncement.append("documentID", documentID);
+    updatedAnnouncement.append("heading", heading);
+    updatedAnnouncement.append("description", description);
+    updatedAnnouncement.append("link", link);
+    updatedAnnouncement.append("receiver", receiver);
+    updatedAnnouncement.append("autoUpdate", autoUpdate);
+    updatedAnnouncement.append("activateStatus", activateStatus);
+    updatedAnnouncement.append("fromDate", fromDate);
+    updatedAnnouncement.append("toDate", toDate);
 
-  // Append the image file only if a new image is uploaded
-  if (image) {
-    updatedAnnouncement.append("image", image); // Append new image file
-  }
-
-  try {
-    const response = await fetch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
-      method: "PUT",
-      body: updatedAnnouncement,
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to update announcement");
+    // Append the image file only if a new image is uploaded
+    if (image) {
+      updatedAnnouncement.append("image", image); // Append new image file
     }
 
-    const result = await response.json();
-    console.log("Announcement updated successfully:", result);
-    navigate("/dashboard/announcement");
-  } catch (error) {
-    console.error("Error updating announcement:", error);
-  }
-};
+    try {
+      const response = await fetch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
+        method: "PUT",
+        body: updatedAnnouncement,
+      });
 
+      if (!response.ok) {
+        throw new Error("Failed to update announcement");
+      }
+
+      const result = await response.json();
+      console.log("Announcement updated successfully:", result);
+      navigate("/dashboard/announcement");
+    } catch (error) {
+      console.error("Error updating announcement:", error);
+    }
+  };
 
   return (
     <Box p={3} component="form" onSubmit={handleSubmit}>
@@ -113,22 +115,29 @@ const handleSubmit = async (e) => {
               <input
                 type="file"
                 hidden
-                onChange={handleImageUpload} // Handle image upload
+                onChange={handleImageUpload}
               />
             </IconButton>
-            {imageName && <Typography variant="body2">{imageName}</Typography>} {/* Display image name */}
-            
-            {/* Display the uploaded image preview */}
+            {imageName && <Typography variant="body2">{imageName}</Typography>} 
+
+            {/* Display image preview */}
             <Box sx={{ marginTop: "16px" }}>
-              {image && (
+              {image ? (
                 <img
-                  src={URL.createObjectURL(image)} // Create a local URL for the image preview
+                  src={URL.createObjectURL(image)} // Preview newly uploaded image
                   alt="Uploaded Preview"
                   style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
                 />
+              ) : existingImage ? (
+                <img
+                  src={existingImage} // Display the existing image from server
+                  alt="Existing Image"
+                  style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
+                />
+              ) : (
+                <Typography variant="body2">No image available</Typography>
               )}
             </Box>
-
             <TextField
               fullWidth
               label="Announcement ID*"
@@ -240,14 +249,9 @@ const handleSubmit = async (e) => {
             </Box>
 
             {/* Submit Button */}
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              sx={{ mt: 2 }}
-            >
-              Update Announcement
-            </Button>
+            <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>
+                Submit
+              </Button>
           </Box>
         </Grid>
       </Grid>

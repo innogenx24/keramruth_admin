@@ -20,6 +20,7 @@ const EditDocumentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const document = location.state?.document || {};
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   // State variables
   const [autoUpdate, setAutoUpdate] = useState(false);
@@ -47,6 +48,7 @@ const EditDocumentForm = () => {
       setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
       setImageName(document.image ? document.image.split('/').pop() : ""); // Set image name based on URL
+      setImage(null); // Reset image state when document is loaded
     }
   }, [document]);
 
@@ -119,12 +121,20 @@ const EditDocumentForm = () => {
             
             {/* Display the uploaded image preview */}
             <Box sx={{ marginTop: "16px" }}>
-              {image && (
+              {image ? (
                 <img
                   src={URL.createObjectURL(image)} // Create a local URL for the image preview
                   alt="Uploaded Preview"
                   style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
                 />
+              ) : (
+                document.image && (
+                  <img
+                    src={`${imageBaseURL}${document.image}`} // Show existing image
+                    alt="Existing Document Image"
+                    style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
+                  />
+                )
               )}
             </Box>
 
@@ -238,15 +248,11 @@ const EditDocumentForm = () => {
               />
             </Box>
 
-            {/* Submit Button */}
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              sx={{ mt: 2 }}
-            >
-              Update Document
-            </Button>
+            {/* Save Button */}
+             {/* Submit Button */}
+             <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>
+                Submit
+              </Button>
           </Box>
         </Grid>
       </Grid>

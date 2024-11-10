@@ -16,6 +16,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const { state } = useLocation();
   const navigate = useNavigate(); // Initialize navigate
   const fileInputRef = useRef(null); // Reference for hidden file input
+  const imageBaseURL = "http://88.222.245.236:3002/"; // Set your API base URL
 
   const initialProductDetails = {
     image: "",
@@ -47,12 +48,11 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
       if (state.product.image) {
         setSelectedImage(state.product.image);
-        setImagePreview(state.product.image);
+        setImagePreview(`${imageBaseURL}${state.product.image}`); // Use the API base URL to display the image
         setImageName(state.product.image); // Set the image name if exists
       }
     }
   }, [state]);
-
   // Handle image selection
   const handleImageChange = (event) => {
     const file = event.target.files[0];
