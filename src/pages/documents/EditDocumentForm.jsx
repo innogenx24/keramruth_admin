@@ -20,7 +20,7 @@ const EditDocumentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const document = location.state?.document || {};
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/";
 
   // State variables
   const [autoUpdate, setAutoUpdate] = useState(false);

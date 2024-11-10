@@ -28,7 +28,7 @@ const DocumentsTable = () => {
   const navigate = useNavigate();
   
   // Base URL for images
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/";
 
   // Fetch documents from API
   const fetchDocuments = async () => {
@@ -132,7 +132,7 @@ const DocumentsTable = () => {
                 <TableCell>No.</TableCell>
                 <TableCell>Document ID</TableCell>
                 <TableCell>Heading</TableCell>
-                <TableCell>File Size (KB)</TableCell>
+                {/* <TableCell>File Size (KB)</TableCell> */}
                 <TableCell>Description</TableCell>
                 <TableCell>Applying On</TableCell>
                 <TableCell>Activate Status</TableCell>
@@ -156,7 +156,7 @@ const DocumentsTable = () => {
                     <span>{document.documentID}</span>
                   </TableCell>
                   <TableCell>{document.heading}</TableCell>
-                  <TableCell>{document.imageSize}</TableCell>
+                  {/* <TableCell>{document.imageSize}</TableCell> */}
                   <TableCell style={{ maxWidth: 200 }}>
                     {document.description.length > 50
                       ? `${document.description.substring(0, 50)}...`

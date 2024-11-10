@@ -291,6 +291,11 @@ export default function AdminDashboard() {
           path: "/dashboard/orders_time_set",
           icon: <MdAccessTimeFilled />,
         },
+        {
+          text: "Document PDF",
+          path: "/dashboard/download-pdf",
+          icon: <MdAccessTimeFilled />,
+        },
       ],
     },
   ];
