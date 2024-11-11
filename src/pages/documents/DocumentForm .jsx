@@ -48,7 +48,7 @@ const DocumentForm = () => {
         formData.append("imageName", selectedFile.name);
       }
 
-      fetch("http://localhost:3002/documents/create", {
+      fetch("http://88.222.245.236:3002/documents/create", {
         method: "POST",
         body: formData,
       })

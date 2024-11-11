@@ -37,7 +37,7 @@ const ProductPage = () => {
   const [isOpen, setIsOpen] = useState(false);  
   const [selectedProduct, setSelectedProduct] = useState(null);  
   // const imageBaseURL = "http://88.222.245.236:3002/";
-    const imageBaseURL = "http://localhost:3002/";
+    const imageBaseURL = "http://88.222.245.236:3002/";
 
 
   useEffect(() => {

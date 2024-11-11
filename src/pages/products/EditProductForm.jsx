@@ -109,8 +109,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
   
     try {
       // Direct API URL without token
-      const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
-        // const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
+      // const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
+        const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
 
         method: 'PUT',
         body: formData,
