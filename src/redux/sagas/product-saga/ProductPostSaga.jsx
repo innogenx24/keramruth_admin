@@ -7,7 +7,9 @@ function* postProduct(action) {
     yield put(productPostRequest());
     const token = localStorage.getItem('token');
     // const response = yield call(axios.post, 'http://88.222.245.236:3002/products', action.payload, {
-    const response = yield call(axios.post, 'http://88.222.245.236:3002/products', action.payload, {
+    const response = yield call(axios.post, 'http://localhost:3002/products', action.payload, {
+      // const response = yield call(axios.post, 'http://88.222.245.236:3002/products', action.payload, {
+
       headers: {
         Authorization: `Bearer ${token}`,
       },

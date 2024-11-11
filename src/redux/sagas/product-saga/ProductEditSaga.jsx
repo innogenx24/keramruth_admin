@@ -11,7 +11,9 @@ function* editProduct(action) {
   try {
     yield put(productEditRequest());
     const token = localStorage.getItem('token');
-    const response = yield call(axios.put, `http://88.222.245.236:3002/products/${action?.payload?.id}`, action?.payload, {
+    const response = yield call(axios.put, `http://localhost:3002/products/${action?.payload?.id}`, action?.payload, {
+      // const response = yield call(axios.put, `http://88.222.245.236:3002/products/${action?.payload?.id}`, action?.payload, {
+
       headers: {
         Authorization: `Bearer ${token}`,
       },

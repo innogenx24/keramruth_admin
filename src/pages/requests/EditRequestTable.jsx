@@ -16,9 +16,11 @@ import { fetchAllMembersRequest } from "../../redux/slices/member-slice/GetAllme
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import IconButton from "@mui/material/IconButton";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const MemberTable = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize the navigate hook
   const { allmembers, loading, error } = useSelector((state) => state.allmembers);
   const [editRequests, setEditRequests] = useState([]);
   const [loadingEditRequests, setLoadingEditRequests] = useState(true);
@@ -98,6 +100,9 @@ const MemberTable = () => {
           setSuccessMessage("Update successful!");
           setSnackbarOpen(true);
           fetchEditRequests();
+          
+          // Navigate to the edit-request page without refreshing
+          navigate("/dashboard/edit-request"); // This navigates to the new route
         } else {
           console.error("Failed to approve request:", data.message);
         }

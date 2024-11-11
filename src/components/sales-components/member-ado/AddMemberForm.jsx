@@ -7,13 +7,15 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  IconButton,
+  Typography,
 } from "@mui/material";
-import "./addmember.css";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { makePostMember } from "../../../redux/slices/member-slice/MemberPostSlice";
-import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices"; // Import useNavigate
+import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
 
 const AddMemberForm = () => {
   const dispatch = useDispatch();
@@ -27,6 +29,15 @@ const AddMemberForm = () => {
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
   }, [selectedRole, dispatch]);
+
+  // Handle image change
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      formik.setFieldValue("image", file); // Set the image in Formik field
+    }
+  };
 
   // Formik form setup
   const formik = useFormik({
@@ -55,7 +66,6 @@ const AddMemberForm = () => {
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
       image: Yup.mixed(),
-     
       full_name: Yup.string().required("Required"),
       username: Yup.string().required("Required"),
       mobile_number: Yup.number().required("Required"),
@@ -75,22 +85,25 @@ const AddMemberForm = () => {
       superior_d: Yup.number(),
     }),
     onSubmit: (values, { resetForm }) => {
-      const parsedValues = {
-        ...values,
-        role_id: parseInt(values.role_id, 10),
-        image: values.image?.name,
-        superior_id: parseInt(values.superior_id, 10),
-        superior_d: parseInt(values.superior_d, 10),
-        superior_sd: parseInt(values.superior_sd, 10),
-        superior_md: parseInt(values.superior_md, 10),
-        superior_ado: parseInt(values.superior_ado, 10),
-      };
-      dispatch(makePostMember(parsedValues));
+      const formData = new FormData();
+      formData.append("role_id", values.role_id);
+      formData.append("full_name", values.full_name);
+      formData.append("username", values.username);
+      formData.append("mobile_number", values.mobile_number);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
+      formData.append("pincode", values.pincode);
+      formData.append("country", values.country);
+      formData.append("state", values.state);
+      formData.append("district", values.district);
+      formData.append("city", values.city);
+      formData.append("street_name", values.street_name);
+      formData.append("building_no_name", values.building_no_name);
+      formData.append("club", values.club);
+      formData.append("image", values.image); // appending the file directly
+    
+      dispatch(makePostMember(formData)); // make sure your action can handle FormData
       resetForm();
-      setSelectedRole("");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     },
   });
 
@@ -122,33 +135,35 @@ const AddMemberForm = () => {
                     name="role_id"
                     value={selectedRole}
                     onChange={handleRoleChange}
-                   
                   >
                     <MenuItem value="">Select Role</MenuItem>
-                    <MenuItem value="2">Area Developemnt Officer(ADO)</MenuItem>
+                    <MenuItem value="2">Area Development Officer(ADO)</MenuItem>
                     <MenuItem value="3">Master Distributor(MD)</MenuItem>
                     <MenuItem value="4">Super Distributor(SD)</MenuItem>
                     <MenuItem value="5">Distributors</MenuItem>
                     <MenuItem value="6">Customers</MenuItem>
                   </Select>
                 </Grid>
+
+                {/* Image Upload Section */}
                 <Grid item xs={12}>
-                  <InputLabel>Add Images</InputLabel>
-                  <TextField
-                    name="image"
-                    type="file"
-                    inputProps={{ accept: "image/*" }}
-                    fullWidth
-                    onChange={(event) => {
-                      const file = event.currentTarget.files[0];
-                      formik.setFieldValue("image", file); // Set file to formik state
-                      setSelectedFile(file); // Update local state if needed
-                    }}
-                    inputRef={fileInputRef} // Attach the ref to the file input
-                    error={formik.touched.image && Boolean(formik.errors.image)}
-                    helperText={formik.touched.image && formik.errors.image}
-                  />
+                  <InputLabel>Add Image*</InputLabel>
+                  <IconButton color="primary" component="label">
+                    <AddPhotoAlternateIcon />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </IconButton>
+                  {selectedFile && (
+                    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+                      Selected file: {selectedFile.name}
+                    </Typography>
+                  )}
                 </Grid>
+
 
                 <Grid item xs={12}>
                   <TextField

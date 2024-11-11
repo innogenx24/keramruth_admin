@@ -28,12 +28,12 @@ const DocumentsTable = () => {
   const navigate = useNavigate();
   
   // Base URL for images
-  const imageBaseURL = "http://88.222.245.236:3002/";
+  const imageBaseURL = "http://localhost:3002/uploads/";
 
   // Fetch documents from API
   const fetchDocuments = async () => {
     try {
-      const response = await axios.get("http://88.222.245.236:3002/documents");
+      const response = await axios.get("http://localhost:3002/documents");
       setDocuments(response.data.data); // Adjust according to your API response structure
     } catch (error) {
       console.error("Error fetching documents:", error);
@@ -85,7 +85,7 @@ const DocumentsTable = () => {
 
     try {
       // Update status on the server
-      await axios.patch(`http://88.222.245.236:3002/documents/${document.id}`, {
+      await axios.patch(`http://localhost:3002/documents/${document.id}`, {
         activateStatus: updatedStatus,
       });
 

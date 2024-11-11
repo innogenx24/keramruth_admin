@@ -20,7 +20,7 @@ const EditAnnouncementForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const announcement = location.state?.announcement || {};
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = "http://localhost:3002/uploads/";
 
   // State variables
   const [autoUpdate, setAutoUpdate] = useState(false);
@@ -83,7 +83,7 @@ const EditAnnouncementForm = () => {
     }
 
     try {
-      const response = await fetch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
+      const response = await fetch(`http://LOCALHOST:3002/announcements/${announcement.id}`, {
         method: "PUT",
         body: updatedAnnouncement,
       });

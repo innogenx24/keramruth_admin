@@ -28,39 +28,35 @@ const AnnouncementTable = () => {
   const [announcementToDelete, setAnnouncementToDelete] = useState(null);
   const navigate = useNavigate();
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/"; // Define the base URL for images
+  const imageBaseURL = "http://localhost:3002/uploads/";
 
-  // Fetch announcements from API
   const fetchAnnouncements = async () => {
     try {
-      const response = await axios.get("http://88.222.245.236:3002/announcements");
-      setAnnouncements(response.data.data); // Assuming your API returns data in this format
+      const response = await axios.get("http://localhost:3002/announcements");
+      setAnnouncements(response.data.data);
     } catch (error) {
       console.error("Error fetching announcements:", error);
     }
   };
 
   useEffect(() => {
-    fetchAnnouncements(); // Call the fetch function on component mount
+    fetchAnnouncements();
   }, []);
 
-  // Open delete confirmation modal
   const handleDeleteOpen = (announcement) => {
     setAnnouncementToDelete(announcement);
     setDeleteModalOpen(true);
   };
 
-  // Close delete confirmation modal
   const handleDeleteClose = () => {
     setDeleteModalOpen(false);
     setAnnouncementToDelete(null);
   };
 
-  // Confirm deletion of the announcement
   const confirmDelete = async () => {
     if (announcementToDelete) {
       try {
-        await axios.delete(`http://88.222.245.236:3002/announcements/${announcementToDelete.id}`); // Use the ID from the announcement
+        await axios.delete(`http://88.222.245.236:3002/announcements/${announcementToDelete.id}`);
         setAnnouncements(announcements.filter((announcement) => announcement.id !== announcementToDelete.id));
         handleDeleteClose();
       } catch (error) {
@@ -69,21 +65,18 @@ const AnnouncementTable = () => {
     }
   };
 
-  // Handle edit button click
   const handleEditClick = (announcement) => {
     navigate("edit-announcement", { state: { announcement } });
   };
 
-  // Handle add button click
   const handleAddClick = () => {
     navigate("add-announcement");
   };
 
-  // Handle toggle switch for activating/deactivating status
   const handleToggleSwitch = async (announcement) => {
     try {
       const updatedStatus = !announcement.activateStatus;
-      await axios.patch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
+      await axios.patch(`http://localhost:3002/announcements/${announcement.id}`, {
         activateStatus: updatedStatus,
       });
       setAnnouncements((prevAnnouncements) =>
@@ -94,6 +87,12 @@ const AnnouncementTable = () => {
     } catch (error) {
       console.error("Error updating activate status:", error);
     }
+  };
+
+  const getImageURL = (imagePath) => {
+    if (!imagePath) return "";
+    const imageName = imagePath.includes("\\") ? imagePath.split("\\").pop() : imagePath;
+    return `${imageBaseURL}${imageName}`;
   };
 
   return (
@@ -114,7 +113,7 @@ const AnnouncementTable = () => {
             startIcon={<AddIcon />}
             onClick={handleAddClick}
             style={{
-              backgroundColor: "#28a745", // Match green color for create button
+              backgroundColor: "#28a745",
               color: "white",
             }}
           >
@@ -140,7 +139,7 @@ const AnnouncementTable = () => {
                 <TableCell style={{ display: "flex", alignItems: "center" }}>
                   {announcement.image ? (
                     <img
-                      src={`${imageBaseURL}${announcement.image}`} // Use imageBaseURL to construct the full image URL
+                      src={getImageURL(announcement.image)}
                       style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
                       alt="Announcement"
                     />
@@ -164,16 +163,10 @@ const AnnouncementTable = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <IconButton
-                    onClick={() => handleEditClick(announcement)}
-                    color="primary"
-                  >
+                  <IconButton onClick={() => handleEditClick(announcement)} color="primary">
                     <EditIcon />
                   </IconButton>
-                  <IconButton
-                    onClick={() => handleDeleteOpen(announcement)}
-                    color="secondary"
-                  >
+                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -183,7 +176,6 @@ const AnnouncementTable = () => {
         </Table>
       </TableContainer>
 
-      {/* Delete Confirmation Modal */}
       <Dialog open={deleteModalOpen} onClose={handleDeleteClose}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>

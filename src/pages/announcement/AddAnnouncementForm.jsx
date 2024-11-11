@@ -68,7 +68,9 @@ const AddAnnouncementDetails = ({ onClose }) => {
     }
 
     try {
-      const response = await fetch("http://88.222.245.236:3002/announcements/create", {
+      // const response = await fetch("http://88.222.245.236:3002/announcements/create", {
+        const response = await fetch("http://localhost:3002/announcements/create", {
+
         method: "POST",
         body: formData,
       });
