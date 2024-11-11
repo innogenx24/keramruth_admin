@@ -46,7 +46,7 @@ const AddMemberForm = () => {
       street_name: "",
       building_no_name: "",
       club: "",
-      superior_id: 24,
+      superior_id: null,
       superior_d: "",
       superior_sd: "",
       superior_md: "",
@@ -109,7 +109,7 @@ const AddMemberForm = () => {
     <Box p={3}>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={3}>
-          {/* Left Side: Member Details */}
+          {/* {/ Left Side: Member Details /} */}
           <Grid item xs={12} md={6}>
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Member Details</InputLabel>
@@ -224,7 +224,7 @@ const AddMemberForm = () => {
               </Grid>
             </Box>
 
-            {/* Address Section */}
+            {/* {/ Address Section /} */}
             <Box
               mt={3}
               sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}
@@ -324,7 +324,7 @@ const AddMemberForm = () => {
             </Box>
           </Grid>
 
-          {/* Right Side: Club & Superior Distributors */}
+          {/* {/ Right Side: Club & Superior Distributors /} */}
           <Grid item xs={12} md={6}>
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Club & Superior Distributors</InputLabel>
@@ -350,136 +350,114 @@ const AddMemberForm = () => {
                   </Select>
                 </Grid>
 
-                {/* Conditionally render the fields based on the selected role */}
-                {selectedRole === "6" && (
-                  <Grid item xs={12}>
-                    <InputLabel>Distributor</InputLabel>
-                    <Select
-                      fullWidth
-                      defaultValue=""
-                      name="superior_d"
-                      value={formik.values.superior_d}
-                      onChange={(event) => {
-                        formik.handleChange(event);
-                      }}
-                      {...formik.getFieldProps("superior_d")}
-                      error={
-                        formik.touched.superior_d &&
-                        Boolean(formik.errors.superior_d)
-                      }
-                      helperText={
-                        formik.touched.superior_d && formik.errors.superior_d
-                      }
-                    >
-                      <MenuItem value="">Select Distributor</MenuItem>
-                      {allmembers?.Ds?.map((item) => (
-                        <MenuItem key={item?.id} value={item?.id}>
-                          {item?.username}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Grid>
-                )}
+{/* {/ Conditionally render the fields based on the selected role /}
+{/ Conditionally render the fields based on the selected role /} */}
+{selectedRole === "6" && (
+  <Grid item xs={12}>
+    <InputLabel>Distributor</InputLabel>
+    <Select
+      fullWidth
+      defaultValue=""
+      name="superior_id" 
+      value={formik.values.superior_id} 
+      onChange={(event) => {
+        formik.setFieldValue("superior_id", event.target.value); 
+      }}
+      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+      helperText={formik.touched.superior_id && formik.errors.superior_id}
+    >
+      <MenuItem value="">Select Distributor</MenuItem>
+      {allmembers?.Ds?.map((item) => (
+        <MenuItem key={item?.id} value={item?.id}>
+          {item?.username}
+        </MenuItem>
+      ))}
+    </Select>
+  </Grid>
+)}
 
-                {(selectedRole === "6" || selectedRole === "5") && (
-                  <Grid item xs={12}>
-                    <InputLabel>Super Distributor</InputLabel>
-                    <Select
-                      fullWidth
-                      defaultValue=""
-                      name="superior_sd"
-                      value={formik.values.superior_sd}
-                      onChange={(event) => {
-                        formik.handleChange(event);
-                      }}
-                      {...formik.getFieldProps("superior_sd")}
-                      error={
-                        formik.touched.superior_sd &&
-                        Boolean(formik.errors.superior_sd)
-                      }
-                      helperText={
-                        formik.touched.superior_sd && formik.errors.superior_sd
-                      }
-                    >
-                      <MenuItem value="">Select Super Distributor</MenuItem>
-                      {allmembers?.SDs?.map((item) => (
-                        <MenuItem key={item?.id} value={item?.id}>
-                          {item?.username}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Grid>
-                )}
+{(selectedRole === "6" || selectedRole === "5") && (
+  <Grid item xs={12}>
+    <InputLabel>Super Distributor</InputLabel>
+    <Select
+      fullWidth
+      defaultValue=""
+      name="superior_id"  
+      value={formik.values.superior_id}  
+      onChange={(event) => {
+        formik.setFieldValue("superior_id", event.target.value);  
+      }}
+      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+      helperText={formik.touched.superior_id && formik.errors.superior_id}
+    >
+      <MenuItem value="">Select Super Distributor</MenuItem>
+      {allmembers?.SDs?.map((item) => (
+        <MenuItem key={item?.id} value={item?.id}>
+          {item?.username}
+        </MenuItem>
+      ))}
+    </Select>
+  </Grid>
+)}
 
-                {(selectedRole === "6" ||
-                  selectedRole === "5" ||
-                  selectedRole === "4") && (
-                  <Grid item xs={12}>
-                    <InputLabel>Master Distributor</InputLabel>
-                    <Select
-                      fullWidth
-                      defaultValue=""
-                      name="superior_md"
-                      value={formik.values.superior_md}
-                      onChange={(event) => {
-                        formik.handleChange(event);
-                      }}
-                      {...formik.getFieldProps("superior_md")}
-                      error={
-                        formik.touched.superior_md &&
-                        Boolean(formik.errors.superior_md)
-                      }
-                      helperText={
-                        formik.touched.superior_md && formik.errors.superior_md
-                      }
-                    >
-                      <MenuItem value="">Select Master Distributor</MenuItem>
-                      {allmembers?.MDs?.map((item) => (
-                        <MenuItem key={item?.id} value={item?.id}>
-                          {item?.username}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Grid>
-                )}
+{(selectedRole === "6" ||
+  selectedRole === "5" ||
+  selectedRole === "4") && (
+  <Grid item xs={12}>
+    <InputLabel>Master Distributor</InputLabel>
+    <Select
+      fullWidth
+      defaultValue=""
+      name="superior_id"  
+      value={formik.values.superior_id}  
+      onChange={(event) => {
+        formik.setFieldValue("superior_id", event.target.value); 
+      }}
+      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+      helperText={formik.touched.superior_id && formik.errors.superior_id}
+    >
+      <MenuItem value="">Select Master Distributor</MenuItem>
+      {allmembers?.MDs?.map((item) => (
+        <MenuItem key={item?.id} value={item?.id}>
+          {item?.username}
+        </MenuItem>
+      ))}
+    </Select>
+  </Grid>
+)}
 
-                {(selectedRole === "6" ||
-                  selectedRole === "5" ||
-                  selectedRole === "4" ||
-                  selectedRole === "3") && (
-                  <Grid item xs={12}>
-                    <InputLabel>Area Developement Officer</InputLabel>
-                    <Select
-                      fullWidth
-                      defaultValue=""
-                      name="superior_ado"
-                      value={formik.values.superior_ado}
-                      onChange={(event) => {
-                        formik.handleChange(event);
-                      }}
-                      {...formik.getFieldProps("superior_ado")}
-                      error={
-                        formik.touched.superior_ado &&
-                        Boolean(formik.errors.superior_ado)
-                      }
-                      helperText={
-                        formik.touched.superior_ado &&
-                        formik.errors.superior_ado
-                      }
-                    >
-                      <MenuItem value="">Select (ADO)</MenuItem>
-                      {allmembers?.ADOs?.map((item) => (
-                        <MenuItem key={item?.id} value={item?.id}>
-                          {item?.username}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Grid>
-                )}
+{(selectedRole === "6" ||
+  selectedRole === "5" ||
+  selectedRole === "4" ||
+  selectedRole === "3") && (
+  <Grid item xs={12}>
+    <InputLabel>Area Development Officer</InputLabel>
+    <Select
+      fullWidth
+      defaultValue=""
+      name="superior_id" 
+      value={formik.values.superior_id}  
+      onChange={(event) => {
+        formik.setFieldValue("superior_id", event.target.value); 
+      }}
+      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+      helperText={formik.touched.superior_id && formik.errors.superior_id}
+    >
+      <MenuItem value="">Select (ADO)</MenuItem>
+      {allmembers?.ADOs?.map((item) => (
+        <MenuItem key={item?.id} value={item?.id}>
+          {item?.username}
+        </MenuItem>
+      ))}
+    </Select>
+  </Grid>
+)}
+
+
               </Grid>
             </Box>
 
-            {/* Save Button */}
+            {/* {/ Save Button /} */}
             <Box mt={3} textAlign="right">
               <Button
                 variant="contained"
