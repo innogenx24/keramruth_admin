@@ -42,6 +42,7 @@ const MemberAdoTable = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // State to manage delete modal visibility
   const [memberToDelete, setMemberToDelete] = useState(null); // State to store the member to be deleted
   const navigate = useNavigate();
+  const imageBaseURL = "http://localhost:3002/uploads/";
 
   useEffect(() => {
     dispatch(fetchMembersRequest({ roleId: 2 }));
@@ -151,14 +152,18 @@ const MemberAdoTable = () => {
       <TableCell>{index + 1}</TableCell>
       <TableCell>{member?.id}</TableCell>
       <TableCell>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          {/* Use the image property from the member object */}
-          <Avatar alt={member?.full_name} src={member?.image} /> 
-          <Typography style={{ marginLeft: "10px" }}>
-            {member?.username}
-          </Typography>
-        </div>
-      </TableCell>
+  <div style={{ display: "flex", alignItems: "center" }}>
+    {/* Use the image property from the member object */}
+    <Avatar
+      alt={member?.full_name}
+      src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'} // Add fallback image
+    />
+    <Typography style={{ marginLeft: "10px" }}>
+      {member?.username}
+    </Typography>
+  </div>
+</TableCell>
+
       <TableCell>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Typography style={{ marginRight: "10px" }}>

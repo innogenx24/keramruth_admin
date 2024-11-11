@@ -71,12 +71,12 @@ const MemberTable = () => {
 
   const handleApprove = async (memberId) => {
     const requestToApprove = editRequests.find((request) => request.user_id === memberId);
-
+  
     if (!requestToApprove) {
       console.error("Request not found:", memberId);
       return;
     }
-
+  
     const updatedData = {
       mobile_number: requestToApprove.new_mobile_number,
       email: requestToApprove.new_email_id,
@@ -85,24 +85,24 @@ const MemberTable = () => {
       street_name: requestToApprove.new_address.street,
       pincode: requestToApprove.new_address.zip,
     };
-
+  
     try {
       const response = await fetch(`http://88.222.245.236:3002/api/member-update/update/${memberId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         if (data.success) {
           setSuccessMessage("Update successful!");
           setSnackbarOpen(true);
           fetchEditRequests();
           
-          // Navigate to the edit-request page without refreshing
-          navigate("/dashboard/edit-request"); // This navigates to the new route
+          // Reload the page after success
+          window.location.reload();
         } else {
           console.error("Failed to approve request:", data.message);
         }
@@ -113,7 +113,7 @@ const MemberTable = () => {
       console.error("Error approving request:", error);
     }
   };
-
+  
   const handleReject = async (requestId) => {
     try {
       const response = await fetch(`http://88.222.245.236:3002/edit-requests/reject/${requestId}`, {
