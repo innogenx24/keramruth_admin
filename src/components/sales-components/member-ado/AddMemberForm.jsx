@@ -16,15 +16,18 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { makePostMember } from "../../../redux/slices/member-slice/MemberPostSlice";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const AddMemberForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize navigate
 
   const [selectClub, setSelectedClub] = useState("");
   const fileInputRef = useRef(null); // Ref to reset file input
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
   const { allmembers } = useSelector((state) => state.allmembers);
+  
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
@@ -58,10 +61,7 @@ const AddMemberForm = () => {
       building_no_name: "",
       club: "",
       superior_id: null,
-      superior_d: "",
-      superior_sd: "",
-      superior_md: "",
-      superior_ado: "",
+     
     },
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
@@ -79,10 +79,8 @@ const AddMemberForm = () => {
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
       club: Yup.string(),
-      superior_ado: Yup.number(),
-      superior_md: Yup.number(),
-      superior_sd: Yup.number(),
-      superior_d: Yup.number(),
+      superior_id: Yup.number(),
+     
     }),
     onSubmit: (values, { resetForm }) => {
       const formData = new FormData();
@@ -100,10 +98,12 @@ const AddMemberForm = () => {
       formData.append("street_name", values.street_name);
       formData.append("building_no_name", values.building_no_name);
       formData.append("club", values.club);
-      formData.append("image", values.image); // appending the file directly
+      formData.append("image", values.image); 
+      formData.append("superior_id", values.superior_id); 
     
       dispatch(makePostMember(formData)); // make sure your action can handle FormData
       resetForm();
+      navigate('/dashboard/members'); // Navigate to /dashboard/club
     },
   });
 
@@ -365,8 +365,6 @@ const AddMemberForm = () => {
                   </Select>
                 </Grid>
 
-{/* {/ Conditionally render the fields based on the selected role /}
-{/ Conditionally render the fields based on the selected role /} */}
 {selectedRole === "6" && (
   <Grid item xs={12}>
     <InputLabel>Distributor</InputLabel>
