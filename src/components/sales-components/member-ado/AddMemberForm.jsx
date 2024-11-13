@@ -59,7 +59,7 @@ const AddMemberForm = () => {
       city: "",
       street_name: "",
       building_no_name: "",
-      club: "",
+      club_id: "",
       superior_id: null,
       // superior_d: "",
       // superior_sd: "",
@@ -81,7 +81,7 @@ const AddMemberForm = () => {
       city: Yup.string().required("Required"),
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
-      club: Yup.string(),
+      club_id: Yup.string(),
       // superior_id: Yup.number(),
       // superior_ado: Yup.number(),
       // superior_md: Yup.number(),
@@ -103,7 +103,7 @@ const AddMemberForm = () => {
       formData.append("city", values.city);
       formData.append("street_name", values.street_name);
       formData.append("building_no_name", values.building_no_name);
-      formData.append("club", values.club);
+      formData.append("club_id", values.club_id);
       formData.append("image", values.image); 
       formData.append("superior_id", values.superior_id); 
     
@@ -355,12 +355,12 @@ const AddMemberForm = () => {
                   <Select
                     fullWidth
                     defaultValue=""
-                    name="club"
+                    name="club_id"
                     value={selectClub}
                     onChange={handleClubChange}
-                    {...formik.getFieldProps("club")}
-                    error={formik.touched.club && Boolean(formik.errors.club)}
-                    helperText={formik.touched.club && formik.errors.club}
+                    {...formik.getFieldProps("club_id")}
+                    error={formik.touched.club_id && Boolean(formik.errors.club_id)}
+                    helperText={formik.touched.club_id && formik.errors.club_id}
                   >
                     <MenuItem value="">Select Club</MenuItem>
                     <MenuItem value="500">500 Litres</MenuItem>
