@@ -371,8 +371,6 @@ const AddMemberForm = () => {
                   </Select>
                 </Grid>
 
-{/* {/ Conditionally render the fields based on the selected role /}
-{/ Conditionally render the fields based on the selected role /} */}
 {selectedRole === "6" && (
   <Grid item xs={12}>
     <InputLabel>Distributor</InputLabel>
