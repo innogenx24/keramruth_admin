@@ -28,11 +28,11 @@ const AnnouncementTable = () => {
   const [announcementToDelete, setAnnouncementToDelete] = useState(null);
   const navigate = useNavigate();
 
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const fetchAnnouncements = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/announcements");
+      const response = await axios.get("http://88.222.245.236:3002/announcements");
       setAnnouncements(response.data.data);
     } catch (error) {
       console.error("Error fetching announcements:", error);
@@ -76,7 +76,7 @@ const AnnouncementTable = () => {
   const handleToggleSwitch = async (announcement) => {
     try {
       const updatedStatus = !announcement.activateStatus;
-      await axios.patch(`http://localhost:3002/announcements/${announcement.id}`, {
+      await axios.patch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
         activateStatus: updatedStatus,
       });
       setAnnouncements((prevAnnouncements) =>
