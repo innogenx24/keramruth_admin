@@ -27,18 +27,19 @@ const AddMemberForm = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
   const { allmembers } = useSelector((state) => state.allmembers);
-  
+  const [imagePreview, setImagePreview] = useState(null);
+
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
   }, [selectedRole, dispatch]);
 
-  // Handle image change
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
       formik.setFieldValue("image", file); // Set the image in Formik field
+      setImagePreview(URL.createObjectURL(file)); // Create a preview URL
     }
   };
 
@@ -147,22 +148,32 @@ const AddMemberForm = () => {
 
                 {/* Image Upload Section */}
                 <Grid item xs={12}>
-                  <InputLabel>Add Image*</InputLabel>
-                  <IconButton color="primary" component="label">
-                    <AddPhotoAlternateIcon />
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </IconButton>
-                  {selectedFile && (
-                    <Typography variant="body2" sx={{ marginTop: "10px" }}>
-                      Selected file: {selectedFile.name}
-                    </Typography>
-                  )}
-                </Grid>
+  <InputLabel>Add Image*</InputLabel>
+  <IconButton color="primary" component="label">
+    <AddPhotoAlternateIcon />
+    <input
+      type="file"
+      hidden
+      accept="image/*"
+      onChange={handleImageChange}
+    />
+  </IconButton>
+  {selectedFile && (
+    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+      Selected file: {selectedFile.name}
+    </Typography>
+  )}
+  {/* Preview the uploaded image */}
+  {imagePreview && (
+    <Box mt={2}>
+      <img
+        src={imagePreview}
+        alt="Preview"
+        style={{ width: "100%", maxWidth: "300px", height: "auto", borderRadius: "8px" }}
+      />
+    </Box>
+  )}
+</Grid>
 
 
                 <Grid item xs={12}>

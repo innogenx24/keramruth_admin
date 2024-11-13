@@ -33,15 +33,16 @@ const AddAnnouncementDetails = ({ onClose }) => {
   const [toDate, setToDate] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [previewUrl, setPreviewUrl] = useState(""); // New state for image preview
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
       setImageFileName(file.name);
+      setPreviewUrl(URL.createObjectURL(file)); // Generate preview URL
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -110,8 +111,8 @@ const AddAnnouncementDetails = ({ onClose }) => {
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Add Images</InputLabel>
+          <Box >
+          <InputLabel>Add Images</InputLabel>
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
               <input type="file" hidden accept="image/*" onChange={handleImageChange} />
@@ -120,6 +121,15 @@ const AddAnnouncementDetails = ({ onClose }) => {
               <Typography variant="body2" sx={{ marginTop: "10px" }}>
                 Selected file: {imageFileName}
               </Typography>
+            )}
+            {previewUrl && (
+              <Box sx={{ marginTop: "10px" }}>
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  style={{ width: "100%", maxHeight: "300px", objectFit: "contain" }}
+                />
+              </Box>
             )}
             <TextField
               fullWidth
