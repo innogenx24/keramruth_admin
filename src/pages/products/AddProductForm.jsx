@@ -84,6 +84,10 @@ const AddProductForm = () => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File size exceeds 2MB. Please upload a smaller file.");
+        return; 
+      }
       formik.setFieldValue("image", file);
       setSelectedFile(file);
 
@@ -295,7 +299,7 @@ const AddProductForm = () => {
               />
 
               {/* Switches: Auto Update and Stock Status, each under the other */}
-              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+              {/* <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
                 <Switch
                   checked={formik.values.autoUpdate}
@@ -313,7 +317,7 @@ const AddProductForm = () => {
                   }
                 />
                 
-              </Box>
+              </Box> */}
 
               <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography sx={{ marginRight: "8px" }}>

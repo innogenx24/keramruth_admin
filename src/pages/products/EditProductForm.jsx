@@ -311,14 +311,14 @@ const EditProductForm = ({ handleBackToProducts }) => {
               />
             </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+            {/* <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
               <InputLabel sx={{ marginRight: "8px" }}>Auto Update</InputLabel>
               <Switch
                 value={autoUpdate}
                 onChange={(e) => setAutoUpdate(e.target.checked)}
                 name="autoUpdate"
               />
-            </Box>
+            </Box> */}
 
             <Box sx={{ marginTop: "20px", display: "flex", justifyContent: "flex-start" }}>
             <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>
