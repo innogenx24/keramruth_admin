@@ -16,9 +16,11 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { makePostMember } from "../../../redux/slices/member-slice/MemberPostSlice";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
+import { useNavigate } from "react-router-dom"; 
 
 const AddMemberForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [selectClub, setSelectedClub] = useState("");
   const fileInputRef = useRef(null); // Ref to reset file input
@@ -80,7 +82,7 @@ const AddMemberForm = () => {
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
       club: Yup.string(),
-      superior_id: Yup.number(),
+      // superior_id: Yup.number(),
       // superior_ado: Yup.number(),
       // superior_md: Yup.number(),
       // superior_sd: Yup.number(),
@@ -107,6 +109,7 @@ const AddMemberForm = () => {
     
       dispatch(makePostMember(formData)); // make sure your action can handle FormData
       resetForm();
+      navigate('/dashboard/members'); 
     },
   });
 
