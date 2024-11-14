@@ -48,7 +48,7 @@ const AddMemberForm = () => {
       role_id: "",
       image: null,
       full_name: "",
-      username: "",
+      // username: "",
       mobile_number: "",
       email: "",
       password: "",
@@ -70,7 +70,7 @@ const AddMemberForm = () => {
       role_id: Yup.string().required("Please select one Role"),
       image: Yup.mixed(),
       full_name: Yup.string().required("Required"),
-      username: Yup.string().required("Required"),
+      // username: Yup.string().required("Required"),
       mobile_number: Yup.number().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       password: Yup.string().required("Required"),
@@ -92,7 +92,7 @@ const AddMemberForm = () => {
       const formData = new FormData();
       formData.append("role_id", values.role_id);
       formData.append("full_name", values.full_name);
-      formData.append("username", values.username);
+      // formData.append("username", values.username);
       formData.append("mobile_number", values.mobile_number);
       formData.append("email", values.email);
       formData.append("password", values.password);
@@ -186,7 +186,7 @@ const AddMemberForm = () => {
                     }
                   />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <TextField
                     fullWidth
                     name="username"
@@ -199,7 +199,7 @@ const AddMemberForm = () => {
                       formik.touched.username && formik.errors.username
                     }
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
