@@ -11,14 +11,13 @@ import {
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useLocation } from "react-router-dom";
-import {makeEditMember} from "../../../redux/slices/member-slice/MemberEditSlices";
 import { useDispatch } from "react-redux";
+import { makeEditMember } from "../../../redux/slices/member-slice/MemberEditSlices"; // Assuming action to save data
 
 const EditMemberForm = () => {
   const dispatch = useDispatch();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const member = location.state?.member;
-  // console.log("member", member); // Extract the member data from the state
 
   const [formData, setFormData] = useState({
     name: "",
@@ -39,32 +38,38 @@ const EditMemberForm = () => {
     ado: "",
   });
 
+  // Dynamically set the form data when member details are available
   useEffect(() => {
     if (member) {
       setFormData({
-        name: member.full_name,
-        mobile: member.mobile_number,
+        name: member.full_name || "",
+        mobile: member.mobile_number || "",
         email: member.email || "",
-        role: "Role1", // Default role or use member's role if available
-        avatar: member.avatar || "",
-        pincode: "123456", // Dummy data for address
-        country: "India",
-        state: "Maharashtra",
-        district: "Pune",
-        city: "Pune",
-        street: "MG Road",
-        club: "Club1", // Dummy data for club and distributors
-        distributor: "Distributor Name",
-        superDistributor: "Super Distributor Name",
-        masterDistributor: "Master Distributor Name",
-        ado: "ADO Name",
+        role: member.role || "", // Dynamically set role
+        avatar: member.avatar || "", // Dynamically set avatar URL
+        pincode: member.address?.pincode || "", // Assuming address object exists
+        country: member.address?.country || "India", // Default to India if missing
+        state: member.address?.state || "Maharashtra", // Default to Maharashtra
+        district: member.address?.district || "Pune", // Default to Pune
+        city: member.address?.city || "Pune", // Default to Pune
+        street: member.address?.street || "MG Road", // Default street
+        club: member.club || "Club1", // Default or dynamically from data
+        distributor: member.distributor || "", // Dynamic value for distributor
+        superDistributor: member.super_distributor || "", // Dynamic super distributor
+        masterDistributor: member.master_distributor || "", // Dynamic master distributor
+        ado: member.ado || "", // Dynamic ADO
       });
     }
   }, [member]);
 
-  // Handle input change
+  // Handle input change for dynamic data population
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Submit the form (dispatch action to save)
+  const handleSave = () => {
+    dispatch(makeEditMember(formData)); // Assuming a Redux action to save the updated member data
   };
 
   return (
@@ -127,10 +132,7 @@ const EditMemberForm = () => {
           </Box>
 
           {/* Address Section */}
-          <Box
-            mt={3}
-            sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}
-          >
+          <Box mt={3} sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
             <InputLabel>Address</InputLabel>
             <Grid container spacing={2}>
               <Grid item xs={6}>
@@ -254,7 +256,7 @@ const EditMemberForm = () => {
               variant="contained"
               color="success"
               size="large"
-              type="submit"
+              onClick={handleSave}
             >
               Save Changes
             </Button>
