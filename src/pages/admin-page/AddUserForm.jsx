@@ -24,6 +24,9 @@ const AddUserForm = () => {
     district: "",
     city: "",
     streetName: "",
+    username: "",
+    image: null,
+
   });
 
   const [accessControls, setAccessControls] = useState({
@@ -58,11 +61,32 @@ const AddUserForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("User Details:", userDetails);
-    console.log("Access Controls:", accessControls);
-    // Handle form submission logic here
+    try {
+      const response = await fetch("http://localhost:3002/api/admin/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userDetails,
+          accessControls,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("User created successfully:", data);
+        alert("User created successfully!");
+        // Clear form or handle success state
+      } else {
+        console.error("Error creating user:", data);
+        alert("Failed to create user: " + data.message);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      alert("Network error. Please try again later.");
+    }
   };
 
   return (
@@ -112,6 +136,16 @@ const AddUserForm = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  label="Username*"
+                  name="username"
+                  value={userDetails.username}
+                  onChange={handleInputChange}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
                   label="Password*"
                   type="password"
                   name="password"
@@ -124,10 +158,7 @@ const AddUserForm = () => {
           </Box>
 
           {/* Address Section */}
-          <Box
-            mt={3}
-            sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}
-          >
+          <Box mt={3} sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
             <InputLabel>Address</InputLabel>
             <Grid container spacing={2}>
               <Grid item xs={6}>
@@ -208,15 +239,8 @@ const AddUserForm = () => {
                         .map((key) => (
                           <Grid item key={key}>
                             <Box display="flex" alignItems="center">
-                              <Typography
-                                variant="body1"
-                                style={{ marginRight: "auto" }}
-                              >
-                                {key
-                                  .replace(/([A-Z])/g, " $1")
-                                  .replace(/^./, (str) =>
-                                    str.charAt(0).toUpperCase()
-                                  )}
+                              <Typography variant="body1" style={{ marginRight: "auto" }}>
+                                {key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.charAt(0).toUpperCase())}
                               </Typography>
                               <Switch
                                 checked={accessControls[key]}
@@ -236,15 +260,8 @@ const AddUserForm = () => {
                         .map((key) => (
                           <Grid item key={key}>
                             <Box display="flex" alignItems="center">
-                              <Typography
-                                variant="body1"
-                                style={{ marginRight: "auto" }}
-                              >
-                                {key
-                                  .replace(/([A-Z])/g, " $1")
-                                  .replace(/^./, (str) =>
-                                    str.charAt(0).toUpperCase()
-                                  )}
+                              <Typography variant="body1" style={{ marginRight: "auto" }}>
+                                {key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.charAt(0).toUpperCase())}
                               </Typography>
                               <Switch
                                 checked={accessControls[key]}
@@ -262,14 +279,12 @@ const AddUserForm = () => {
 
           {/* Save Button */}
           <Box mt={3} textAlign="center">
-            {" "}
-            {/* Center the button */}
             <Button
               variant="contained"
               color="success"
               size="large"
               type="submit"
-              sx={{ width: "95%" }} // Set button width to 50%
+              sx={{ width: "95%" }}
             >
               Save
             </Button>

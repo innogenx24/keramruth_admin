@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import {
   Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Typography,
-  Switch,
   Box,
   TextField,
   TextareaAutosize,
   Grid,
+  Switch,
+  Typography,
   IconButton,
+  InputLabel,
+  FormControlLabel,
+  Checkbox,
+  FormControl,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -21,6 +21,13 @@ const EditDocumentForm = () => {
   const navigate = useNavigate();
   const document = location.state?.document || {};
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const roles = [
+    { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
+    { label: "Master Distributor (MD)", value: "Master Distributor" },
+    { label: "Super Distributor (SD)", value: "Super Distributor" },
+    { label: "Distributor", value: "Distributor" },
+    { label: "Customer", value: "Customer" },
+  ];
 
   // State variables
   const [autoUpdate, setAutoUpdate] = useState(false);
@@ -29,13 +36,13 @@ const EditDocumentForm = () => {
   const [heading, setHeading] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
-  const [receiver, setReceiver] = useState("");
+  const [receiver, setReceiver] = useState([]); // receiver as an array of selected roles
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [image, setImage] = useState(null); // Keep as a file object
   const [imageName, setImageName] = useState("");
+  const [selectAll, setSelectAll] = useState(false); // state for 'Select All' checkbox
 
-  // Effect to initialize state based on document details
   useEffect(() => {
     if (document) {
       setAutoUpdate(document.autoUpdate || false);
@@ -44,13 +51,18 @@ const EditDocumentForm = () => {
       setHeading(document.heading || "");
       setDescription(document.description || "");
       setLink(document.link || "");
-      setReceiver(document.receiver || "");
+      setReceiver(Array.isArray(document.receiver) ? document.receiver : []);
       setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
-      setImageName(document.image ? document.image.split('/').pop() : ""); // Set image name based on URL
+      setImageName(document.image ? document.image.split("/").pop() : "");
       setImage(null); // Reset image state when document is loaded
     }
   }, [document]);
+
+  useEffect(() => {
+    // Sync 'Select All' checkbox with receiver list
+    setSelectAll(roles.length > 0 && roles.every(role => receiver.includes(role.value)));
+  }, [receiver]);
 
   // Handle image upload
   const handleImageUpload = (event) => {
@@ -58,6 +70,23 @@ const EditDocumentForm = () => {
     if (file) {
       setImage(file); // Store the file object
       setImageName(file.name); // Set the image name
+    }
+  };
+
+  const handleReceiverChange = (event) => {
+    const { value, checked } = event.target;
+
+    if (value === "selectAll") {
+      // Toggle select/deselect all roles
+      setReceiver(checked ? roles.map(role => role.value) : []);
+    } else {
+      setReceiver((prevReceiver) => {
+        if (checked) {
+          return [...prevReceiver, value]; // Add the role to receiver if checked
+        } else {
+          return prevReceiver.filter((role) => role !== value); // Remove role from receiver if unchecked
+        }
+      });
     }
   };
 
@@ -70,13 +99,12 @@ const EditDocumentForm = () => {
     updatedDocument.append("heading", heading);
     updatedDocument.append("description", description);
     updatedDocument.append("link", link);
-    updatedDocument.append("receiver", receiver);
+    updatedDocument.append("receiver", JSON.stringify(receiver)); // Store receiver as a JSON string
     updatedDocument.append("autoUpdate", autoUpdate);
     updatedDocument.append("activateStatus", activateStatus);
     updatedDocument.append("fromDate", fromDate);
     updatedDocument.append("toDate", toDate);
 
-    // Append the image file if it exists
     if (image) {
       updatedDocument.append("image", image);
     }
@@ -114,37 +142,28 @@ const EditDocumentForm = () => {
               <input
                 type="file"
                 hidden
-                onChange={handleImageUpload} // Handle image upload
+                onChange={handleImageUpload}
               />
             </IconButton>
-            {imageName && <Typography variant="body2">{imageName}</Typography>} {/* Display image name */}
-            
-            {/* Display the uploaded image preview */}
+            {imageName && <Typography variant="body2">{imageName}</Typography>}
+
             <Box sx={{ marginTop: "16px" }}>
               {image ? (
                 <img
-                  src={URL.createObjectURL(image)} // Create a local URL for the image preview
+                  src={URL.createObjectURL(image)}
                   alt="Uploaded Preview"
                   style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
                 />
               ) : (
                 document.image && (
                   <img
-                    src={`${imageBaseURL}${document.image}`} // Show existing image
+                    src={`${imageBaseURL}${document.image}`}
                     alt="Existing Document Image"
                     style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
                   />
                 )
               )}
             </Box>
-
-            <TextField
-              fullWidth
-              label="Document ID*"
-              value={documentID}
-              onChange={(e) => setDocumentID(e.target.value)} // Allow editing of Document ID
-              margin="normal"
-            />
 
             <TextField
               fullWidth
@@ -178,21 +197,36 @@ const EditDocumentForm = () => {
         {/* Right Side: Receiver and Actions */}
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Select Receiver Roles
+            </Typography>
             <InputLabel>Receiver</InputLabel>
             <FormControl fullWidth margin="normal">
-              <InputLabel>Applying on</InputLabel>
-              <Select
-                value={receiver}
-                onChange={(e) => setReceiver(e.target.value)}
-                required
-              >
-                <MenuItem value="All Users">All Users</MenuItem>
-                <MenuItem value="ADO">Area Development Officer (ADO)</MenuItem>
-                <MenuItem value="MD">Master Distributor (MD)</MenuItem>
-                <MenuItem value="SD">Super Distributor (SD)</MenuItem>
-                <MenuItem value="Distributor">Distributor</MenuItem>
-                <MenuItem value="Customers">Customers</MenuItem>
-              </Select>
+              {/* Select All Checkbox */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectAll}
+                    onChange={handleReceiverChange}
+                    value="selectAll"
+                  />
+                }
+                label="Select All"
+              />
+
+              {roles.map((role) => (
+                <FormControlLabel
+                  key={role.value}
+                  control={
+                    <Checkbox
+                      checked={receiver.includes(role.value)}
+                      onChange={handleReceiverChange}
+                      value={role.value}
+                    />
+                  }
+                  label={role.label}
+                />
+              ))}
             </FormControl>
 
             {/* Auto Update */}
@@ -209,7 +243,6 @@ const EditDocumentForm = () => {
             {autoUpdate && (
               <Box sx={{ mt: 2 }}>
                 <Grid container spacing={2}>
-                  {/* From Date on the left side */}
                   <Grid item xs={6}>
                     <TextField
                       fullWidth
@@ -218,11 +251,8 @@ const EditDocumentForm = () => {
                       value={fromDate}
                       onChange={(e) => setFromDate(e.target.value)}
                       InputLabelProps={{ shrink: true }}
-                      margin="normal"
                     />
                   </Grid>
-
-                  {/* To Date on the right side */}
                   <Grid item xs={6}>
                     <TextField
                       fullWidth
@@ -231,14 +261,13 @@ const EditDocumentForm = () => {
                       value={toDate}
                       onChange={(e) => setToDate(e.target.value)}
                       InputLabelProps={{ shrink: true }}
-                      margin="normal"
                     />
                   </Grid>
                 </Grid>
               </Box>
             )}
 
-            {/* Activate Status */}
+            {/* Status Toggle */}
             <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
               <label style={{ marginRight: "8px" }}>Activate Status</label>
               <Switch
@@ -248,11 +277,16 @@ const EditDocumentForm = () => {
               />
             </Box>
 
-            {/* Save Button */}
-             {/* Submit Button */}
-             <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>
-                Submit
-              </Button>
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 3 }}
+            >
+              Update Document
+            </Button>
           </Box>
         </Grid>
       </Grid>

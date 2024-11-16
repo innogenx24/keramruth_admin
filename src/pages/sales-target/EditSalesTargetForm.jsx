@@ -11,219 +11,156 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import "./sales.css";
 
-const durations = ["1 month", "3 months", "6 months"]; // Array for duration options
-
-export default function EditSalesTargetForm() {
-  const { state } = useLocation();
+export default function EditSalesTarget() {
   const navigate = useNavigate();
-  const [targetData, setTargetData] = useState({
-    role: '',
-    virginCoconutOil: { target: '', duration: '' },
-    virginCoconutHairOil: { target: '', duration: '' },
-  });
+  const { state } = useLocation(); // Receiving data from the previous page
+
+  const [selectedProduct, setSelectedProduct] = useState(
+    state?.product?.product_name || ""
+  );
+  const [targets, setTargets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  // Fetch sales target data based on the selected product
   useEffect(() => {
-    const fetchTargetData = async () => {
-      try {
-        let data;
+    if (!selectedProduct) return;
+    fetchSalesTargets();
+  }, [selectedProduct]);
 
-        // If data is passed through state
-        if (state?.row) {
-          data = state.row;
-        } else {
-          throw new Error('No data available');
-        }
-
-        // Ensure the fetched data is structured correctly
-        const virginCoconutOil = data.productData.find(p => p.productType === "Virgin Coconut Oil");
-        const virginCoconutHairOil = data.productData.find(p => p.productType === "Virgin Coconut Hair Oil");
-
-        // Set the fetched data
-        setTargetData({
-          role: data.role || 'No Role Provided',
-          virginCoconutOil: {
-            target: virginCoconutOil?.target || '',
-            duration: virginCoconutOil?.duration || '',
-          },
-          virginCoconutHairOil: {
-            target: virginCoconutHairOil?.target || '',
-            duration: virginCoconutHairOil?.duration || '',
-          },
-        });
-      } catch (error) {
-        setError(error.message);
-        console.error("Error fetching target data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTargetData();
-  }, [state]);
-
-  // Handle form field changes
-  const handleChange = (product, field, value) => {
-    setTargetData((prevData) => ({
-      ...prevData,
-      [product]: {
-        ...prevData[product],
-        [field]: value,
-      },
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Prepare payload with the required format
-    const payload = {
-      role: targetData.role,
-      productData: [
-        {
-          productType: "Virgin Coconut Oil",
-          target: targetData.virginCoconutOil.target,
-          duration: targetData.virginCoconutOil.duration,
-        },
-        {
-          productType: "Virgin Coconut Hair Oil",
-          target: targetData.virginCoconutHairOil.target,
-          duration: targetData.virginCoconutHairOil.duration,
-        },
-      ],
-    };
-
-    console.log('Sending payload:', JSON.stringify(payload));
-
+  const fetchSalesTargets = async () => {
     try {
-      const response = await fetch(`http://88.222.245.236:3002/salestarget/${state.row.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error('Error response:', errorResponse);
-        throw new Error(errorResponse.message || 'Failed to update target data');
-      }
-
-      console.log('Target data updated successfully');
-      navigate("/dashboard/sales-target");
+      const response = await axios.get(
+        `http://localhost:3002/salestarget/${encodeURIComponent(selectedProduct)}`
+      );
+      console.log("Fetched Data:", response.data.data); // Debugging
+      setTargets(response.data.data || []);
+      setLoading(false);
     } catch (error) {
-      console.error('Error updating target data:', error);
+      console.error("Error fetching sales targets:", error);
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // Handle change in target values and durations
+  const handleChange = (productIndex, dataIndex, field, value) => {
+    const updatedTargets = [...targets];
+    updatedTargets[productIndex].product_data[dataIndex][field] = value;
+    setTargets(updatedTargets);
+  };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const handleSubmit = async () => {
+    if (!targets.length || targets.some(product => product.product_data.some(data => !data.target || !data.duration))) {
+      alert("Please fill out all target values and durations.");
+      return;
+    }
+
+    const requestData = {
+      product_name: selectedProduct,
+      productData: targets.map((product) => ({
+        product_name: selectedProduct,
+        product_data: product.product_data.map((data) => ({
+          role: data.role,
+          target: data.target,
+          duration: data.duration,
+        })),
+      })),
+    };
+
+    // Log the data being sent
+    console.log("Sending data to backend:", requestData);
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3002/salestarget/${encodeURIComponent(selectedProduct)}`,
+        requestData
+      );
+
+      if (response.data.success) {
+        // Log success
+        console.log("Sales targets updated:", response.data);
+        
+        // Re-fetch the updated data after the PUT request is successful
+        await fetchSalesTargets();
+
+        alert("Sales targets updated successfully");
+        navigate("/dashboard/sales-target");
+      }
+    } catch (error) {
+      console.error("Error updating sales targets:", error);
+      alert("Failed to update sales targets.");
+    }
+  };
 
   return (
     <div style={{ padding: "20px" }}>
       <Typography variant="h4" gutterBottom>
-        Edit Sales Target
+        Edit Sales Target for {selectedProduct}
       </Typography>
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined" sx={{ mb: 4 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Sales Target for Virgin Coconut Oil
-              </Typography>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={6}>
-                  <Typography variant="subtitle1">{targetData.role}</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <TextField
-                    label="Enter Target"
-                    fullWidth
-                    value={targetData.virginCoconutOil.target || ""}
-                    onChange={(e) =>
-                      handleChange("virginCoconutOil", "target", e.target.value)
-                    }
-                    type="number"
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <Select
-                    value={targetData.virginCoconutOil.duration || ""}
-                    onChange={(e) =>
-                      handleChange("virginCoconutOil", "duration", e.target.value)
-                    }
-                    fullWidth
-                    displayEmpty
-                  >
-                    <MenuItem value="" disabled>Duration</MenuItem>
-                    {durations.map((duration) => (
-                      <MenuItem key={duration} value={duration}>{duration}</MenuItem>
-                    ))}
-                  </Select>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+      {loading ? (
+        <Typography variant="h6">Loading...</Typography>
+      ) : (
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Sales Target for {selectedProduct}:
+                </Typography>
+                {targets.map((product, productIndex) => (
+                  <div key={product.id}>
+                    {product.product_data.map((data, dataIndex) => (
+                      <Grid container spacing={2} key={dataIndex} alignItems="center" sx={{ mb: 2 }}>
+                        <Grid item xs={6}>
+                          <Typography>{data.role}</Typography>
+                        </Grid>
 
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Sales Target for Virgin Coconut Hair Oil
-              </Typography>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={6}>
-                  <Typography variant="subtitle1">{targetData.role}</Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <TextField
-                    label="Enter Target"
-                    fullWidth
-                    value={targetData.virginCoconutHairOil.target || ""}
-                    onChange={(e) =>
-                      handleChange("virginCoconutHairOil", "target", e.target.value)
-                    }
-                    type="number"
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <Select
-                    value={targetData.virginCoconutHairOil.duration || ""}
-                    onChange={(e) =>
-                      handleChange("virginCoconutHairOil", "duration", e.target.value)
-                    }
-                    fullWidth
-                    displayEmpty
-                  >
-                    <MenuItem value="" disabled>Duration</MenuItem>
-                    {durations.map((duration) => (
-                      <MenuItem key={duration} value={duration}>{duration}</MenuItem>
+                        <Grid item xs={3}>
+                          <TextField
+                            label="Enter Target"
+                            fullWidth
+                            value={data.target || ""}
+                            onChange={(e) =>
+                              handleChange(productIndex, dataIndex, "target", e.target.value)
+                            }
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Select
+                            fullWidth
+                            value={data.duration || ""}
+                            onChange={(e) =>
+                              handleChange(productIndex, dataIndex, "duration", e.target.value)
+                            }
+                            displayEmpty
+                          >
+                            <MenuItem value="" disabled>
+                              <em>Select Duration</em>
+                            </MenuItem>
+                            <MenuItem value="1 month">1 Month</MenuItem>
+                            <MenuItem value="3 months">3 Months</MenuItem>
+                            <MenuItem value="6 months">6 Months</MenuItem>
+                          </Select>
+                        </Grid>
+                      </Grid>
                     ))}
-                  </Select>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12}>
+            <Box display="flex" justifyContent="center" mt={3}>
+              <Button variant="contained" color="primary" onClick={handleSubmit}>
+                Update Sales Target
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-
-      <Box mt={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit}
-        >
-          Save Changes
-        </Button>
-      </Box>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Typography,
   IconButton,
+  Button, // Import Button from MUI
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
@@ -24,7 +25,7 @@ const OrderLimitsTable = () => {
   useEffect(() => {
     const fetchOrderLimits = async () => {
       try {
-        const response = await axios.get('http://88.222.245.236:3002/api/order-limits');
+        const response = await axios.get('http://localhost:3002/api/order-limits');
         setOrderLimits(response.data.data);
       } catch (err) {
         setError('Failed to fetch order limits');
@@ -42,6 +43,11 @@ const OrderLimitsTable = () => {
     navigate("edit-form", { state: { limit } });
   };
 
+  const handleAddTimeClick = () => {
+    // Navigate to the add-time route
+    navigate("add-time");
+  };
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -53,7 +59,7 @@ const OrderLimitsTable = () => {
   return (
     <>
       <TableContainer component={Paper}>
-      <div
+        <div
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -62,12 +68,20 @@ const OrderLimitsTable = () => {
           }}
         >
           <h2 style={{ margin: 0 }}>Master / Set Order Time</h2>
-         
+          {/* <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddTimeClick} // Button click handler for navigating to add-time
+          >
+            Add Time
+          </Button> */}
         </div>
         <Table aria-label="Order Limit Table">
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
+              <TableCell>Role</TableCell>
+
               <TableCell>Hours</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
@@ -76,6 +90,8 @@ const OrderLimitsTable = () => {
             {orderLimits.map((limit, index) => (
               <TableRow key={limit.id}>
                 <TableCell>{index + 1}</TableCell>
+                <TableCell>{limit.role}</TableCell>
+
                 <TableCell>{limit.hours}</TableCell>
                 <TableCell>
                   <IconButton color="secondary" onClick={() => handleEditClick(limit)}>

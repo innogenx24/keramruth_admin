@@ -128,51 +128,43 @@ const AnnouncementTable = () => {
               <TableCell>Announcement Heading</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Applying on</TableCell>
-              <TableCell>Activate Status</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {announcements.map((announcement, index) => (
-              <TableRow key={announcement.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell style={{ display: "flex", alignItems: "center" }}>
-                  {announcement.image ? (
-                    <img
-                      src={getImageURL(announcement.image)}
-                      style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
-                      alt="Announcement"
-                    />
-                  ) : (
-                    <span>No Image Available</span>
-                  )}
-                  <span>{announcement.documentID}</span>
-                </TableCell>
-                <TableCell>{announcement.heading}</TableCell>
-                <TableCell style={{ maxWidth: 200 }}>
-                  {announcement.description.length > 50
-                    ? `${announcement.description.substring(0, 50)}...`
-                    : announcement.description}
-                </TableCell>
-                <TableCell>{announcement.receiver}</TableCell>
-                <TableCell>
-                  <Switch
-                    checked={announcement.activateStatus}
-                    onChange={() => handleToggleSwitch(announcement)}
-                    color="success"
-                  />
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleEditClick(announcement)} color="primary">
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+  {announcements.map((announcement, index) => (
+    <TableRow key={announcement.id}>
+      <TableCell>{index + 1}</TableCell>
+      <TableCell style={{ display: "flex", alignItems: "center" }}>
+        {announcement.image ? (
+          <img
+            src={getImageURL(announcement.image)}
+            style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
+            alt="Announcement"
+          />
+        ) : (
+          <span>No Image Available</span>
+        )}
+      </TableCell>
+      <TableCell>{announcement.heading}</TableCell>
+      <TableCell style={{ maxWidth: 200 }}>
+        {announcement.description.length > 50
+          ? `${announcement.description.substring(0, 50)}...`
+          : announcement.description}
+      </TableCell>
+      <TableCell>{announcement.receiver.join(", ")}</TableCell> {/* Join the array */}
+      <TableCell>
+        <IconButton onClick={() => handleEditClick(announcement)} color="primary">
+          <EditIcon />
+        </IconButton>
+        <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
+          <DeleteIcon />
+        </IconButton>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
         </Table>
       </TableContainer>
 

@@ -8,6 +8,8 @@ import {
   Switch,
   InputLabel,
   IconButton,
+  Select ,
+  MenuItem,
 } from "@mui/material";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { useFormik } from "formik";
@@ -40,6 +42,8 @@ const AddProductForm = () => {
       quantity_type: "",
       createdBy: "",
       category_id: "",
+      fromDate: "",
+      toDate: "",   
     },
     validationSchema: Yup.object({
       product_code: Yup.number().required("Required"),
@@ -52,10 +56,14 @@ const AddProductForm = () => {
       adoPrice: Yup.number().required("Required"),
     }),
     onSubmit: (values, { resetForm }) => {
+      // Generate a random 6-digit product ID
+      const productId = Math.floor(100000 + Math.random() * 900000);
+    
+      // Create FormData to append the values
       const formData = new FormData();
+      formData.append("product_code", productId); // Set the generated product ID
       formData.append("autoUpdate", values.autoUpdate);
       formData.append("status", values.status);
-      formData.append("product_code", values.product_code);
       formData.append("name", values.name);
       formData.append("description", values.description);
       formData.append("productVolume", values.productVolume);
@@ -64,11 +72,17 @@ const AddProductForm = () => {
       formData.append("sdPrice", values.sdPrice);
       formData.append("mdPrice", values.mdPrice);
       formData.append("adoPrice", values.adoPrice);
-      formData.append("quantity_type", values.quantity_type); // Ensure this is included
-
+      formData.append("quantity_type", values.quantity_type);
+    
+      if (values.autoUpdate) {
+        formData.append("fromDate", values.fromDate);
+        formData.append("toDate", values.toDate);
+      }
+    
       if (selectedFile) {
         formData.append("image", selectedFile); // Attach the selected file
       }
+    
       dispatch(makePostProduct(formData));
       resetForm();
       setSelectedFile(null);
@@ -77,8 +91,8 @@ const AddProductForm = () => {
         fileInputRef.current.value = "";
       }
       navigate("/dashboard/products");
-
     },
+    
   });
 
   const handleImageChange = (event) => {
@@ -101,13 +115,7 @@ const AddProductForm = () => {
 
   return(
     <Box
-      sx={{
-        padding: "20px",
-        maxWidth: "1200px",
-        margin: "0 auto",
-        backgroundColor: "#f5f5f5",
-        borderRadius: "8px",
-      }}
+      
     >
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Product / Add Product
@@ -116,13 +124,8 @@ const AddProductForm = () => {
         <Grid container spacing={3}>
           {/* Product Details Section (Left Side) */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                backgroundColor: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-              }}
-            >
+          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
+
               <Typography variant="h6" gutterBottom>
                 Products Details
               </Typography>
@@ -157,7 +160,7 @@ const AddProductForm = () => {
               )}
 
               {/* Other input fields remain unchanged */}
-              <TextField
+              {/* <TextField
                 fullWidth
                 variant="outlined"
                 name="product_code"
@@ -166,7 +169,7 @@ const AddProductForm = () => {
                 {...formik.getFieldProps("product_code")}
                 error={formik.touched.product_code && Boolean(formik.errors.product_code)}
                 helperText={formik.touched.product_code && formik.errors.product_code}
-              />
+              /> */}
               <TextField
                 fullWidth
                 variant="outlined"
@@ -207,13 +210,8 @@ const AddProductForm = () => {
 
           {/* Price Details Section (Right Side) */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                backgroundColor: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-              }}
-            >
+                        <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
+
               <Typography variant="h6" gutterBottom>
                 Price Details
               </Typography>
@@ -286,38 +284,68 @@ const AddProductForm = () => {
                 error={formik.touched.stock_quantity && Boolean(formik.errors.stock_quantity)}
                 helperText={formik.touched.stock_quantity && formik.errors.stock_quantity}
               />
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="quantity_type"
-                label="Quantity Type*"
-                placeholder="e.g., pcs, ml, kg"
+               <InputLabel>Quantity Type</InputLabel>
+               <Select
+                 fullWidth
+                 name="quantity_type"
+                 value={formik.values.quantity_type}
+                 onChange={(e) => formik.setFieldValue("quantity_type", e.target.value)} 
+                 error={formik.touched.quantity_type && Boolean(formik.errors.quantity_type)} 
+                 helperText={formik.touched.quantity_type && formik.errors.quantity_type} 
                 sx={{ marginBottom: "16px" }}
-                {...formik.getFieldProps("quantity_type")}
-                error={formik.touched.quantity_type && Boolean(formik.errors.quantity_type)}
-                helperText={formik.touched.quantity_type && formik.errors.quantity_type}
-              />
+              >
+               <MenuItem value="">Select Quantity Type</MenuItem>
+               <MenuItem value="ml">ml</MenuItem>
+               <MenuItem value="liters">Liters</MenuItem>
+               <MenuItem value="kg">Kg</MenuItem>
+               <MenuItem value="gm">gm</MenuItem>
+              </Select>
 
-              {/* Switches: Auto Update and Stock Status, each under the other */}
-              {/* <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
-                <Switch
-                  checked={formik.values.autoUpdate}
-                  name="autoUpdate"
-                  onChange={(e) =>
-                    formik.setFieldValue("autoUpdate", e.target.checked)
-                  } // Formik update
-                  color="primary"
-                  error={
-                    formik.touched.autoUpdate &&
-                    Boolean(formik.errors.autoUpdate)
-                  }
-                  helperText={
-                    formik.touched.autoUpdate && formik.errors.autoUpdate
-                  }
-                />
-                
-              </Box> */}
+
+<Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+  <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
+  <Switch
+    checked={formik.values.autoUpdate}
+    name="autoUpdate"
+    onChange={(e) => formik.setFieldValue("autoUpdate", e.target.checked)}
+    color="primary"
+  />
+</Box>
+
+{formik.values.autoUpdate && ( // Conditional rendering based on autoUpdate state
+  <Box sx={{ mt: 2 }}>
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="From Date"
+          type="date"
+          value={formik.values.fromDate}
+          onChange={(e) => formik.setFieldValue("fromDate", e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          margin="normal"
+          error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
+          helperText={formik.touched.fromDate && formik.errors.fromDate}
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="To Date"
+          type="date"
+          value={formik.values.toDate}
+          onChange={(e) => formik.setFieldValue("toDate", e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          margin="normal"
+          error={formik.touched.toDate && Boolean(formik.errors.toDate)}
+          helperText={formik.touched.toDate && formik.errors.toDate}
+        />
+      </Grid>
+    </Grid>
+  </Box>
+)}
+
+
 
               <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography sx={{ marginRight: "8px" }}>
