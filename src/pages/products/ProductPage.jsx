@@ -94,6 +94,29 @@ const ProductPage = () => {
     );
   }
 
+  const handleStatusToggle = async (productId, newStatus) => {
+    try {
+      const response = await fetch(`http://88.222.245.236:3002/products/${productId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+  
+      if (response.ok) {
+        // Trigger the dispatch to re-fetch the products after the status update
+        dispatch(fetchProductsRequest());
+      } else {
+        console.error("Failed to update Product status");
+      }
+    } catch (error) {
+      console.error("Error updating product status", error);
+    }
+  };
+  
+  
+
   return (
     <div>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -151,9 +174,15 @@ const ProductPage = () => {
                 <TableCell>
                   <Button onClick={() => handleViewClick(product)}>View</Button>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Switch checked={product.status} />
-                </TableCell>
+                </TableCell> */}
+<TableCell>
+  <Switch
+    checked={product.status}
+    onChange={(e) => handleStatusToggle(product.id, e.target.checked)} // Add onChange handler
+  />
+</TableCell>
                 <TableCell>
                   <IconButton
                     color="primary"

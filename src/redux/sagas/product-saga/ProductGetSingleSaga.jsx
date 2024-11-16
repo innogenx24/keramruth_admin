@@ -5,7 +5,8 @@ import { fetchProductSingleFailure, fetchProductSingleRequest, fetchProductSingl
 function* fetchProductSingleSaga(action) {
   try {
     const token = localStorage.getItem('token');
-    const response = yield call(axios.get, `http://88.222.245.236:3002/products/${action.payload}`, {
+    // const response = yield call(axios.get, `http://88.222.245.236:3002/products/${action.payload}`, {
+      const response = yield call(axios.get, `http://88.222.245.236:3002/products/admin_product/${action.payload}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

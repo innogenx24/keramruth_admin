@@ -22,7 +22,7 @@ const AddMemberForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [selectClub, setSelectedClub] = useState("");
+  const [selectClub, setSelectedClub] = useState("500 Litres");
   const fileInputRef = useRef(null); // Ref to reset file input
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
