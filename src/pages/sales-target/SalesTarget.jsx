@@ -30,7 +30,7 @@ export default function SalesTargetTable() {
 
   const fetchSalesTargets = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/salestarget");
+      const response = await axios.get("http://88.222.245.236:3002/salestarget");
       setSalesData(response.data.data || []);
     } catch (error) {
       console.error("Error fetching sales targets:", error);
@@ -52,7 +52,7 @@ export default function SalesTargetTable() {
   // Delete product targets based on product name
   const deleteProductTargets = async (productName) => {
     try {
-      const response = await axios.delete(`http://localhost:3002/salestarget/${productName}`);
+      const response = await axios.delete(`http://88.222.245.236:3002/salestarget/${productName}`);
       alert(response.data.message); // Show success message
       fetchSalesTargets(); // Re-fetch the sales data
     } catch (error) {

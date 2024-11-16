@@ -33,7 +33,7 @@ export default function AddSalesTargetForm() {
     // Fetch products from the API
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3002/products");
+        const response = await fetch("http://88.222.245.236:3002/products");
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
@@ -98,7 +98,7 @@ export default function AddSalesTargetForm() {
     };
 
     try {
-      const response = await fetch("http://localhost:3002/salestarget/create", {
+      const response = await fetch("http://88.222.245.236:3002/salestarget/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

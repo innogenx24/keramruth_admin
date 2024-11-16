@@ -85,7 +85,7 @@ const ProductPage = () => {
   const handleToggleStockStatus = async (product) => {
     try {
       const updatedStatus = !product.status; // Toggle the current status
-      const response = await fetch(`http://localhost:3002/products/${product.id}`, {
+      const response = await fetch(`http://88.222.245.236:3002/products/${product.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
