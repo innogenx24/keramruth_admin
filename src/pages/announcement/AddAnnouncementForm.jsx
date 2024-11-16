@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import {
   Button,
-  Select,
-  MenuItem,
+  Checkbox,
   FormControl,
-  InputLabel,
+  FormControlLabel,
   Typography,
-  Switch,
   Box,
   TextField,
   TextareaAutosize,
   Grid,
   IconButton,
   Snackbar,
+  InputLabel,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useNavigate } from "react-router-dom";
@@ -20,84 +19,120 @@ import "./announcement.css";
 
 const AddAnnouncementDetails = ({ onClose }) => {
   const navigate = useNavigate();
-  const [autoUpdate, setAutoUpdate] = useState(false);
-  const [activateStatus, setActivateStatus] = useState(true);
   const [documentID, setDocumentID] = useState("");
   const [heading, setHeading] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
-  const [receiver, setReceiver] = useState("");
+  const [linkError, setLinkError] = useState("");
+  const [receiver, setReceiver] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileName, setImageFileName] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [previewUrl, setPreviewUrl] = useState(""); // New state for image preview
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [selectAll, setSelectAll] = useState(false);
+
+  const roles = [
+    { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
+    { label: "Master Distributor (MD)", value: "Master Distributor" },
+    { label: "Super Distributor (SD)", value: "Super Distributor" },
+    { label: "Distributor", value: "Distributor" },
+    { label: "Customer", value: "Customer" },
+  ];
+
+  const handleCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      setReceiver((prevReceivers) => [...prevReceivers, value]);
+    } else {
+      setReceiver((prevReceivers) => prevReceivers.filter((item) => item !== value));
+      setSelectAll(false); // Uncheck "Select All" if any item is unchecked
+    }
+  };
+
+  const handleSelectAllChange = (event) => {
+    const { checked } = event.target;
+    setSelectAll(checked);
+    if (checked) {
+      setReceiver(roles.map((role) => role.value));
+    } else {
+      setReceiver([]);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
       setImageFileName(file.name);
-      setPreviewUrl(URL.createObjectURL(file)); // Generate preview URL
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
+
+  const validateLink = (value) => {
+    const urlPattern = new RegExp(
+      "^(https?:\/\/)?(www\.)?((youtube\.com\/(?:[^\/]+\/[^\/]+\/|(?:v|e(?:mbed))\/?))|(youtu\.be\/))([a-zA-Z0-9-]+)(\?[^\s]*)?$|^https?:\/\/(.*\.(?:jpg|jpeg|png|gif|bmp|webp|svg))$"
+    );
+    
+    if (value && !urlPattern.test(value)) {
+      setLinkError("Please enter a valid URL.");
+    } else {
+      setLinkError("");
+    }
+  };
+
+  const handleLinkChange = (e) => {
+    const value = e.target.value;
+    setLink(value);
+    validateLink(value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const randomDocumentID = Math.floor(100000 + Math.random() * 900000).toString();
+    setDocumentID(randomDocumentID);
 
-    // Validate required fields
-    if (!documentID || !heading || !receiver) {
-      setErrorMessage("Please fill in all required fields.");
+    if (!randomDocumentID || !heading || receiver.length === 0 || linkError) {
+      setErrorMessage("Please fill in all required fields with valid data.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("documentID", documentID);
+    formData.append("documentID", randomDocumentID);
     formData.append("heading", heading);
     formData.append("description", description);
     formData.append("link", link);
-    formData.append("receiver", receiver);
-    formData.append("autoUpdate", autoUpdate);
-    formData.append("activateStatus", activateStatus);
-    if (autoUpdate) {
-      formData.append("fromDate", fromDate);
-      formData.append("toDate", toDate);
-    }
+    formData.append("receiver", JSON.stringify(receiver));
     if (imageFile) {
       formData.append("image", imageFile);
     }
 
     try {
-      // const response = await fetch("http://88.222.245.236:3002/announcements/create", {
-        const response = await fetch("http://88.222.245.236:3002/announcements/create", {
-
+      const response = await fetch("http://88.222.245.236:3002/announcements/create", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        const result = await response.json();
-        console.log("Announcement successfully saved:", result);
         setSuccessMessage("Announcement created successfully!");
-
-        // Navigate to the announcements page after success
         navigate("/dashboard/announcement");
-
-        // Clear form fields
         setDocumentID("");
         setHeading("");
         setDescription("");
         setLink("");
-        setReceiver("");
+        setReceiver([]);
         setImageFile(null);
         setImageFileName("");
-        setFromDate("");
-        setToDate("");
+        setPreviewUrl("");
+        setSelectAll(false);
       } else {
         const errorText = await response.text();
         setErrorMessage(`Failed to save announcement: ${errorText}`);
-        console.error("Failed to save announcement:", response.statusText);
       }
     } catch (error) {
       setErrorMessage("Error submitting the form: " + error.message);
@@ -111,8 +146,8 @@ const AddAnnouncementDetails = ({ onClose }) => {
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <Box >
-          <InputLabel>Add Images</InputLabel>
+          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
+            <InputLabel>Add Images</InputLabel>
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
               <input type="file" hidden accept="image/*" onChange={handleImageChange} />
@@ -124,22 +159,10 @@ const AddAnnouncementDetails = ({ onClose }) => {
             )}
             {previewUrl && (
               <Box sx={{ marginTop: "10px" }}>
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  style={{ width: "100%", maxHeight: "300px", objectFit: "contain" }}
-                />
+                <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
               </Box>
             )}
-            <TextField
-              fullWidth
-              label="Announcement ID*"
-              value={documentID}
-              onChange={(e) => setDocumentID(e.target.value)}
-              placeholder="Enter Document ID"
-              required
-              margin="normal"
-            />
+
             <TextField
               fullWidth
               label="Announcement Heading*"
@@ -154,15 +177,17 @@ const AddAnnouncementDetails = ({ onClose }) => {
               placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              style={{ width: "100%", margin: "16px 0" }}
+              style={{ width: "100%", margin: "16px 0", backgroundColor: "#f5f5f5" }}
             />
             <TextField
               fullWidth
               label="Link"
               value={link}
-              onChange={(e) => setLink(e.target.value)}
+              onChange={handleLinkChange}
               placeholder="Enter Link"
               margin="normal"
+              error={!!linkError}
+              helperText={linkError}
             />
           </Box>
         </Grid>
@@ -171,78 +196,39 @@ const AddAnnouncementDetails = ({ onClose }) => {
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
             <InputLabel>Receiver</InputLabel>
             <FormControl fullWidth margin="normal">
-              <InputLabel>Applying on</InputLabel>
-              <Select
-                value={receiver}
-                onChange={(e) => setReceiver(e.target.value)}
-                required
-              >
-                <MenuItem value="All Users">All Users</MenuItem>
-                <MenuItem value="ADO">Area Development Officer (ADO)</MenuItem>
-                <MenuItem value="MD">Master Distributor (MD)</MenuItem>
-                <MenuItem value="SD">Super Distributor (SD)</MenuItem>
-                <MenuItem value="Distributor">Distributor</MenuItem>
-                <MenuItem value="Customer">Customer</MenuItem>
-              </Select>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectAll}
+                    onChange={handleSelectAllChange}
+                    color="primary"
+                  />
+                }
+                label="Select All"
+              />
+              {roles.map((role) => (
+                <FormControlLabel
+                  key={role.value}
+                  control={
+                    <Checkbox
+                      checked={receiver.includes(role.value)}
+                      onChange={handleCheckboxChange}
+                      value={role.value}
+                    />
+                  }
+                  label={role.label}
+                />
+              ))}
             </FormControl>
 
-            <Box sx={{ display: "flex", alignItems: "center", marginTop: 2 }}>
-              <Switch
-                checked={autoUpdate}
-                onChange={() => setAutoUpdate(!autoUpdate)}
-                color="primary"
-              />
-              <Typography variant="body1" sx={{ marginLeft: 1 }}>
-                Auto Update
-              </Typography>
-            </Box>
-
-            {autoUpdate && (
-              <Box sx={{ mt: 2 }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="From Date"
-                      type="date"
-                      value={fromDate}
-                      onChange={(e) => setFromDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      margin="normal"
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="To Date"
-                      type="date"
-                      value={toDate}
-                      onChange={(e) => setToDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                      margin="normal"
-                    />
-                  </Grid>
-                </Grid>
-              </Box>
-            )}
-
-            <Box sx={{ display: "flex", alignItems: "center", marginTop: 2 }}>
-              <Switch
-                checked={activateStatus}
-                onChange={() => setActivateStatus(!activateStatus)}
-                color="primary"
-              />
-              <Typography variant="body1" sx={{ marginLeft: 1 }}>
-                Activate Status
-              </Typography>
-            </Box>
-
             <Button
-              variant="contained"
               type="submit"
-              sx={{ marginTop: 2 }}
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
             >
-              Submit
+              Save
             </Button>
           </Box>
         </Grid>

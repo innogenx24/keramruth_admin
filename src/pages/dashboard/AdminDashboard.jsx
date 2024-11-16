@@ -37,6 +37,10 @@ import { signOut } from "../../redux/slices/authSlice";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
+import { GrAnnounce } from "react-icons/gr";
+import { FaCcDinersClub } from "react-icons/fa";
+import { FaCodePullRequest } from "react-icons/fa6";
+
 // Drawer width
 const drawerWidth = 240;
 // const drawerWidth = 300;
@@ -204,11 +208,11 @@ export default function AdminDashboard() {
 
   ///
   const menuItems = [
-    {
-      text: "HomePage",
-      path: "/dashboard",
-      icon: <HomeIcon />,
-    },
+    // {
+    //   text: "HomePage",
+    //   path: "/dashboard",
+    //   icon: <HomeIcon />,
+    // },
     {
       text: "Products",
       path: "/dashboard/products",
@@ -222,22 +226,22 @@ export default function AdminDashboard() {
     {
       text: "Announcement",
       path: "/dashboard/announcement",
-      icon: <AnnouncementIcon />,
+      icon: <GrAnnounce />,
     },
-    {
-      text: "Report",
-      path: "/dashboard/report",
-      icon: <ReportIcon />,
-      // subItems: [
-      //   {
-      //     text: "EX1",
-      //     path: "/dashboard/ex1",
-      //     default: true,
-      //     icon: <AdminPanelSettingsIcon />,
-      //   },
-      //   { text: "EX2", path: "/dashboard/ex2", icon: <SalesTargetIcon /> },
-      // ],
-    },
+    // {
+    //   text: "Report",
+    //   path: "/dashboard/report",
+    //   icon: <ReportIcon />,
+    //   // subItems: [
+    //   //   {
+    //   //     text: "EX1",
+    //   //     path: "/dashboard/ex1",
+    //   //     default: true,
+    //   //     icon: <AdminPanelSettingsIcon />,
+    //   //   },
+    //   //   { text: "EX2", path: "/dashboard/ex2", icon: <SalesTargetIcon /> },
+    //   // ],
+    // },
     {
       text: "Documents",
       path: "/dashboard/documents",
@@ -252,13 +256,13 @@ export default function AdminDashboard() {
           text: "Edit Request",
           path: "/dashboard/edit-request",
           default: true,
-          icon: <AnnouncementIcon />,
+          icon: <FaCodePullRequest />,
         },
-        {
-          text: "Delete Request",
-          path: "/dashboard/delete-request",
-          icon: <AnnouncementIcon />,
-        },
+        // {
+        //   text: "Delete Request",
+        //   path: "/dashboard/delete-request",
+        //   icon: <AnnouncementIcon />,
+        // },
       ],
     },
     {
@@ -266,25 +270,30 @@ export default function AdminDashboard() {
       // path: '/dashboard/add-list',
       icon: <AdminPanelSettingsIcon />,
       subItems: [
-        {
-          text: "Admin",
-          path: "/dashboard/add-list",
-          default: true,
-          icon: <AdminPanelSettingsIcon />,
-        },
+        // {
+        //   text: "Admin",
+        //   path: "/dashboard/add-list",
+        //   default: true,
+        //   icon: <AdminPanelSettingsIcon />,
+        // },
         {
           text: "Sales Target",
           path: "/dashboard/sales-target",
           icon: <SalesTargetIcon />,
         },
+        // {
+        //   text: "Minimum Stock",
+        //   path: "/dashboard/minimum-stock",
+        //   icon: <StockIcon />,
+        // },
+        // { text: "Roles", path: "/dashboard/roles", icon: <RolesIcon /> },
+        { text: "Club", path: "/dashboard/club", icon: <FaCcDinersClub /> },
+        { text: "Category", path: "/dashboard/category", icon: <RolesIcon /> },
         {
-          text: "Minimum Stock",
-          path: "/dashboard/minimum-stock",
+          text: "Sector",
+          path: "/dashboard/sector",
           icon: <StockIcon />,
         },
-        // { text: "Roles", path: "/dashboard/roles", icon: <RolesIcon /> },
-        { text: "Club", path: "/dashboard/club", icon: <RolesIcon /> },
-        { text: "Category", path: "/dashboard/category", icon: <RolesIcon /> },
         { text: "Role", path: "/dashboard/role", icon: <RolesIcon /> },
         {
           text: "Set Time",
@@ -382,7 +391,7 @@ export default function AdminDashboard() {
                   <ListItemIcon
                     sx={{
                       color:
-                        location.pathname === subItem.path ? "green" : "#000",
+                        location.pathname === subItem.path ? "gray" : "#000",
                     }}
                   >
                     {subItem.icon}
@@ -394,7 +403,7 @@ export default function AdminDashboard() {
                       fontWeight: 500,
                       fontSize: "16px",
                       color:
-                        location.pathname === subItem.path ? "green" : "#fff", // Adjust text color for selected state
+                        location.pathname === subItem.path ? "#000" : "#fff", // Adjust text color for selected state
                     }}
                   />
                 </ListItemButton>

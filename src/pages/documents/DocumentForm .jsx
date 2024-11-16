@@ -1,9 +1,14 @@
 import React, { useState, useRef } from "react";
-import { Box, TextField, Button, Grid, FormControl, Typography, Switch, InputLabel, IconButton, MenuItem, Select } from "@mui/material";
+import { Box, TextField, Button, Grid, Typography, Switch, InputLabel, IconButton, FormControlLabel, Checkbox } from "@mui/material";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+
+const validateLink = (url) => {
+  const regex = /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
+  return regex.test(url);
+};
 
 const DocumentForm = () => {
   const navigate = useNavigate();
@@ -11,15 +16,20 @@ const DocumentForm = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageName, setImageName] = useState("");
   const [imagePreview, setImagePreview] = useState("");
+  const [selectAll, setSelectAll] = useState(false);
+  const roles = ["Area Development Officer", "Master Distributor", "Super Distributor", "Distributor", "Customers"];
 
-  // Formik setup with validation schema
+  const generateDocumentID = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
   const formik = useFormik({
     initialValues: {
-      documentID: "",
+      documentID: generateDocumentID(),
       heading: "",
       description: "",
       link: "",
-      receiver: "",
+      receiver: [],
       fromDate: "",
       toDate: "",
       autoUpdate: false,
@@ -29,8 +39,9 @@ const DocumentForm = () => {
     validationSchema: Yup.object({
       heading: Yup.string().required("Heading is required"),
       description: Yup.string().required("Description is required"),
-      link: Yup.string().required("Link is required"),
-      receiver: Yup.string().required("Receiver is required"),
+      link: Yup.string()
+        .required("Link is required")
+        .test("isValidURL", "Enter a valid URL", value => validateLink(value)),
     }),
     onSubmit: (values) => {
       const formData = new FormData();
@@ -38,7 +49,7 @@ const DocumentForm = () => {
       formData.append("heading", values.heading);
       formData.append("description", values.description);
       formData.append("link", values.link);
-      formData.append("receiver", values.receiver);
+      formData.append("receiver", JSON.stringify(values.receiver));
       formData.append("autoUpdate", values.autoUpdate);
       formData.append("activateStatus", values.activateStatus);
       if (values.fromDate) formData.append("fromDate", values.fromDate);
@@ -77,6 +88,20 @@ const DocumentForm = () => {
     }
   };
 
+  const handleReceiverChange = (event) => {
+    const value = event.target.value;
+    formik.setFieldValue("receiver", value);
+  };
+
+  const handleSelectAllChange = () => {
+    setSelectAll(!selectAll);
+    if (!selectAll) {
+      formik.setFieldValue("receiver", roles);
+    } else {
+      formik.setFieldValue("receiver", []);
+    }
+  };
+
   return (
     <Box sx={{ padding: "20px", maxWidth: "1200px", margin: "0 auto", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -90,7 +115,6 @@ const DocumentForm = () => {
                 Document Details
               </Typography>
 
-              {/* Image Upload Section */}
               <InputLabel>Add Image</InputLabel>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
@@ -113,15 +137,6 @@ const DocumentForm = () => {
                 />
               )}
 
-              {/* Document Fields */}
-              <TextField
-                fullWidth
-                label="Document ID"
-                name="documentID"
-                value={formik.values.documentID}
-                onChange={formik.handleChange}
-                margin="normal"
-              />
               <TextField
                 fullWidth
                 label="Heading"
@@ -166,24 +181,40 @@ const DocumentForm = () => {
                 Additional Settings
               </Typography>
 
-              {/* Receiver Selection */}
+              {/* Receiver Selection - Checkboxes */}
               <InputLabel>Receiver</InputLabel>
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Applying on</InputLabel>
-                <Select
-                  value={formik.values.receiver}
-                  onChange={formik.handleChange}
-                  name="receiver"
+              <Box sx={{ display: "flex", flexDirection: "column", marginTop: "10px" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectAll}
+                      onChange={handleSelectAllChange}
+                      color="primary"
+                    />
+                  }
+                  label="Select All"
                   required
-                >
-                  <MenuItem value="All Users">All Users</MenuItem>
-                  <MenuItem value="ADO">Area Development Officer (ADO)</MenuItem>
-                  <MenuItem value="MD">Master Distributor (MD)</MenuItem>
-                  <MenuItem value="SD">Super Distributor (SD)</MenuItem>
-                  <MenuItem value="Distributor">Distributor</MenuItem>
-                  <MenuItem value="Customers">Customers</MenuItem>
-                </Select>
-              </FormControl>
+                />
+                {roles.map((role) => (
+                  <FormControlLabel
+                    key={role}
+                    control={
+                      <Checkbox
+                        value={role}
+                        checked={formik.values.receiver.includes(role)}
+                        onChange={(e) => {
+                          const { checked } = e.target;
+                          const newReceiver = checked
+                            ? [...formik.values.receiver, role]
+                            : formik.values.receiver.filter((r) => r !== role);
+                          formik.setFieldValue("receiver", newReceiver);
+                        }}
+                      />
+                    }
+                    label={role}
+                  />
+                ))}
+              </Box>
 
               {/* Auto Update Switch */}
               <Box sx={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
@@ -240,9 +271,11 @@ const DocumentForm = () => {
               </Box>
 
               {/* Submit Button */}
-              <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>
-                Submit
-              </Button>
+              <Box sx={{ marginTop: 3 }}>
+                <Button variant="contained" color="primary" fullWidth type="submit">
+                  Submit
+                </Button>
+              </Box>
             </Box>
           </Grid>
         </Grid>

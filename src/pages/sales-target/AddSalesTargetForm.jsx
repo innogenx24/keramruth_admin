@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -8,75 +8,111 @@ import {
   Card,
   CardContent,
   Typography,
-  Switch,
-  FormControlLabel,
+  FormControl,
+  InputLabel,
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "./sales.css";
 
 const salesRoles = [
-  { id: 1, role: "Area Development Officer (ADO)" },
-  { id: 2, role: "Master Distributor (MD)" },
-  { id: 3, role: "Super Distributor (SD)" },
+  { id: 1, role: "Area Development Officer" },
+  { id: 2, role: "Master Distributor" },
+  { id: 3, role: "Super Distributor" },
   { id: 4, role: "Distributor" },
 ];
 
 export default function AddSalesTargetForm() {
-  const [targets, setTargets] = useState(
-    salesRoles.map((role) => ({
-      id: role.id,
-      role: role.role,
-      productData: [
-        { target: "", duration: "", productType: "Virgin Coconut Oil" },
-        { target: "", duration: "", productType: "Virgin Coconut Hair Oil" },
-      ],
-    }))
-  );
-
-  const [autoUpdate, setAutoUpdate] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(""); // The product selected by the user
+  const [rolesData, setRolesData] = useState([]); // Array for storing target data
+  const [products, setProducts] = useState([]);
+  const [selectedProductCode, setSelectedProductCode] = useState(""); // Store product code
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fetch products from the API
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:3002/products");
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data);
+        } else {
+          console.error("Failed to fetch products");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   // Handle form field changes
-  const handleChange = (id, productIndex, field, value) => {
-    setTargets((prevTargets) =>
-      prevTargets.map((target) =>
-        target.id === id
+  const handleChange = (roleId, field, value) => {
+    setRolesData((prevRolesData) =>
+      prevRolesData.map((roleData) =>
+        roleData.roleId === roleId
           ? {
-              ...target,
-              productData: target.productData.map((product, index) =>
-                index === productIndex
-                  ? { ...product, [field]: value }
-                  : product
-              ),
+              ...roleData,
+              [field]: value,
             }
-          : target
+          : roleData
       )
     );
   };
 
-  // Handle form submission
-  const handleSubmit = async () => {
-    const formattedData = targets.map((target) => ({
-      role: target.role,
-      productData: target.productData,
+  const handleProductChange = (product) => {
+    setSelectedProduct(product.name); // Set the selected product name
+    setSelectedProductCode(product.code); // Set the selected product code
+
+    // Create an initial structure for roles data with all roles
+    const initialRolesData = salesRoles.map((role) => ({
+      roleId: role.id,
+      roleName: role.role,
+      target: "",
+      duration: "",
     }));
 
+    setRolesData(initialRolesData);
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedProduct || !Array.isArray(rolesData) || rolesData.some(roleData => !roleData.target || !roleData.duration)) {
+      console.error("Product and target data are required");
+      return;
+    }
+
+    // Structure the payload properly
+    const payload = {
+      product_name: selectedProduct, // Include product name
+      targets: rolesData.map((roleData) => ({
+        role: roleData.roleName, // Role name
+        targetData: [
+          {
+            target: roleData.target,
+            duration: roleData.duration,
+          },
+        ],
+      })),
+    };
+
     try {
-      const response = await fetch("http://88.222.245.236:3002/salestarget/create", {
+      const response = await fetch("http://localhost:3002/salestarget/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ targets: formattedData }), // Wrap data in an object with "targets" key
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         const result = await response.json();
         console.log("Success:", result);
-        navigate("/dashboard/sales-target"); // Redirect on success
+        navigate("/dashboard/sales-targets");
       } else {
-        console.error("Error submitting sales target");
+        const errorData = await response.json();
+        console.error("Error:", errorData.message);
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -91,108 +127,78 @@ export default function AddSalesTargetForm() {
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
-          {/* Sales Target for Virgin Coconut Oil */}
+          <InputLabel>Select Product</InputLabel>
+          <FormControl fullWidth margin="normal">
+            <Select
+              value={selectedProduct}
+              onChange={(e) => {
+                const selected = products.find(
+                  (product) => product.name === e.target.value
+                );
+                handleProductChange(selected);
+              }}
+              required
+            >
+              <MenuItem value="">
+                <em>Select a Product</em>
+              </MenuItem>
+              {products.map((product) => (
+                <MenuItem key={product.id} value={product.name}>
+                  {product.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Sales Target for Virgin Coconut Oil:
+                Sales Target for {selectedProduct}:
               </Typography>
-              {targets.map((target) => (
-                <Grid container spacing={2} key={target.id} alignItems="center" sx={{ mb: 2 }}>
-                  <Grid item xs={6}>
-                    <Typography>{target.role}</Typography>
+              {Array.isArray(rolesData) && rolesData.length > 0 ? (
+                rolesData.map((roleData) => (
+                  <Grid container spacing={2} key={roleData.roleId} alignItems="center" sx={{ mb: 2 }}>
+                    <Grid item xs={6}>
+                      <Typography>{roleData.roleName}</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <TextField
+                        label="Enter Target"
+                        fullWidth
+                        value={roleData.target}
+                        onChange={(e) =>
+                          handleChange(roleData.roleId, "target", e.target.value)
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Select
+                        fullWidth
+                        value={roleData.duration}
+                        onChange={(e) =>
+                          handleChange(roleData.roleId, "duration", e.target.value)
+                        }
+                        displayEmpty
+                      >
+                        <MenuItem value="" disabled>
+                          <em>Select Duration</em>
+                        </MenuItem>
+                        <MenuItem value="1 month">1 month</MenuItem>
+                        <MenuItem value="3 months">3 months</MenuItem>
+                        <MenuItem value="6 months">6 months</MenuItem>
+                      </Select>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={3}>
-                    <TextField
-                      label="Enter Target"
-                      fullWidth
-                      value={target.productData[0].target}
-                      onChange={(e) =>
-                        handleChange(target.id, 0, "target", e.target.value)
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Select
-                      fullWidth
-                      value={target.productData[0].duration}
-                      onChange={(e) =>
-                        handleChange(target.id, 0, "duration", e.target.value)
-                      }
-                      displayEmpty
-                    >
-                      <MenuItem value="" disabled>
-                        <em>Select Duration</em>
-                      </MenuItem>
-                      <MenuItem value="1 month">1 month</MenuItem>
-                      <MenuItem value="3 months">3 months</MenuItem>
-                      <MenuItem value="6 months">6 months</MenuItem>
-                    </Select>
-                  </Grid>
-                </Grid>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Sales Target for Virgin Coconut Hair Oil */}
-          <Card variant="outlined" sx={{ mt: 4 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Sales Target for Virgin Coconut Hair Oil:
-              </Typography>
-              {targets.map((target) => (
-                <Grid container spacing={2} key={target.id} alignItems="center" sx={{ mb: 2 }}>
-                  <Grid item xs={6}>
-                    <Typography>{target.role}</Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <TextField
-                      label="Enter Target"
-                      fullWidth
-                      value={target.productData[1].target}
-                      onChange={(e) =>
-                        handleChange(target.id, 1, "target", e.target.value)
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Select
-                      fullWidth
-                      value={target.productData[1].duration}
-                      onChange={(e) =>
-                        handleChange(target.id, 1, "duration", e.target.value)
-                      }
-                      displayEmpty
-                    >
-                      <MenuItem value="" disabled>
-                        <em>Select Duration</em>
-                      </MenuItem>
-                      <MenuItem value="1 month">1 month</MenuItem>
-                      <MenuItem value="3 months">3 months</MenuItem>
-                      <MenuItem value="6 months">6 months</MenuItem>
-                    </Select>
-                  </Grid>
-                </Grid>
-              ))}
+                ))
+              ) : (
+                <Typography>Product Not Selected</Typography>
+              )}
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Right side: Auto Update and Save button */}
-        <Grid item xs={12} md={6}>
-          <Box display="flex" flexDirection="column" alignItems="flex-end">
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={autoUpdate}
-                  onChange={() => setAutoUpdate(!autoUpdate)}
-                  color="primary"
-                />
-              }
-              label="Auto Update"
-              labelPlacement="start"
-              sx={{ mb: 4 }}
-            />
+        <Grid item xs={12}>
+          <Box display="flex">
             <Button
               variant="contained"
               color="success"

@@ -139,9 +139,9 @@ const MemberAdoTable = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>No.</TableCell>
-                  <TableCell>Id User</TableCell>
+                  {/* <TableCell>Id User</TableCell> */}
                   <TableCell>Username</TableCell>
-                  <TableCell>Status/Month</TableCell>
+                  {/* <TableCell>Status/Month</TableCell> */}
                   <TableCell>Mobile No.</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
@@ -150,7 +150,7 @@ const MemberAdoTable = () => {
   {membersList.map((member, index) => (
     <TableRow key={member.id}>
       <TableCell>{index + 1}</TableCell>
-      <TableCell>{member?.id}</TableCell>
+      {/* <TableCell>{member?.id}</TableCell> */}
       <TableCell>
   <div style={{ display: "flex", alignItems: "center" }}>
     {/* Use the image property from the member object */}
@@ -164,7 +164,7 @@ const MemberAdoTable = () => {
   </div>
 </TableCell>
 
-      <TableCell>
+      {/* <TableCell>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Typography style={{ marginRight: "10px" }}>
             {"95"}%
@@ -177,12 +177,12 @@ const MemberAdoTable = () => {
             style={{ marginLeft: "10px" }}
           />
         </div>
-      </TableCell>
+      </TableCell> */}
       <TableCell>{member?.mobile_number}</TableCell>
       <TableCell>
-        <IconButton color="primary">
+        {/* <IconButton color="primary">
           <VisibilityIcon />
-        </IconButton>
+        </IconButton> */}
         <IconButton
           color="secondary"
           onClick={() => handleEditMemberClick(member)} // Pass the member data

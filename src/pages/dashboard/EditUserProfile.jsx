@@ -258,10 +258,17 @@ const EditUserProfile = () => {
               margin="normal"
             />
           </Box>
+          <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ marginTop: "20px" }}
+            >
+              Save Changes
+            </Button>
         </Grid>
 
-        {/* Access Section */}
-        <Grid item xs={12} md={6}>
+        {/* <Grid item xs={12} md={6}>
           <Box sx={{ padding: "20px", backgroundColor: "#fff", borderRadius: "10px" }}>
             <Typography variant="h6" gutterBottom>
               Access
@@ -269,7 +276,6 @@ const EditUserProfile = () => {
 
            
             <Grid container spacing={2}>
-              {/* Left column for Add & Edit permissions */}
               <Grid item xs={6}>
                 {[
                   "Add & Edit Users",
@@ -288,7 +294,6 @@ const EditUserProfile = () => {
                 ))}
               </Grid>
 
-              {/* Right column for Delete permissions */}
               <Grid item xs={6}>
                 {[
                   "Delete Users",
@@ -305,16 +310,9 @@ const EditUserProfile = () => {
                 ))}
               </Grid>
             </Grid>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              sx={{ marginTop: "20px" }}
-            >
-              Save Changes
-            </Button>
+            
           </Box>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );
