@@ -113,8 +113,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
   
     try {
       // Direct API URL without token
-      const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
-        // const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
+      // const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
+        const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
 
         method: 'PUT',
         body: formData,
@@ -317,15 +317,23 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
             </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+            {/* <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
               <InputLabel sx={{ marginRight: "8px" }}>Auto Update</InputLabel>
               <Switch
+<<<<<<< HEAD
   checked={autoUpdate} // Use 'checked' instead of 'value'
   onChange={(e) => setAutoUpdate(e.target.checked)}
   name="autoUpdate"
 />
 
             </Box>
+=======
+                value={autoUpdate}
+                onChange={(e) => setAutoUpdate(e.target.checked)}
+                name="autoUpdate"
+              />
+            </Box> */}
+>>>>>>> d25265bfe0c757321da801ff354154cafedbb310
 
             <Box sx={{ marginTop: "20px", display: "flex", justifyContent: "flex-start" }}>
             <Button variant="contained" type="submit" fullWidth sx={{ marginTop: "20px" }}>

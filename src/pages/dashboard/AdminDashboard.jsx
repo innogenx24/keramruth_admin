@@ -289,6 +289,11 @@ export default function AdminDashboard() {
         // { text: "Roles", path: "/dashboard/roles", icon: <RolesIcon /> },
         { text: "Club", path: "/dashboard/club", icon: <FaCcDinersClub /> },
         { text: "Category", path: "/dashboard/category", icon: <RolesIcon /> },
+        {
+          text: "Sector",
+          path: "/dashboard/sector",
+          icon: <StockIcon />,
+        },
         { text: "Role", path: "/dashboard/role", icon: <RolesIcon /> },
         {
           text: "Set Time",

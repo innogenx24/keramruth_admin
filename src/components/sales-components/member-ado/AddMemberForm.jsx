@@ -16,13 +16,13 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { makePostMember } from "../../../redux/slices/member-slice/MemberPostSlice";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const AddMemberForm = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
-  const [selectClub, setSelectedClub] = useState("");
+  const [selectClub, setSelectedClub] = useState("500 Litres");
   const fileInputRef = useRef(null); // Ref to reset file input
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
@@ -49,7 +49,7 @@ const AddMemberForm = () => {
       role_id: "",
       image: null,
       full_name: "",
-      username: "",
+      // username: "",
       mobile_number: "",
       email: "",
       password: "",
@@ -60,15 +60,18 @@ const AddMemberForm = () => {
       city: "",
       street_name: "",
       building_no_name: "",
-      club: "",
+      club_id: "",
       superior_id: null,
-     
+      // superior_d: "",
+      // superior_sd: "",
+      // superior_md: "",
+      // superior_ado: "",
     },
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
       image: Yup.mixed(),
       full_name: Yup.string().required("Required"),
-      username: Yup.string().required("Required"),
+      // username: Yup.string().required("Required"),
       mobile_number: Yup.number().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       password: Yup.string().required("Required"),
@@ -79,15 +82,18 @@ const AddMemberForm = () => {
       city: Yup.string().required("Required"),
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
-      club: Yup.string(),
-      superior_id: Yup.number(),
-     
+      club_id: Yup.string(),
+      // superior_id: Yup.number(),
+      // superior_ado: Yup.number(),
+      // superior_md: Yup.number(),
+      // superior_sd: Yup.number(),
+      // superior_d: Yup.number(),
     }),
     onSubmit: (values, { resetForm }) => {
       const formData = new FormData();
       formData.append("role_id", values.role_id);
       formData.append("full_name", values.full_name);
-      formData.append("username", values.username);
+      // formData.append("username", values.username);
       formData.append("mobile_number", values.mobile_number);
       formData.append("email", values.email);
       formData.append("password", values.password);
@@ -98,13 +104,13 @@ const AddMemberForm = () => {
       formData.append("city", values.city);
       formData.append("street_name", values.street_name);
       formData.append("building_no_name", values.building_no_name);
-      formData.append("club", values.club);
-      formData.append("image", values.image); 
-      formData.append("superior_id", values.superior_id); 
-    
+      formData.append("club_id", values.club_id);
+      formData.append("image", values.image);
+      formData.append("superior_id", values.superior_id);
+
       dispatch(makePostMember(formData)); // make sure your action can handle FormData
       resetForm();
-      navigate('/dashboard/members'); // Navigate to /dashboard/club
+      navigate('/dashboard/members');
     },
   });
 
@@ -191,7 +197,7 @@ const AddMemberForm = () => {
                     }
                   />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <TextField
                     fullWidth
                     name="username"
@@ -204,7 +210,7 @@ const AddMemberForm = () => {
                       formik.touched.username && formik.errors.username
                     }
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
@@ -360,12 +366,12 @@ const AddMemberForm = () => {
                   <Select
                     fullWidth
                     defaultValue=""
-                    name="club"
+                    name="club_id"
                     value={selectClub}
                     onChange={handleClubChange}
-                    {...formik.getFieldProps("club")}
-                    error={formik.touched.club && Boolean(formik.errors.club)}
-                    helperText={formik.touched.club && formik.errors.club}
+                    {...formik.getFieldProps("club_id")}
+                    error={formik.touched.club_id && Boolean(formik.errors.club_id)}
+                    helperText={formik.touched.club_id && formik.errors.club_id}
                   >
                     <MenuItem value="">Select Club</MenuItem>
                     <MenuItem value="500">500 Litres</MenuItem>
@@ -376,106 +382,109 @@ const AddMemberForm = () => {
                   </Select>
                 </Grid>
 
-{selectedRole === "6" && (
-  <Grid item xs={12}>
-    <InputLabel>Distributor</InputLabel>
-    <Select
-      fullWidth
-      defaultValue=""
-      name="superior_id" 
-      value={formik.values.superior_id} 
-      onChange={(event) => {
-        formik.setFieldValue("superior_id", event.target.value); 
-      }}
-      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-      helperText={formik.touched.superior_id && formik.errors.superior_id}
-    >
-      <MenuItem value="">Select Distributor</MenuItem>
-      {allmembers?.Ds?.map((item) => (
-        <MenuItem key={item?.id} value={item?.id}>
-          {item?.username}
-        </MenuItem>
-      ))}
-    </Select>
-  </Grid>
-)}
 
-{(selectedRole === "6" || selectedRole === "5") && (
-  <Grid item xs={12}>
-    <InputLabel>Super Distributor</InputLabel>
-    <Select
-      fullWidth
-      defaultValue=""
-      name="superior_id"  
-      value={formik.values.superior_id}  
-      onChange={(event) => {
-        formik.setFieldValue("superior_id", event.target.value);  
-      }}
-      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-      helperText={formik.touched.superior_id && formik.errors.superior_id}
-    >
-      <MenuItem value="">Select Super Distributor</MenuItem>
-      {allmembers?.SDs?.map((item) => (
-        <MenuItem key={item?.id} value={item?.id}>
-          {item?.username}
-        </MenuItem>
-      ))}
-    </Select>
-  </Grid>
-)}
 
-{(selectedRole === "6" ||
-  selectedRole === "5" ||
-  selectedRole === "4") && (
-  <Grid item xs={12}>
-    <InputLabel>Master Distributor</InputLabel>
-    <Select
-      fullWidth
-      defaultValue=""
-      name="superior_id"  
-      value={formik.values.superior_id}  
-      onChange={(event) => {
-        formik.setFieldValue("superior_id", event.target.value); 
-      }}
-      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-      helperText={formik.touched.superior_id && formik.errors.superior_id}
-    >
-      <MenuItem value="">Select Master Distributor</MenuItem>
-      {allmembers?.MDs?.map((item) => (
-        <MenuItem key={item?.id} value={item?.id}>
-          {item?.username}
-        </MenuItem>
-      ))}
-    </Select>
-  </Grid>
-)}
+                {(selectedRole === "6" ||
+                  selectedRole === "5" ||
+                  selectedRole === "4" ||
+                  selectedRole === "3") && (
+                    <Grid item xs={12}>
+                      <InputLabel>Area Development Officer</InputLabel>
+                      <Select
+                        fullWidth
+                        defaultValue=""
+                        name="superior_id"
+                        value={formik.values.superior_id}
+                        onChange={(event) => {
+                          formik.setFieldValue("superior_id", event.target.value);
+                        }}
+                        error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+                        helperText={formik.touched.superior_id && formik.errors.superior_id}
+                      >
+                        <MenuItem value="">Select (ADO)</MenuItem>
+                        {allmembers?.ADOs?.map((item) => (
+                          <MenuItem key={item?.id} value={item?.id}>
+                            {item?.username}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                  )}
 
-{(selectedRole === "6" ||
-  selectedRole === "5" ||
-  selectedRole === "4" ||
-  selectedRole === "3") && (
-  <Grid item xs={12}>
-    <InputLabel>Area Development Officer</InputLabel>
-    <Select
-      fullWidth
-      defaultValue=""
-      name="superior_id" 
-      value={formik.values.superior_id}  
-      onChange={(event) => {
-        formik.setFieldValue("superior_id", event.target.value); 
-      }}
-      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-      helperText={formik.touched.superior_id && formik.errors.superior_id}
-    >
-      <MenuItem value="">Select (ADO)</MenuItem>
-      {allmembers?.ADOs?.map((item) => (
-        <MenuItem key={item?.id} value={item?.id}>
-          {item?.username}
-        </MenuItem>
-      ))}
-    </Select>
-  </Grid>
-)}
+                {(selectedRole === "6" ||
+                  selectedRole === "5" ||
+                  selectedRole === "4") && (
+                    <Grid item xs={12}>
+                      <InputLabel>Master Distributor</InputLabel>
+                      <Select
+                        fullWidth
+                        defaultValue=""
+                        name="superior_id"
+                        value={formik.values.superior_id}
+                        onChange={(event) => {
+                          formik.setFieldValue("superior_id", event.target.value);
+                        }}
+                        error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+                        helperText={formik.touched.superior_id && formik.errors.superior_id}
+                      >
+                        <MenuItem value="">Select Master Distributor</MenuItem>
+                        {allmembers?.MDs?.map((item) => (
+                          <MenuItem key={item?.id} value={item?.id}>
+                            {item?.username}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                  )}
+
+                {(selectedRole === "6" || selectedRole === "5") && (
+                  <Grid item xs={12}>
+                    <InputLabel>Super Distributor</InputLabel>
+                    <Select
+                      fullWidth
+                      defaultValue=""
+                      name="superior_id"
+                      value={formik.values.superior_id}
+                      onChange={(event) => {
+                        formik.setFieldValue("superior_id", event.target.value);
+                      }}
+                      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+                      helperText={formik.touched.superior_id && formik.errors.superior_id}
+                    >
+                      <MenuItem value="">Select Super Distributor</MenuItem>
+                      {allmembers?.SDs?.map((item) => (
+                        <MenuItem key={item?.id} value={item?.id}>
+                          {item?.username}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+                )}
+
+                {selectedRole === "6" && (
+                  <Grid item xs={12}>
+                    <InputLabel>Distributor</InputLabel>
+                    <Select
+                      fullWidth
+                      defaultValue=""
+                      name="superior_id"
+                      value={formik.values.superior_id}
+                      onChange={(event) => {
+                        formik.setFieldValue("superior_id", event.target.value);
+                      }}
+                      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
+                      helperText={formik.touched.superior_id && formik.errors.superior_id}
+                    >
+                      <MenuItem value="">Select Distributor</MenuItem>
+                      {allmembers?.Ds?.map((item) => (
+                        <MenuItem key={item?.id} value={item?.id}>
+                          {item?.username}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+                )}
+
 
 
               </Grid>
