@@ -41,7 +41,7 @@ const AddOrEditSector = () => {
           });
         } else {
           // If adding, make a POST request to create the sector
-          response = await fetch("/api/sectors", {
+          response = await fetch("http://localhost:3002/sectors", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
