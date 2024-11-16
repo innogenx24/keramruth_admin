@@ -52,6 +52,8 @@ import AddClubForm from "./pages/club/AddClubForm";
 import OrderLimitTable from "./pages/club/OrderLimitTable";
 import EditOrderLimit from "./pages/club/EditOrderLimit";
 import DocumentComponent from "./pages/club/DocumentComponent";
+import Sector from "./pages/sector/Sector";
+import AddSector from "./pages/sector/AddSector";
 
 const RoutesConfig = () => {
   return (
@@ -137,6 +139,10 @@ const RoutesConfig = () => {
             <Route path="delete-request" element={<DeleteRequestTable />} />
             <Route path="products/edit-product" element={<EditProductForm />} />
             <Route path="products/add-product" element={<AddProductForm />} />
+             {/* Sector */}
+            <Route path="sector" element={<Sector/>} />
+            <Route path="add-sector" element={<AddSector/>} />
+            <Route path="add-sector/:id" element={<AddSector/>} />
           </Route>
         </Routes>
       </Router>
