@@ -51,7 +51,7 @@ import EditMinimumStockForm from "./pages/minimumstock/EditMinimumStockForm";
 import AddClubForm from "./pages/club/AddClubForm";
 import OrderLimitTable from "./pages/club/OrderLimitTable";
 import EditOrderLimit from "./pages/club/EditOrderLimit";
-import DocumentComponent from "./pages/club/DocumentComponent";
+import SetOrderLimit from "./pages/club/SetOrderLimit";
 
 const RoutesConfig = () => {
   return (
@@ -96,7 +96,7 @@ const RoutesConfig = () => {
               element={<EditDocumentForm />}
             />
             <Route path="orders_time_set" element={<OrderLimitTable />} />
-            <Route path="download-pdf" element={<DocumentComponent />} />
+            <Route path="orders_time_set/add-time" element={<SetOrderLimit />} />
 
             <Route path="report" element={<ReportTable />} />
             <Route path="members/add-members" element={<AddMemberForm />} />

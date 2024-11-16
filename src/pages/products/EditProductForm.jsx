@@ -19,6 +19,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const imageBaseURL = "http://88.222.245.236:3002/"; // Set your API base URL
 
   const initialProductDetails = {
+    product_code: "", 
+
     image: "",
     id: "",
     name: "",
@@ -42,7 +44,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
   useEffect(() => {
     if (state?.product) {
       setProductDetails(state.product);
-      const stockValue = state?.product?.status === "Active" ? true : false;
+      const stockValue = state?.product?.status === 1 ? true : false;
       setStockStatus(stockValue);
       setAutoUpdate(state.product.autoUpdate);
 
@@ -86,6 +88,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
     
     // Append product data fields
     formData.append("id", productDetails.id);
+    formData.append("product_code", productDetails.product_code); // Use 'product_code' instead of 'id'
+
     formData.append("name", productDetails.name);
     formData.append("productVolume", productDetails.productVolume);
     formData.append("distributorPrice", productDetails.distributorPrice);
@@ -196,15 +200,16 @@ const EditProductForm = ({ handleBackToProducts }) => {
               </div>
             )}
 
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Product ID*"
-              name="id"
-              value={productDetails.id}
-              InputProps={{ readOnly: true }}
-              sx={{ marginBottom: "16px" }}
-            />
+{/* <TextField
+  fullWidth
+  variant="outlined"
+  label="Product ID*"
+  name="product_code"
+  value={productDetails.product_code}
+  onChange={handleInputChange} 
+  sx={{ marginBottom: "16px" }}
+/> */}
+
 
             <TextField
               fullWidth
@@ -305,19 +310,21 @@ const EditProductForm = ({ handleBackToProducts }) => {
             <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
               <InputLabel sx={{ marginRight: "8px" }}>Stock Status</InputLabel>
               <Switch
-                value={stockStatus}
-                onChange={(e) => setStockStatus(e.target.checked)}
-                name="stockStatus"
-              />
+  checked={stockStatus} // Use 'checked' instead of 'value'
+  onChange={(e) => setStockStatus(e.target.checked)}
+  name="stockStatus"
+/>
+
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
               <InputLabel sx={{ marginRight: "8px" }}>Auto Update</InputLabel>
               <Switch
-                value={autoUpdate}
-                onChange={(e) => setAutoUpdate(e.target.checked)}
-                name="autoUpdate"
-              />
+  checked={autoUpdate} // Use 'checked' instead of 'value'
+  onChange={(e) => setAutoUpdate(e.target.checked)}
+  name="autoUpdate"
+/>
+
             </Box>
 
             <Box sx={{ marginTop: "20px", display: "flex", justifyContent: "flex-start" }}>

@@ -36,19 +36,17 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);  
   const [selectedProduct, setSelectedProduct] = useState(null);  
-  // const imageBaseURL = "http://88.222.245.236:3002/";
-    const imageBaseURL = "http://88.222.245.236:3002/";
-
+  const imageBaseURL = "http://88.222.245.236:3002/";
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
   }, [dispatch]);
-  
+
   const handleViewClick = (product) => {  
     setIsOpen(true);  
     setSelectedProduct(product);  
   };  
-  
+
   const handleCloseModal = () => {  
     setIsOpen(false);  
   };  
@@ -77,12 +75,33 @@ const ProductPage = () => {
     dispatch(deleteProductRequest(productToDelete?.id));
     setOpenDeleteModal(false);
     setProductToDelete(null); 
-    // window.location.reload();
   };
 
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false); // Close the delete modal
     setProductToDelete(null); // Reset product to delete
+  };
+
+  const handleToggleStockStatus = async (product) => {
+    try {
+      const updatedStatus = !product.status; // Toggle the current status
+      const response = await fetch(`http://localhost:3002/products/${product.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...product, status: updatedStatus }),
+      });
+
+      if (response.ok) {
+        // Optionally, update the local state or refetch the products
+        dispatch(fetchProductsRequest()); // Refetching for simplicity; consider updating state directly if needed
+      } else {
+        console.error("Failed to update product status");
+      }
+    } catch (error) {
+      console.error("Error updating product status:", error);
+    }
   };
 
   if (showAddProduct) {
@@ -121,11 +140,11 @@ const ProductPage = () => {
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
-              <TableCell>Product ID</TableCell>
+              <TableCell>Product Image</TableCell>
               <TableCell>Product Name</TableCell>
               <TableCell>Product Volume</TableCell>
               <TableCell>MRP</TableCell>
-              <TableCell>Distributor's Price</TableCell>
+              <TableCell>Price</TableCell>
               <TableCell>Stock Status</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
@@ -137,13 +156,12 @@ const ProductPage = () => {
                 <TableCell style={{ display: "flex", alignItems: "center" }}>
                   {product.image ? (
                     <img
-                    src={`${imageBaseURL}${product.image}`} // Use the base URL
-                    style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
+                      src={`${imageBaseURL}${product.image}`}
+                      style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
                     />
                   ) : (
                     <span>No Image Available</span>
                   )}
-                  <span>{product.id}</span>
                 </TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.productVolume}</TableCell>
@@ -152,7 +170,10 @@ const ProductPage = () => {
                   <Button onClick={() => handleViewClick(product)}>View</Button>
                 </TableCell>
                 <TableCell>
-                  <Switch checked={product.status} />
+                  <Switch
+                    checked={product.status}
+                    onChange={() => handleToggleStockStatus(product)}
+                  />
                 </TableCell>
                 <TableCell>
                   <IconButton
@@ -163,7 +184,7 @@ const ProductPage = () => {
                   </IconButton>
                   <IconButton
                     color="secondary"
-                    onClick={() => handleDeleteProductClick(product)} 
+                    onClick={() => handleDeleteProductClick(product)}
                   >
                     <Delete />
                   </IconButton>
@@ -174,7 +195,6 @@ const ProductPage = () => {
         </Table>
       </TableContainer>
 
-      {/* Product Price Modal */} 
       {isOpen && (  
         <ProductPriceModal  
           product={selectedProduct}  
@@ -183,7 +203,6 @@ const ProductPage = () => {
         />  
       )}
 
-      {/* Delete Confirmation Modal */}
       <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>

@@ -102,8 +102,7 @@ function UserProfile() {
         </Card>
       </Grid>
 
-      {/* Access Permissions */}
-      <Grid item xs={12} sm={4}>
+      {/* <Grid item xs={12} sm={4}>
         <Paper elevation={3}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -145,16 +144,16 @@ function UserProfile() {
             </Grid>
           </CardContent>
         </Paper>
-      </Grid>
+      </Grid> */}
 
       {/* ID Card */}
       <Grid item xs={12} sm={4}>
-        <Card>
-          <CardContent>
-            <Box display="flex" justifyContent="center" mb={2}>
+        <Card >
+          <CardContent >
+            <Box display="flex" justifyContent="center" mb={2} marginTop={"73px"}>
               <Avatar
                 alt={users?.full_name || "User"}
-                src={selectedImage || "default-avatar.jpg"} // Use the selected image or a default
+                src={selectedImage || "default-avatar.jpg"} 
                 sx={{ width: 80, height: 80 }}
               />
             </Box>

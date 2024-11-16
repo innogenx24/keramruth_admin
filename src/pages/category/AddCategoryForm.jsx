@@ -48,6 +48,21 @@ const AddCategoryForm = () => {
                 }
                 helperText={formik.touched.category_name && formik.errors.category_name}
               />
+               <InputLabel>Select Sector*</InputLabel>
+                  <Select
+                    fullWidth
+                    defaultValue=""
+                    name="sector_name"
+                    value={selectsector_name}
+                    onChange={handlesector_name}
+                    {...formik.getFieldProps("sector_name")}
+                    error={formik.touched.sector_name && Boolean(formik.errors.sector_name)}
+                    helperText={formik.touched.sector_name && formik.errors.sector_name}
+                  >
+                    <MenuItem value="">Select Sector</MenuItem>
+                    <MenuItem value="sector_name"></MenuItem>
+                    
+                  </Select>
 
               {/* Save Button */}
               <Box sx={{ mt: 2 }}>
