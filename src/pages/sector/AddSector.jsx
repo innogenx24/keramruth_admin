@@ -54,8 +54,8 @@ const AddOrEditSector = () => {
 
         if (response.ok) {
           // On success, navigate back to the sectors list
-          navigate("/dashboard/sectors");
           resetForm();
+          navigate("/dashboard/sector");
         } else {
           // Handle error response if needed
           alert(data.message || "Something went wrong");
