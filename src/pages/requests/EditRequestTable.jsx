@@ -10,6 +10,9 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Modal,
+  Box,
+  Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllMembersRequest } from "../../redux/slices/member-slice/GetAllmemberSlices";
@@ -27,6 +30,9 @@ const MemberTable = () => {
   const [editRequestError, setEditRequestError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(""); // Success message state
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
+  const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
+
+  const imageBaseURL = "http://localhost:3002/uploads/";
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
@@ -129,6 +135,13 @@ const MemberTable = () => {
       console.error("Error rejecting request:", error);
     }
   };
+  const handleImageClick = (imageUrl) => {
+    setImageModal({ open: true, imageUrl });
+  };
+
+  const handleImageModalClose = () => {
+    setImageModal({ open: false, imageUrl: "" });
+  };
 
   // Function to close the snackbar
   const handleSnackbarClose = () => {
@@ -175,6 +188,18 @@ const MemberTable = () => {
                 return (
                   <TableRow key={request.id}>
                     <TableCell>{request.user_id}</TableCell>
+                    <TableCell>
+                      {member.image ? (
+                        <img
+                          src={`${imageBaseURL}${member.image}`}
+                          alt="Member"
+                          style={{ width: 50, height: 50, cursor: "pointer" }}
+                          onClick={() => handleImageClick(`${imageBaseURL}${member.image}`)}
+                        />
+                      ) : (
+                        "No Image"
+                      )}
+                    </TableCell>
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{member.role_name}</TableCell>
                     <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
@@ -201,6 +226,28 @@ const MemberTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Modal open={imageModal.open} onClose={handleImageModalClose}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Full Image
+          </Typography>
+          <img
+            src={imageModal.imageUrl}
+            alt="Full size"
+            style={{ width: "100%", maxHeight: "400px" }}
+          />
+        </Box>
+      </Modal>
 
       {/* Snackbar for success message */}
       <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
