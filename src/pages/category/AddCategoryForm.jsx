@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Typography, Box, TextField, Grid } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Button, Typography, Box, TextField, Grid, Select, MenuItem, InputLabel } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
@@ -7,21 +7,46 @@ import { makePostCategory } from "../../redux/slices/master-slice/categort-slice
 
 const AddCategoryForm = () => {
   const dispatch = useDispatch();
+  const [sectors, setSectors] = useState([]);
+  const [selectedSector, setSelectedSector] = useState("");
+
+  useEffect(() => {
+    const fetchSectors = async () => {
+      try {
+        const response = await fetch("http://localhost:3002/sectors");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        console.log("Fetched sectors:", data); // Debugging log
+        setSectors(data);
+      } catch (error) {
+        console.error("Error fetching sectors:", error);
+      }
+    };
+    fetchSectors();
+  }, []);
+
+  const handleSectorChange = (event) => {
+    setSelectedSector(event.target.value);
+    formik.setFieldValue("sector_name", event.target.value);
+  };
 
   const formik = useFormik({
     initialValues: {
       category_name: "",
       parent_category_id: "",
+      sector_name: "",
     },
     validationSchema: Yup.object({
       category_name: Yup.string().required("Required"),
+      sector_name: Yup.string().required("Required"),
     }),
     onSubmit: (values, { resetForm }) => {
       const parsedValues = {
         ...values,
         parent_category_id: parseInt(values.parent_category_id, 10),
       };
-      // console.log("parsedValues", parsedValues);
       dispatch(makePostCategory(parsedValues));
       resetForm();
     },
@@ -43,34 +68,44 @@ const AddCategoryForm = () => {
                 name="category_name"
                 label="Category Name*"
                 {...formik.getFieldProps("category_name")}
-                error={
-                  formik.touched.category_name && Boolean(formik.errors.category_name)
-                }
+                error={formik.touched.category_name && Boolean(formik.errors.category_name)}
                 helperText={formik.touched.category_name && formik.errors.category_name}
               />
-               <InputLabel>Select Sector*</InputLabel>
-                  <Select
-                    fullWidth
-                    defaultValue=""
-                    name="sector_name"
-                    value={selectsector_name}
-                    onChange={handlesector_name}
-                    {...formik.getFieldProps("sector_name")}
-                    error={formik.touched.sector_name && Boolean(formik.errors.sector_name)}
-                    helperText={formik.touched.sector_name && formik.errors.sector_name}
-                  >
-                    <MenuItem value="">Select Sector</MenuItem>
-                    <MenuItem value="sector_name"></MenuItem>
-                    
-                  </Select>
 
-              {/* Save Button */}
+              <InputLabel sx={{ mt: 2 }}>Select Sector*</InputLabel>
+              <Select
+                fullWidth
+                name="sector_name"
+                value={formik.values.sector_name || ""}
+                onChange={handleSectorChange}
+                error={formik.touched.sector_name && Boolean(formik.errors.sector_name)}
+                displayEmpty
+              >
+                <MenuItem value="">
+                  <span style={{ color: "black" }}>Select Sector</span>
+                </MenuItem>
+                {sectors.length === 0 ? (
+                  <MenuItem value="" disabled>No Sectors Available</MenuItem>
+                ) : (
+                  sectors.map((sector) => (
+                    <MenuItem key={sector.id} value={sector.sector_name}>
+                      <span style={{ color: "black" }}>{sector.sector_name}</span>
+                    </MenuItem>
+                  ))
+                )}
+              </Select>
+              {formik.touched.sector_name && formik.errors.sector_name && (
+                <Typography variant="caption" color="error">
+                  {formik.errors.sector_name}
+                </Typography>
+              )}
+
               <Box sx={{ mt: 2 }}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
-                  sx={{ width: "100%" }} // Set the button width to 100%
+                  sx={{ width: "100%" }}
                 >
                   SAVE
                 </Button>

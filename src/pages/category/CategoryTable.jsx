@@ -95,6 +95,8 @@ const CategoryTable = () => {
                   <TableCell>No.</TableCell>
                   <TableCell>Id</TableCell>
                   <TableCell>Category Name</TableCell>
+                  <TableCell>Sector Name</TableCell>
+
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -109,6 +111,13 @@ const CategoryTable = () => {
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Typography sx={{ marginLeft: "10px" }}>
                           {row?.category_name}
+                        </Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Typography sx={{ marginLeft: "10px" }}>
+                          {row?.sector_name}
                         </Typography>
                       </div>
                     </TableCell>

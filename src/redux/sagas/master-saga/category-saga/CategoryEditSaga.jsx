@@ -7,7 +7,7 @@ function* editCategory(action) {
   try {
     yield put(categoryEditRequest());
     const token = localStorage.getItem('token');
-    const response = yield call(axios.put, `http://88.222.245.236:3002/category/${action?.payload?.id}`, action?.payload, {
+    const response = yield call(axios.put, `http://localhost:3002/category/${action?.payload?.id}`, action?.payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

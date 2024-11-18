@@ -7,20 +7,21 @@ import {
   Typography,
   Switch,
   InputLabel,
+  Select,
+  MenuItem,
   IconButton,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 
 const EditProductForm = ({ handleBackToProducts }) => {
   const { state } = useLocation();
-  const navigate = useNavigate(); // Initialize navigate
-  const fileInputRef = useRef(null); // Reference for hidden file input
-  const imageBaseURL = "http://88.222.245.236:3002/"; // Set your API base URL
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const imageBaseURL = "http://localhost:3002/";
 
   const initialProductDetails = {
-    product_code: "", 
-
+    product_code: "",
     image: "",
     id: "",
     name: "",
@@ -31,15 +32,33 @@ const EditProductForm = ({ handleBackToProducts }) => {
     sdPrice: "",
     mdPrice: "",
     adoPrice: "",
+    category_name: "", // Add category name field
   };
 
-  // States for form fields
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [imageName, setImageName] = useState(""); // State to hold image name
+  const [imageName, setImageName] = useState("");
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [stockStatus, setStockStatus] = useState(true);
   const [productDetails, setProductDetails] = useState(initialProductDetails);
+  const [categories, setCategories] = useState([]);  // State for categories
+  const [selectedCategory, setSelectedCategory] = useState(""); // State for selected category
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:3002/category");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (state?.product) {
@@ -50,22 +69,21 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
       if (state.product.image) {
         setSelectedImage(state.product.image);
-        setImagePreview(`${imageBaseURL}${state.product.image}`); // Use the API base URL to display the image
-        setImageName(state.product.image); // Set the image name if exists
+        setImagePreview(`${imageBaseURL}${state.product.image}`);
+        setImageName(state.product.image);
       }
     }
   }, [state]);
-  // Handle image selection
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
-      setImageName(file.name); // Set the image name
+      setImageName(file.name);
     }
   };
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProductDetails((prevDetails) => ({
@@ -75,21 +93,16 @@ const EditProductForm = ({ handleBackToProducts }) => {
   };
 
   const handleFormSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-  
-    // Ensure the product ID exists
+    e.preventDefault();
+
     if (!productDetails.id) {
       console.error("Product ID is missing");
-      return; // Exit if ID is missing
+      return;
     }
-  
-    // Create FormData to handle file uploads
-    const formData = new FormData();
-    
-    // Append product data fields
-    formData.append("id", productDetails.id);
-    formData.append("product_code", productDetails.product_code); // Use 'product_code' instead of 'id'
 
+    const formData = new FormData();
+    formData.append("id", productDetails.id);
+    formData.append("product_code", productDetails.product_code);
     formData.append("name", productDetails.name);
     formData.append("productVolume", productDetails.productVolume);
     formData.append("distributorPrice", productDetails.distributorPrice);
@@ -99,40 +112,30 @@ const EditProductForm = ({ handleBackToProducts }) => {
     formData.append("mdPrice", productDetails.mdPrice);
     formData.append("adoPrice", productDetails.adoPrice);
     formData.append("autoUpdate", autoUpdate);
-    
-    // Convert stock status to integer (1 for Active, 0 for Inactive)
+    formData.append("category_name", productDetails.category_name);  // Append category name
+
     formData.append("status", stockStatus ? 1 : 0);
-  
-    // Check if an image is selected and append to formData
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
-  
-    // Log the form data for debugging
-    console.log("Form data: ", formData);
-  
-    try {
-      // Direct API URL without token
-      // const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
-        const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
 
+    try {
+      const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
         method: 'PUT',
         body: formData,
       });
-  
+
       if (!response.ok) {
         throw new Error("Error updating product");
       }
-  
-      // Reset form fields upon success
+
       setProductDetails(initialProductDetails);
       setSelectedImage(null);
       setImagePreview(null);
-      setImageName(""); // Reset image name
+      setImageName("");
       setAutoUpdate(true);
       setStockStatus(true);
-  
-      // Navigate back to products page
+
       navigate("/dashboard/products");
     } catch (error) {
       console.error("Error updating product:", error);
@@ -200,15 +203,6 @@ const EditProductForm = ({ handleBackToProducts }) => {
               </div>
             )}
 
-{/* <TextField
-  fullWidth
-  variant="outlined"
-  label="Product ID*"
-  name="product_code"
-  value={productDetails.product_code}
-  onChange={handleInputChange} 
-  sx={{ marginBottom: "16px" }}
-/> */}
 
 
             <TextField
@@ -245,6 +239,28 @@ const EditProductForm = ({ handleBackToProducts }) => {
               placeholder="Enter Product Volume (200ml, 500ml, 1L)"
               sx={{ marginBottom: "16px" }}
             />
+             <InputLabel id="category-label">Category</InputLabel>
+      <Select
+        labelId="category-label"
+        id="category"
+        value={productDetails.category_name || selectedCategory}
+        onChange={(e) => {
+          setSelectedCategory(e.target.value);
+          setProductDetails((prevDetails) => ({
+            ...prevDetails,
+            category_name: e.target.value,
+          }));
+        }}
+        fullWidth
+        variant="outlined"
+        sx={{ marginBottom: "16px" }}
+      >
+        {categories.map((category) => (
+          <MenuItem key={category.id} value={category.category_name}>
+            {category.category_name}
+          </MenuItem>
+        ))}
+      </Select>
           </Box>
         </Grid>
 
@@ -306,6 +322,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
               sx={{ marginBottom: "16px" }}
               onChange={handleInputChange}
             />
+            
 
             <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
               <InputLabel sx={{ marginRight: "8px" }}>Stock Status</InputLabel>

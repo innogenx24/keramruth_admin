@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -7,29 +7,53 @@ import {
   Typography,
   Switch,
   InputLabel,
-  IconButton,
-  Select ,
+  Select,
   MenuItem,
+  IconButton,
 } from "@mui/material";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { makePostProduct } from "../../redux/slices/product-slice/ProductPostSlice";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const AddProductForm = () => {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:3002/category");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Handle category change
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+    formik.setFieldValue("category_name", event.target.value); // Update Formik value
+  };
 
   const formik = useFormik({
     initialValues: {
       autoUpdate: false,
       status: false,
-      product_code: "",
       name: "",
       description: "",
       productVolume: "",
@@ -41,67 +65,71 @@ const AddProductForm = () => {
       stock_quantity: "",
       quantity_type: "",
       createdBy: "",
-      category_id: "",
+      category_name: "",
       fromDate: "",
-      toDate: "",   
+      toDate: "",
+      ADO_price: "",
+      MD_price: "",
+      SD_price: "",
+      distributor_price: "",
+      customer_price: "",
     },
     validationSchema: Yup.object({
-      product_code: Yup.number().required("Required"),
       name: Yup.string().required("Required"),
       productVolume: Yup.string().required("Required"),
-      price: Yup.number().required("Required"),
-      distributorPrice: Yup.number().required("Required"),
-      sdPrice: Yup.number().required("Required"),
-      mdPrice: Yup.number().required("Required"),
-      adoPrice: Yup.number().required("Required"),
+      price: Yup.number().required("Required").min(0).default(0),
+      distributorPrice: Yup.number().required("Required").min(0).default(0),
+      sdPrice: Yup.number().required("Required").min(0).default(0),
+      mdPrice: Yup.number().required("Required").min(0).default(0),
+      adoPrice: Yup.number().required("Required").min(0).default(0),
+      quantity_type: Yup.string().required("Required"),
+      category_name: Yup.string().required("Required"),
+      stock_quantity: Yup.number().required("Stock quantity is required").min(0, "Stock quantity must be greater than or equal to 0"),
+
     }),
     onSubmit: (values, { resetForm }) => {
-      // Generate a random 6-digit product ID
-      const productId = Math.floor(100000 + Math.random() * 900000);
-    
-      // Create FormData to append the values
+      const randomProductCode = Math.floor(100000 + Math.random() * 900000); // Generate random 6-digit number
       const formData = new FormData();
-      formData.append("product_code", productId); // Set the generated product ID
       formData.append("autoUpdate", values.autoUpdate);
       formData.append("status", values.status);
+      formData.append("product_code", randomProductCode);
       formData.append("name", values.name);
       formData.append("description", values.description);
       formData.append("productVolume", values.productVolume);
-      formData.append("price", values.price);
-      formData.append("distributorPrice", values.distributorPrice);
-      formData.append("sdPrice", values.sdPrice);
-      formData.append("mdPrice", values.mdPrice);
-      formData.append("adoPrice", values.adoPrice);
+      formData.append("price", values.price || 0); // Ensure decimal value is set
+      formData.append("distributorPrice", values.distributorPrice || 0);
+      formData.append("stock_quantity", values.stock_quantity);  // Add stock_quantity to FormData
+
+      formData.append("sdPrice", values.sdPrice || 0);
+      formData.append("mdPrice", values.mdPrice || 0);
+      formData.append("adoPrice", values.adoPrice || 0);
       formData.append("quantity_type", values.quantity_type);
-    
-      if (values.autoUpdate) {
-        formData.append("fromDate", values.fromDate);
-        formData.append("toDate", values.toDate);
-      }
-    
+      formData.append("category_name", values.category_name);
+      formData.append("fromDate", values.fromDate);
+      formData.append("toDate", values.toDate);
+      formData.append("ADO_price", values.ADO_price || 0);
+      formData.append("MD_price", values.MD_price || 0);
+      formData.append("SD_price", values.SD_price || 0);
+      formData.append("distributor_price", values.distributor_price || 0);
+      formData.append("customer_price", values.customer_price || 0);
+  
       if (selectedFile) {
         formData.append("image", selectedFile); // Attach the selected file
       }
-    
-      dispatch(makePostProduct(formData));
+      dispatch(makePostProduct(formData)); // Dispatch product creation action
       resetForm();
       setSelectedFile(null);
       setImagePreview("");
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
-      navigate("/dashboard/products");
+      navigate("/dashboard/products"); // Navigate to the product list page after submission
     },
-    
   });
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert("File size exceeds 2MB. Please upload a smaller file.");
-        return; 
-      }
       formik.setFieldValue("image", file);
       setSelectedFile(file);
 
@@ -115,7 +143,13 @@ const AddProductForm = () => {
 
   return(
     <Box
-      
+      sx={{
+        padding: "20px",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        backgroundColor: "#f5f5f5",
+        borderRadius: "8px",
+      }}
     >
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Product / Add Product
@@ -124,8 +158,13 @@ const AddProductForm = () => {
         <Grid container spacing={3}>
           {/* Product Details Section (Left Side) */}
           <Grid item xs={12} md={6}>
-          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-
+            <Box
+              sx={{
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Products Details
               </Typography>
@@ -159,17 +198,6 @@ const AddProductForm = () => {
                 </div>
               )}
 
-              {/* Other input fields remain unchanged */}
-              {/* <TextField
-                fullWidth
-                variant="outlined"
-                name="product_code"
-                label="Product ID*"
-                sx={{ marginBottom: "16px" }}
-                {...formik.getFieldProps("product_code")}
-                error={formik.touched.product_code && Boolean(formik.errors.product_code)}
-                helperText={formik.touched.product_code && formik.errors.product_code}
-              /> */}
               <TextField
                 fullWidth
                 variant="outlined"
@@ -205,13 +233,45 @@ const AddProductForm = () => {
                 error={formik.touched.productVolume && Boolean(formik.errors.productVolume)}
                 helperText={formik.touched.productVolume && formik.errors.productVolume}
               />
+              <InputLabel sx={{ mt: 2 }}>Select Category*</InputLabel>
+          <Select
+            fullWidth
+            name="category_name"
+            value={formik.values.category_name || ""}
+            onChange={handleCategoryChange} // Update formik values on category change
+            error={formik.touched.category_name && Boolean(formik.errors.category_name)}
+            displayEmpty
+          >
+            <MenuItem value="">
+              <span>Select Category</span>
+            </MenuItem>
+            {categories && categories.length > 0 ? (
+              categories.map((category) => (
+                <MenuItem key={category.id} value={category.category_name}>
+                  <span>{category.category_name}</span>
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem value="" disabled>No Category Available</MenuItem>
+            )}
+          </Select>
+          {formik.touched.category_name && formik.errors.category_name && (
+            <Typography variant="caption" color="error">
+              {formik.errors.category_name}
+            </Typography>
+          )}
             </Box>
           </Grid>
 
           {/* Price Details Section (Right Side) */}
           <Grid item xs={12} md={6}>
-                        <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-
+            <Box
+              sx={{
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Price Details
               </Typography>
@@ -284,69 +344,150 @@ const AddProductForm = () => {
                 error={formik.touched.stock_quantity && Boolean(formik.errors.stock_quantity)}
                 helperText={formik.touched.stock_quantity && formik.errors.stock_quantity}
               />
-               <InputLabel>Quantity Type</InputLabel>
-               <Select
-                 fullWidth
-                 name="quantity_type"
-                 value={formik.values.quantity_type}
-                 onChange={(e) => formik.setFieldValue("quantity_type", e.target.value)} 
-                 error={formik.touched.quantity_type && Boolean(formik.errors.quantity_type)} 
-                 helperText={formik.touched.quantity_type && formik.errors.quantity_type} 
-                sx={{ marginBottom: "16px" }}
-              >
-               <MenuItem value="">Select Quantity Type</MenuItem>
-               <MenuItem value="ml">ml</MenuItem>
-               <MenuItem value="liters">Liters</MenuItem>
-               <MenuItem value="kg">Kg</MenuItem>
-               <MenuItem value="gm">gm</MenuItem>
-              </Select>
+             <InputLabel>Quantity Type</InputLabel>
+      <Select
+        fullWidth
+        name="quantity_type"
+        value={formik.values.quantity_type}
+        onChange={(e) => formik.setFieldValue("quantity_type", e.target.value)} 
+        error={formik.touched.quantity_type && Boolean(formik.errors.quantity_type)} 
+        sx={{ marginBottom: "16px" }}
+      >
+        <MenuItem value="">Select Quantity Type
+        
+        </MenuItem>
+        <MenuItem value="ml">ml</MenuItem>
+        <MenuItem value="liters">Liters</MenuItem>
+        <MenuItem value="kg">Kg</MenuItem>
+        <MenuItem value="gm">gm</MenuItem>
+      </Select>
+      {formik.touched.quantity_type && formik.errors.quantity_type && (
+        <Typography color="error" variant="body2">
+          {formik.errors.quantity_type}
+        </Typography>
+      )}
 
 
 <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-  <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
-  <Switch
-    checked={formik.values.autoUpdate}
-    name="autoUpdate"
-    onChange={(e) => formik.setFieldValue("autoUpdate", e.target.checked)}
-    color="primary"
-  />
-</Box>
+          <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
+          <Switch
+            checked={formik.values.autoUpdate}
+            name="autoUpdate"
+            onChange={(e) => formik.setFieldValue("autoUpdate", e.target.checked)}
+            color="primary"
+          />
+        </Box>
 
-{formik.values.autoUpdate && ( // Conditional rendering based on autoUpdate state
-  <Box sx={{ mt: 2 }}>
-    <Grid container spacing={2}>
-      <Grid item xs={6}>
-        <TextField
-          fullWidth
-          label="From Date"
-          type="date"
-          value={formik.values.fromDate}
-          onChange={(e) => formik.setFieldValue("fromDate", e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          margin="normal"
-          error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
-          helperText={formik.touched.fromDate && formik.errors.fromDate}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField
-          fullWidth
-          label="To Date"
-          type="date"
-          value={formik.values.toDate}
-          onChange={(e) => formik.setFieldValue("toDate", e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          margin="normal"
-          error={formik.touched.toDate && Boolean(formik.errors.toDate)}
-          helperText={formik.touched.toDate && formik.errors.toDate}
-        />
-      </Grid>
+        {/* Conditional Fields: From Date & To Date */}
+        {formik.values.autoUpdate && (
+          <Box sx={{ mt: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="From Date"
+                  type="date"
+                  value={formik.values.fromDate}
+                  onChange={(e) => formik.setFieldValue("fromDate", e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                  margin="normal"
+                  error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
+                  helperText={formik.touched.fromDate && formik.errors.fromDate}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="To Date"
+                  type="date"
+                  value={formik.values.toDate}
+                  onChange={(e) => formik.setFieldValue("toDate", e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                  margin="normal"
+                  error={formik.touched.toDate && Boolean(formik.errors.toDate)}
+                  helperText={formik.touched.toDate && formik.errors.toDate}
+                />
+              </Grid>
+            </Grid>
+            <Typography variant="h6">Set Price</Typography>
+  <Grid container spacing={2}>
+    <Grid item xs={6}>
+    <Typography variant="h6">Area Development Officer Price </Typography>
+
+      <TextField
+        fullWidth
+        label="Enter ADO Price"
+        name="ADO_price"
+        value={formik.values.ADO_price}
+        onChange={formik.handleChange}
+        error={formik.touched.ADO_price && Boolean(formik.errors.ADO_price)}
+        helperText={formik.touched.ADO_price && formik.errors.ADO_price}
+      />
     </Grid>
-  </Box>
-)}
+    <Grid item xs={6}>
+    <Typography variant="h6">Master Distributor Price </Typography>
 
+    <TextField
+  fullWidth
+  label="Enter MD Price"
+  name="MD_price"  // Match the key in Formik's initial values
+  value={formik.values.MD_price}
+  onChange={formik.handleChange}
+  error={formik.touched.MD_price && Boolean(formik.errors.MD_price)}
+  helperText={formik.touched.MD_price && formik.errors.MD_price}
+/>
 
+    </Grid>
+    {/* Add other price fields here as needed */}
+  </Grid>
+  <Grid container spacing={2}>
+    <Grid item xs={6}>
+    <Typography variant="h6">Super Distributor Price </Typography>
 
+      <TextField
+        fullWidth
+        label="Enter SD Price"
+        name="SD_price"
+        value={formik.values.SD_price}
+        onChange={formik.handleChange}
+        error={formik.touched.SD_price && Boolean(formik.errors.SD_price)}
+        helperText={formik.touched.SD_price && formik.errors.SD_price}
+      />
+    </Grid>
+    <Grid item xs={6}>
+    
+    <Typography variant="h6">Distributor Price:</Typography>
+
+      <TextField
+        fullWidth
+        label="Enter Distributor Price"
+        name="distributor_price"
+        value={formik.values.distributor_price}
+        onChange={formik.handleChange}
+        error={formik.touched.distributor_price && Boolean(formik.errors.distributor_price)}
+        helperText={formik.touched.distributor_price && formik.errors.distributor_price}
+      />
+    </Grid>
+    {/* Add other price fields here as needed */}
+  </Grid>
+  <Typography variant="h6">Customer Price</Typography>
+  <Grid container spacing={2}>
+    <Grid item xs={6}>
+      <TextField
+        fullWidth
+        label="Enter Customer Price"
+        name="customer_price"
+        value={formik.values.customer_price}
+        onChange={formik.handleChange}
+        error={formik.touched.customer_price && Boolean(formik.errors.customer_price)}
+        helperText={formik.touched.customer_price && formik.errors.customer_price}
+      />
+    </Grid>
+   
+    {/* Add other price fields here as needed */}
+  </Grid>
+          </Box>
+        )}
               <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography sx={{ marginRight: "8px" }}>
                   Stock Status

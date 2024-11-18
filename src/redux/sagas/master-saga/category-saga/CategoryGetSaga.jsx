@@ -7,7 +7,7 @@ import {
 } from "../../../slices/master-slice/categort-slice/CategortGetSlice";
 
 function* fetchCategorys() {
-  const API_URL = `http://88.222.245.236:3002/category`;
+  const API_URL = `http://localhost:3002/category`;
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");

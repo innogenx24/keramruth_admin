@@ -32,12 +32,20 @@ const AnnouncementTable = () => {
 
   const fetchAnnouncements = async () => {
     try {
-      const response = await axios.get("http://88.222.245.236:3002/announcements");
+      const token = localStorage.getItem("token"); // Retrieve token from localStorage
+      if (!token) throw new Error("Token not found");
+  
+      const response = await axios.get("http://localhost:3002/announcements", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setAnnouncements(response.data.data);
     } catch (error) {
       console.error("Error fetching announcements:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchAnnouncements();
@@ -76,7 +84,7 @@ const AnnouncementTable = () => {
   const handleToggleSwitch = async (announcement) => {
     try {
       const updatedStatus = !announcement.activateStatus;
-      await axios.patch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
+      await axios.patch(`http://localhost:3002/announcements/${announcement.id}`, {
         activateStatus: updatedStatus,
       });
       setAnnouncements((prevAnnouncements) =>
