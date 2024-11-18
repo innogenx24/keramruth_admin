@@ -32,7 +32,7 @@ const MemberTable = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
   const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
 
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());

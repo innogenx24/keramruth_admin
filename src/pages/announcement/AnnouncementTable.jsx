@@ -28,7 +28,7 @@ const AnnouncementTable = () => {
   const [announcementToDelete, setAnnouncementToDelete] = useState(null);
   const navigate = useNavigate();
 
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const fetchAnnouncements = async () => {
     try {
