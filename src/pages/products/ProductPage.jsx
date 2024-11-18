@@ -36,7 +36,7 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);  
   const [selectedProduct, setSelectedProduct] = useState(null);  
-  const imageBaseURL = "http://88.222.245.236:3002/";
+  const imageBaseURL = "http://localhost:3002/";
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
@@ -115,7 +115,7 @@ const ProductPage = () => {
 
   const handleStatusToggle = async (productId, newStatus) => {
     try {
-      const response = await fetch(`http://88.222.245.236:3002/products/${productId}`, {
+      const response = await fetch(`http://localhost:3002/products/admin_product/${productId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -165,6 +165,7 @@ const ProductPage = () => {
               <TableCell>No.</TableCell>
               <TableCell>Product Image</TableCell>
               <TableCell>Product Name</TableCell>
+              <TableCell>Category Name</TableCell>
               <TableCell>Product Volume</TableCell>
               <TableCell>MRP</TableCell>
               <TableCell>Price</TableCell>
@@ -187,6 +188,8 @@ const ProductPage = () => {
                   )}
                 </TableCell>
                 <TableCell>{product.name}</TableCell>
+                <TableCell>{product.category_name}</TableCell>
+
                 <TableCell>{product.productVolume}</TableCell>
                 <TableCell>{product.price}</TableCell>
                 <TableCell>

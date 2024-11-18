@@ -10,7 +10,7 @@ import { fetchCategorysRequest } from "../../../slices/master-slice/categort-sli
 function deleteCategoryApi(categoryId, token) {
   console.log("categoryId", categoryId);
   return axios.delete(
-    `http://88.222.245.236:3002/category/${categoryId}`,
+    `http://localhost:3002/category/${categoryId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
