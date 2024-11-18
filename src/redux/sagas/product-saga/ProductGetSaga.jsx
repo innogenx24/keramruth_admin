@@ -6,7 +6,7 @@ import { fetchProductsFailure, fetchProductsRequest, fetchProductsSuccess } from
 /** Define the API URL **/
 // const API_URL = 'http://localhost:3002/products';
 // const API_URL = 'http://88.222.245.236:3002/products';
-const API_URL = 'http://localhost:3002/products/admin_product';
+const API_URL = 'http://88.222.245.236:3002/products/admin_product';
 
 
 /** Worker saga to fetch products**/

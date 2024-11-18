@@ -32,7 +32,7 @@ const AddOrEditSector = () => {
 
         if (isEditMode) {
           // If editing, make a PUT request to update the sector
-          response = await fetch(`http://localhost:3002/sectors/${sector.id}`, {
+          response = await fetch(`http://88.222.245.236:3002/sectors/${sector.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const AddOrEditSector = () => {
           });
         } else {
           // If adding, make a POST request to create the sector
-          response = await fetch("http://localhost:3002/sectors", {
+          response = await fetch("http://88.222.245.236:3002/sectors", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

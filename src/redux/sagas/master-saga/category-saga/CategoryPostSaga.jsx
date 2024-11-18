@@ -7,7 +7,7 @@ function* postCategory(action) {
     yield put(categoryPostRequest());
     const token = localStorage.getItem('token');
   
-    const response = yield call(axios.post, 'http://localhost:3002/category', action.payload, {
+    const response = yield call(axios.post, 'http://88.222.245.236:3002/category', action.payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

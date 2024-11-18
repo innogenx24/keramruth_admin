@@ -31,7 +31,7 @@ const AddProductForm = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3002/category");
+        const response = await fetch("http://88.222.245.236:3002/category");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

@@ -18,7 +18,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const imageBaseURL = "http://localhost:3002/";
+  const imageBaseURL = "http://88.222.245.236:3002/";
 
   const initialProductDetails = {
     product_code: "",
@@ -47,7 +47,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3002/category");
+        const response = await fetch("http://88.222.245.236:3002/category");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -120,7 +120,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
+      const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
         method: 'PUT',
         body: formData,
       });
