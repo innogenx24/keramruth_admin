@@ -5,11 +5,11 @@ import {
   Button,
   Grid,
   Typography,
-  Switch,
   InputLabel,
   Select,
   MenuItem,
   IconButton,
+  Switch,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
@@ -32,7 +32,16 @@ const EditProductForm = ({ handleBackToProducts }) => {
     sdPrice: "",
     mdPrice: "",
     adoPrice: "",
-    category_name: "", // Add category name field
+    category_name: "",
+    stock_quantity: "",
+    quantity_type: "", 
+    fromDate: "",
+    toDate: "",
+    ADO_price: "",
+    MD_price: "",
+    SD_price: "",
+    distributor_price: "",
+    customer_price: ""
   };
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -41,8 +50,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const [autoUpdate, setAutoUpdate] = useState(true);
   const [stockStatus, setStockStatus] = useState(true);
   const [productDetails, setProductDetails] = useState(initialProductDetails);
-  const [categories, setCategories] = useState([]);  // State for categories
-  const [selectedCategory, setSelectedCategory] = useState(""); // State for selected category
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(''); 
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -66,6 +75,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
       const stockValue = state?.product?.status === 1 ? true : false;
       setStockStatus(stockValue);
       setAutoUpdate(state.product.autoUpdate);
+      setSelectedCategory(state.product.category_name); 
 
       if (state.product.image) {
         setSelectedImage(state.product.image);
@@ -92,14 +102,18 @@ const EditProductForm = ({ handleBackToProducts }) => {
     }));
   };
 
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value); 
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!productDetails.id) {
       console.error("Product ID is missing");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("id", productDetails.id);
     formData.append("product_code", productDetails.product_code);
@@ -111,37 +125,47 @@ const EditProductForm = ({ handleBackToProducts }) => {
     formData.append("sdPrice", productDetails.sdPrice);
     formData.append("mdPrice", productDetails.mdPrice);
     formData.append("adoPrice", productDetails.adoPrice);
-    formData.append("autoUpdate", autoUpdate);
-    formData.append("category_name", productDetails.category_name);  // Append category name
-
+    formData.append("autoUpdate", autoUpdate ? "true" : "false");
+    formData.append("category_name", selectedCategory);
+    formData.append("stock_quantity", productDetails.stock_quantity);
+    formData.append("quantity_type", productDetails.quantity_type);
     formData.append("status", stockStatus ? 1 : 0);
+    formData.append("fromDate", productDetails.fromDate);
+    formData.append("toDate", productDetails.toDate);
+    formData.append("ADO_price", productDetails.ADO_price);
+    formData.append("MD_price", productDetails.MD_price);
+    formData.append("SD_price", productDetails.SD_price);
+    formData.append("distributor_price", productDetails.distributor_price);
+    formData.append("customer_price", productDetails.customer_price);
+  
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
-
+  
     try {
       const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
         method: 'PUT',
         body: formData,
       });
-
+  
       if (!response.ok) {
         throw new Error("Error updating product");
       }
-
+  
       setProductDetails(initialProductDetails);
       setSelectedImage(null);
       setImagePreview(null);
       setImageName("");
       setAutoUpdate(true);
       setStockStatus(true);
-
+  
       navigate("/dashboard/products");
     } catch (error) {
       console.error("Error updating product:", error);
     }
   };
-  
+
+
   return (
     <Box
       sx={{
@@ -322,7 +346,133 @@ const EditProductForm = ({ handleBackToProducts }) => {
               sx={{ marginBottom: "16px" }}
               onChange={handleInputChange}
             />
-            
+             <TextField
+        fullWidth
+        variant="outlined"
+        name="stock_quantity"
+        value={productDetails.stock_quantity} // Bind stock_quantity value to state
+        label="Stock Quantity*"
+        placeholder="Enter Stock Quantity"
+        sx={{ marginBottom: "16px" }}
+        onChange={handleInputChange}
+      />
+      <InputLabel>Quantity Type</InputLabel>
+      <Select
+        fullWidth
+        name="quantity_type"
+        value={productDetails.quantity_type} // Bind to the state
+        onChange={handleInputChange} // Handle the change
+        sx={{ marginBottom: "16px" }}
+      >
+        <MenuItem value="">Select Quantity Type</MenuItem>
+        <MenuItem value="ml">ml</MenuItem>
+        <MenuItem value="liters">Liters</MenuItem>
+        <MenuItem value="kg">Kg</MenuItem>
+        <MenuItem value="gm">gm</MenuItem>
+      </Select>
+
+      <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+        <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
+        <Switch
+          checked={autoUpdate}
+          onChange={(e) => setAutoUpdate(e.target.checked)}
+          color="primary"
+        />
+      </Box>
+
+      {/* Conditional Fields: From Date & To Date */}
+      {autoUpdate && (
+        <Box sx={{ mt: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label="From Date"
+                type="date"
+                name="fromDate"
+                value={productDetails.fromDate}
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label="To Date"
+                type="date"
+                name="toDate"
+                value={productDetails.toDate}
+                onChange={handleInputChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Typography variant="h6">Set Price</Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <Typography variant="h6">Area Development Officer Price</Typography>
+          <TextField
+            fullWidth
+            label="Enter ADO Price"
+            name="ADO_price"
+            value={productDetails.ADO_price}
+            onChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Typography variant="h6">Master Distributor Price</Typography>
+          <TextField
+            fullWidth
+            label="Enter MD Price"
+            name="MD_price"
+            value={productDetails.MD_price}
+            onChange={handleInputChange}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <Typography variant="h6">Super Distributor Price</Typography>
+          <TextField
+            fullWidth
+            label="Enter SD Price"
+            name="SD_price"
+            value={productDetails.SD_price}
+            onChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <Typography variant="h6">Distributor Price</Typography>
+          <TextField
+            fullWidth
+            label="Enter Distributor Price"
+            name="distributor_price"
+            value={productDetails.distributor_price}
+            onChange={handleInputChange}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <Typography variant="h6">Customer Price</Typography>
+          <TextField
+            fullWidth
+            label="Enter Customer Price"
+            name="customer_price"
+            value={productDetails.customer_price}
+            onChange={handleInputChange}
+          />
+        </Grid>
+      </Grid>
+        </Box>
+      )}
+
 
             <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
               <InputLabel sx={{ marginRight: "8px" }}>Stock Status</InputLabel>
