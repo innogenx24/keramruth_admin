@@ -57,16 +57,25 @@ export default function EditSalesTarget() {
       return;
     }
 
+    // const requestData = {
+    //   product_name: selectedProduct,
+    //   productData: targets.map((product) => ({
+    //     product_name: selectedProduct,
+    //     product_data: product.product_data.map((data) => ({
+    //       role: data.role,
+    //       target: data.target,
+    //       duration: data.duration,
+    //     })),
+    //   })),
+    // };
+
     const requestData = {
       product_name: selectedProduct,
-      productData: targets.map((product) => ({
-        product_name: selectedProduct,
-        product_data: product.product_data.map((data) => ({
-          role: data.role,
-          target: data.target,
-          duration: data.duration,
-        })),
-      })),
+      productData: targets.flatMap((product) => product.product_data.map((data) => ({
+        role: data.role,
+        target: data.target,
+        duration: data.duration,
+      }))),
     };
 
     // Log the data being sent
