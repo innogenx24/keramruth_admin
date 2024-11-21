@@ -56,7 +56,7 @@ const CategoryTable = () => {
   // Function to confirm deletion by calling the API directly
   const handleConfirmDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3002/category/${selectedClub?.id}`, {
+      const response = await fetch(`http://88.222.245.236:3002/category/${selectedClub?.id}`, {
         method: "DELETE",
       });
       if (response.ok) {
