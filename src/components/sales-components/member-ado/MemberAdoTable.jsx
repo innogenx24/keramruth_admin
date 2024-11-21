@@ -59,7 +59,8 @@ const MemberAdoTable = () => {
   const handleEditMemberClick = (member) => {
     setEditMember(member); // Set the selected member for editing
     setShowTable(false); // Hide the table and show the Edit Member form
-    navigate("edit-members", { state: { member } }); // Pass member data in state
+    // navigate("edit-members", { state: { member } }); // Pass member data in state
+    navigate(`edit-members/${member?.id}`)
   };
   // Function to open delete confirmation modal
   const handleDeleteOpen = (member) => {
