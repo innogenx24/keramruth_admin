@@ -23,7 +23,6 @@ import EditCategoryForm from "./EditCategoryForm"; // Import your EditClubForm c
 import { useNavigate } from "react-router-dom";
 import { fetchCategorysRequest } from "../../redux/slices/master-slice/categort-slice/CategortGetSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteCategoryRequest } from "../../redux/slices/master-slice/categort-slice/CategoryDeleteSlice";
 
 const CategoryTable = () => {
   const dispatch = useDispatch();
@@ -54,14 +53,24 @@ const CategoryTable = () => {
     setOpenDeleteModal(true); // Open the delete confirmation modal
   };
 
-  // Function to confirm deletion
-  const handleConfirmDelete = () => {
-    // Add your deletion logic here
-    // console.log("Deleted Club:", selectedClub?.id);
-    dispatch(deleteCategoryRequest(selectedClub?.id));
-    setOpenDeleteModal(false); // Close the modal after deletion
-    setSelectedClub(null); // Reset selected club
-    // window.location.reload();
+  // Function to confirm deletion by calling the API directly
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:3002/category/${selectedClub?.id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        dispatch(fetchCategorysRequest()); // Re-fetch the category list after deletion
+        setOpenDeleteModal(false); // Close the modal after deletion
+        setSelectedClub(null); // Reset selected club
+      } else {
+        console.error("Error deleting category");
+        // Handle error (you can display a notification or a message)
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle network or other errors
+    }
   };
 
   // Function to cancel deletion
