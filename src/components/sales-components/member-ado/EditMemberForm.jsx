@@ -8,17 +8,23 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  IconButton,
+  Typography,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
 import { useDispatch, useSelector } from "react-redux";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const EditMemberForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { memberId } = useParams();
   const { allmembers } = useSelector((state) => state.allmembers);
+  const [image, setImage] = useState(null); // Store the selected image
+  const [imageName, setImageName] = useState(""); // Store image file name for display
+  const imageBaseURL = "http://localhost:3002/uploads/";
 
   const [selectedRole, setSelectedRole] = useState(""); // Role dropdown value
   const [formData, setFormData] = useState({
@@ -33,7 +39,7 @@ const EditMemberForm = () => {
     district: "",
     city: "",
     street: "",
-    club: "",
+    club_id: "",
     superior_id: "",
     password: "",
     street_name: "",
@@ -69,7 +75,7 @@ const EditMemberForm = () => {
             district: member.district || "",
             city: member.city || "",
             street_name: member.street_name || "",
-            club: member.club_id || "",
+            club_id: member.club_id || "",
             superior_id: member.superior_id || "",
             password: member.password || "",
             building_no_name: member.building_no_name || "",
@@ -84,6 +90,14 @@ const EditMemberForm = () => {
     }
   }, [memberId, navigate]);
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setImageName(file.name);
+    }
+  };
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -95,22 +109,32 @@ const EditMemberForm = () => {
 
   const handleSave = () => {
     const token = localStorage.getItem("token");
-
+  
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data", // Required for image upload
       },
     };
-
+  
+    const data = new FormData();
+    for (const key in formData) {
+      data.append(key, formData[key]);
+    }
+    if (image) {
+      data.append("image", image); // Attach the image file
+    }
+  
     axios
-      .put(`http://localhost:3002/api/user/update/${memberId}`, formData, config)
+      .put(`http://localhost:3002/api/user/update/${memberId}`, data, config)
       .then(() => {
-        navigate(`/member-details/${memberId}`);
+        navigate(`/dashboard/members`);
       })
       .catch((error) => {
         console.error("Error updating member data", error);
       });
   };
+  
 
   // Filter dropdown options based on the role
   const renderDropdownOptions = () => {
@@ -169,6 +193,35 @@ const EditMemberForm = () => {
                   <MenuItem value="6">Customer</MenuItem>
                 </Select>
               </Grid>
+              <Grid item xs={12}>
+  <InputLabel>Edit Image</InputLabel>
+  <IconButton color="primary" component="label">
+    <AddPhotoAlternateIcon />
+    <input type="file" hidden onChange={handleImageUpload} />
+  </IconButton>
+  {imageName && <Typography variant="body2">{imageName}</Typography>}
+  <Box mt={2}>
+    {image ? (
+      // Show preview of the uploaded image
+      <img
+        src={URL.createObjectURL(image)}
+        alt="Uploaded Preview"
+        style={{ maxWidth: "100%", maxHeight: "200px" }}
+      />
+    ) : formData.image ? (
+      // Show previously uploaded image
+      <img
+        src={`${imageBaseURL}${formData.image}`}
+        alt="Current Profile"
+        style={{ maxWidth: "100%", maxHeight: "200px" }}
+      />
+    ) : (
+      // Fallback for no image
+      <Typography variant="body2">No image uploaded</Typography>
+    )}
+  </Box>
+</Grid>
+
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -307,8 +360,8 @@ const EditMemberForm = () => {
                 <InputLabel>Club*</InputLabel>
                 <Select
                   fullWidth
-                  value={formData.club}
-                  name="club"
+                  value={formData.club_id}
+                  name="club_id"
                   onChange={handleChange}
                 >
                   <MenuItem value="">Select Club</MenuItem>
