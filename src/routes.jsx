@@ -95,9 +95,10 @@ const RoutesConfig = () => {
             <Route path="documents" element={<Documents />} />
             <Route path="documents/add-document" element={<DocumentForm />} />
             <Route
-              path="documents/edit-document"
-              element={<EditDocumentForm />}
-            />
+  path="documents/edit-document"
+  element={<EditDocumentForm />}
+/>
+
             <Route path="orders_time_set" element={<OrderLimitTable />} />
             <Route path="orders_time_set/add-time" element={<SetOrderLimit />} />
 

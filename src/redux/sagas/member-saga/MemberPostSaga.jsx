@@ -8,7 +8,6 @@ function* postMember(action) {
     const token = localStorage.getItem('token');
     const { role_id } = action.payload;
   
-    // const response = yield call(axios.post, 'http://localhost:3002/api/user/signup', action.payload, {
       const response = yield call(axios.post, 'http://88.222.245.236:3002/api/user/signup', action.payload, {
 
       headers: {

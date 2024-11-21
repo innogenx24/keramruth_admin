@@ -19,17 +19,25 @@ import { useDispatch, useSelector } from "react-redux";
 const EditUserProfile = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
-  const imageBaseURL = "http://88.222.245.236:3002/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const [selectedImage, setSelectedImage] = useState("/static/images/avatar/1.jpg");
   const [imageFile, setImageFile] = useState(null);
+  const [imageError, setImageError] = useState("");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check if the file size exceeds 2MB
+      if (file.size > 2 * 1024 * 1024) {
+        setImageError("Image size must be 2MB or less");
+        return; // Stop further execution if file size exceeds limit
+      }
+  
       const imageUrl = URL.createObjectURL(file); // Preview the image
       setSelectedImage(imageUrl);  // Set the selected image for preview
       setImageFile(file);  // Store the file for submission
+      setImageError(""); // Clear any previous error message
     }
   };
 
@@ -131,6 +139,11 @@ const EditUserProfile = () => {
                 style={{ display: "none" }}
                 onChange={handleImageChange}
               />
+               {imageError && (
+    <Typography variant="body2" color="error" mt={1}>
+      {imageError}
+    </Typography>
+  )}
             </Box>
 
             <TextField

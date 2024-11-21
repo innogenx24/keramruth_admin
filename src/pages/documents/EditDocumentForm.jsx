@@ -20,6 +20,7 @@ const EditDocumentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const document = location.state?.document || {};
+  
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const roles = [
     { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
@@ -51,7 +52,7 @@ const EditDocumentForm = () => {
       setHeading(document.heading || "");
       setDescription(document.description || "");
       setLink(document.link || "");
-      setReceiver(Array.isArray(document.receiver) ? document.receiver : []);
+      setReceiver(document.receiver || []); // Ensure it's an array
       setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
       setImageName(document.image ? document.image.split("/").pop() : "");
@@ -75,20 +76,22 @@ const EditDocumentForm = () => {
 
   const handleReceiverChange = (event) => {
     const { value, checked } = event.target;
-
+  
     if (value === "selectAll") {
       // Toggle select/deselect all roles
       setReceiver(checked ? roles.map(role => role.value) : []);
     } else {
       setReceiver((prevReceiver) => {
+        const currentReceiver = Array.isArray(prevReceiver) ? prevReceiver : []; // Ensure it's an array
         if (checked) {
-          return [...prevReceiver, value]; // Add the role to receiver if checked
+          return [...currentReceiver, value]; // Add the role to receiver if checked
         } else {
-          return prevReceiver.filter((role) => role !== value); // Remove role from receiver if unchecked
+          return currentReceiver.filter((role) => role !== value); // Remove role from receiver if unchecked
         }
       });
     }
   };
+  
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -181,6 +184,7 @@ const EditDocumentForm = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               style={{ width: "100%", margin: "16px 0" }}
+              required
             />
 
             <TextField

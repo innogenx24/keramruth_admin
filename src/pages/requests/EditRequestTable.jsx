@@ -32,7 +32,9 @@ const MemberTable = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
   const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
 
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  // const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
@@ -123,11 +125,11 @@ const MemberTable = () => {
   const handleReject = async (requestId) => {
     try {
       const response = await fetch(`http://88.222.245.236:3002/edit-requests/reject/${requestId}`, {
-        method: "POST",
+        method: "DELETE",  // Change from POST to DELETE to match your server-side API
       });
       const data = await response.json();
       if (data.success) {
-        fetchEditRequests();
+        fetchEditRequests();  // Fetch the updated list after the request is deleted
       } else {
         console.error("Failed to reject request:", data.message);
       }
@@ -135,6 +137,8 @@ const MemberTable = () => {
       console.error("Error rejecting request:", error);
     }
   };
+  
+  
   const handleImageClick = (imageUrl) => {
     setImageModal({ open: true, imageUrl });
   };
@@ -154,78 +158,140 @@ const MemberTable = () => {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>User ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Date Of Joining</TableCell>
-              <TableCell>Mobile No</TableCell>
-              <TableCell>New Mobile Number</TableCell>
-              <TableCell>New Email ID</TableCell>
-              <TableCell>New Address</TableCell>
-              <TableCell>Request Reason</TableCell>
-              <TableCell>Action</TableCell>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+      Current Details 
+      </Typography>
+  <TableContainer component={Paper}>
+  {/* Current Data Table */}
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>ID Proof</TableCell>
+        <TableCell>Name</TableCell>
+        <TableCell>Role</TableCell>
+        <TableCell>Date Of Joining</TableCell>
+        <TableCell>Mobile No</TableCell>
+        <TableCell>New Mobile Number</TableCell>
+        <TableCell>New Email ID</TableCell>
+        <TableCell>New Address</TableCell>
+        <TableCell>Request Reason</TableCell>
+        <TableCell>Action</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {editRequests.map((request) => {
+        // Find the corresponding member from combinedMembers
+        const member = combinedMembers.find((member) => member.id === request.user_id);
+
+        // If member is not found or if the member's approval is pending, skip rendering
+        if (!member || member.approved === "Pending") return null;
+
+        // Check if the existing and new data are the same
+        const isMobileSame = member?.mobile_number === request.new_mobile_number;
+        const isEmailSame = member?.email === request.new_email_id;
+        const isAddressSame =
+          member?.street_name === request.new_address.street &&
+          member?.city === request.new_address.city &&
+          member?.state === request.new_address.state &&
+          member?.pincode === request.new_address.zip;
+
+        // Only display the row if any of the mobile number, email, or address fields differ
+        if (!isMobileSame || !isEmailSame || !isAddressSame) {
+          return (
+            <TableRow key={request.id}>
+              <TableCell>
+                {request.image ? (
+                  <img
+                    src={`${imageBaseURL}${request.image}`}
+                    style={{ width: 50, height: 50, cursor: "pointer" }}
+                    onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
+                  />
+                ) : (
+                  "No Image"
+                )}
+              </TableCell>
+              <TableCell>{member.full_name}</TableCell>
+              <TableCell>{member.role_name}</TableCell>
+              <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+              <TableCell>{member.mobile_number}</TableCell>
+              <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
+              <TableCell>{isEmailSame ? "-" : request.new_email_id}</TableCell>
+              <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+              <TableCell>{request.request_reason}</TableCell>
+              <TableCell>{request.status}</TableCell>
+              <TableCell>
+                <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
+                  <IconButton style={{ color: "red" }} onClick={() => handleReject(request.id)}>
+                    <ClearIcon />
+                  </IconButton>
+                  <IconButton style={{ color: "green" }} onClick={() => handleApprove(member.id)}>
+                    <CheckIcon />
+                  </IconButton>
+                </div>
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {editRequests.map((request) => {
-              const member = combinedMembers.find((member) => member.id === request.user_id);
+          );
+        }
+        return null;
+      })}
+    </TableBody>
+  </Table>
+</TableContainer>
 
-              // Check if the existing and new data are the same
-              const isMobileSame = member?.mobile_number === request.new_mobile_number;
-              const isEmailSame = member?.email === request.new_email_id;
-              const isAddressSame =
-                member?.street_name === request.new_address.street &&
-                member?.city === request.new_address.city &&
-                member?.state === request.new_address.state &&
-                member?.pincode === request.new_address.zip;
+{/* Spacer */}
+<div style={{ margin: "20px 0" }} />
+<Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+Previous History 
+      </Typography>
+{/* Previous Data Table */}
+<TableContainer component={Paper}>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>ID Proof</TableCell>
+        <TableCell>Name</TableCell>
+        <TableCell>Role</TableCell>
+        <TableCell>Date Of Joining</TableCell>
+        <TableCell>Previous Mobile No</TableCell>
+        <TableCell>Previous Email ID</TableCell>
+        <TableCell>Previous Address</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {editRequests.map((request) => {
+        // Find the corresponding member from combinedMembers
+        const member = combinedMembers.find((member) => member.id === request.user_id);
 
-              // Only display the row if any of the mobile number, email, or address fields differ
-              if (member && (!isMobileSame || !isEmailSame || !isAddressSame)) {
-                return (
-                  <TableRow key={request.id}>
-                    <TableCell>{request.user_id}</TableCell>
-                    <TableCell>
-                      {member.image ? (
-                        <img
-                          src={`${imageBaseURL}${member.image}`}
-                          alt="Member"
-                          style={{ width: 50, height: 50, cursor: "pointer" }}
-                          onClick={() => handleImageClick(`${imageBaseURL}${member.image}`)}
-                        />
-                      ) : (
-                        "No Image"
-                      )}
-                    </TableCell>
-                    <TableCell>{member.full_name}</TableCell>
-                    <TableCell>{member.role_name}</TableCell>
-                    <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell>{member.mobile_number}</TableCell>
-                    <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
-                    <TableCell>{isEmailSame ? "-" : request.new_email_id}</TableCell>
-                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
-                    <TableCell>{request.request_reason}</TableCell>
-                    <TableCell>
-                      <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-                        <IconButton style={{ color: "red" }} onClick={() => handleReject(request.id)}>
-                          <ClearIcon />
-                        </IconButton>
-                        <IconButton style={{ color: "green" }} onClick={() => handleApprove(request.user_id)}>
-                          <CheckIcon />
-                        </IconButton>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              }
-              return null;
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        // If member is not found or if the member's approval is pending, skip rendering
+        if (!member || member.approved === "Pending") return null;
+
+        // Display previous data even if the data is the same
+        return (
+          <TableRow key={request.id}>
+            <TableCell>
+              {request.image ? (
+                <img
+                  src={`${imageBaseURL}${request.image}`}
+                  style={{ width: 50, height: 50, cursor: "pointer" }}
+                  onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
+                />
+              ) : (
+                "No Image"
+              )}
+            </TableCell>
+            <TableCell>{member.full_name}</TableCell>
+            <TableCell>{member.role_name}</TableCell>
+            <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+            <TableCell>{member.mobile_number}</TableCell>
+            <TableCell>{request.new_email_id}</TableCell>
+            <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+          </TableRow>
+        );
+      })}
+    </TableBody>
+  </Table>
+</TableContainer>
+
       <Modal open={imageModal.open} onClose={handleImageModalClose}>
         <Box
           sx={{

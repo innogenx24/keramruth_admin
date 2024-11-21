@@ -30,13 +30,20 @@ export default function SalesTargetTable() {
 
   const fetchSalesTargets = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/salestarget");
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found");
+  
+      const response = await axios.get("http://88.222.245.236:3002/salestarget", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setSalesData(response.data.data || []);
     } catch (error) {
       console.error("Error fetching sales targets:", error);
     }
   };
-
+  
   const handleAddClick = () => {
     navigate("add-sales-target");
   };
@@ -52,7 +59,7 @@ export default function SalesTargetTable() {
   // Delete product targets based on product name
   const deleteProductTargets = async (productName) => {
     try {
-      const response = await axios.delete(`http://localhost:3002/salestarget/${productName}`);
+      const response = await axios.delete(`http://88.222.245.236:3002/salestarget/${productName}`);
       alert(response.data.message); // Show success message
       fetchSalesTargets(); // Re-fetch the sales data
     } catch (error) {

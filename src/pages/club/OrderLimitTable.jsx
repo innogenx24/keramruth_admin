@@ -24,11 +24,20 @@ const OrderLimitsTable = () => {
 
   useEffect(() => {
     const fetchOrderLimits = async () => {
+      setLoading(true); 
       try {
-        const response = await axios.get('http://localhost:3002/api/order-limits');
-        setOrderLimits(response.data.data);
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token not found");
+
+        const response = await axios.get("http://88.222.245.236:3002/api/order-limits", {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        });
+
+        setOrderLimits(response.data.data); // Set the fetched order limits
       } catch (err) {
-        setError('Failed to fetch order limits');
+        setError("Failed to fetch order limits"); // Handle error
         console.error(err);
       } finally {
         setLoading(false);
@@ -37,7 +46,6 @@ const OrderLimitsTable = () => {
 
     fetchOrderLimits();
   }, []);
-
   const handleEditClick = (limit) => {
     // Navigate to the edit form with limit data as state
     navigate("edit-form", { state: { limit } });

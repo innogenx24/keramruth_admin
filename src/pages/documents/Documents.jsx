@@ -33,11 +33,13 @@ const DocumentsTable = () => {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
       if (!token) throw new Error("Token not found");
   
-      const response = await axios.get("http://localhost:3002/documents", {
+      const response = await axios.get("http://88.222.245.236:3002/documents", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+  
+      console.log(response.data.data); // Log the fetched data
       setDocuments(response.data.data);
     } catch (error) {
       console.error("Error fetching documents:", error);

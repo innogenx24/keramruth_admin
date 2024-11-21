@@ -5,7 +5,6 @@ import { fetchProductsRequest } from "../../slices/product-slice/ProductGetSlice
 
 function deleteProductApi(productId, token) {
   console.log("productId", productId);
-  // return axios.delete(`http://localhost:3002/products/${productId}`, {
     return axios.delete(`http://88.222.245.236:3002/products/${productId}`, {
 
     headers: {

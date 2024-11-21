@@ -33,7 +33,7 @@ export default function EditSalesTarget() {
   const fetchSalesTargets = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/salestarget/${encodeURIComponent(selectedProduct)}`
+        `http://88.222.245.236:3002/salestarget/${encodeURIComponent(selectedProduct)}`
       );
       console.log("Fetched Data:", response.data.data); // Debugging
       setTargets(response.data.data || []);
@@ -74,7 +74,7 @@ export default function EditSalesTarget() {
 
     try {
       const response = await axios.put(
-        `http://localhost:3002/salestarget/${encodeURIComponent(selectedProduct)}`,
+        `http://88.222.245.236:3002/salestarget/${encodeURIComponent(selectedProduct)}`,
         requestData
       );
 

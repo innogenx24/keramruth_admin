@@ -13,7 +13,7 @@ const AddCategoryForm = () => {
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const response = await fetch("http://localhost:3002/sectors");
+        const response = await fetch("http://88.222.245.236:3002/sectors");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

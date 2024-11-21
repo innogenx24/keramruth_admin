@@ -30,7 +30,7 @@ const SectorTable = () => {
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const response = await fetch("http://localhost:3002/sectors");
+        const response = await fetch("http://88.222.245.236:3002/sectors");
         const data = await response.json();
         setSectors(data); // Set the fetched sectors
       } catch (error) {
@@ -59,13 +59,13 @@ const SectorTable = () => {
   // Function to confirm deletion
   const handleConfirmDelete = async () => {
     try {
-      await fetch(`http://localhost:3002/sectors/${selectedSector?.id}`, {
+      await fetch(`http://88.222.245.236:3002/sectors/${selectedSector?.id}`, {
         method: "DELETE",
       });
       setOpenDeleteModal(false);
       setSelectedSector(null);
       // Refresh the sector list after deletion
-      const response = await fetch("http://localhost:3002/sectors");
+      const response = await fetch("http://88.222.245.236:3002/sectors");
       const data = await response.json();
       setSectors(data);
     } catch (error) {

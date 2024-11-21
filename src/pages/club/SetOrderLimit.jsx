@@ -44,7 +44,7 @@ const SetOrderLimit = () => {
     const orderLimitData = { hours: parseInt(hours, 10), role: selectedRole };
 
     try {
-        const response = await axios.post('http://localhost:3002/api/order-limits/create', orderLimitData);
+        const response = await axios.post('http://88.222.245.236:3002/api/order-limits/create', orderLimitData);
         console.log('Success:', response.data);
         setSnackbarMessage('Order limit set successfully!');
         setSnackbarSeverity('success');

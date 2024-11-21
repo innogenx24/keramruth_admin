@@ -8,7 +8,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Switch,
   Button,
   Dialog,
   DialogActions,
@@ -28,14 +27,14 @@ const AnnouncementTable = () => {
   const [announcementToDelete, setAnnouncementToDelete] = useState(null);
   const navigate = useNavigate();
 
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const fetchAnnouncements = async () => {
     try {
-      const token = localStorage.getItem("token"); // Retrieve token from localStorage
+      const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
-  
-      const response = await axios.get("http://localhost:3002/announcements", {
+
+      const response = await axios.get("http://88.222.245.236:3002/announcements", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -45,7 +44,6 @@ const AnnouncementTable = () => {
       console.error("Error fetching announcements:", error);
     }
   };
-  
 
   useEffect(() => {
     fetchAnnouncements();
@@ -84,7 +82,7 @@ const AnnouncementTable = () => {
   const handleToggleSwitch = async (announcement) => {
     try {
       const updatedStatus = !announcement.activateStatus;
-      await axios.patch(`http://localhost:3002/announcements/${announcement.id}`, {
+      await axios.patch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
         activateStatus: updatedStatus,
       });
       setAnnouncements((prevAnnouncements) =>
@@ -134,45 +132,44 @@ const AnnouncementTable = () => {
               <TableCell>No.</TableCell>
               <TableCell>Announcement ID</TableCell>
               <TableCell>Announcement Heading</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Applying on</TableCell>
+              <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>Description</TableCell>
+              <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>Applying on</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-  {announcements.map((announcement, index) => (
-    <TableRow key={announcement.id}>
-      <TableCell>{index + 1}</TableCell>
-      <TableCell style={{ display: "flex", alignItems: "center" }}>
-        {announcement.image ? (
-          <img
-            src={getImageURL(announcement.image)}
-            style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
-            alt="Announcement"
-          />
-        ) : (
-          <span>No Image Available</span>
-        )}
-      </TableCell>
-      <TableCell>{announcement.heading}</TableCell>
-      <TableCell style={{ maxWidth: 200 }}>
-        {announcement.description.length > 50
-          ? `${announcement.description.substring(0, 50)}...`
-          : announcement.description}
-      </TableCell>
-      <TableCell>{announcement.receiver.join(", ")}</TableCell> {/* Join the array */}
-      <TableCell>
-        <IconButton onClick={() => handleEditClick(announcement)} color="primary">
-          <EditIcon />
-        </IconButton>
-        <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
-          <DeleteIcon />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-
+            {announcements.map((announcement, index) => (
+              <TableRow key={announcement.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell style={{ display: "flex", alignItems: "center" }}>
+                  {announcement.image ? (
+                    <img
+                      src={getImageURL(announcement.image)}
+                      style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
+                      alt="Announcement"
+                    />
+                  ) : (
+                    <span>No Image Available</span>
+                  )}
+                </TableCell>
+                <TableCell>{announcement.heading}</TableCell>
+                <TableCell style={{ maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {announcement.description}
+                </TableCell>
+                <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
+                  {announcement.receiver.join(", ")}
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEditClick(announcement)} color="primary">
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
 

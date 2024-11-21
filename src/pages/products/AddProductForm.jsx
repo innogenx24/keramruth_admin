@@ -31,7 +31,7 @@ const AddProductForm = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3002/category");
+        const response = await fetch("http://88.222.245.236:3002/category");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -96,26 +96,31 @@ const AddProductForm = () => {
       formData.append("name", values.name);
       formData.append("description", values.description);
       formData.append("productVolume", values.productVolume);
-      formData.append("price", values.price || 0); // Ensure decimal value is set
+      formData.append("price", values.price || 0);
       formData.append("distributorPrice", values.distributorPrice || 0);
-      formData.append("stock_quantity", values.stock_quantity);  // Add stock_quantity to FormData
-
+      formData.append("stock_quantity", values.stock_quantity); // Add stock_quantity to FormData
       formData.append("sdPrice", values.sdPrice || 0);
       formData.append("mdPrice", values.mdPrice || 0);
       formData.append("adoPrice", values.adoPrice || 0);
       formData.append("quantity_type", values.quantity_type);
       formData.append("category_name", values.category_name);
-      formData.append("fromDate", values.fromDate);
-      formData.append("toDate", values.toDate);
+    
+      // Include date fields only if autoUpdate is enabled
+      if (values.autoUpdate) {
+        formData.append("fromDate", values.fromDate);
+        formData.append("toDate", values.toDate);
+      }
+    
       formData.append("ADO_price", values.ADO_price || 0);
       formData.append("MD_price", values.MD_price || 0);
       formData.append("SD_price", values.SD_price || 0);
       formData.append("distributor_price", values.distributor_price || 0);
       formData.append("customer_price", values.customer_price || 0);
-  
+    
       if (selectedFile) {
         formData.append("image", selectedFile); // Attach the selected file
       }
+    
       dispatch(makePostProduct(formData)); // Dispatch product creation action
       resetForm();
       setSelectedFile(null);
@@ -125,6 +130,7 @@ const AddProductForm = () => {
       }
       navigate("/dashboard/products"); // Navigate to the product list page after submission
     },
+    
   });
 
   const handleImageChange = (event) => {
@@ -484,7 +490,6 @@ const AddProductForm = () => {
       />
     </Grid>
    
-    {/* Add other price fields here as needed */}
   </Grid>
           </Box>
         )}

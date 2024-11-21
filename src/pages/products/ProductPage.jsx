@@ -36,7 +36,7 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);  
   const [selectedProduct, setSelectedProduct] = useState(null);  
-  const imageBaseURL = "http://localhost:3002/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
@@ -85,7 +85,7 @@ const ProductPage = () => {
   const handleToggleStockStatus = async (product) => {
     try {
       const updatedStatus = !product.status; // Toggle the current status
-      const response = await fetch(`http://localhost:3002/products/${product.id}`, {
+      const response = await fetch(`http://88.222.245.236:3002/products/${product.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const ProductPage = () => {
 
   const handleStatusToggle = async (productId, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:3002/products/admin_product/${productId}`, {
+      const response = await fetch(`http://88.222.245.236:3002/products/admin_product/${productId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

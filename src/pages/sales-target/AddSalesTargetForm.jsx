@@ -33,7 +33,21 @@ export default function AddSalesTargetForm() {
     // Fetch products from the API
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3002/products");
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token not found");
+          return;
+        }
+
+        // Make API request with the token in the Authorization header
+        const response = await fetch("http://88.222.245.236:3002/products/admin_product", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
@@ -47,7 +61,6 @@ export default function AddSalesTargetForm() {
 
     fetchProducts();
   }, []);
-
   // Handle form field changes
   const handleChange = (roleId, field, value) => {
     setRolesData((prevRolesData) =>
@@ -98,7 +111,7 @@ export default function AddSalesTargetForm() {
     };
 
     try {
-      const response = await fetch("http://localhost:3002/salestarget/create", {
+      const response = await fetch("http://88.222.245.236:3002/salestarget/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +122,7 @@ export default function AddSalesTargetForm() {
       if (response.ok) {
         const result = await response.json();
         console.log("Success:", result);
-        navigate("/dashboard/sales-targets");
+        navigate("/dashboard/sales-target");
       } else {
         const errorData = await response.json();
         console.error("Error:", errorData.message);

@@ -35,12 +35,20 @@ const ClubTable = () => {
   const fetchClubs = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://88.222.245.236:3002/club");
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found");
+  
+      const response = await fetch("http://88.222.245.236:3002/club", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       const result = await response.json();
-      if (result.success) { // Check if the fetch was successful
+      if (result.success) {
         setClubs(result.data); // Set the clubs from the data property
       } else {
-        console.error("Error fetching clubs: ", result.message); // Handle any error messages
+        console.error("Error fetching clubs:", result.message); // Handle any error messages
       }
     } catch (error) {
       console.error("Error fetching clubs:", error);
@@ -48,6 +56,7 @@ const ClubTable = () => {
       setLoading(false);
     }
   };
+  
   
 
   useEffect(() => {

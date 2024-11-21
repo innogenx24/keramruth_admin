@@ -182,6 +182,7 @@ const EditAnnouncementForm = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               style={{ width: "100%", margin: "16px 0", backgroundColor: "#f5f5f5" }}
+              required
             />
             <TextField
               fullWidth
