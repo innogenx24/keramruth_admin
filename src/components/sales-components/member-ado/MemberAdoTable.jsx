@@ -42,7 +42,7 @@ const MemberAdoTable = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // State to manage delete modal visibility
   const [memberToDelete, setMemberToDelete] = useState(null); // State to store the member to be deleted
   const navigate = useNavigate();
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   useEffect(() => {
     dispatch(fetchMembersRequest({ roleId: 2 }));

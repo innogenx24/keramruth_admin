@@ -24,7 +24,7 @@ const EditMemberForm = () => {
   const { allmembers } = useSelector((state) => state.allmembers);
   const [image, setImage] = useState(null); // Store the selected image
   const [imageName, setImageName] = useState(""); // Store image file name for display
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const [selectedRole, setSelectedRole] = useState(""); // Role dropdown value
   const [formData, setFormData] = useState({
@@ -58,7 +58,7 @@ const EditMemberForm = () => {
     const token = localStorage.getItem("token");
     if (memberId && token) {
       axios
-        .get(`http://localhost:3002/directMembers/profileby-admin/${memberId}`, {
+        .get(`http://88.222.245.236:3002/directMembers/profileby-admin/${memberId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -126,7 +126,7 @@ const EditMemberForm = () => {
     }
   
     axios
-      .put(`http://localhost:3002/api/user/update/${memberId}`, data, config)
+      .put(`http://88.222.245.236:3002/api/user/update/${memberId}`, data, config)
       .then(() => {
         navigate(`/dashboard/members`);
       })

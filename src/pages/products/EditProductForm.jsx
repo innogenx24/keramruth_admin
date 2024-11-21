@@ -119,24 +119,33 @@ const EditProductForm = ({ handleBackToProducts }) => {
     formData.append("product_code", productDetails.product_code);
     formData.append("name", productDetails.name);
     formData.append("productVolume", productDetails.productVolume);
-    formData.append("distributorPrice", productDetails.distributorPrice);
-    formData.append("price", productDetails.price);
-    formData.append("description", productDetails.description);
-    formData.append("sdPrice", productDetails.sdPrice);
-    formData.append("mdPrice", productDetails.mdPrice);
-    formData.append("adoPrice", productDetails.adoPrice);
+    formData.append("distributorPrice", productDetails.distributorPrice || "0");
+    formData.append("price", productDetails.price || "0");
+    formData.append("description", productDetails.description || "");
+    formData.append("sdPrice", productDetails.sdPrice || "0");
+    formData.append("mdPrice", productDetails.mdPrice || "0");
+    formData.append("adoPrice", productDetails.adoPrice || "0");
     formData.append("autoUpdate", autoUpdate ? "true" : "false");
-    formData.append("category_name", selectedCategory);
-    formData.append("stock_quantity", productDetails.stock_quantity);
-    formData.append("quantity_type", productDetails.quantity_type);
+    formData.append("category_name", selectedCategory || "General");
+    formData.append("stock_quantity", productDetails.stock_quantity || "0");
+    formData.append("quantity_type", productDetails.quantity_type || "Unit");
     formData.append("status", stockStatus ? 1 : 0);
-    formData.append("fromDate", productDetails.fromDate);
-    formData.append("toDate", productDetails.toDate);
-    formData.append("ADO_price", productDetails.ADO_price);
-    formData.append("MD_price", productDetails.MD_price);
-    formData.append("SD_price", productDetails.SD_price);
-    formData.append("distributor_price", productDetails.distributor_price);
-    formData.append("customer_price", productDetails.customer_price);
+  
+    // Validate and handle dates
+    const validFromDate = productDetails.fromDate
+      ? new Date(productDetails.fromDate).toISOString().slice(0, 10)
+      : "1970-01-01"; // Default to 1970-01-01 if no date is provided or autoUpdate is off
+    const validToDate = productDetails.toDate
+      ? new Date(productDetails.toDate).toISOString().slice(0, 10)
+      : "1970-01-01";
+  
+    formData.append("fromDate", autoUpdate ? validFromDate : "1970-01-01");
+    formData.append("toDate", autoUpdate ? validToDate : "1970-01-01");
+    formData.append("ADO_price", autoUpdate ? productDetails.ADO_price || "0" : "0");
+    formData.append("MD_price", autoUpdate ? productDetails.MD_price || "0" : "0");
+    formData.append("SD_price", autoUpdate ? productDetails.SD_price || "0" : "0");
+    formData.append("distributor_price", autoUpdate ? productDetails.distributor_price || "0" : "0");
+    formData.append("customer_price", autoUpdate ? productDetails.customer_price || "0" : "0");
   
     if (selectedImage) {
       formData.append("image", selectedImage);
@@ -164,6 +173,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
       console.error("Error updating product:", error);
     }
   };
+  
 
 
   return (

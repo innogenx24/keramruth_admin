@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 const EditUserProfile = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const [selectedImage, setSelectedImage] = useState("/static/images/avatar/1.jpg");
   const [imageFile, setImageFile] = useState(null);

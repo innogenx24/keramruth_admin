@@ -175,7 +175,7 @@ const SignIn = () => {
               </Button>
 
               {/* Forgot Password Link */}
-              <Box sx={{ mt: 1, textAlign: 'center' }}>
+              {/* <Box sx={{ mt: 1, textAlign: 'center' }}>
                 <Typography variant="body2">
                   Forgot Your Password?{' '}
                   <Button
@@ -186,10 +186,10 @@ const SignIn = () => {
                     Click Here
                   </Button>
                 </Typography>
-              </Box>
+              </Box> */}
 
               {/* Sign Up Link */}
-              <Box sx={{ mt: -1, textAlign: 'center' }}>
+              {/* <Box sx={{ mt: -1, textAlign: 'center' }}>
                 <Typography variant="body2">
                   Don't have an account?{' '}
                   <Button
@@ -200,7 +200,7 @@ const SignIn = () => {
                     Click Here
                   </Button>
                 </Typography>
-              </Box>
+              </Box> */}
 
               {/* Snackbar for Error Display */}
               <Snackbar
