@@ -33,7 +33,6 @@ const AnnouncementTable = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
-
       const response = await axios.get("http://88.222.245.236:3002/announcements", {
         headers: {
           Authorization: `Bearer ${token}`,

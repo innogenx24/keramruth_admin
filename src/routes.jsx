@@ -104,7 +104,8 @@ const RoutesConfig = () => {
 
             <Route path="report" element={<ReportTable />} />
             <Route path="members/add-members" element={<AddMemberForm />} />
-            <Route path="members/edit-members" element={<EditMemberForm />} />
+            {/* <Route path="members/edit-members" element={<EditMemberForm />} /> */}
+            <Route path="members/edit-members/:memberId" element={<EditMemberForm />} />
             <Route path="add-list" element={<AdminList />} />
             <Route path="add-list/add-user" element={<AddUserForm />} />
             <Route path="add-list/edit-user" element={<EditUserForm />} />
