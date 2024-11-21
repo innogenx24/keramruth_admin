@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import {
   Grid,
@@ -25,6 +26,7 @@ const EditMemberForm = () => {
     mobile_number: "",
     email: "",
     role_id: "",
+    image: "",
     pincode: "",
     country: "",
     state: "",
@@ -50,16 +52,17 @@ const EditMemberForm = () => {
     const token = localStorage.getItem("token");
     if (memberId && token) {
       axios
-        .get(`http://88.222.245.236:3002/directMembers/profileby-admin/${memberId}`, {
+        .get(`http://localhost:3002/directMembers/profileby-admin/${memberId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
           const member = response.data;
           setFormData({
-            name: member.full_name || "",
+            full_name: member.full_name || "",
             mobile_number: member.mobile_number || "",
             email: member.email || "",
             role_id: member.role_id || "",
+            image: member.image || "",
             pincode: member.pincode || "",
             country: member.country || "",
             state: member.state || "",
@@ -100,7 +103,7 @@ const EditMemberForm = () => {
     };
 
     axios
-      .put(`http://LOCALHOST:3002/api/user/update/${memberId}`, formData, config)
+      .put(`http://localhost:3002/api/user/update/${memberId}`, formData, config)
       .then(() => {
         navigate(`/member-details/${memberId}`);
       })
@@ -170,8 +173,8 @@ const EditMemberForm = () => {
                 <TextField
                   fullWidth
                   label="Full Name*"
-                  name="name"
-                  value={formData.name}
+                  name="full_name"
+                  value={formData.full_name}
                   onChange={handleChange}
                 />
               </Grid>
