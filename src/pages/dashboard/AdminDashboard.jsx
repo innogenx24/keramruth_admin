@@ -40,6 +40,7 @@ import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGet
 import { GrAnnounce } from "react-icons/gr";
 import { FaCcDinersClub } from "react-icons/fa";
 import { FaCodePullRequest } from "react-icons/fa6";
+import { IoDocument } from "react-icons/io5";
 
 // Drawer width
 const drawerWidth = 240;
@@ -242,15 +243,16 @@ export default function AdminDashboard() {
     //   //   { text: "EX2", path: "/dashboard/ex2", icon: <SalesTargetIcon /> },
     //   // ],
     // },
+
     {
       text: "Documents",
       path: "/dashboard/documents",
-      icon: <AnnouncementIcon />,
+      icon: <IoDocument />,
     },
     {
       text: "Requests",
       // path: '/dashboard/report',
-      icon: <AnnouncementIcon />,
+      icon: <FaCodePullRequest />,
       subItems: [
         {
           text: "Edit Request",
