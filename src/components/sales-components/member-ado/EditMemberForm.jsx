@@ -25,7 +25,6 @@ const EditMemberForm = () => {
     mobile_number: "",
     email: "",
     role_id: "",
-    avatar: "",
     pincode: "",
     country: "",
     state: "",
@@ -61,7 +60,6 @@ const EditMemberForm = () => {
             mobile_number: member.mobile_number || "",
             email: member.email || "",
             role_id: member.role_id || "",
-            avatar: member.image || "",
             pincode: member.pincode || "",
             country: member.country || "",
             state: member.state || "",
@@ -102,7 +100,7 @@ const EditMemberForm = () => {
     };
 
     axios
-      .put(`http://88.222.245.236:3002/api/user/update/${memberId}`, formData, config)
+      .put(`http://LOCALHOST:3002/api/user/update/${memberId}`, formData, config)
       .then(() => {
         navigate(`/member-details/${memberId}`);
       })
