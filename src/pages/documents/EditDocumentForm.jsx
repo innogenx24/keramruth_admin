@@ -60,17 +60,15 @@ const EditDocumentForm = () => {
   }, [document]);
 
   useEffect(() => {
-    setSelectAll(roles?.every((role) => receiver?.includes(role?.value)));
+    setSelectAll(roles.every((role) => receiver.includes(role.value)));
   }, [receiver]);
 
-  
-
   const handleReceiverChange = (event) => {
-    const { value, checked } = event?.target;
+    const { value, checked } = event.target;
   
     setReceiver((prev) => {
       if (value === "selectAll") {
-        return checked ? roles?.map((role) => role?.value) : [];
+        return checked ? roles.map((role) => role.value) : [];
       } else {
         const newReceiver = Array.isArray(prev) ? [...prev] : [];
         return checked
@@ -223,17 +221,17 @@ const EditDocumentForm = () => {
                 label="Select All"
               />
 
-              {roles?.map((role) => (
+              {roles.map((role) => (
                 <FormControlLabel
-                  key={role?.value}
+                  key={role.value}
                   control={
                     <Checkbox
-                      checked={receiver?.includes(role?.value)}
+                      checked={receiver.includes(role.value)}
                       onChange={handleReceiverChange}
-                      value={role?.value}
+                      value={role.value}
                     />
                   }
-                  label={role?.label}
+                  label={role.label}
                 />
               ))}
             </FormControl>
