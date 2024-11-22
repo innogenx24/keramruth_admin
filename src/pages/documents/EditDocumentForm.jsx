@@ -275,14 +275,14 @@ const EditDocumentForm = () => {
             )}
 
             {/* Status Toggle */}
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+            {/* <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
               <label style={{ marginRight: "8px" }}>Activate Status</label>
               <Switch
                 checked={activateStatus}
                 onChange={(e) => setActivateStatus(e.target.checked)}
                 color="primary"
               />
-            </Box>
+            </Box> */}
 
             {/* Submit Button */}
             <Button

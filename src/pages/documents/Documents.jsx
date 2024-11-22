@@ -134,7 +134,7 @@ const DocumentsTable = () => {
               <TableCell>Heading</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Applying On</TableCell>
-              <TableCell>Activate Status</TableCell>
+              {/* <TableCell>Activate Status</TableCell> */}
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -164,13 +164,13 @@ const DocumentsTable = () => {
         {document.description}
       </TableCell>
       <TableCell>{document.receiver}</TableCell>
-      <TableCell>
+      {/* <TableCell>
         <Switch
           checked={document.activateStatus}
           onChange={() => handleToggleSwitch(document)}
           color="success"
         />
-      </TableCell>
+      </TableCell> */}
       <TableCell>
         <IconButton onClick={() => handleEditClick(document)} color="primary">
           <Edit />
