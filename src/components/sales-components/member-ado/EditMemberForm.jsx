@@ -16,6 +16,7 @@ import axios from "axios";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
 import { useDispatch, useSelector } from "react-redux";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { Snackbar, Alert } from '@mui/material';
 
 const EditMemberForm = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,9 @@ const EditMemberForm = () => {
   const [image, setImage] = useState(null); // Store the selected image
   const [imageName, setImageName] = useState(""); // Store image file name for display
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  //
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [selectedRole, setSelectedRole] = useState(""); // Role dropdown value
   const [formData, setFormData] = useState({
@@ -45,7 +49,21 @@ const EditMemberForm = () => {
     street_name: "",
     building_no_name: "",
     username: "",
+  });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    mobile_number: "",
+    email: "",
+    role_id: "",
+    pincode: "",
+    country: "",
+    state: "",
+    district: "",
+    city: "",
+    username: "",
+    password: "",
+    club_id: "",
   });
 
   // Fetch all members on mount
@@ -105,9 +123,69 @@ const EditMemberForm = () => {
     if (name === "role_id") setSelectedRole(value);
   };
 
+  const validateForm = () => {
+    let validationErrors = {};
+    let isValid = true;
+
+    // Check required fields
+    if (!formData.full_name) {
+      validationErrors.name = "Full Name is required";
+      isValid = false;
+    }
+    if (!formData.mobile_number) {
+      validationErrors.mobile_number = "Mobile Number is required";
+      isValid = false;
+    }
+    if (!formData.email) {
+      validationErrors.email = "Email is required";
+      isValid = false;
+    }
+    if (!formData.role_id) {
+      validationErrors.role_id = "Role is required";
+      isValid = false;
+    }
+    if (!formData.pincode) {
+      validationErrors.pincode = "Pincode is required";
+      isValid = false;
+    }
+    if (!formData.country) {
+      validationErrors.country = "Country is required";
+      isValid = false;
+    }
+    if (!formData.state) {
+      validationErrors.state = "State is required";
+      isValid = false;
+    }
+    if (!formData.district) {
+      validationErrors.district = "District is required";
+      isValid = false;
+    }
+    if (!formData.city) {
+      validationErrors.city = "City is required";
+      isValid = false;
+    }
+    if (!formData.username) {
+      validationErrors.username = "Username is required";
+      isValid = false;
+    }
+    if (!formData.password) {
+      validationErrors.password = "Password is required";
+      isValid = false;
+    }
+    if (!formData.club_id) {
+      validationErrors.club_id = "Club is required";
+      isValid = false;
+    }
+
+    setErrors(validationErrors);
+    return isValid;
+  };
+
   // Save updated member data
 
   const handleSave = () => {
+    const isValid = validateForm();
+    if (!isValid) return;
     const token = localStorage.getItem("token");
   
     const config = {
@@ -132,7 +210,21 @@ const EditMemberForm = () => {
       })
       .catch((error) => {
         console.error("Error updating member data", error);
+
+        // Check if the error response contains a message and set the error message
+        if (error.response && error.response.data && error.response.data.error) {
+          setErrorMessage(error.response.data.error); // Extract the error message
+        } else {
+          setErrorMessage("An unknown error occurred.");
+        }
+  
+        // Open Snackbar to display the error message
+        setOpenSnackbar(true);
       });
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
   
 
@@ -229,6 +321,8 @@ const EditMemberForm = () => {
                   name="full_name"
                   value={formData.full_name}
                   onChange={handleChange}
+                  error={!!errors.name}
+                  helperText={errors.name}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -238,6 +332,8 @@ const EditMemberForm = () => {
                   label="User Name*"
                   value={formData.username}
                   onChange={handleChange}
+                  error={!!errors.username}
+                  helperText={errors.username}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -247,6 +343,8 @@ const EditMemberForm = () => {
                   name="mobile_number"
                   value={formData.mobile_number}
                   onChange={handleChange}
+                  error={!!errors.mobile_number}
+                  helperText={errors.mobile_number}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -256,6 +354,8 @@ const EditMemberForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  error={!!errors.email}
+                  helperText={errors.email}
                 />
               </Grid>
 
@@ -267,6 +367,8 @@ const EditMemberForm = () => {
                   type="password"
                   value={formData.password}
                   onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
                 />
               </Grid>
 
@@ -287,6 +389,8 @@ const EditMemberForm = () => {
                   label="Pincode*"
                   value={formData.pincode}
                   onChange={handleChange}
+                  error={!!errors.pincode}
+                  helperText={errors.pincode}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -296,6 +400,8 @@ const EditMemberForm = () => {
                   label="Country*"
                   value={formData.country}
                   onChange={handleChange}
+                  error={!!errors.country}
+                  helperText={errors.country}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -305,6 +411,8 @@ const EditMemberForm = () => {
                   label="State*"
                   value={formData.state}
                   onChange={handleChange}
+                  error={!!errors.state}
+                  helperText={errors.state}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -314,6 +422,8 @@ const EditMemberForm = () => {
                   label="District*"
                   value={formData.district}
                   onChange={handleChange}
+                  error={!!errors.district}
+                  helperText={errors.district}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -323,6 +433,8 @@ const EditMemberForm = () => {
                   label="City*"
                   value={formData.city}
                   onChange={handleChange}
+                  error={!!errors.city}
+                  helperText={errors.city}
 
                 />
               </Grid>
@@ -333,6 +445,8 @@ const EditMemberForm = () => {
                   label="Street Name"
                   value={formData.street_name}
                   onChange={handleChange}
+                  error={!!errors.street_name}
+                  helperText={errors.street_name}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -342,6 +456,8 @@ const EditMemberForm = () => {
                   label="Building No / Name"
                   value={formData.building_no_name}
                   onChange={handleChange}
+                  error={!!errors.building_no_name}
+                  helperText={errors.building_no_name}
                 />
               </Grid>
             </Grid>
@@ -385,6 +501,19 @@ const EditMemberForm = () => {
           </Button>
         </Grid>
       </Grid>
+      <Snackbar
+  open={openSnackbar}
+  autoHideDuration={6000}
+  onClose={handleCloseSnackbar}
+  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+  <Alert
+    onClose={handleCloseSnackbar}
+    severity="error"
+    sx={{ width: "100%", background:'red', color: 'white' }}
+  >
+    {errorMessage || "An error occurred while updating member data."}
+  </Alert>
+</Snackbar>
     </Box>
   );
 };

@@ -20,6 +20,16 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const fileInputRef = useRef(null);
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
+  const [errors, setErrors] = useState({
+    name: '',
+    productVolume: '',
+    price: '',
+    adoPrice: '',
+    mdPrice: '',
+    sdPrice: '',
+    stock_quantity: '',
+  });
+
   const initialProductDetails = {
     product_code: "",
     image: "",
@@ -106,8 +116,61 @@ const EditProductForm = ({ handleBackToProducts }) => {
     setSelectedCategory(event.target.value); 
   };
 
+  const validateForm = () => {
+    let formErrors = {};
+    
+    // Validate required fields
+    if (!productDetails.name) {
+      formErrors.name = 'Product name is required';
+    } else if (productDetails.name.length < 3) {
+      formErrors.name = 'Product name must be at least 3 characters';
+    } else if (productDetails.name.length > 30) {
+      formErrors.name = 'Product name must be less than 30 characters';
+    }
+    if (!productDetails.productVolume) {
+      formErrors.productVolume = 'Product volume is required';
+    } else if (isNaN(productDetails.productVolume) || productDetails.productVolume <= 0) {
+      formErrors.productVolume = 'Please enter a valid positive number for product volume';
+    }
+    if (!productDetails.price) {
+      formErrors.price = 'MRP price is required';
+    } else if (isNaN(productDetails.price) || productDetails.price <= 0) {
+      formErrors.price = 'Please enter a number';
+    }
+    if (!productDetails.adoPrice) {
+      formErrors.adoPrice = 'ADO price is required';
+    } else if (isNaN(productDetails.adoPrice) || productDetails.adoPrice <= 0) {
+      formErrors.adoPrice = 'Please enter a number';
+    }
+    if (!productDetails.mdPrice) {
+      formErrors.mdPrice = 'MD price is required';
+    } else if (isNaN(productDetails.mdPrice) || productDetails.mdPrice <= 0) {
+      formErrors.mdPrice = 'Please enter a number';
+    }
+    if (!productDetails.sdPrice) {
+      formErrors.sdPrice = 'SD price is required';
+    } else if (isNaN(productDetails.sdPrice) || productDetails.sdPrice <= 0) {
+      formErrors.sdPrice = 'Please enter a number';
+    }
+    if (!productDetails.stock_quantity) {
+      formErrors.stock_quantity = 'Stock quantity is required';
+    } else if (isNaN(productDetails.stock_quantity) || productDetails.stock_quantity <= 0) {
+      formErrors.stock_quantity = 'Please enter a number';
+    }
+  
+    // Set errors to state
+    setErrors(formErrors);
+  
+    // Return true if no errors
+    return Object.keys(formErrors).length === 0;
+  };
+  
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return; // Stop form submission if validation fails
+    }
   
     if (!productDetails.id) {
       console.error("Product ID is missing");
@@ -248,6 +311,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
               onChange={handleInputChange}
               placeholder="Enter Product Name"
               sx={{ marginBottom: "16px" }}
+              error={Boolean(errors.name)}
+              helperText={errors.name}   
             />
 
             <TextField
@@ -272,6 +337,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
               onChange={handleInputChange}
               placeholder="Enter Product Volume (200ml, 500ml, 1L)"
               sx={{ marginBottom: "16px" }}
+              error={Boolean(errors.productVolume)}
+              helperText={errors.productVolume} 
             />
              <InputLabel id="category-label">Category</InputLabel>
       <Select
@@ -320,6 +387,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
               onChange={handleInputChange}
               placeholder="Enter MRP Price"
               sx={{ marginBottom: "16px" }}
+              error={Boolean(errors.price)}
+              helperText={errors.price}   
             />
 
             <Typography variant="h6" gutterBottom>
@@ -335,6 +404,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
               placeholder="Enter ADO Price"
               sx={{ marginBottom: "16px" }}
               onChange={handleInputChange}
+              error={Boolean(errors.adoPrice)}
+              helperText={errors.adoPrice} 
             />
             <TextField
               fullWidth
@@ -345,6 +416,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
               placeholder="Enter MD Price"
               sx={{ marginBottom: "16px" }}
               onChange={handleInputChange}
+              error={Boolean(errors.mdPrice)}
+              helperText={errors.mdPrice} 
             />
             <TextField
               fullWidth
@@ -355,6 +428,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
               placeholder="Enter SD Price"
               sx={{ marginBottom: "16px" }}
               onChange={handleInputChange}
+              error={Boolean(errors.sdPrice)}
+              helperText={errors.sdPrice} 
             />
              <TextField
         fullWidth
@@ -365,6 +440,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
         placeholder="Enter Stock Quantity"
         sx={{ marginBottom: "16px" }}
         onChange={handleInputChange}
+        error={Boolean(errors.stock_quantity)}
+        helperText={errors.stock_quantity} 
       />
       <InputLabel>Quantity Type</InputLabel>
       <Select
