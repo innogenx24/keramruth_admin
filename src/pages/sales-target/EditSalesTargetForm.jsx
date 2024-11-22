@@ -57,17 +57,7 @@ export default function EditSalesTarget() {
       return;
     }
 
-    // const requestData = {
-    //   product_name: selectedProduct,
-    //   productData: targets.map((product) => ({
-    //     product_name: selectedProduct,
-    //     product_data: product.product_data.map((data) => ({
-    //       role: data.role,
-    //       target: data.target,
-    //       duration: data.duration,
-    //     })),
-    //   })),
-    // };
+    
 
     const requestData = {
       product_name: selectedProduct,
@@ -128,15 +118,23 @@ export default function EditSalesTarget() {
                         </Grid>
 
                         <Grid item xs={3}>
-                          <TextField
-                            label="Enter Target"
-                            fullWidth
-                            value={data.target || ""}
-                            onChange={(e) =>
-                              handleChange(productIndex, dataIndex, "target", e.target.value)
-                            }
-                          />
-                        </Grid>
+  <TextField
+    label="Enter Target"
+    fullWidth
+    value={data.target || ""}
+    error={isNaN(data.target)}
+    helperText={isNaN(data.target) ? "Only numeric values are allowed" : ""}
+    onChange={(e) => {
+      const value = e.target.value;
+      if (!isNaN(value) && Number(value) >= 0) {
+        handleChange(productIndex, dataIndex, "target", value);
+      } else {
+        handleChange(productIndex, dataIndex, "target", ""); // Clear invalid input
+      }
+    }}
+  />
+</Grid>
+
                         <Grid item xs={3}>
                           <Select
                             fullWidth
@@ -162,8 +160,8 @@ export default function EditSalesTarget() {
             </Card>
           </Grid>
           <Grid item xs={12}>
-            <Box display="flex" justifyContent="center" mt={3}>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>
+            <Box display="flex"  mt={3} >
+              <Button variant="contained" color="primary" onClick={handleSubmit} >
                 Update Sales Target
               </Button>
             </Box>
