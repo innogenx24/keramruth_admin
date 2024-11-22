@@ -20,29 +20,29 @@ const EditDocumentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const document = location.state?.document || {};
-  
+
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const roles = [
-    { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
-    { label: "Master Distributor (MD)", value: "Master Distributor" },
-    { label: "Super Distributor (SD)", value: "Super Distributor" },
+    { label: "Area Development Officer", value: "Area Development Officer" },
+    { label: "Master Distributor", value: "Master Distributor" },
+    { label: "Super Distributor", value: "Super Distributor" },
     { label: "Distributor", value: "Distributor" },
     { label: "Customer", value: "Customer" },
   ];
 
-  // State variables
   const [autoUpdate, setAutoUpdate] = useState(false);
   const [activateStatus, setActivateStatus] = useState(false);
   const [documentID, setDocumentID] = useState("");
   const [heading, setHeading] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
-  const [receiver, setReceiver] = useState([]); // receiver as an array of selected roles
+  const [receiver, setReceiver] = useState([]); // array of roles
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [image, setImage] = useState(null); // Keep as a file object
+  const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState("");
-  const [selectAll, setSelectAll] = useState(false); // state for 'Select All' checkbox
+  const [selectAll, setSelectAll] = useState(false);
+  const [imageError, setImageError] = useState(""); // State for image error message
 
   useEffect(() => {
     if (document) {
@@ -52,147 +52,150 @@ const EditDocumentForm = () => {
       setHeading(document.heading || "");
       setDescription(document.description || "");
       setLink(document.link || "");
-      setReceiver(document.receiver || []); // Ensure it's an array
+      setReceiver(document.receiver || []);
       setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
-      setImageName(document.image ? document.image.split("/").pop() : "");
-      setImage(null); // Reset image state when document is loaded
+      setImageName(document.image || "");
     }
   }, [document]);
 
   useEffect(() => {
-    // Sync 'Select All' checkbox with receiver list
-    setSelectAll(roles.length > 0 && roles.every(role => receiver.includes(role.value)));
+    setSelectAll(roles.every((role) => receiver.includes(role.value)));
   }, [receiver]);
-
-  // Handle image upload
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImage(file); // Store the file object
-      setImageName(file.name); // Set the image name
-    }
-  };
 
   const handleReceiverChange = (event) => {
     const { value, checked } = event.target;
   
-    if (value === "selectAll") {
-      // Toggle select/deselect all roles
-      setReceiver(checked ? roles.map(role => role.value) : []);
-    } else {
-      setReceiver((prevReceiver) => {
-        const currentReceiver = Array.isArray(prevReceiver) ? prevReceiver : []; // Ensure it's an array
-        if (checked) {
-          return [...currentReceiver, value]; // Add the role to receiver if checked
-        } else {
-          return currentReceiver.filter((role) => role !== value); // Remove role from receiver if unchecked
-        }
-      });
+    setReceiver((prev) => {
+      if (value === "selectAll") {
+        return checked ? roles.map((role) => role.value) : [];
+      } else {
+        const newReceiver = Array.isArray(prev) ? [...prev] : [];
+        return checked
+          ? [...newReceiver, value] 
+          : newReceiver.filter((role) => role !== value); 
+      }
+    });
+  };  
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const fileSizeMB = file.size / (1024 * 1024); // Convert file size to MB
+
+      // Check if file size exceeds 2MB
+      if (fileSizeMB > 2) {
+        setImageError("File size must be less than 2MB");
+        setImage(null); // Reset image if the file is too large
+        return; // Prevent further actions
+      } else {
+        setImageError(""); // Clear error if file size is valid
+      }
+
+      setImage(file);
+      setImageName(file.name);
     }
   };
-  
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedDocument = new FormData();
-    updatedDocument.append("documentID", documentID);
-    updatedDocument.append("heading", heading);
-    updatedDocument.append("description", description);
-    updatedDocument.append("link", link);
-    updatedDocument.append("receiver", JSON.stringify(receiver)); // Store receiver as a JSON string
-    updatedDocument.append("autoUpdate", autoUpdate);
-    updatedDocument.append("activateStatus", activateStatus);
-    updatedDocument.append("fromDate", fromDate);
-    updatedDocument.append("toDate", toDate);
-
+  
+    const formData = new FormData();
+    formData.append("documentID", documentID);
+    formData.append("heading", heading);
+    formData.append("description", description);
+    formData.append("link", link);
+  
+    // Send the receiver array as a JSON string
+    formData.append("receiver", JSON.stringify(receiver));
+  
+    formData.append("autoUpdate", autoUpdate);
+    formData.append("activateStatus", activateStatus);
+    formData.append("fromDate", fromDate);
+    formData.append("toDate", toDate);
+  
     if (image) {
-      updatedDocument.append("image", image);
+      formData.append("image", image);
     }
-
+  
     try {
-      const response = await fetch(`http://88.222.245.236:3002/documents/${document.id}`, {
-        method: "PUT",
-        body: updatedDocument,
-      });
-
+      const response = await fetch(
+        `http://88.222.245.236:3002/documents/${document.id}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
+  
       if (!response.ok) {
         throw new Error("Failed to update document");
       }
-
+  
       const result = await response.json();
-      console.log("Document updated successfully:", result);
+      console.log("Document updated:", result);
       navigate("/dashboard/documents");
     } catch (error) {
       console.error("Error updating document:", error);
     }
   };
-
   return (
     <Box p={3} component="form" onSubmit={handleSubmit}>
-      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-        Document / Edit Document
+      <Typography variant="h6" sx={{ marginBottom: "20px" }}>
+        Edit Document
       </Typography>
       <Grid container spacing={3}>
-        {/* Left Side: Document Details */}
+        {/* Left Side: Image and Basic Info */}
         <Grid item xs={12} md={6}>
-          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Edit Images</InputLabel>
-            <IconButton color="primary" component="label">
-              <AddPhotoAlternateIcon />
-              <input
-                type="file"
-                hidden
-                onChange={handleImageUpload}
-              />
-            </IconButton>
-            {imageName && <Typography variant="body2">{imageName}</Typography>}
+          <Box p={2} sx={{ backgroundColor: "#f5f5f5", borderRadius: 2 }}>
+          <InputLabel>Edit Images</InputLabel>
+      <IconButton color="primary" component="label">
+        <AddPhotoAlternateIcon />
+        <input type="file" hidden onChange={handleImageUpload} />
+      </IconButton>
+      {imageName && <Typography variant="body2">{imageName}</Typography>}
 
-            <Box sx={{ marginTop: "16px" }}>
-              {image ? (
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt="Uploaded Preview"
-                  style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
-                />
-              ) : (
-                document.image && (
-                  <img
-                    src={`${imageBaseURL}${document.image}`}
-                    alt="Existing Document Image"
-                    style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
-                  />
-                )
-              )}
-            </Box>
+      {imageError && (
+        <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+          {imageError}
+        </Typography>
+      )}
 
+      <Box sx={{ marginTop: "16px" }}>
+        {image ? (
+          <img
+            src={URL.createObjectURL(image)}
+            alt="Uploaded Preview"
+            style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
+          />
+        ) : (
+          document.image && (
+            <img
+              src={`${imageBaseURL}${document.image}`}
+              alt="Existing Document Image"
+              style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
+            />
+          )
+        )}
+      </Box>
             <TextField
               fullWidth
-              label="Document Heading*"
+              label="Heading"
               value={heading}
               onChange={(e) => setHeading(e.target.value)}
-              placeholder="Enter Document Heading"
-              required
               margin="normal"
             />
-
             <TextareaAutosize
               minRows={3}
-              placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description"
               style={{ width: "100%", margin: "16px 0" }}
-              required
             />
-
             <TextField
               fullWidth
               label="Link"
               value={link}
               onChange={(e) => setLink(e.target.value)}
-              placeholder="Enter Link"
               margin="normal"
             />
           </Box>
@@ -272,14 +275,14 @@ const EditDocumentForm = () => {
             )}
 
             {/* Status Toggle */}
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+            {/* <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
               <label style={{ marginRight: "8px" }}>Activate Status</label>
               <Switch
                 checked={activateStatus}
                 onChange={(e) => setActivateStatus(e.target.checked)}
                 color="primary"
               />
-            </Box>
+            </Box> */}
 
             {/* Submit Button */}
             <Button

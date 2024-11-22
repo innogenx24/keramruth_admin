@@ -23,7 +23,23 @@ export default function EditSalesTarget() {
   );
   const [targets, setTargets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({}); // To store error messages
+// Handle validation for numeric input
+const handleTargetChange = (productIndex, dataIndex, value) => {
+  if (!/^\d*$/.test(value)) {
+    setErrors((prev) => ({
+      ...prev,
+      [`targetError_${productIndex}_${dataIndex}`]: "Numbers only allowed.",
+    }));
+  } else {
+    setErrors((prev) => ({
+      ...prev,
+      [`targetError_${productIndex}_${dataIndex}`]: "",
+    }));
+  }
 
+  handleChange(productIndex, dataIndex, "target", value);
+};
   // Fetch sales target data based on the selected product
   useEffect(() => {
     if (!selectedProduct) return;
@@ -57,17 +73,7 @@ export default function EditSalesTarget() {
       return;
     }
 
-    // const requestData = {
-    //   product_name: selectedProduct,
-    //   productData: targets.map((product) => ({
-    //     product_name: selectedProduct,
-    //     product_data: product.product_data.map((data) => ({
-    //       role: data.role,
-    //       target: data.target,
-    //       duration: data.duration,
-    //     })),
-    //   })),
-    // };
+    
 
     const requestData = {
       product_name: selectedProduct,
@@ -128,14 +134,14 @@ export default function EditSalesTarget() {
                         </Grid>
 
                         <Grid item xs={3}>
-                          <TextField
-                            label="Enter Target"
-                            fullWidth
-                            value={data.target || ""}
-                            onChange={(e) =>
-                              handleChange(productIndex, dataIndex, "target", e.target.value)
-                            }
-                          />
+                        <TextField
+                label="Enter Target"
+                fullWidth
+                value={data.target || ""}
+                onChange={(e) => handleTargetChange(productIndex, dataIndex, e.target.value)}
+                error={!!errors[`targetError_${productIndex}_${dataIndex}`]}
+                helperText={errors[`targetError_${productIndex}_${dataIndex}`]}
+              />
                         </Grid>
                         <Grid item xs={3}>
                           <Select

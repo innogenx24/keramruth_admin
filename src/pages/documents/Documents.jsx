@@ -33,13 +33,12 @@ const DocumentsTable = () => {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
       if (!token) throw new Error("Token not found");
   
-      const response = await axios.get("http://88.222.245.236:3002/documents", {
+      const response = await axios.get("http://88.222.245.236:3002/documents/admin", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
   
-      console.log(response.data.data); // Log the fetched data
       setDocuments(response.data.data);
     } catch (error) {
       console.error("Error fetching documents:", error);
@@ -135,48 +134,55 @@ const DocumentsTable = () => {
               <TableCell>Heading</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Applying On</TableCell>
-              <TableCell>Activate Status</TableCell>
+              {/* <TableCell>Activate Status</TableCell> */}
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {documents.map((document, index) => (
-              <TableRow key={document.id} hover>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell style={{ display: "flex", alignItems: "center" }}>
-                  {document.image ? (
-                    <img
-                      src={`${imageBaseURL}${document.image}`}
-                      alt={document.heading}
-                      style={{ width: 50, height: 50, marginRight: 10, borderRadius: 4 }}
-                    />
-                  ) : (
-                    <span>No Image Available</span>
-                  )}
-                </TableCell>
-                <TableCell>{document.heading}</TableCell>
-                <TableCell style={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {document.description}
-                </TableCell>
-                <TableCell>{document.receiver}</TableCell>
-                <TableCell>
-                  <Switch
-                    checked={document.activateStatus}
-                    onChange={() => handleToggleSwitch(document)}
-                    color="success"
-                  />
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleEditClick(document)} color="primary">
-                    <Edit />
-                  </IconButton>
-                  <IconButton onClick={() => handleDeleteOpen(document)} color="secondary">
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+  {documents.map((document, index) => (
+    <TableRow key={document.id}>
+      <TableCell>{index + 1}</TableCell>
+      <TableCell style={{ width: 100, textAlign: "center" }}>
+        {document.image ? (
+          <img
+            src={`${imageBaseURL}${document.image}`}
+            alt={document.heading}
+            style={{
+              width: "80px",
+              height: "80px",
+              objectFit: "cover",
+              borderRadius: "5px",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+            }}
+          />
+        ) : (
+          <span style={{ color: "#999" }}>No Image Available</span>
+        )}
+      </TableCell>
+      <TableCell>{document.heading}</TableCell>
+      <TableCell style={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {document.description}
+      </TableCell>
+      <TableCell>{document.receiver}</TableCell>
+      {/* <TableCell>
+        <Switch
+          checked={document.activateStatus}
+          onChange={() => handleToggleSwitch(document)}
+          color="success"
+        />
+      </TableCell> */}
+      <TableCell>
+        <IconButton onClick={() => handleEditClick(document)} color="primary">
+          <Edit />
+        </IconButton>
+        <IconButton onClick={() => handleDeleteOpen(document)} color="secondary">
+          <Delete />
+        </IconButton>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
         </Table>
       </TableContainer>
 

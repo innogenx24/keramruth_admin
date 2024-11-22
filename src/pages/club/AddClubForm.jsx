@@ -8,6 +8,7 @@ const AddClubForm = () => {
   const [litreQuantity, setLitreQuantity] = useState("");
   const [loading, setLoading] = useState(false); // State for loading
   const [error, setError] = useState(""); // State for error messages
+  const [inputError, setInputError] = useState(""); // Error state for input validation
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +54,16 @@ const AddClubForm = () => {
       setLoading(false); // Stop loading
     }
   };
-
+// Handle input for litre quantity with validation
+const handleLitreQuantityChange = (e) => {
+  const value = e.target.value;
+  if (/^\d+$/.test(value) || value === "") {
+    setLitreQuantity(value);
+    setInputError(""); // Clear error if input is valid
+  } else {
+    setInputError("Numbers only allowed");
+  }
+};
   return (
     <Box p={3} component="form" onSubmit={handleSubmit}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -74,16 +84,18 @@ const AddClubForm = () => {
               required
             />
 
-            <TextField
-              fullWidth
-              label="Litre Quantity"
-              value={litreQuantity}
-              onChange={(e) => setLitreQuantity(e.target.value)}
-              placeholder="Enter Litre Quantity"
-              required
-              margin="normal"
-              type="number" // Set type to number for litre quantity
-            />
+<TextField
+          fullWidth
+          label="Litre Quantity"
+          value={litreQuantity}
+          onChange={handleLitreQuantityChange} // Call the validation function
+          placeholder="Enter Litre Quantity"
+          required
+          margin="normal"
+          type="text" // Keep type as text for manual validation
+          error={!!inputError} // Show error if input is invalid
+          helperText={inputError} // Display error message
+        />
 
             {/* Error Message */}
             {error && <Typography color="error">{error}</Typography>}
