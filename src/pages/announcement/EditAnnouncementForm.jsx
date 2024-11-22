@@ -35,6 +35,7 @@ const EditAnnouncementForm = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [selectAll, setSelectAll] = useState(false);
+  const [imageError, setImageError] = useState(""); // Added image error state
 
   const roles = [
     { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
@@ -81,14 +82,27 @@ const EditAnnouncementForm = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
-      setImageFileName(file.name);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
-      setExistingImage("");
+      const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB size limit
+      const fileSizeMB = file.size / (1024 * 1024); // Convert size to MB
+
+      // Validate file size
+      if (fileSizeMB > 2) {
+        setImageError("File size must be less than 2MB");
+        setImageFile(null); // Clear selected file
+        setImageFileName("");
+        setPreviewUrl("");
+        setExistingImage(""); // Clear existing image if error occurs
+      } else {
+        setImageError(""); // Clear error if file is valid
+        setImageFile(file);
+        setImageFileName(file.name);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+        setExistingImage(""); // Clear existing image if new file is selected
+      }
     }
   };
 
@@ -139,6 +153,7 @@ const EditAnnouncementForm = () => {
     }
   };
 
+
   return (
     <Box p={3} component="form" onSubmit={handleSubmit} encType="multipart/form-data">
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -147,7 +162,7 @@ const EditAnnouncementForm = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Edit Images</InputLabel>
+          <InputLabel>Edit Images</InputLabel>
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
               <input type="file" hidden accept="image/*" onChange={handleImageChange} />
@@ -166,6 +181,11 @@ const EditAnnouncementForm = () => {
               <Box sx={{ marginTop: "10px" }}>
                 <img src={existingImage} alt="Existing Image" style={{ maxWidth: "100%", height: "auto" }} />
               </Box>
+            )}
+            {imageError && (
+              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+                {imageError}
+              </Typography>
             )}
             <TextField
               fullWidth

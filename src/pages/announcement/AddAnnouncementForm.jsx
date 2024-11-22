@@ -31,6 +31,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [selectAll, setSelectAll] = useState(false);
+  const [imageError, setImageError] = useState("");
 
   const roles = [
     { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
@@ -62,17 +63,32 @@ const AddAnnouncementDetails = ({ onClose }) => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+    
     if (file) {
-      setImageFile(file);
-      setImageFileName(file.name);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
+  
+      // Check if file size exceeds 2MB
+      if (fileSizeMB > 2) {
+        setImageError("File size must be less than 2MB");
+        setImageFile(null); // Clear any previously selected file
+        setImageFileName("");
+        setPreviewUrl("");
+      } else {
+        setImageError(""); // Clear error if file is valid
+        setImageFile(file);
+        setImageFileName(file.name);
+  
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
+  
+  
 
   const validateLink = (value) => {
     const urlPattern = new RegExp(
@@ -147,22 +163,26 @@ const AddAnnouncementDetails = ({ onClose }) => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Add Images</InputLabel>
-            <IconButton color="primary" component="label">
-              <AddPhotoAlternateIcon />
-              <input type="file" hidden accept="image/*" onChange={handleImageChange} />
-            </IconButton>
-            {imageFileName && (
-              <Typography variant="body2" sx={{ marginTop: "10px" }}>
-                Selected file: {imageFileName}
-              </Typography>
-            )}
-            {previewUrl && (
-              <Box sx={{ marginTop: "10px" }}>
-                <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
-              </Box>
-            )}
-
+          <InputLabel>Add Images</InputLabel>
+  <IconButton color="primary" component="label">
+    <AddPhotoAlternateIcon />
+    <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+  </IconButton>
+  {imageFileName && (
+    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+      Selected file: {imageFileName}
+    </Typography>
+  )}
+  {previewUrl && (
+    <Box sx={{ marginTop: "10px" }}>
+      <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
+    </Box>
+  )}
+  {imageError && (
+    <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+      {imageError}
+    </Typography>
+  )}
             <TextField
               fullWidth
               label="Announcement Heading*"

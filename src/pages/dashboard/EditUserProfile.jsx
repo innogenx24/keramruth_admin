@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import {
   Grid,
   TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
   Button,
   Avatar,
   Typography,
-  Checkbox,
-  FormControlLabel,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { makeEditUser } from "../../redux/slices/user-profile-slice/UserEditSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const EditUserProfile = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const navigate = useNavigate(); // Initialize navigate
 
   const [selectedImage, setSelectedImage] = useState("/static/images/avatar/1.jpg");
   const [imageFile, setImageFile] = useState(null);
@@ -33,7 +33,7 @@ const EditUserProfile = () => {
         setImageError("Image size must be 2MB or less");
         return; // Stop further execution if file size exceeds limit
       }
-  
+
       const imageUrl = URL.createObjectURL(file); // Preview the image
       setSelectedImage(imageUrl);  // Set the selected image for preview
       setImageFile(file);  // Store the file for submission
@@ -54,6 +54,13 @@ const EditUserProfile = () => {
     country: "",
     image: "", 
   });
+
+  const [errors, setErrors] = useState({
+    full_name: "",
+    mobile_number: "",
+    pincode: "",
+  });
+
   useEffect(() => {
     if (users) {
       setUser({
@@ -70,16 +77,38 @@ const EditUserProfile = () => {
         image: users.image || "",  // Load the image path
       });
   
-      // Only update selectedImage if no new image file has been selected
       if (!imageFile && users.image) {
         setSelectedImage(users.image.includes("http") ? users.image : `${imageBaseURL}${users.image}`);
       }
     }
   }, [users, imageFile]);
-  
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let errorMessage = "";
+
+    if (name === "mobile_number") {
+      if (!/^\d{10}$/.test(value)) {
+        errorMessage = "Mobile number must be 10 digits";
+      }
+    }
+  
+    if (name === "pincode") {
+      if (!/^\d{6}$/.test(value)) {
+        errorMessage = "Pincode must be 6 digits";
+      }
+    }
+  
+    if (name === "full_name" && !/^[a-zA-Z\s]*$/.test(value)) {
+      errorMessage = "Full name should only contain letters and spaces";
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: errorMessage,
+    }));
+
+    // Update the user state with the new value
     setUser((prevDetails) => ({
       ...prevDetails,
       [name]: value,
@@ -88,7 +117,7 @@ const EditUserProfile = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-  
+
     const formData = new FormData();
     formData.append("full_name", user.full_name);
     formData.append("mobile_number", user.mobile_number);
@@ -100,19 +129,17 @@ const EditUserProfile = () => {
     formData.append("country", user.country);
     formData.append("building_no_name", user.building_no_name);
     formData.append("username", user.username);
-  
-    // Append the new image only if a new image file is selected
+
     if (imageFile) {
       formData.append("image", imageFile); // Append new image
     } else {
       formData.append("image", user.image); // Append the old image (if no new image is selected)
     }
-  
-    // Dispatch the form data for updating
+
     dispatch(makeEditUser(formData));
+    navigate("/dashboard/profile");
+
   };
-  
-  
 
   return (
     <Box sx={{ padding: "20px", backgroundColor: "#f5f5f5" }} component="form" onSubmit={handleFormSubmit}>
@@ -123,7 +150,7 @@ const EditUserProfile = () => {
             <Typography variant="h6" gutterBottom>
               User Details: Profile
             </Typography>
-            <Box display="flex" alignItems="center" marginBottom="20px">
+            <Box display="flex" flexDirection="column">
               {/* Display Avatar */}
               <Avatar
                 alt="User Profile"
@@ -131,7 +158,6 @@ const EditUserProfile = () => {
                 onClick={() => document.getElementById("imageUpload").click()}
                 sx={{ width: 56, height: 56 }}
               />
-
               <input
                 id="imageUpload"
                 type="file"
@@ -139,11 +165,11 @@ const EditUserProfile = () => {
                 style={{ display: "none" }}
                 onChange={handleImageChange}
               />
-               {imageError && (
-    <Typography variant="body2" color="error" mt={1}>
-      {imageError}
-    </Typography>
-  )}
+              {imageError && (
+                <Typography variant="body2" color="error" mt={1}>
+                  {imageError}
+                </Typography>
+              )}
             </Box>
 
             <TextField
@@ -156,6 +182,11 @@ const EditUserProfile = () => {
               required
               margin="normal"
             />
+            {errors.full_name && (
+              <Typography variant="body2" color="error" mt={1}>
+                {errors.full_name}
+              </Typography>
+            )}
 
             <TextField
               fullWidth
@@ -167,6 +198,11 @@ const EditUserProfile = () => {
               required
               margin="normal"
             />
+            {errors.mobile_number && (
+              <Typography variant="body2" color="error" mt={1}>
+                {errors.mobile_number}
+              </Typography>
+            )}
 
             <TextField
               fullWidth
@@ -175,16 +211,6 @@ const EditUserProfile = () => {
               name="email"
               value={user.email}
               onChange={handleInputChange}
-              required
-              margin="normal"
-            />
-
-            <TextField
-              fullWidth
-              label="Password"
-              type="password"
-              variant="outlined"
-              defaultValue="Password12"
               required
               margin="normal"
             />
@@ -203,6 +229,11 @@ const EditUserProfile = () => {
               onChange={handleInputChange}
               margin="normal"
             />
+            {errors.pincode && (
+              <Typography variant="body2" color="error" mt={1}>
+                {errors.pincode}
+              </Typography>
+            )}
 
             <Grid container spacing={2}>
               <Grid item xs={6}>
@@ -215,8 +246,6 @@ const EditUserProfile = () => {
                     label="Country"
                   >
                     <MenuItem value="India">India</MenuItem>
-                    <MenuItem value="USA">USA</MenuItem>
-                    <MenuItem value="Canada">Canada</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -247,8 +276,10 @@ const EditUserProfile = () => {
                   name="city"
                   value={user.city}
                   onChange={handleInputChange}
+                  margin="normal"
                 />
               </Grid>
+
               <Grid item xs={6}>
                 <TextField
                   fullWidth
@@ -257,75 +288,18 @@ const EditUserProfile = () => {
                   name="street_name"
                   value={user.street_name}
                   onChange={handleInputChange}
+                  margin="normal"
                 />
               </Grid>
             </Grid>
 
-            <TextField
-              fullWidth
-              label="Building No / Name"
-              variant="outlined"
-              name="building_no_name"
-              value={user.building_no_name}
-              onChange={handleInputChange}
-              margin="normal"
-            />
-          </Box>
-          <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              sx={{ marginTop: "20px" }}
-            >
-              Save Changes
-            </Button>
-        </Grid>
-
-        {/* <Grid item xs={12} md={6}>
-          <Box sx={{ padding: "20px", backgroundColor: "#fff", borderRadius: "10px" }}>
-            <Typography variant="h6" gutterBottom>
-              Access
-            </Typography>
-
-           
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                {[
-                  "Add & Edit Users",
-                  "Add & Edit Products",
-                  "Add & Edit Announcement",
-                  "Add & Edit Sales Target",
-                  "Add & Edit Minimum Stock",
-                  "Add & Edit Roles",
-                  "Add & Edit Branches",
-                ].map((item) => (
-                  <FormControlLabel
-                    key={item}
-                    control={<Checkbox />}
-                    label={item}
-                  />
-                ))}
-              </Grid>
-
-              <Grid item xs={6}>
-                {[
-                  "Delete Users",
-                  "Delete Products",
-                  "Delete Announcement",
-                  "Delete Sales Target",
-                  "Delete Minimum Stock",
-                ].map((item) => (
-                  <FormControlLabel
-                    key={item}
-                    control={<Checkbox />}
-                    label={item}
-                  />
-                ))}
-              </Grid>
+            <Grid item xs={12}>
+              <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: "20px" }}>
+                Save Changes
+              </Button>
             </Grid>
-            
           </Box>
-        </Grid> */}
+        </Grid>
       </Grid>
     </Box>
   );

@@ -18,6 +18,7 @@ const DocumentForm = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const roles = ["Area Development Officer", "Master Distributor", "Super Distributor", "Distributor", "Customers"];
+  const [imageError, setImageError] = useState("");  // Add state for image error
 
   const generateDocumentID = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -59,7 +60,7 @@ const DocumentForm = () => {
         formData.append("imageName", selectedFile.name);
       }
 
-      fetch("http://88.222.245.236:3002/documents/create", {
+      fetch("http://localhost:3002/documents/create", {
         method: "POST",
         body: formData,
       })
@@ -77,9 +78,20 @@ const DocumentForm = () => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
+  
+      // Check if file size exceeds 2MB
+      if (fileSizeMB > 2) {
+        setImageError("File size must be less than 2MB");
+        return; // Prevent further actions if size is too large
+      } else {
+        setImageError(""); // Clear error if file is valid
+      }
+  
       formik.setFieldValue("image", file.name);
       setSelectedFile(file);
       setImageName(file.name);
+  
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -116,26 +128,32 @@ const DocumentForm = () => {
               </Typography>
 
               <InputLabel>Add Image</InputLabel>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
-                  <AddPhotoAlternateIcon />
-                </IconButton>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  ref={fileInputRef}
-                  style={{ display: "none" }}
-                />
-              </Box>
-              {imageName && <Typography variant="body2" sx={{ marginTop: 1 }}>{imageName}</Typography>}
-              {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Selected"
-                  style={{ marginTop: "10px", maxWidth: "100%", height: "auto", borderRadius: "8px" }}
-                />
-              )}
+<Box sx={{ display: "flex", alignItems: "center" }}>
+  <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
+    <AddPhotoAlternateIcon />
+  </IconButton>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    ref={fileInputRef}
+    style={{ display: "none" }}
+  />
+</Box>
+{imageName && <Typography variant="body2" sx={{ marginTop: 1 }}>{imageName}</Typography>}
+{imagePreview && (
+  <img
+    src={imagePreview}
+    alt="Selected"
+    style={{ marginTop: "10px", maxWidth: "100%", height: "auto", borderRadius: "8px" }}
+  />
+)}
+{imageError && (
+  <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+    {imageError}
+  </Typography>
+)}
+
 
               <TextField
                 fullWidth
