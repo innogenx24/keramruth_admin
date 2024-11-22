@@ -26,14 +26,14 @@ const DocumentsTable = () => {
   const [documentToDelete, setDocumentToDelete] = useState(null);
   const navigate = useNavigate();
   
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
       if (!token) throw new Error("Token not found");
   
-      const response = await axios.get("http://localhost:3002/documents/admin", {
+      const response = await axios.get("http://88.222.245.236:3002/documents/admin", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

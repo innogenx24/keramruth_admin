@@ -21,7 +21,7 @@ const EditDocumentForm = () => {
   const navigate = useNavigate();
   const document = location.state?.document || {};
 
-  const imageBaseURL = "http://localhost:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const roles = [
     { label: "Area Development Officer", value: "Area Development Officer" },
     { label: "Master Distributor", value: "Master Distributor" },
@@ -120,7 +120,7 @@ const EditDocumentForm = () => {
   
     try {
       const response = await fetch(
-        `http://localhost:3002/documents/${document.id}`,
+        `http://88.222.245.236:3002/documents/${document.id}`,
         {
           method: "PUT",
           body: formData,
