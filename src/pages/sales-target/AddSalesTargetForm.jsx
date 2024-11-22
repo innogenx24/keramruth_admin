@@ -11,6 +11,7 @@ import {
   FormControl,
   InputLabel,
   Box,
+  FormHelperText, // Added for error message display
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "./sales.css";
@@ -27,6 +28,7 @@ export default function AddSalesTargetForm() {
   const [rolesData, setRolesData] = useState([]); // Array for storing target data
   const [products, setProducts] = useState([]);
   const [selectedProductCode, setSelectedProductCode] = useState(""); // Store product code
+  const [errors, setErrors] = useState({}); // For tracking validation errors
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,18 +63,34 @@ export default function AddSalesTargetForm() {
 
     fetchProducts();
   }, []);
+
   // Handle form field changes
   const handleChange = (roleId, field, value) => {
-    setRolesData((prevRolesData) =>
-      prevRolesData.map((roleData) =>
-        roleData.roleId === roleId
-          ? {
-              ...roleData,
-              [field]: value,
-            }
-          : roleData
-      )
-    );
+    // Validate that only numeric input is allowed for 'target'
+    if (field === "target" && !/^\d*$/.test(value)) {
+      // If it's not a number, show an error
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [roleId]: "Numbers only allowed.",
+      }));
+    } else {
+      // Otherwise, update the state with the value
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [roleId]: "", // Clear error message when valid input is given
+      }));
+
+      setRolesData((prevRolesData) =>
+        prevRolesData.map((roleData) =>
+          roleData.roleId === roleId
+            ? {
+                ...roleData,
+                [field]: value,
+              }
+            : roleData
+        )
+      );
+    }
   };
 
   const handleProductChange = (product) => {
@@ -131,7 +149,6 @@ export default function AddSalesTargetForm() {
       console.error("Network error:", error);
     }
   };
-
   return (
     <div style={{ padding: "20px" }}>
       <Typography variant="h4" gutterBottom>
@@ -175,14 +192,16 @@ export default function AddSalesTargetForm() {
                       <Typography>{roleData.roleName}</Typography>
                     </Grid>
                     <Grid item xs={3}>
-                      <TextField
-                        label="Enter Target"
-                        fullWidth
-                        value={roleData.target}
-                        onChange={(e) =>
-                          handleChange(roleData.roleId, "target", e.target.value)
-                        }
-                      />
+                    <TextField
+                  label="Enter Target"
+                  fullWidth
+                  value={roleData.target}
+                  onChange={(e) =>
+                    handleChange(roleData.roleId, "target", e.target.value)
+                  }
+                  error={!!errors[roleData.roleId]}
+                  helperText={errors[roleData.roleId] || ""}
+                />
                     </Grid>
                     <Grid item xs={3}>
                       <Select

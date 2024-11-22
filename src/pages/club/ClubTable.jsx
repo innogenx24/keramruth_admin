@@ -145,7 +145,7 @@ const ClubTable = () => {
           </div>
         </TableCell>
         <TableCell>
-          <Typography>{parseInt(club.litre_quantity, 10)}L</Typography> {/* Convert to integer and append 'L' */}
+          <Typography>{parseInt(club.litre_quantity, 10)}</Typography> {/* Convert to integer and append 'L' */}
         </TableCell>
         <TableCell>
           <IconButton color="secondary" onClick={() => handleEditClick(club)}>

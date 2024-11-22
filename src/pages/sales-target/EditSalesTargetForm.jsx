@@ -23,7 +23,23 @@ export default function EditSalesTarget() {
   );
   const [targets, setTargets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({}); // To store error messages
+// Handle validation for numeric input
+const handleTargetChange = (productIndex, dataIndex, value) => {
+  if (!/^\d*$/.test(value)) {
+    setErrors((prev) => ({
+      ...prev,
+      [`targetError_${productIndex}_${dataIndex}`]: "Numbers only allowed.",
+    }));
+  } else {
+    setErrors((prev) => ({
+      ...prev,
+      [`targetError_${productIndex}_${dataIndex}`]: "",
+    }));
+  }
 
+  handleChange(productIndex, dataIndex, "target", value);
+};
   // Fetch sales target data based on the selected product
   useEffect(() => {
     if (!selectedProduct) return;
@@ -118,23 +134,15 @@ export default function EditSalesTarget() {
                         </Grid>
 
                         <Grid item xs={3}>
-  <TextField
-    label="Enter Target"
-    fullWidth
-    value={data.target || ""}
-    error={isNaN(data.target)}
-    helperText={isNaN(data.target) ? "Only numeric values are allowed" : ""}
-    onChange={(e) => {
-      const value = e.target.value;
-      if (!isNaN(value) && Number(value) >= 0) {
-        handleChange(productIndex, dataIndex, "target", value);
-      } else {
-        handleChange(productIndex, dataIndex, "target", ""); // Clear invalid input
-      }
-    }}
-  />
-</Grid>
-
+                        <TextField
+                label="Enter Target"
+                fullWidth
+                value={data.target || ""}
+                onChange={(e) => handleTargetChange(productIndex, dataIndex, e.target.value)}
+                error={!!errors[`targetError_${productIndex}_${dataIndex}`]}
+                helperText={errors[`targetError_${productIndex}_${dataIndex}`]}
+              />
+                        </Grid>
                         <Grid item xs={3}>
                           <Select
                             fullWidth
@@ -160,8 +168,8 @@ export default function EditSalesTarget() {
             </Card>
           </Grid>
           <Grid item xs={12}>
-            <Box display="flex"  mt={3} >
-              <Button variant="contained" color="primary" onClick={handleSubmit} >
+            <Box display="flex" justifyContent="center" mt={3}>
+              <Button variant="contained" color="primary" onClick={handleSubmit}>
                 Update Sales Target
               </Button>
             </Box>

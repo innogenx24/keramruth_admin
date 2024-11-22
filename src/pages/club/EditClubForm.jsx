@@ -13,6 +13,7 @@ const EditClubForm = ({ onCancel }) => {
   );
   const [loading, setLoading] = useState(false); // Loading state for the button
   const [error, setError] = useState(""); // Error state for API response
+  const [inputError, setInputError] = useState(""); // Error state for invalid input
 
   // Function to handle form submission (update logic)
   const handleFormSubmit = async (event) => {
@@ -55,6 +56,16 @@ const EditClubForm = ({ onCancel }) => {
       setLoading(false); // Stop loading
     }
   };
+// Handle input for litre quantity
+const handleLitreQuantityChange = (e) => {
+  const value = e.target.value;
+  if (/^\d+$/.test(value) || value === "") {
+    setLitreQuantity(value);
+    setInputError(""); // Clear error if input is valid
+  } else {
+    setInputError("Numbers only allowed");
+  }
+};
 
   return (
     <Box sx={{ padding: 2, maxWidth: 500 }}>
@@ -69,13 +80,15 @@ const EditClubForm = ({ onCancel }) => {
           fullWidth
           margin="normal"
         />
-        <TextField
+         <TextField
           label="Litre Quantity"
           value={litreQuantity}
-          onChange={(e) => setLitreQuantity(parseInt(e.target.value, 10) || "")} // Convert input to integer
+          onChange={handleLitreQuantityChange} // Call the validation function
           fullWidth
           margin="normal"
-          type="number" // Set type to number for litre quantity
+          type="text" // Set to text to allow for input checking
+          error={!!inputError} // Show error if input is invalid
+          helperText={inputError} // Display error message
         />
 
         {/* Error Message */}
