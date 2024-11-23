@@ -44,7 +44,7 @@ const SignIn = () => {
   // Handle authentication redirect
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard/sales');
+      navigate('/dashboard/products');
     }
   }, [isAuthenticated, navigate]);
 
