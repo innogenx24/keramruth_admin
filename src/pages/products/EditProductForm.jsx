@@ -28,6 +28,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
     mdPrice: '',
     sdPrice: '',
     stock_quantity: '',
+    quantity_type:'',
   });
 
   const initialProductDetails = {
@@ -82,7 +83,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
   useEffect(() => {
     if (state?.product) {
       setProductDetails(state.product);
-      const stockValue = state?.product?.status === 1 ? true : false;
+      const stockValue = state?.product?.status === true ? true : false;
+      
       setStockStatus(stockValue);
       setAutoUpdate(state.product.autoUpdate);
       setSelectedCategory(state.product.category_name); 
@@ -157,6 +159,9 @@ const EditProductForm = ({ handleBackToProducts }) => {
     } else if (isNaN(productDetails.stock_quantity) || productDetails.stock_quantity <= 0) {
       formErrors.stock_quantity = 'Please enter a number';
     }
+      if (!productDetails.quantity_type) {
+        formErrors.quantity_type = 'quantity_type is required';
+      }
   
     // Set errors to state
     setErrors(formErrors);
@@ -450,6 +455,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
         value={productDetails.quantity_type} // Bind to the state
         onChange={handleInputChange} // Handle the change
         sx={{ marginBottom: "16px" }}
+        error={Boolean(errors.quantity_type)}
+        helperText={errors.quantity_type}  
       >
         <MenuItem value="">Select Quantity Type</MenuItem>
         <MenuItem value="ml">ml</MenuItem>

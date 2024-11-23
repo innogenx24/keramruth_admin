@@ -10,6 +10,7 @@ import {
   MenuItem,
   IconButton,
   Typography,
+  InputAdornment,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,6 +18,7 @@ import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAl
 import { useDispatch, useSelector } from "react-redux";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Snackbar, Alert } from '@mui/material';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const EditMemberForm = () => {
   const dispatch = useDispatch();
@@ -26,6 +28,7 @@ const EditMemberForm = () => {
   const [image, setImage] = useState(null); // Store the selected image
   const [imageName, setImageName] = useState(""); // Store image file name for display
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const [showPassword, setShowPassword] = useState(false);
   //
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -226,6 +229,10 @@ const EditMemberForm = () => {
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
   
 
   // Filter dropdown options based on the role
@@ -364,11 +371,25 @@ const EditMemberForm = () => {
                   fullWidth
                   name="password"
                   label="Password*"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
                   error={!!errors.password}
                   helperText={errors.password}
+                  InputProps={{
+                    // Add an icon button to toggle visibility
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleTogglePasswordVisibility}
+                          edge="end"
+                          aria-label="toggle password visibility"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
 
@@ -479,6 +500,8 @@ const EditMemberForm = () => {
                   value={formData.club_id}
                   name="club_id"
                   onChange={handleChange}
+                  error={!!errors.club_id}
+                  helperText={errors.club_id}
                 >
                   <MenuItem value="">Select Club</MenuItem>
                   <MenuItem value="500">500 Litres</MenuItem>
