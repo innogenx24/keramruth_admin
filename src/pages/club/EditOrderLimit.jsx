@@ -1,4 +1,3 @@
-// EditOrderLimit.js
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Snackbar, Alert, Typography, Box } from '@mui/material';
 import axios from 'axios';
@@ -12,6 +11,9 @@ const EditOrderLimit = () => {
   const [hours, setHours] = useState(limit ? limit.hours : ''); // Prefill with existing hours
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorSnackbar, setErrorSnackbar] = useState(false);
+  const [errors, setErrors] = useState({
+    hours: '',
+  });
 
   useEffect(() => {
     if (!limit) {
@@ -22,10 +24,33 @@ const EditOrderLimit = () => {
 
   const handleChange = (e) => {
     setHours(e.target.value);
+    // Reset error when user starts typing
+    if (e.target.value.trim() !== '') {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        hours: '',
+      }));
+    }
+  };
+
+  // Validate the form before submission
+  const validateForm = () => {
+    const newErrors = {};
+    if (!hours || hours <= 0) {
+      newErrors.hours = 'Please enter a valid time limit greater than 0';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form before making the API call
+    if (!validateForm()) {
+      return; // If validation fails, do not proceed
+    }
+
     try {
       await axios.put(`http://88.222.245.236:3002/api/order-limits/${limit.id}`, { hours });
       setOpenSnackbar(true); // Show success message
@@ -55,7 +80,8 @@ const EditOrderLimit = () => {
           variant="outlined"
           fullWidth
           margin="normal"
-          required
+          error={!!errors.hours} // Display error style if there's an error
+          helperText={errors.hours} // Display error message
         />
         <Button 
           variant="contained" 
@@ -67,7 +93,7 @@ const EditOrderLimit = () => {
           Update Limit
         </Button>
       </form>
-      
+
       {/* Success Snackbar */}
       <Snackbar
         open={openSnackbar}

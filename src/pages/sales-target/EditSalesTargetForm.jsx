@@ -23,23 +23,9 @@ export default function EditSalesTarget() {
   );
   const [targets, setTargets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState({}); // To store error messages
-// Handle validation for numeric input
-const handleTargetChange = (productIndex, dataIndex, value) => {
-  if (!/^\d*$/.test(value)) {
-    setErrors((prev) => ({
-      ...prev,
-      [`targetError_${productIndex}_${dataIndex}`]: "Numbers only allowed.",
-    }));
-  } else {
-    setErrors((prev) => ({
-      ...prev,
-      [`targetError_${productIndex}_${dataIndex}`]: "",
-    }));
-  }
+  const [errors, setErrors] = useState({});
+  const [formSubmitted, setFormSubmitted] = useState(false); // Track if form was submitted
 
-  handleChange(productIndex, dataIndex, "target", value);
-};
   // Fetch sales target data based on the selected product
   useEffect(() => {
     if (!selectedProduct) return;
@@ -51,7 +37,6 @@ const handleTargetChange = (productIndex, dataIndex, value) => {
       const response = await axios.get(
         `http://88.222.245.236:3002/salestarget/${encodeURIComponent(selectedProduct)}`
       );
-      console.log("Fetched Data:", response.data.data); // Debugging
       setTargets(response.data.data || []);
       setLoading(false);
     } catch (error) {
@@ -60,32 +45,71 @@ const handleTargetChange = (productIndex, dataIndex, value) => {
     }
   };
 
-  // Handle change in target values and durations
   const handleChange = (productIndex, dataIndex, field, value) => {
     const updatedTargets = [...targets];
     updatedTargets[productIndex].product_data[dataIndex][field] = value;
     setTargets(updatedTargets);
+
+    // Clear errors for this field when input is corrected
+    if (formSubmitted) {
+      validateField(productIndex, dataIndex, field, value);
+    }
+  };
+
+  const handleTargetChange = (productIndex, dataIndex, value) => {
+    handleChange(productIndex, dataIndex, "target", value);
+  };
+
+  const validateField = (productIndex, dataIndex, field, value) => {
+    const newErrors = { ...errors };
+
+    if (field === "target" && (!value || !/^\d+$/.test(value))) {
+      newErrors[`targetError_${productIndex}_${dataIndex}`] =
+        "Target must be a number.";
+    } else if (field === "duration" && !value) {
+      newErrors[`durationError_${productIndex}_${dataIndex}`] =
+        "Duration is required.";
+    } else {
+      delete newErrors[`${field}Error_${productIndex}_${dataIndex}`];
+    }
+
+    setErrors(newErrors);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    targets.forEach((product, productIndex) => {
+      product.product_data.forEach((data, dataIndex) => {
+        if (!data.target || !/^\d+$/.test(data.target)) {
+          newErrors[`targetError_${productIndex}_${dataIndex}`] =
+            "Target must be a number.";
+        }
+        if (!data.duration) {
+          newErrors[`durationError_${productIndex}_${dataIndex}`] =
+            "Duration is required.";
+        }
+      });
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // No errors if the object is empty
   };
 
   const handleSubmit = async () => {
-    if (!targets.length || targets.some(product => product.product_data.some(data => !data.target || !data.duration))) {
-      alert("Please fill out all target values and durations.");
-      return;
-    }
-
-    
+    setFormSubmitted(true); // Mark the form as submitted
+    if (!validateForm()) return; // If validation fails, stop submission
 
     const requestData = {
       product_name: selectedProduct,
-      productData: targets.flatMap((product) => product.product_data.map((data) => ({
-        role: data.role,
-        target: data.target,
-        duration: data.duration,
-      }))),
+      productData: targets.flatMap((product) =>
+        product.product_data.map((data) => ({
+          role: data.role,
+          target: data.target,
+          duration: data.duration,
+        }))
+      ),
     };
-
-    // Log the data being sent
-    console.log("Sending data to backend:", requestData);
 
     try {
       const response = await axios.put(
@@ -94,12 +118,6 @@ const handleTargetChange = (productIndex, dataIndex, value) => {
       );
 
       if (response.data.success) {
-        // Log success
-        console.log("Sales targets updated:", response.data);
-        
-        // Re-fetch the updated data after the PUT request is successful
-        await fetchSalesTargets();
-
         alert("Sales targets updated successfully");
         navigate("/dashboard/sales-target");
       }
@@ -128,29 +146,52 @@ const handleTargetChange = (productIndex, dataIndex, value) => {
                 {targets.map((product, productIndex) => (
                   <div key={product.id}>
                     {product.product_data.map((data, dataIndex) => (
-                      <Grid container spacing={2} key={dataIndex} alignItems="center" sx={{ mb: 2 }}>
+                      <Grid
+                        container
+                        spacing={2}
+                        key={dataIndex}
+                        alignItems="center"
+                        sx={{ mb: 2 }}
+                      >
                         <Grid item xs={6}>
                           <Typography>{data.role}</Typography>
                         </Grid>
-
                         <Grid item xs={3}>
-                        <TextField
-                label="Enter Target"
-                fullWidth
-                value={data.target || ""}
-                onChange={(e) => handleTargetChange(productIndex, dataIndex, e.target.value)}
-                error={!!errors[`targetError_${productIndex}_${dataIndex}`]}
-                helperText={errors[`targetError_${productIndex}_${dataIndex}`]}
-              />
+                          <TextField
+                            label="Enter Target"
+                            fullWidth
+                            value={data.target || ""}
+                            onChange={(e) =>
+                              handleTargetChange(
+                                productIndex,
+                                dataIndex,
+                                e.target.value
+                              )
+                            }
+                            error={
+                              !!errors[`targetError_${productIndex}_${dataIndex}`]
+                            }
+                            helperText={
+                              errors[`targetError_${productIndex}_${dataIndex}`]
+                            }
+                          />
                         </Grid>
                         <Grid item xs={3}>
                           <Select
                             fullWidth
                             value={data.duration || ""}
                             onChange={(e) =>
-                              handleChange(productIndex, dataIndex, "duration", e.target.value)
+                              handleChange(
+                                productIndex,
+                                dataIndex,
+                                "duration",
+                                e.target.value
+                              )
                             }
                             displayEmpty
+                            error={
+                              !!errors[`durationError_${productIndex}_${dataIndex}`]
+                            }
                           >
                             <MenuItem value="" disabled>
                               <em>Select Duration</em>
@@ -159,6 +200,14 @@ const handleTargetChange = (productIndex, dataIndex, value) => {
                             <MenuItem value="3 months">3 Months</MenuItem>
                             <MenuItem value="6 months">6 Months</MenuItem>
                           </Select>
+                          <Typography
+                            variant="caption"
+                            color="error"
+                          >
+                            {
+                              errors[`durationError_${productIndex}_${dataIndex}`]
+                            }
+                          </Typography>
                         </Grid>
                       </Grid>
                     ))}

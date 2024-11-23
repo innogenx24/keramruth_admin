@@ -4,25 +4,35 @@ import { makePostRole } from "../../redux/slices/master-slice/role-slice/RolePos
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
 const AddRoleForm = () => {
   const dispatch = useDispatch();
+  const [showErrors, setShowErrors] = useState(false); // Track whether errors should be shown
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       role_name: "",
     },
     validationSchema: Yup.object({
-      role_name: Yup.string().required("Required"),
+      role_name: Yup.string().required("Role name is required."),
     }),
     onSubmit: (values, { resetForm }) => {
       const parsedValues = {
         ...values,
       };
-      // console.log("parsedValues", parsedValues);
       dispatch(makePostRole(parsedValues));
       resetForm();
+      navigate("/dashboard/role"); // Navigate to the product list page after submission
+
     },
   });
+
+  const handleSubmit = (e) => {
+    setShowErrors(true); // Enable error display after submit is clicked
+    formik.handleSubmit(e); // Call formik's submit handler
+  };
 
   return (
     <Box p={3}>
@@ -34,16 +44,18 @@ const AddRoleForm = () => {
           <h2>Role Details:</h2>
 
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-          <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <TextField
                 fullWidth
                 name="role_name"
                 label="Role Name*"
                 {...formik.getFieldProps("role_name")}
                 error={
-                  formik.touched.role_name && Boolean(formik.errors.role_name)
+                  showErrors && formik.touched.role_name && Boolean(formik.errors.role_name)
                 }
-                helperText={formik.touched.role_name && formik.errors.role_name}
+                helperText={
+                  showErrors && formik.touched.role_name && formik.errors.role_name
+                }
               />
 
               {/* Save Button */}
@@ -52,7 +64,7 @@ const AddRoleForm = () => {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  sx={{ width: "100%" }} 
+                  sx={{ width: "100%" }}
                 >
                   SAVE
                 </Button>

@@ -1,34 +1,49 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography } from "@mui/material";
 
-const EditClubForm = ({ onCancel }) => {
+const EditClubForm = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize navigate
-  const { club } = location.state || {}; // Destructure club data from state
+  const navigate = useNavigate();
+  const { club } = location.state || {};
   const [clubName, setClubName] = useState(club?.club_name || "");
-  // Convert litre_quantity to an integer for display without decimals
   const [litreQuantity, setLitreQuantity] = useState(
     club?.litre_quantity ? parseInt(club.litre_quantity, 10) : ""
   );
-  const [loading, setLoading] = useState(false); // Loading state for the button
-  const [error, setError] = useState(""); // Error state for API response
-  const [inputError, setInputError] = useState(""); // Error state for invalid input
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [formErrors, setFormErrors] = useState({
+    clubName: false,
+    litreQuantity: false,
+  });
 
-  // Function to handle form submission (update logic)
+  // Function to validate the form fields
+  const validateFields = () => {
+    const errors = {
+      clubName: clubName.trim() === "",
+      litreQuantity: litreQuantity === "" || isNaN(litreQuantity),
+    };
+    setFormErrors(errors);
+    return !Object.values(errors).includes(true);
+  };
+
+  // Function to handle form submission
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true); // Start loading
-    setError(""); // Reset error message
 
-    // Prepare the data to be sent
+    if (!validateFields()) {
+      return; // Stop if validation fails
+    }
+
+    setLoading(true);
+    setError("");
+
     const updatedClubData = {
       club_name: clubName,
       litre_quantity: litreQuantity,
     };
 
     try {
-      // Send PUT request to the API
       const response = await fetch(`http://88.222.245.236:3002/club/${club?.id}`, {
         method: "PUT",
         headers: {
@@ -40,32 +55,19 @@ const EditClubForm = ({ onCancel }) => {
       const result = await response.json();
 
       if (response.ok) {
-        // Handle success - navigate to the club dashboard
         console.log("Club updated successfully:", result.data);
-        navigate('/dashboard/club'); // Redirect to /dashboard/club
+        navigate("/dashboard/club");
       } else {
-        // Handle errors returned from the API
         setError(result.message || "Failed to update club.");
         console.error("Failed to update club:", result.message);
       }
     } catch (error) {
-      // Handle network or unexpected errors
       setError("An unexpected error occurred. Please try again.");
       console.error("Error updating club:", error);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
-// Handle input for litre quantity
-const handleLitreQuantityChange = (e) => {
-  const value = e.target.value;
-  if (/^\d+$/.test(value) || value === "") {
-    setLitreQuantity(value);
-    setInputError(""); // Clear error if input is valid
-  } else {
-    setInputError("Numbers only allowed");
-  }
-};
 
   return (
     <Box sx={{ padding: 2, maxWidth: 500 }}>
@@ -79,19 +81,19 @@ const handleLitreQuantityChange = (e) => {
           onChange={(e) => setClubName(e.target.value)}
           fullWidth
           margin="normal"
+          error={formErrors.clubName}
+          helperText={formErrors.clubName ? "Club name is required." : ""}
         />
-         <TextField
+        <TextField
           label="Litre Quantity"
           value={litreQuantity}
-          onChange={handleLitreQuantityChange} // Call the validation function
+          onChange={(e) => setLitreQuantity(e.target.value)}
           fullWidth
           margin="normal"
-          type="text" // Set to text to allow for input checking
-          error={!!inputError} // Show error if input is invalid
-          helperText={inputError} // Display error message
+          error={formErrors.litreQuantity}
+          helperText={formErrors.litreQuantity ? "Numbers only allowed" : ""}
         />
 
-        {/* Error Message */}
         {error && <Typography color="error">{error}</Typography>}
 
         <Box
@@ -105,8 +107,8 @@ const handleLitreQuantityChange = (e) => {
             variant="contained"
             color="primary"
             type="submit"
-            sx={{ width: "100%" }} // Set button width to 100%
-            disabled={loading} // Disable button while loading
+            sx={{ width: "100%" }}
+            disabled={loading}
           >
             {loading ? "Updating..." : "Save Changes"}
           </Button>

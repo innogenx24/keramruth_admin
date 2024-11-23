@@ -32,6 +32,8 @@ const AddAnnouncementDetails = ({ onClose }) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const [imageError, setImageError] = useState("");
+  const [headingError, setHeadingError] = useState("");
+  const [descriptionError, setDescriptionError] = useState(""); // Add descriptionError state
 
   const roles = [
     { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
@@ -87,34 +89,91 @@ const AddAnnouncementDetails = ({ onClose }) => {
       }
     }
   };
-  
-  
 
   const validateLink = (value) => {
+    // Updated regex for validating general and specific URLs
     const urlPattern = new RegExp(
-      "^(https?:\/\/)?(www\.)?((youtube\.com\/(?:[^\/]+\/[^\/]+\/|(?:v|e(?:mbed))\/?))|(youtu\.be\/))([a-zA-Z0-9-]+)(\?[^\s]*)?$|^https?:\/\/(.*\.(?:jpg|jpeg|png|gif|bmp|webp|svg))$"
+      "^(https?:\\/\\/)?(www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[a-zA-Z0-9@:%_\\+.~#?&//=]*)?$"
     );
-    
+  
     if (value && !urlPattern.test(value)) {
       setLinkError("Please enter a valid URL.");
+    } else if (!value.trim()) {
+      setLinkError("Link is required.");
     } else {
-      setLinkError("");
+      setLinkError(""); // Clear the error if the link is valid
     }
   };
-
+  
+  
+  
   const handleLinkChange = (e) => {
     const value = e.target.value;
     setLink(value);
-    validateLink(value);
+  
+    if (!value.trim()) {
+      setLinkError("Link is required.");
+    } else {
+      validateLink(value); // This will update linkError accordingly
+    }
+  };
+  
+  
+  
+  const validateDescription = (value) => {
+    if (!value.trim()) {
+      setDescriptionError("Description is required.");
+      return false;
+    }
+    return true;
   };
 
+  const validateForm = () => {
+    let isValid = true;
+  
+    // Validate Heading
+    if (!heading) {
+      setHeadingError("Heading is required.");
+      isValid = false;
+    } else {
+      setHeadingError("");
+    }
+  
+    // Validate Receiver
+    if (!receiver.length) {
+      setErrorMessage("Please select at least one receiver.");
+      isValid = false;
+    } else {
+      setErrorMessage("");
+    }
+  
+    // Validate Description
+    if (!validateDescription(description)) {
+      isValid = false;
+    } else {
+      setDescriptionError("");
+    }
+  
+    // Validate Link
+    if (!link) {
+      setLinkError("Link is required.");
+      isValid = false;
+    } else {
+      validateLink(link);
+      if (linkError) {
+        isValid = false;
+      }
+    }
+  
+    return isValid;
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const randomDocumentID = Math.floor(100000 + Math.random() * 900000).toString();
     setDocumentID(randomDocumentID);
 
-    if (!randomDocumentID || !heading || receiver.length === 0 || linkError) {
-      setErrorMessage("Please fill in all required fields with valid data.");
+    if (!validateForm()) {
       return;
     }
 
@@ -163,34 +222,35 @@ const AddAnnouncementDetails = ({ onClose }) => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-          <InputLabel>Add Images</InputLabel>
-  <IconButton color="primary" component="label">
-    <AddPhotoAlternateIcon />
-    <input type="file" hidden accept="image/*" onChange={handleImageChange} />
-  </IconButton>
-  {imageFileName && (
-    <Typography variant="body2" sx={{ marginTop: "10px" }}>
-      Selected file: {imageFileName}
-    </Typography>
-  )}
-  {previewUrl && (
-    <Box sx={{ marginTop: "10px" }}>
-      <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
-    </Box>
-  )}
-  {imageError && (
-    <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
-      {imageError}
-    </Typography>
-  )}
+            <InputLabel>Add Images</InputLabel>
+            <IconButton color="primary" component="label">
+              <AddPhotoAlternateIcon />
+              <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+            </IconButton>
+            {imageFileName && (
+              <Typography variant="body2" sx={{ marginTop: "10px" }}>
+                Selected file: {imageFileName}
+              </Typography>
+            )}
+            {previewUrl && (
+              <Box sx={{ marginTop: "10px" }}>
+                <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
+              </Box>
+            )}
+            {imageError && (
+              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+                {imageError}
+              </Typography>
+            )}
             <TextField
               fullWidth
               label="Announcement Heading*"
               value={heading}
               onChange={(e) => setHeading(e.target.value)}
               placeholder="Enter Announcement Heading"
-              required
               margin="normal"
+              error={!!headingError}
+              helperText={headingError}
             />
             <TextareaAutosize
               minRows={3}
@@ -199,19 +259,33 @@ const AddAnnouncementDetails = ({ onClose }) => {
               onChange={(e) => setDescription(e.target.value)}
               style={{ width: "100%", margin: "16px 0", backgroundColor: "#f5f5f5" }}
             />
-            <TextField
-              fullWidth
-              label="Link"
-              value={link}
-              onChange={handleLinkChange}
-              placeholder="Enter Link"
-              margin="normal"
-              error={!!linkError}
-              helperText={linkError}
-            />
+            {descriptionError && (
+              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+                {descriptionError}
+              </Typography>
+            )}
+        <TextField
+  fullWidth
+  label="Link"
+  value={link}
+  onChange={handleLinkChange}
+  placeholder="Enter a valid link"
+  margin="normal"
+  error={!!linkError} // Error state for the field
+/>
+
+
+
+{linkError && (
+  <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+    {linkError}
+  </Typography>
+)}
+
+
+
           </Box>
         </Grid>
-
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
             <InputLabel>Receiver</InputLabel>
@@ -240,33 +314,32 @@ const AddAnnouncementDetails = ({ onClose }) => {
                 />
               ))}
             </FormControl>
-
+            {errorMessage && (
+              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+                {errorMessage}
+              </Typography>
+            )}
             <Button
               type="submit"
               variant="contained"
-              color="primary"
+              sx={{ marginTop: "20px" }}
               fullWidth
-              sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
             >
-              Save
+              Add Announcement
             </Button>
+
+            
+
+            {successMessage && (
+              <Typography variant="body2" color="success" sx={{ marginTop: "10px" }}>
+                {successMessage}
+              </Typography>
+            )}
           </Box>
         </Grid>
-      </Grid>
+        
+        </Grid>
 
-      <Snackbar
-        open={!!successMessage}
-        onClose={() => setSuccessMessage("")}
-        message={successMessage}
-        autoHideDuration={3000}
-      />
-
-      <Snackbar
-        open={!!errorMessage}
-        onClose={() => setErrorMessage("")}
-        message={errorMessage}
-        autoHideDuration={3000}
-      />
     </Box>
   );
 };

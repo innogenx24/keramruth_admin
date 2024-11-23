@@ -1,28 +1,49 @@
 import React, { useState } from "react";
 import { Button, Typography, Box, TextField, Grid } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const AddClubForm = () => {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const [clubName, setClubName] = useState("");
   const [litreQuantity, setLitreQuantity] = useState("");
-  const [loading, setLoading] = useState(false); // State for loading
-  const [error, setError] = useState(""); // State for error messages
-  const [inputError, setInputError] = useState(""); // Error state for input validation
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(""); // State for API errors
+  const [errors, setErrors] = useState({}); // State for input field errors
+  const [submitted, setSubmitted] = useState(false); // Track if form is submitted
 
+  // Validate form fields
+  const validate = () => {
+    let formErrors = {};
+    if (!clubName.trim()) formErrors.clubName = "Club name is required.";
+    if (!litreQuantity.trim()) {
+      formErrors.litreQuantity = "Litre quantity is required.";
+    } else if (!/^\d+$/.test(litreQuantity)) {
+      formErrors.litreQuantity = "Numbers only allowed.";
+    }
+    return formErrors;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
-    setError(""); // Reset error message
+    setSubmitted(true);
 
-    // Prepare the data to be sent
+    // Validate inputs
+    const formErrors = validate();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
     const clubData = {
       club_name: clubName,
       litre_quantity: litreQuantity,
     };
 
     try {
-      // Send POST request to the API
       const response = await fetch("http://88.222.245.236:3002/club/create", {
         method: "POST",
         headers: {
@@ -34,36 +55,34 @@ const AddClubForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        // Handle success - reset the form and redirect
-        console.log("Club added successfully:", result.data);
-        setClubName(""); // Reset club name
-        setLitreQuantity(""); // Reset litre quantity
-
-        // Redirect to the desired URL after successful addition
-        navigate('/dashboard/club'); // Navigate to /dashboard/club
+        setClubName("");
+        setLitreQuantity("");
+        navigate("/dashboard/club");
       } else {
-        // Handle errors returned from the API
         setError(result.message || "Failed to add club.");
-        console.error("Failed to add club:", result.message);
       }
-    } catch (error) {
-      // Handle network or unexpected errors
+    } catch (err) {
       setError("An unexpected error occurred. Please try again.");
-      console.error("Error adding club:", error);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
-// Handle input for litre quantity with validation
-const handleLitreQuantityChange = (e) => {
-  const value = e.target.value;
-  if (/^\d+$/.test(value) || value === "") {
-    setLitreQuantity(value);
-    setInputError(""); // Clear error if input is valid
-  } else {
-    setInputError("Numbers only allowed");
-  }
-};
+
+  // Handle input changes and clear errors
+  const handleInputChange = (setter, field) => (e) => {
+    const value = e.target.value;
+    setter(value);
+
+    if (submitted) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: field === "litreQuantity" && !/^\d+$/.test(value) && value !== "" 
+          ? "Numbers only allowed."
+          : "",
+      }));
+    }
+  };
+
   return (
     <Box p={3} component="form" onSubmit={handleSubmit}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -72,32 +91,34 @@ const handleLitreQuantityChange = (e) => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <h2>Club Details:</h2>
-
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
+            {/* Club Name Field */}
             <TextField
               fullWidth
               label="Club Name*"
               value={clubName}
-              onChange={(e) => setClubName(e.target.value)}
+              onChange={handleInputChange(setClubName, "clubName")}
               margin="normal"
               placeholder="Enter Club Name"
               required
+              error={!!errors.clubName}
+              helperText={errors.clubName}
             />
 
-<TextField
-          fullWidth
-          label="Litre Quantity"
-          value={litreQuantity}
-          onChange={handleLitreQuantityChange} // Call the validation function
-          placeholder="Enter Litre Quantity"
-          required
-          margin="normal"
-          type="text" // Keep type as text for manual validation
-          error={!!inputError} // Show error if input is invalid
-          helperText={inputError} // Display error message
-        />
+            {/* Litre Quantity Field */}
+            <TextField
+              fullWidth
+              label="Litre Quantity*"
+              value={litreQuantity}
+              onChange={handleInputChange(setLitreQuantity, "litreQuantity")}
+              margin="normal"
+              placeholder="Enter Litre Quantity"
+              required
+              error={!!errors.litreQuantity}
+              helperText={errors.litreQuantity}
+            />
 
-            {/* Error Message */}
+            {/* API Error Message */}
             {error && <Typography color="error">{error}</Typography>}
 
             {/* Save Button */}
@@ -106,8 +127,8 @@ const handleLitreQuantityChange = (e) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                sx={{ width: "100%" }} // Set the button width to 100%
-                disabled={loading} // Disable button while loading
+                sx={{ width: "100%" }}
+                disabled={loading}
               >
                 {loading ? "Saving..." : "SAVE"}
               </Button>
