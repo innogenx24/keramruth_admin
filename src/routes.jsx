@@ -55,6 +55,7 @@ import SetOrderLimit from "./pages/club/SetOrderLimit";
 // import DocumentComponent from "./pages/club/DocumentComponent";
 import Sector from "./pages/sector/Sector";
 import AddSector from "./pages/sector/AddSector";
+import PendingOrders from "./pages/pending-orders/PendingOrders";
 
 const RoutesConfig = () => {
   return (
@@ -85,7 +86,7 @@ const RoutesConfig = () => {
             <Route path="edit-profile" element={<EditUserProfile />} />
             <Route path="members" element={<ViewMember />} />
             <Route path="announcement" element={<AnnouncementTable />} />
-            <Route path="pending-orders" element={<AnnouncementTable />} />
+            <Route path="pending-orders" element={<PendingOrders />} />
 
           
             <Route
