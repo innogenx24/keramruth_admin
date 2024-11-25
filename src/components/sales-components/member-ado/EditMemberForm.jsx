@@ -267,7 +267,7 @@ useEffect(() => {
     }
   
     axios
-      .put(`http://localhost:3002/api/user/update/${memberId}`, data, config)
+      .put(`http://88.222.245.236:3002/api/user/update/${memberId}`, data, config)
       .then(() => {
         navigate(`/dashboard/members`);
       })

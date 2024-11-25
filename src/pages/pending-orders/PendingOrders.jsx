@@ -21,7 +21,7 @@ const OrderManagement = () => {
   const [completedOrders, setCompletedOrders] = useState([]);
   const [expandedOrders, setExpandedOrders] = useState({}); // Track expanded orders
 
-  const API_URL = 'http://localhost:3002/orders/get-order-request';
+  const API_URL = 'http://88.222.245.236:3002/orders/get-order-request';
 
   const fetchOrders = async () => {
     const token = localStorage.getItem('token');
@@ -58,7 +58,7 @@ const OrderManagement = () => {
     }
 
     try {
-      const apiEndpoint = `http://localhost:3002/orders/order/${orderId}`;
+      const apiEndpoint = `http://88.222.245.236:3002/orders/order/${orderId}`;
 
       const response = await axios.post(
         apiEndpoint,
