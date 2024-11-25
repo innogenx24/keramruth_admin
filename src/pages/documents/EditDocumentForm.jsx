@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import {
   Button,
   Box,
   TextField,
-  TextareaAutosize,
   Grid,
   Switch,
   Typography,
   IconButton,
-  InputLabel,
   FormControlLabel,
   Checkbox,
+  InputLabel,
+  TextareaAutosize,
   FormControl,
+
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -21,7 +22,7 @@ const EditDocumentForm = () => {
   const navigate = useNavigate();
   const document = location.state?.document || {};
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/"; 
   const roles = [
     { label: "Area Development Officer", value: "Area Development Officer" },
     { label: "Master Distributor", value: "Master Distributor" },
@@ -44,6 +45,15 @@ const EditDocumentForm = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [imageError, setImageError] = useState(""); // State for image error message
 
+  // Error states
+  const [errors, setErrors] = useState({
+    heading: "",
+    description: "",
+    link: "",
+    receiver: "",
+    image: ""
+  });
+
   useEffect(() => {
     if (document) {
       setAutoUpdate(document.autoUpdate || false);
@@ -65,18 +75,18 @@ const EditDocumentForm = () => {
 
   const handleReceiverChange = (event) => {
     const { value, checked } = event.target;
-  
+
     setReceiver((prev) => {
       if (value === "selectAll") {
         return checked ? roles.map((role) => role.value) : [];
       } else {
         const newReceiver = Array.isArray(prev) ? [...prev] : [];
         return checked
-          ? [...newReceiver, value] 
-          : newReceiver.filter((role) => role !== value); 
+          ? [...newReceiver, value]
+          : newReceiver.filter((role) => role !== value);
       }
     });
-  };  
+  };
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -97,27 +107,90 @@ const EditDocumentForm = () => {
     }
   };
 
+  const validateLink = (link) => {
+    const validLinkRegex = /^(https?:\/\/|https:\/\/www\.youtube\.com\/watch\?v=)/;
+    return validLinkRegex.test(link);
+  };
+
+  const handleLinkChange = (e) => {
+    const value = e.target.value;
+    if (validateLink(value) || value === "") {
+      setLink(value); // Set valid link
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        link: "", // Clear any previous error
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        link: "Link must be a valid HTTP or YouTube URL",
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    let formErrors = {};
+    let isValid = true;
+
+    // Heading validation
+    if (!heading.trim()) {
+      formErrors.heading = "Heading is required";
+      isValid = false;
+    }
+
+    // Description validation
+    if (!description.trim()) {
+      formErrors.description = "Description is required";
+      isValid = false;
+    }
+
+    // Link validation
+    if (!link.trim() || errors.link) {
+      formErrors.link = "Link is required and must be a valid URL";
+      isValid = false;
+    }
+
+    // Receiver validation
+    if (receiver.length === 0) {
+      formErrors.receiver = "At least one role must be selected";
+      isValid = false;
+    }
+
+    // Image validation
+    if (!image && !imageName) {
+      formErrors.image = "Image is required";
+      isValid = false;
+    }
+
+    setErrors(formErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    if (!validateForm()) {
+      return; // Prevent form submission if validation fails
+    }
+
     const formData = new FormData();
     formData.append("documentID", documentID);
     formData.append("heading", heading);
     formData.append("description", description);
     formData.append("link", link);
-  
+
     // Send the receiver array as a JSON string
     formData.append("receiver", JSON.stringify(receiver));
-  
+
     formData.append("autoUpdate", autoUpdate);
     formData.append("activateStatus", activateStatus);
     formData.append("fromDate", fromDate);
     formData.append("toDate", toDate);
-  
+
     if (image) {
       formData.append("image", image);
     }
-  
+
     try {
       const response = await fetch(
         `http://88.222.245.236:3002/documents/${document.id}`,
@@ -126,11 +199,11 @@ const EditDocumentForm = () => {
           body: formData,
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to update document");
       }
-  
+
       const result = await response.json();
       console.log("Document updated:", result);
       navigate("/dashboard/documents");
@@ -138,6 +211,7 @@ const EditDocumentForm = () => {
       console.error("Error updating document:", error);
     }
   };
+
   return (
     <Box p={3} component="form" onSubmit={handleSubmit}>
       <Typography variant="h6" sx={{ marginBottom: "20px" }}>
@@ -147,42 +221,45 @@ const EditDocumentForm = () => {
         {/* Left Side: Image and Basic Info */}
         <Grid item xs={12} md={6}>
           <Box p={2} sx={{ backgroundColor: "#f5f5f5", borderRadius: 2 }}>
-          <InputLabel>Edit Images</InputLabel>
-      <IconButton color="primary" component="label">
-        <AddPhotoAlternateIcon />
-        <input type="file" hidden onChange={handleImageUpload} />
-      </IconButton>
-      {imageName && <Typography variant="body2">{imageName}</Typography>}
+            <InputLabel>Edit Images</InputLabel>
+            <IconButton color="primary" component="label">
+              <AddPhotoAlternateIcon />
+              <input type="file" hidden onChange={handleImageUpload} />
+            </IconButton>
+            {imageName && <Typography variant="body2">{imageName}</Typography>}
 
-      {imageError && (
-        <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
-          {imageError}
-        </Typography>
-      )}
+            {imageError && (
+              <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+                {imageError}
+              </Typography>
+            )}
 
-      <Box sx={{ marginTop: "16px" }}>
-        {image ? (
-          <img
-            src={URL.createObjectURL(image)}
-            alt="Uploaded Preview"
-            style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
-          />
-        ) : (
-          document.image && (
-            <img
-              src={`${imageBaseURL}${document.image}`}
-              alt="Existing Document Image"
-              style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
-            />
-          )
-        )}
-      </Box>
+            <Box sx={{ marginTop: "16px" }}>
+              {image ? (
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="Uploaded Preview"
+                  style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
+                />
+              ) : (
+                document.image && (
+                  <img
+                    src={`${imageBaseURL}${document.image}`}
+                    alt="Existing Document Image"
+                    style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
+                  />
+                )
+              )}
+            </Box>
+
             <TextField
               fullWidth
               label="Heading"
               value={heading}
               onChange={(e) => setHeading(e.target.value)}
               margin="normal"
+              error={!!errors.heading}
+              helperText={errors.heading}
             />
             <TextareaAutosize
               minRows={3}
@@ -191,13 +268,20 @@ const EditDocumentForm = () => {
               placeholder="Description"
               style={{ width: "100%", margin: "16px 0" }}
             />
-            <TextField
-              fullWidth
-              label="Link"
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              margin="normal"
-            />
+            {errors.description && (
+              <Typography variant="body2" color="error" sx={{ marginBottom: "8px" }}>
+                {errors.description}
+              </Typography>
+            )}
+              <TextField
+          fullWidth
+          label="Link"
+          value={link}
+          onChange={handleLinkChange}
+          margin="normal"
+          error={!!errors.link}
+          helperText={errors.link}
+        />
           </Box>
         </Grid>
 
@@ -207,9 +291,7 @@ const EditDocumentForm = () => {
             <Typography variant="h6" sx={{ mb: 2 }}>
               Select Receiver Roles
             </Typography>
-            <InputLabel>Receiver</InputLabel>
-            <FormControl fullWidth margin="normal">
-              {/* Select All Checkbox */}
+            <FormControl component="fieldset">
               <FormControlLabel
                 control={
                   <Checkbox
@@ -220,7 +302,6 @@ const EditDocumentForm = () => {
                 }
                 label="Select All"
               />
-
               {roles.map((role) => (
                 <FormControlLabel
                   key={role.value}
@@ -234,10 +315,14 @@ const EditDocumentForm = () => {
                   label={role.label}
                 />
               ))}
+              {errors.receiver && (
+                <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+                  {errors.receiver}
+                </Typography>
+              )}
             </FormControl>
-
-            {/* Auto Update */}
-            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+ {/* Auto Update */}
+ <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
               <label style={{ marginRight: "8px" }}>Auto Update</label>
               <Switch
                 checked={autoUpdate}
@@ -274,23 +359,12 @@ const EditDocumentForm = () => {
               </Box>
             )}
 
-            {/* Status Toggle */}
-            {/* <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-              <label style={{ marginRight: "8px" }}>Activate Status</label>
-              <Switch
-                checked={activateStatus}
-                onChange={(e) => setActivateStatus(e.target.checked)}
-                color="primary"
-              />
-            </Box> */}
-
-            {/* Submit Button */}
             <Button
-              type="submit"
               variant="contained"
               color="primary"
+              type="submit"
               fullWidth
-              sx={{ mt: 3 }}
+              sx={{ marginTop: "20px" }}
             >
               Update Document
             </Button>

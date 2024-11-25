@@ -33,6 +33,8 @@ const EditMemberForm = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [clubs, setClubs] = useState([]); 
+  const [loading, setLoading] = useState(false); 
   const [selectedRole, setSelectedRole] = useState(""); // Role dropdown value
   const [formData, setFormData] = useState({
     name: "",
@@ -46,7 +48,8 @@ const EditMemberForm = () => {
     district: "",
     city: "",
     street: "",
-    club_id: "",
+    club_name: "", // Added for club name selection
+
     superior_id: "",
     password: "",
     street_name: "",
@@ -66,7 +69,6 @@ const EditMemberForm = () => {
     city: "",
     username: "",
     password: "",
-    club_id: "",
     street_name: "",
     building_no_name:"",
 
@@ -76,6 +78,33 @@ const EditMemberForm = () => {
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
   }, [dispatch]);
+
+
+   // Fetch clubs from the API
+   const fetchClubs = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found");
+  
+      const response = await fetch("http://88.222.245.236:3002/club", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const result = await response.json();
+      if (result.success) {
+        setClubs(result.data); // Set the clubs from the data property
+      } else {
+        console.error("Error fetching clubs:", result.message); // Handle any error messages
+      }
+    } catch (error) {
+      console.error("Error fetching clubs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch member details for editing
   useEffect(() => {
@@ -99,7 +128,8 @@ const EditMemberForm = () => {
             district: member.district || "",
             city: member.city || "",
             street_name: member.street_name || "",
-            club_id: member.club_id || "",
+            club_name: member.club_name || "", // Set club_name from response data
+
             superior_id: member.superior_id || "",
             password: member.password || "",
             building_no_name: member.building_no_name || "",
@@ -121,6 +151,10 @@ const EditMemberForm = () => {
       setImageName(file.name);
     }
   };
+// Call fetchClubs when the component mounts
+useEffect(() => {
+  fetchClubs();
+}, []);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -196,10 +230,6 @@ const EditMemberForm = () => {
       validationErrors.password = "Password is required";
       isValid = false;
     }
-    if (!formData.club_id) {
-      validationErrors.club_id = "Club is required";
-      isValid = false;
-    }
     //
     if (!formData.street_name) {
       validationErrors.street_name = "Sreet Name is required";
@@ -237,7 +267,7 @@ const EditMemberForm = () => {
     }
   
     axios
-      .put(`http://88.222.245.236:3002/api/user/update/${memberId}`, data, config)
+      .put(`http://localhost:3002/api/user/update/${memberId}`, data, config)
       .then(() => {
         navigate(`/dashboard/members`);
       })
@@ -523,24 +553,22 @@ const EditMemberForm = () => {
             <InputLabel>Hierarchy & Club</InputLabel>
             <Grid container spacing={2}>
 
-              <Grid item xs={12}>
-                <InputLabel>Club*</InputLabel>
-                <Select
-                  fullWidth
-                  value={formData.club_id}
-                  name="club_id"
-                  onChange={handleChange}
-                  error={!!errors.club_id}
-                  helperText={errors.club_id}
-                >
-                  <MenuItem value="">Select Club</MenuItem>
-                  <MenuItem value="500">500 Litres</MenuItem>
-                  <MenuItem value="1000">1000 Litres</MenuItem>
-                  <MenuItem value="1500">1500 Litres</MenuItem>
-                  <MenuItem value="2000">2000 Litres</MenuItem>
-                  <MenuItem value="2500">2500 Litres</MenuItem>
-                </Select>
-              </Grid>
+            <Grid item xs={12}>
+          <InputLabel>Club*</InputLabel>
+          <Select
+            fullWidth
+            value={formData.club_name}
+            name="club_name"
+            onChange={handleChange}
+          >
+            <MenuItem value="">Select Club</MenuItem>
+            {clubs.map((club) => (
+              <MenuItem key={club.id} value={club.club_name}>
+                {club.club_name}
+              </MenuItem>
+            ))}
+          </Select>
+        </Grid>
               {renderDropdownOptions()}
 
             </Grid>

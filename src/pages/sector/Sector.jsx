@@ -100,7 +100,7 @@ const SectorTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
-              <TableCell>Id</TableCell>
+              {/* <TableCell>Id</TableCell> */}
               <TableCell>Sector Name</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
@@ -109,7 +109,7 @@ const SectorTable = () => {
             {sectors.map((row, index) => (
               <TableRow key={row?.id}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{row?.id}</TableCell>
+                {/* <TableCell>{row?.id}</TableCell> */}
                 <TableCell>{row?.sector_name}</TableCell>
                 <TableCell>
                   <IconButton

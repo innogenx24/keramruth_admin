@@ -32,10 +32,15 @@ const EditAnnouncementForm = () => {
   const [imageFileName, setImageFileName] = useState("");
   const [existingImage, setExistingImage] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [selectAll, setSelectAll] = useState(false);
-  const [imageError, setImageError] = useState(""); // Added image error state
+
+  // Separate error state for each field
+  const [headingError, setHeadingError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [linkError, setLinkError] = useState("");
+  const [receiverError, setReceiverError] = useState("");
+  const [imageError, setImageError] = useState(""); // Image file error state
+  const [errorMessage, setErrorMessage] = useState(""); // General error message
 
   const roles = [
     { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
@@ -111,16 +116,57 @@ const EditAnnouncementForm = () => {
     return regex.test(url);
   };
 
+  const validateForm = () => {
+    let isValid = true;
+
+    // Reset all error messages
+    setHeadingError("");
+    setDescriptionError("");
+    setLinkError("");
+    setReceiverError("");
+    setImageError("");
+    setErrorMessage(""); // Reset the general error message
+
+    // Validate Heading
+    if (!heading) {
+      setHeadingError("Heading is required.");
+      isValid = false;
+    }
+
+    // Validate Receiver
+    if (receiver.length === 0) {
+      setReceiverError("Please select at least one receiver.");
+      isValid = false;
+    }
+
+    // Validate Description
+    if (!description.trim()) {
+      setDescriptionError("Description is required.");
+      isValid = false;
+    }
+
+    // Validate Link
+    if (!link.trim()) {
+      setLinkError("Link is required.");
+      isValid = false;
+    } else if (!validateLink(link)) {
+      setLinkError("Please enter a valid URL.");
+      isValid = false;
+    }
+
+    // Validate Image (if necessary)
+    if (!imageFile && !existingImage) {
+      setImageError("Image is required.");
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!documentID || !heading || receiver.length === 0) {
-      setErrorMessage("Please fill in all required fields.");
-      return;
-    }
-
-    if (link && !validateLink(link)) {
-      setErrorMessage("Please enter a valid URL.");
+    if (!validateForm()) {
       return;
     }
 
@@ -153,7 +199,6 @@ const EditAnnouncementForm = () => {
     }
   };
 
-
   return (
     <Box p={3} component="form" onSubmit={handleSubmit} encType="multipart/form-data">
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -162,7 +207,7 @@ const EditAnnouncementForm = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-          <InputLabel>Edit Images</InputLabel>
+            <InputLabel>Edit Images</InputLabel>
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
               <input type="file" hidden accept="image/*" onChange={handleImageChange} />
@@ -192,18 +237,31 @@ const EditAnnouncementForm = () => {
               label="Announcement Heading*"
               value={heading}
               onChange={(e) => setHeading(e.target.value)}
-              placeholder="Enter Announcement Heading"
-              required
               margin="normal"
             />
+            {headingError && (
+              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+                {headingError}
+              </Typography>
+            )}
             <TextareaAutosize
-              minRows={3}
-              placeholder="Enter Description"
+              minRows={4}
+              maxRows={6}
+              placeholder="Description"
+              style={{ width: "100%", marginTop: "20px" }}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              style={{ width: "100%", margin: "16px 0", backgroundColor: "#f5f5f5" }}
-              required
             />
+            {descriptionError && (
+              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+                {descriptionError}
+              </Typography>
+            )}
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
             <TextField
               fullWidth
               label="Link"
@@ -212,13 +270,14 @@ const EditAnnouncementForm = () => {
               placeholder="Enter Link"
               margin="normal"
             />
-          </Box>
-        </Grid>
+            {linkError && (
+              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+                {linkError}
+              </Typography>
+            )}
 
-        <Grid item xs={12} md={6}>
-          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Receiver</InputLabel>
             <FormControl fullWidth margin="normal">
+              <Typography variant="h6">Select Receivers</Typography>
               <FormControlLabel
                 control={<Checkbox checked={selectAll} onChange={handleSelectAllChange} />}
                 label="Select All"
@@ -237,33 +296,28 @@ const EditAnnouncementForm = () => {
                 />
               ))}
             </FormControl>
-
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
-            >
-              Save
-            </Button>
+            {receiverError && (
+              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+                {receiverError}
+              </Typography>
+            )}
           </Box>
         </Grid>
       </Grid>
 
-      <Snackbar
-        open={!!successMessage}
-        onClose={() => setSuccessMessage("")}
-        message={successMessage}
-        autoHideDuration={3000}
-      />
-
-      <Snackbar
-        open={!!errorMessage}
-        onClose={() => setErrorMessage("")}
-        message={errorMessage}
-        autoHideDuration={3000}
-      />
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        sx={{ marginTop: 3, width: "100%" }}
+      >
+        Update Announcement
+      </Button>
+      {errorMessage && (
+        <Typography variant="body2" sx={{ color: "red", marginTop: "20px" }}>
+          {errorMessage}
+        </Typography>
+      )}
     </Box>
   );
 };

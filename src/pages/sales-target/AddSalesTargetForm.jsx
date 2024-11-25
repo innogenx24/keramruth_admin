@@ -24,31 +24,31 @@ const salesRoles = [
 ];
 
 export default function AddSalesTargetForm() {
-  const [selectedProduct, setSelectedProduct] = useState(""); // The product selected by the user
+  const [selectedProduct, setSelectedProduct] = useState(""); // Selected product name
   const [rolesData, setRolesData] = useState([]); // Array for storing target data
   const [products, setProducts] = useState([]);
   const [selectedProductCode, setSelectedProductCode] = useState(""); // Store product code
   const [errors, setErrors] = useState({}); // For tracking validation errors
+  const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission
   const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch products from the API
     const fetchProducts = async () => {
       try {
-        // Retrieve the token from localStorage
         const token = localStorage.getItem("token");
         if (!token) {
           console.error("Token not found");
           return;
         }
 
-        // Make API request with the token in the Authorization header
-        const response = await fetch("http://88.222.245.236:3002/products/admin_product", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "http://88.222.245.236:3002/products/admin_product",
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -64,40 +64,54 @@ export default function AddSalesTargetForm() {
     fetchProducts();
   }, []);
 
-  // Handle form field changes
-  const handleChange = (roleId, field, value) => {
-    // Validate that only numeric input is allowed for 'target'
-    if (field === "target" && !/^\d*$/.test(value)) {
-      // If it's not a number, show an error
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [roleId]: "Numbers only allowed.",
-      }));
-    } else {
-      // Otherwise, update the state with the value
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [roleId]: "", // Clear error message when valid input is given
-      }));
+  const validateFields = () => {
+    const validationErrors = {};
 
-      setRolesData((prevRolesData) =>
-        prevRolesData.map((roleData) =>
-          roleData.roleId === roleId
-            ? {
-                ...roleData,
-                [field]: value,
-              }
-            : roleData
-        )
-      );
+    if (!selectedProduct) {
+      validationErrors.product = "Please select a product.";
     }
+
+    rolesData.forEach((roleData) => {
+      if (!roleData.target) {
+        validationErrors[`${roleData.roleId}-target`] =
+          "Numbers only allowed..";
+      } else if (!/^\d+$/.test(roleData.target)) {
+        validationErrors[`${roleData.roleId}-target`] =
+          "Target must be a number.";
+      }
+
+      if (!roleData.duration) {
+        validationErrors[`${roleData.roleId}-duration`] =
+          "Duration is required.";
+      }
+    });
+
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const handleChange = (roleId, field, value) => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [`${roleId}-${field}`]: "", // Clear error for specific field
+    }));
+
+    setRolesData((prevRolesData) =>
+      prevRolesData.map((roleData) =>
+        roleData.roleId === roleId
+          ? {
+              ...roleData,
+              [field]: value,
+            }
+          : roleData
+      )
+    );
   };
 
   const handleProductChange = (product) => {
-    setSelectedProduct(product.name); // Set the selected product name
-    setSelectedProductCode(product.code); // Set the selected product code
+    setSelectedProduct(product.name); // Set selected product name
+    setSelectedProductCode(product.code); // Set selected product code
 
-    // Create an initial structure for roles data with all roles
     const initialRolesData = salesRoles.map((role) => ({
       roleId: role.id,
       roleName: role.role,
@@ -106,19 +120,21 @@ export default function AddSalesTargetForm() {
     }));
 
     setRolesData(initialRolesData);
+    setErrors({}); // Clear errors when product changes
   };
 
   const handleSubmit = async () => {
-    if (!selectedProduct || !Array.isArray(rolesData) || rolesData.some(roleData => !roleData.target || !roleData.duration)) {
-      console.error("Product and target data are required");
+    setFormSubmitted(true);
+
+    if (!validateFields()) {
+      console.error("Validation failed");
       return;
     }
 
-    // Structure the payload properly
     const payload = {
-      product_name: selectedProduct, // Include product name
+      product_name: selectedProduct,
       targets: rolesData.map((roleData) => ({
-        role: roleData.roleName, // Role name
+        role: roleData.roleName,
         targetData: [
           {
             target: roleData.target,
@@ -129,13 +145,14 @@ export default function AddSalesTargetForm() {
     };
 
     try {
-      const response = await fetch("http://88.222.245.236:3002/salestarget/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "http://88.222.245.236:3002/salestarget/create",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -149,6 +166,7 @@ export default function AddSalesTargetForm() {
       console.error("Network error:", error);
     }
   };
+
   return (
     <div style={{ padding: "20px" }}>
       <Typography variant="h4" gutterBottom>
@@ -157,8 +175,8 @@ export default function AddSalesTargetForm() {
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
-          <InputLabel>Select Product</InputLabel>
-          <FormControl fullWidth margin="normal">
+          <FormControl fullWidth margin="normal" error={!!errors.product}>
+            <InputLabel>Select Product</InputLabel>
             <Select
               value={selectedProduct}
               onChange={(e) => {
@@ -167,7 +185,6 @@ export default function AddSalesTargetForm() {
                 );
                 handleProductChange(selected);
               }}
-              required
             >
               <MenuItem value="">
                 <em>Select a Product</em>
@@ -178,34 +195,37 @@ export default function AddSalesTargetForm() {
                 </MenuItem>
               ))}
             </Select>
+            {errors.product && <FormHelperText>{errors.product}</FormHelperText>}
           </FormControl>
 
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Sales Target for {selectedProduct}:
+                Sales Target for {selectedProduct || "N/A"}:
               </Typography>
-              {Array.isArray(rolesData) && rolesData.length > 0 ? (
-                rolesData.map((roleData) => (
-                  <Grid container spacing={2} key={roleData.roleId} alignItems="center" sx={{ mb: 2 }}>
-                    <Grid item xs={6}>
-                      <Typography>{roleData.roleName}</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
+              {rolesData.map((roleData) => (
+                <Grid container spacing={2} key={roleData.roleId} alignItems="center" sx={{ mb: 2 }}>
+                  <Grid item xs={6}>
+                    <Typography>{roleData.roleName}</Typography>
+                  </Grid>
+                  <Grid item xs={3}>
                     <TextField
-                  label="Enter Target"
-                  fullWidth
-                  value={roleData.target}
-                  onChange={(e) =>
-                    handleChange(roleData.roleId, "target", e.target.value)
-                  }
-                  error={!!errors[roleData.roleId]}
-                  helperText={errors[roleData.roleId] || ""}
-                />
-                    </Grid>
-                    <Grid item xs={3}>
+                      label="Target"
+                      fullWidth
+                      value={roleData.target}
+                      onChange={(e) =>
+                        handleChange(roleData.roleId, "target", e.target.value)
+                      }
+                      error={!!errors[`${roleData.roleId}-target`]}
+                      helperText={errors[`${roleData.roleId}-target`] || ""}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <FormControl
+                      fullWidth
+                      error={!!errors[`${roleData.roleId}-duration`]}
+                    >
                       <Select
-                        fullWidth
                         value={roleData.duration}
                         onChange={(e) =>
                           handleChange(roleData.roleId, "duration", e.target.value)
@@ -219,12 +239,15 @@ export default function AddSalesTargetForm() {
                         <MenuItem value="3 months">3 months</MenuItem>
                         <MenuItem value="6 months">6 months</MenuItem>
                       </Select>
-                    </Grid>
+                      {errors[`${roleData.roleId}-duration`] && (
+                        <FormHelperText>
+                          {errors[`${roleData.roleId}-duration`]}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
                   </Grid>
-                ))
-              ) : (
-                <Typography>Product Not Selected</Typography>
-              )}
+                </Grid>
+              ))}
             </CardContent>
           </Card>
         </Grid>

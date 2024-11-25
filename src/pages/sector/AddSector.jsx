@@ -10,6 +10,7 @@ const AddOrEditSector = () => {
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [sector, setSector] = useState(null); // For storing sector data when editing
+  const [showErrors, setShowErrors] = useState(false); // Tracks when to show errors
 
   // If editing, set the sector data from the location state (passed during navigation)
   useEffect(() => {
@@ -67,6 +68,11 @@ const AddOrEditSector = () => {
     },
   });
 
+  const handleSubmit = (e) => {
+    setShowErrors(true); // Enable error display
+    formik.handleSubmit(e); // Call formik submission
+  };
+
   return (
     <Box p={3}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -76,7 +82,7 @@ const AddOrEditSector = () => {
         <Grid item xs={12} md={6}>
           <h2>Sector Details:</h2>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <TextField
                 fullWidth
                 name="sector_name"
@@ -84,8 +90,8 @@ const AddOrEditSector = () => {
                 value={formik.values.sector_name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.sector_name && Boolean(formik.errors.sector_name)}
-                helperText={formik.touched.sector_name && formik.errors.sector_name}
+                error={showErrors && formik.touched.sector_name && Boolean(formik.errors.sector_name)}
+                helperText={showErrors && formik.touched.sector_name && formik.errors.sector_name}
               />
               {/* Save Button */}
               <Box sx={{ mt: 2 }}>
