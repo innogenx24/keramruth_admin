@@ -67,6 +67,9 @@ const EditMemberForm = () => {
     username: "",
     password: "",
     club_id: "",
+    street_name: "",
+    building_no_name:"",
+
   });
 
   // Fetch all members on mount
@@ -135,14 +138,32 @@ const EditMemberForm = () => {
       validationErrors.name = "Full Name is required";
       isValid = false;
     }
+    // if (!formData.mobile_number) {
+    //   validationErrors.mobile_number = "Mobile Number is required";
+    //   isValid = false;
+    // }
+    // if (!formData.email) {
+    //   validationErrors.email = "Email is required";
+    //   isValid = false;
+    // }
     if (!formData.mobile_number) {
       validationErrors.mobile_number = "Mobile Number is required";
       isValid = false;
+    } else if (!/^\d{10,13}$/.test(formData.mobile_number)) {
+      // Phone number regex: Must be exactly 10 digits
+      validationErrors.mobile_number = "Enter a valid 10 to 13 digit Mobile Number";
+      isValid = false;
     }
+    
     if (!formData.email) {
       validationErrors.email = "Email is required";
       isValid = false;
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+      // Email regex: Standard email format
+      validationErrors.email = "Enter a valid Email address";
+      isValid = false;
     }
+    
     if (!formData.role_id) {
       validationErrors.role_id = "Role is required";
       isValid = false;
@@ -177,6 +198,15 @@ const EditMemberForm = () => {
     }
     if (!formData.club_id) {
       validationErrors.club_id = "Club is required";
+      isValid = false;
+    }
+    //
+    if (!formData.street_name) {
+      validationErrors.street_name = "Sreet Name is required";
+      isValid = false;
+    }
+    if (!formData.building_no_name) {
+      validationErrors.building_no_name = "Building_no_name is required";
       isValid = false;
     }
 
