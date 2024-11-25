@@ -1,0 +1,28 @@
+/* Default Menu Item Styling */
+.menu-item {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s ease;
+  }
+  
+  .menu-item .icon {
+    margin-right: 10px;
+  }
+  
+  .menu-item:hover {
+    background-color: #f0f0f0; /* On hover */
+  }
+  
+  /* Active Menu Item Styling */
+  .menu-item.active {
+    background-color: #007bff; /* Active background color */
+    color: #fff; /* Active text color */
+  }
+  
+  .menu-item.active:hover {
+    background-color: #0056b3; /* Active hover background color */
+  }
+  

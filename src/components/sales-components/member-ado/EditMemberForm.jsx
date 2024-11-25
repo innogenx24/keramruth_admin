@@ -10,12 +10,15 @@ import {
   MenuItem,
   IconButton,
   Typography,
+  InputAdornment,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
 import { useDispatch, useSelector } from "react-redux";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { Snackbar, Alert } from '@mui/material';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const EditMemberForm = () => {
   const dispatch = useDispatch();
@@ -25,6 +28,11 @@ const EditMemberForm = () => {
   const [image, setImage] = useState(null); // Store the selected image
   const [imageName, setImageName] = useState(""); // Store image file name for display
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const [showPassword, setShowPassword] = useState(false);
+  //
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
   const [clubs, setClubs] = useState([]); 
   const [loading, setLoading] = useState(false); 
   const [selectedRole, setSelectedRole] = useState(""); // Role dropdown value
@@ -47,6 +55,22 @@ const EditMemberForm = () => {
     street_name: "",
     building_no_name: "",
     username: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    mobile_number: "",
+    email: "",
+    role_id: "",
+    pincode: "",
+    country: "",
+    state: "",
+    district: "",
+    city: "",
+    username: "",
+    password: "",
+    street_name: "",
+    building_no_name:"",
 
   });
 
@@ -139,9 +163,92 @@ useEffect(() => {
     if (name === "role_id") setSelectedRole(value);
   };
 
+  const validateForm = () => {
+    let validationErrors = {};
+    let isValid = true;
+
+    // Check required fields
+    if (!formData.full_name) {
+      validationErrors.name = "Full Name is required";
+      isValid = false;
+    }
+    // if (!formData.mobile_number) {
+    //   validationErrors.mobile_number = "Mobile Number is required";
+    //   isValid = false;
+    // }
+    // if (!formData.email) {
+    //   validationErrors.email = "Email is required";
+    //   isValid = false;
+    // }
+    if (!formData.mobile_number) {
+      validationErrors.mobile_number = "Mobile Number is required";
+      isValid = false;
+    } else if (!/^\d{10,13}$/.test(formData.mobile_number)) {
+      // Phone number regex: Must be exactly 10 digits
+      validationErrors.mobile_number = "Enter a valid 10 to 13 digit Mobile Number";
+      isValid = false;
+    }
+    
+    if (!formData.email) {
+      validationErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+      // Email regex: Standard email format
+      validationErrors.email = "Enter a valid Email address";
+      isValid = false;
+    }
+    
+    if (!formData.role_id) {
+      validationErrors.role_id = "Role is required";
+      isValid = false;
+    }
+    if (!formData.pincode) {
+      validationErrors.pincode = "Pincode is required";
+      isValid = false;
+    }
+    if (!formData.country) {
+      validationErrors.country = "Country is required";
+      isValid = false;
+    }
+    if (!formData.state) {
+      validationErrors.state = "State is required";
+      isValid = false;
+    }
+    if (!formData.district) {
+      validationErrors.district = "District is required";
+      isValid = false;
+    }
+    if (!formData.city) {
+      validationErrors.city = "City is required";
+      isValid = false;
+    }
+    if (!formData.username) {
+      validationErrors.username = "Username is required";
+      isValid = false;
+    }
+    if (!formData.password) {
+      validationErrors.password = "Password is required";
+      isValid = false;
+    }
+    //
+    if (!formData.street_name) {
+      validationErrors.street_name = "Sreet Name is required";
+      isValid = false;
+    }
+    if (!formData.building_no_name) {
+      validationErrors.building_no_name = "Building_no_name is required";
+      isValid = false;
+    }
+
+    setErrors(validationErrors);
+    return isValid;
+  };
+
   // Save updated member data
 
   const handleSave = () => {
+    const isValid = validateForm();
+    if (!isValid) return;
     const token = localStorage.getItem("token");
   
     const config = {
@@ -166,7 +273,25 @@ useEffect(() => {
       })
       .catch((error) => {
         console.error("Error updating member data", error);
+
+        // Check if the error response contains a message and set the error message
+        if (error.response && error.response.data && error.response.data.error) {
+          setErrorMessage(error.response.data.error); // Extract the error message
+        } else {
+          setErrorMessage("An unknown error occurred.");
+        }
+  
+        // Open Snackbar to display the error message
+        setOpenSnackbar(true);
       });
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
   
 
@@ -263,6 +388,8 @@ useEffect(() => {
                   name="full_name"
                   value={formData.full_name}
                   onChange={handleChange}
+                  error={!!errors.name}
+                  helperText={errors.name}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -272,6 +399,8 @@ useEffect(() => {
                   label="User Name*"
                   value={formData.username}
                   onChange={handleChange}
+                  error={!!errors.username}
+                  helperText={errors.username}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -281,6 +410,8 @@ useEffect(() => {
                   name="mobile_number"
                   value={formData.mobile_number}
                   onChange={handleChange}
+                  error={!!errors.mobile_number}
+                  helperText={errors.mobile_number}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -290,6 +421,8 @@ useEffect(() => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  error={!!errors.email}
+                  helperText={errors.email}
                 />
               </Grid>
 
@@ -298,9 +431,25 @@ useEffect(() => {
                   fullWidth
                   name="password"
                   label="Password*"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                  InputProps={{
+                    // Add an icon button to toggle visibility
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleTogglePasswordVisibility}
+                          edge="end"
+                          aria-label="toggle password visibility"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Grid>
 
@@ -321,6 +470,8 @@ useEffect(() => {
                   label="Pincode*"
                   value={formData.pincode}
                   onChange={handleChange}
+                  error={!!errors.pincode}
+                  helperText={errors.pincode}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -330,6 +481,8 @@ useEffect(() => {
                   label="Country*"
                   value={formData.country}
                   onChange={handleChange}
+                  error={!!errors.country}
+                  helperText={errors.country}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -339,6 +492,8 @@ useEffect(() => {
                   label="State*"
                   value={formData.state}
                   onChange={handleChange}
+                  error={!!errors.state}
+                  helperText={errors.state}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -348,6 +503,8 @@ useEffect(() => {
                   label="District*"
                   value={formData.district}
                   onChange={handleChange}
+                  error={!!errors.district}
+                  helperText={errors.district}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -357,6 +514,8 @@ useEffect(() => {
                   label="City*"
                   value={formData.city}
                   onChange={handleChange}
+                  error={!!errors.city}
+                  helperText={errors.city}
 
                 />
               </Grid>
@@ -367,6 +526,8 @@ useEffect(() => {
                   label="Street Name"
                   value={formData.street_name}
                   onChange={handleChange}
+                  error={!!errors.street_name}
+                  helperText={errors.street_name}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -376,6 +537,8 @@ useEffect(() => {
                   label="Building No / Name"
                   value={formData.building_no_name}
                   onChange={handleChange}
+                  error={!!errors.building_no_name}
+                  helperText={errors.building_no_name}
                 />
               </Grid>
             </Grid>
@@ -419,6 +582,19 @@ useEffect(() => {
           </Button>
         </Grid>
       </Grid>
+      <Snackbar
+  open={openSnackbar}
+  autoHideDuration={6000}
+  onClose={handleCloseSnackbar}
+  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+  <Alert
+    onClose={handleCloseSnackbar}
+    severity="error"
+    sx={{ width: "100%", background:'red', color: 'white' }}
+  >
+    {errorMessage || "An error occurred while updating member data."}
+  </Alert>
+</Snackbar>
     </Box>
   );
 };

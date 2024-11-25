@@ -75,13 +75,19 @@ const AddProductForm = () => {
       customer_price: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Required"),
-      productVolume: Yup.string().required("Required"),
-      price: Yup.number().required("Required").min(0).default(0),
-      distributorPrice: Yup.number().required("Required").min(0).default(0),
-      sdPrice: Yup.number().required("Required").min(0).default(0),
-      mdPrice: Yup.number().required("Required").min(0).default(0),
-      adoPrice: Yup.number().required("Required").min(0).default(0),
+      name: Yup.string()
+      .required("Required")
+      .min(3, "Name must be at least 3 characters long")
+      .max(30, "Name cannot be more than 30 characters long"),
+      productVolume: Yup.string()
+      .required("Required")
+      .matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
+      // price: Yup.number().required("Required").min(0).default(0),
+      price: Yup.number().required("Required").min(0),
+      distributorPrice: Yup.number().required("Required").min(0),
+      sdPrice: Yup.number().required("Required").min(0),
+      mdPrice: Yup.number().required("Required").min(0),
+      adoPrice: Yup.number().required("Required").min(0),
       quantity_type: Yup.string().required("Required"),
       category_name: Yup.string().required("Required"),
       stock_quantity: Yup.number().required("Stock quantity is required").min(0, "Stock quantity must be greater than or equal to 0"),
@@ -97,11 +103,11 @@ const AddProductForm = () => {
       formData.append("description", values.description);
       formData.append("productVolume", values.productVolume);
       formData.append("price", values.price || 0);
-      formData.append("distributorPrice", values.distributorPrice || 0);
+      formData.append("distributorPrice", values.distributorPrice);
       formData.append("stock_quantity", values.stock_quantity); // Add stock_quantity to FormData
-      formData.append("sdPrice", values.sdPrice || 0);
-      formData.append("mdPrice", values.mdPrice || 0);
-      formData.append("adoPrice", values.adoPrice || 0);
+      formData.append("sdPrice", values.sdPrice);
+      formData.append("mdPrice", values.mdPrice);
+      formData.append("adoPrice", values.adoPrice);
       formData.append("quantity_type", values.quantity_type);
       formData.append("category_name", values.category_name);
     
@@ -153,7 +159,8 @@ const AddProductForm = () => {
         padding: "20px",
         maxWidth: "1200px",
         margin: "0 auto",
-        backgroundColor: "#f5f5f5",
+        // backgroundColor: "#f5f5f5",
+        backgroundColor: "#fff",
         borderRadius: "8px",
       }}
     >
@@ -166,7 +173,8 @@ const AddProductForm = () => {
           <Grid item xs={12} md={6}>
             <Box
               sx={{
-                backgroundColor: "#fff",
+                // backgroundColor: "#fff",
+                backgroundColor: "#F1F3FF",
                 padding: "20px",
                 borderRadius: "8px",
               }}
@@ -174,7 +182,11 @@ const AddProductForm = () => {
               <Typography variant="h6" gutterBottom>
                 Products Details
               </Typography>
-              <InputLabel>Add Images</InputLabel>
+              <InputLabel sx={{
+                color:'#232428'
+              }}>
+                Add Images
+                </InputLabel>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
                   <AddPhotoAlternateIcon />
@@ -273,7 +285,7 @@ const AddProductForm = () => {
           <Grid item xs={12} md={6}>
             <Box
               sx={{
-                backgroundColor: "#fff",
+                backgroundColor: "#F1F3FF",
                 padding: "20px",
                 borderRadius: "8px",
               }}

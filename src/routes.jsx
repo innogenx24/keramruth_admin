@@ -78,7 +78,8 @@ const RoutesConfig = () => {
               </PrivateRoute>
             }
           >
-            <Route path="*" element={<SalesPage />} />
+            {/* <Route path="*" element={<SalesPage />} />
+            <Route path="products" element={<ProductPage />} /> */}
             <Route path="products" element={<ProductPage />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditUserProfile />} />

@@ -31,7 +31,7 @@ const SignIn = () => {
     }),
     onSubmit: (values) => {
       dispatch(signInRequest({ ...values, rememberMe }));
-
+      setOpenSnackbar(true);
       // Store token in localStorage if "Remember Me" is checked
       if (rememberMe) {
         localStorage.setItem('email', values.email); // Store email (or token) in localStorage
@@ -44,7 +44,7 @@ const SignIn = () => {
   // Handle authentication redirect
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard/sales');
+      navigate('/dashboard/products');
     }
   }, [isAuthenticated, navigate]);
 
@@ -205,10 +205,18 @@ const SignIn = () => {
               {/* Snackbar for Error Display */}
               <Snackbar
                 open={openSnackbar}
+                message={error ? "Invalid Email or Password" : "Successfully login"}
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
-                message={error ? "Invalid Email or Password" : ""}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                ContentProps={{
+                  sx: {
+                    backgroundColor: error ? 'red' : 'green', 
+                    color: 'white',
+                    fontWeight: 'bold',
+                  },
+                }}
+                
               />
             </form>
           </Box>

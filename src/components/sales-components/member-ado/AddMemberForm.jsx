@@ -9,6 +9,7 @@ import {
   MenuItem,
   IconButton,
   Typography,
+  InputAdornment,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
@@ -17,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { makePostMember } from "../../../redux/slices/member-slice/MemberPostSlice";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
 import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AddMemberForm = () => {
   const dispatch = useDispatch();
@@ -29,6 +31,7 @@ const AddMemberForm = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const { allmembers } = useSelector((state) => state.allmembers);
   const [imagePreview, setImagePreview] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false); // Add loading state
 
 
@@ -93,7 +96,6 @@ const AddMemberForm = () => {
       city: "",
       street_name: "",
       building_no_name: "",
-      club_id: "",
       club_name: "",
 
       superior_id: null,
@@ -150,6 +152,11 @@ const AddMemberForm = () => {
   const handleRoleChange = (event) => {
     formik.setFieldValue("role_id", event.target.value);
     setSelectedRole(event.target.value);
+  };
+
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -266,20 +273,30 @@ const AddMemberForm = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    name="password"
-                    label="Password*"
-                    type="password"
-                    {...formik.getFieldProps("password")}
-                    error={
-                      formik.touched.password && Boolean(formik.errors.password)
-                    }
-                    helperText={
-                      formik.touched.password && formik.errors.password
-                    }
-                  />
-                </Grid>
+      <TextField
+        fullWidth
+        name="password"
+        label="Password*"
+        type={showPassword ? "text" : "password"} // Toggle type based on state
+        {...formik.getFieldProps("password")}
+        error={formik.touched.password && Boolean(formik.errors.password)}
+        helperText={formik.touched.password && formik.errors.password}
+        InputProps={{
+          // Add an icon button to toggle visibility
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={handleTogglePasswordVisibility}
+                edge="end"
+                aria-label="toggle password visibility"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    </Grid>
               </Grid>
             </Box>
 

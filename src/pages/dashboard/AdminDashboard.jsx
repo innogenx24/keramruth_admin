@@ -41,10 +41,11 @@ import { GrAnnounce } from "react-icons/gr";
 import { FaCcDinersClub } from "react-icons/fa";
 import { FaCodePullRequest } from "react-icons/fa6";
 import { IoDocument } from "react-icons/io5";
+import AppLogo2 from "../../assets/logo/AppLogo2";
 
 // Drawer width
-const drawerWidth = 240;
-// const drawerWidth = 300;
+// const drawerWidth = 240;
+const drawerWidth = 300;
 
 // Mixin for opened Drawer
 const openedMixin = (theme) => ({
@@ -482,7 +483,8 @@ export default function AdminDashboard() {
               width: "100%",
             }}
           >
-            <AppLogo />
+            {/* <AppLogo /> */}
+            <AppLogo2/>
           </Box>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
@@ -492,7 +494,7 @@ export default function AdminDashboard() {
             )}
           </IconButton>
         </DrawerHeader>
-        <List>
+        <List sx={{padding:'15px'}}>
           {menuItems.map((item) => (
             <MenuItem
               key={item.text}
