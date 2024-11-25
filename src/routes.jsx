@@ -84,6 +84,9 @@ const RoutesConfig = () => {
             <Route path="edit-profile" element={<EditUserProfile />} />
             <Route path="members" element={<ViewMember />} />
             <Route path="announcement" element={<AnnouncementTable />} />
+            <Route path="pending-orders" element={<AnnouncementTable />} />
+
+          
             <Route
               path="announcement/add-announcement"
               element={<AddAnnouncementForm />}

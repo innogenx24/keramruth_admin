@@ -229,6 +229,12 @@ export default function AdminDashboard() {
       path: "/dashboard/announcement",
       icon: <GrAnnounce />,
     },
+    {
+      text: "Pending Orders",
+      path: "/dashboard/pending-orders",
+      icon: <GrAnnounce />,
+    },
+
     // {
     //   text: "Report",
     //   path: "/dashboard/report",
