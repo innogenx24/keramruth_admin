@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 const AddMemberForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [clubs, setClubs] = useState([]); // Store the clubs data
 
   const [selectClub, setSelectedClub] = useState("500 Litres");
   const fileInputRef = useRef(null); // Ref to reset file input
@@ -28,7 +29,39 @@ const AddMemberForm = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const { allmembers } = useSelector((state) => state.allmembers);
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false); // Add loading state
 
+
+  // Fetch clubs from the API
+  const fetchClubs = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found");
+
+      const response = await fetch("http://88.222.245.236:3002/club", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setClubs(result.data); // Populate clubs data
+      } else {
+        console.error("Error fetching clubs:", result.message);
+      }
+    } catch (error) {
+      console.error("Error fetching clubs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch clubs on component mount
+  useEffect(() => {
+    fetchClubs();
+  }, []);
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
@@ -61,6 +94,8 @@ const AddMemberForm = () => {
       street_name: "",
       building_no_name: "",
       club_id: "",
+      club_name: "",
+
       superior_id: null,
     },
     validationSchema: Yup.object({
@@ -78,7 +113,8 @@ const AddMemberForm = () => {
       city: Yup.string().required("Required"),
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
-      club_id: Yup.string(),
+      club_name: Yup.string().required("Please select a club"), // Validate club_name
+
     }),
     onSubmit: (values, { resetForm }) => {
       const formData = new FormData();
@@ -95,7 +131,7 @@ const AddMemberForm = () => {
       formData.append("city", values.city);
       formData.append("street_name", values.street_name);
       formData.append("building_no_name", values.building_no_name);
-      formData.append("club_id", values.club_id);
+      formData.append("club_name", formik.values.club_name); // Append club_name
       formData.append("image", values.image);
       formData.append("superior_id", values.superior_id);
 
@@ -352,26 +388,29 @@ const AddMemberForm = () => {
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Club & Superior Distributors</InputLabel>
               <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <InputLabel>Club*</InputLabel>
-                  <Select
-                    fullWidth
-                    defaultValue=""
-                    name="club_id"
-                    value={selectClub}
-                    onChange={handleClubChange}
-                    {...formik.getFieldProps("club_id")}
-                    error={formik.touched.club_id && Boolean(formik.errors.club_id)}
-                    helperText={formik.touched.club_id && formik.errors.club_id}
-                  >
-                    <MenuItem value="">Select Club</MenuItem>
-                    <MenuItem value="500">500 Litres</MenuItem>
-                    <MenuItem value="1000">1000 Litres</MenuItem>
-                    <MenuItem value="1500">1500 Litres</MenuItem>
-                    <MenuItem value="2000">2000 Litres</MenuItem>
-                    <MenuItem value="2500">2500 Litres</MenuItem>
-                  </Select>
-                </Grid>
+              <Grid item xs={12}>
+  <InputLabel>Club*</InputLabel>
+  <Select
+    fullWidth
+    name="club_name"
+    value={formik.values.club_name}
+    onChange={(e) => {
+      formik.setFieldValue("club_name", e.target.value); // Set club_name directly
+    }}
+    error={Boolean(formik.touched.club_name && formik.errors.club_name)}
+  >
+    <MenuItem value="">Select Club</MenuItem>
+    {clubs.map((club) => (
+      <MenuItem key={club.id} value={club.club_name}>
+        {club.club_name}
+      </MenuItem>
+    ))}
+  </Select>
+  {formik.touched.club_name && formik.errors.club_name && (
+    <Typography color="error">{formik.errors.club_name}</Typography>
+  )}
+</Grid>
+
 
 
 
