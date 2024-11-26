@@ -101,7 +101,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`http://localhost:3002/api/member-update/update/${memberId}`, {
+      const response = await fetch(`http://88.222.245.236:3002/api/member-update/update/${memberId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
@@ -130,7 +130,7 @@ useEffect(() => {
   
   const handleReject = async (requestId) => {
     try {
-      const response = await fetch(`http://localhost:3002/edit-requests/reject/${requestId}`, {
+      const response = await fetch(`http://88.222.245.236:3002/edit-requests/reject/${requestId}`, {
         method: "DELETE",  // Change from POST to DELETE to match your server-side API
       });
       const data = await response.json();
