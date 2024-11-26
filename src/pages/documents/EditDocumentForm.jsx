@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import {
-  Button,
-  Box,
-  TextField,
-  Grid,
-  Switch,
   Typography,
-  IconButton,
+  FormControl,
   FormControlLabel,
   Checkbox,
-  InputLabel,
+  TextField,
+  Button,
+  Box,
+  Grid,
   TextareaAutosize,
-  FormControl,
-
+  InputLabel,
+  IconButton,
+  Switch,
 } from "@mui/material";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useLocation, useNavigate } from "react-router-dom";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const EditDocumentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const document = location.state?.document || {};
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/"; 
+  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const roles = [
     { label: "Area Development Officer", value: "Area Development Officer" },
     { label: "Master Distributor", value: "Master Distributor" },
@@ -37,21 +36,19 @@ const EditDocumentForm = () => {
   const [heading, setHeading] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
-  const [receiver, setReceiver] = useState([]); // array of roles
+  const [receiver, setReceiver] = useState(roles.map((role) => role.value));
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState("");
-  const [selectAll, setSelectAll] = useState(false);
-  const [imageError, setImageError] = useState(""); // State for image error message
-
-  // Error states
+  const [selectAll, setSelectAll] = useState(true);
+  const [imageError, setImageError] = useState("");
   const [errors, setErrors] = useState({
     heading: "",
     description: "",
     link: "",
     receiver: "",
-    image: ""
+    image: "",
   });
 
   useEffect(() => {
@@ -62,31 +59,37 @@ const EditDocumentForm = () => {
       setHeading(document.heading || "");
       setDescription(document.description || "");
       setLink(document.link || "");
-      setReceiver(document.receiver || []);
-      setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
+      setReceiver(
+        Array.isArray(document.receiver)
+          ? document.receiver
+          : roles.map((role) => role.value)
+      );
+            setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
       setImageName(document.image || "");
     }
   }, [document]);
 
-  useEffect(() => {
-    setSelectAll(roles.every((role) => receiver.includes(role.value)));
-  }, [receiver]);
-
   const handleReceiverChange = (event) => {
     const { value, checked } = event.target;
 
-    setReceiver((prev) => {
-      if (value === "selectAll") {
-        return checked ? roles.map((role) => role.value) : [];
+    if (value === "selectAll") {
+      if (checked) {
+        setReceiver(roles.map((role) => role.value));
       } else {
-        const newReceiver = Array.isArray(prev) ? [...prev] : [];
-        return checked
-          ? [...newReceiver, value]
-          : newReceiver.filter((role) => role !== value);
+        setReceiver([]);
       }
-    });
+      setSelectAll(checked);
+    } else {
+      const updatedReceiver = checked
+        ? [...receiver, value]
+        : receiver.filter((role) => role !== value);
+
+      setReceiver(updatedReceiver);
+      setSelectAll(updatedReceiver.length === roles.length);
+    }
   };
+
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -291,36 +294,36 @@ const EditDocumentForm = () => {
             <Typography variant="h6" sx={{ mb: 2 }}>
               Select Receiver Roles
             </Typography>
-            <FormControl component="fieldset">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectAll}
-                    onChange={handleReceiverChange}
-                    value="selectAll"
-                  />
-                }
-                label="Select All"
+            <FormControl component="fieldset" sx={{ mb: 3 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={selectAll}
+              onChange={handleReceiverChange}
+              value="selectAll"
+            />
+          }
+          label="Select All"
+        />
+        {roles.map((role) => (
+          <FormControlLabel
+            key={role.value}
+            control={
+              <Checkbox
+                checked={receiver.includes(role.value)}
+                onChange={handleReceiverChange}
+                value={role.value}
               />
-              {roles.map((role) => (
-                <FormControlLabel
-                  key={role.value}
-                  control={
-                    <Checkbox
-                      checked={receiver.includes(role.value)}
-                      onChange={handleReceiverChange}
-                      value={role.value}
-                    />
-                  }
-                  label={role.label}
-                />
-              ))}
-              {errors.receiver && (
-                <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
-                  {errors.receiver}
-                </Typography>
-              )}
-            </FormControl>
+            }
+            label={role.label}
+          />
+        ))}
+        {errors.receiver && (
+          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+            {errors.receiver}
+          </Typography>
+        )}
+      </FormControl>
  {/* Auto Update */}
  <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
               <label style={{ marginRight: "8px" }}>Auto Update</label>

@@ -252,17 +252,20 @@ export default function AddSalesTargetForm() {
           </Card>
         </Grid>
 
+       
         <Grid item xs={12}>
-          <Box display="flex">
-            <Button
+        <Button
+              type="submit"
               variant="contained"
-              color="success"
-              size="large"
+              color="primary"
               onClick={handleSubmit}
+
+              
+              sx={{ marginTop: "24px",    width: "50%",
+                borderRadius: "15px", padding: "8px" }}
             >
-              SAVE
+              Save
             </Button>
-          </Box>
         </Grid>
       </Grid>
     </div>

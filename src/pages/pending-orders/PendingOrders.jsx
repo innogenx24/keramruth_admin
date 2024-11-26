@@ -29,7 +29,7 @@ const OrderManagement = () => {
       console.error('Token not found');
       return;
     }
-
+  
     try {
       const response = await axios.get(API_URL, {
         headers: {
@@ -37,14 +37,21 @@ const OrderManagement = () => {
         },
       });
       const allOrders = response.data.orders || [];
+      
+      // Filter pending orders
       setPendingOrders(allOrders.filter(order => order.status === 'Pending'));
-      setCompletedOrders(
-        allOrders.filter(order => order.status === 'Accepted' || order.status === 'Cancelled')
-      );
+      
+      // Filter accepted and cancelled orders, then sort by updatedAt in descending order
+      const sortedCompletedOrders = allOrders
+        .filter(order => order.status === 'Accepted' || order.status === 'Cancelled')
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)); // Sorting in descending order by updatedAt
+      
+      setCompletedOrders(sortedCompletedOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchOrders();
@@ -131,7 +138,7 @@ const OrderManagement = () => {
             {/* Calculate total quantity from the OrderItems */}
             {order.OrderItems.reduce((total, item) => total + item.quantity, 0).toLocaleString()}
           </TableCell>
-                  <TableCell>${parseFloat(order.totalAmount).toFixed(2)}</TableCell>
+                  <TableCell>Rs. {parseFloat(order.totalAmount).toFixed(2)}</TableCell>
                   <TableCell>
                     <Button
                       variant="outlined"

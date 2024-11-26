@@ -3,12 +3,16 @@ import { Button, Typography, Box, TextField, Grid, Select, MenuItem, InputLabel,
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from 'axios';
+import { useDispatch } from "react-redux";
+import { makePostCategory } from "../../redux/slices/master-slice/categort-slice/CategoryPostSlice";
+import { useNavigate } from "react-router-dom";
 
 const AddCategoryForm = () => {
   const [sectors, setSectors] = useState([]);
   const [selectedSector, setSelectedSector] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSectors = async () => {
@@ -38,8 +42,8 @@ const AddCategoryForm = () => {
       sector_name: "",
     },
     validationSchema: Yup.object({
-      category_name: Yup.string().required("Required"),
-      sector_name: Yup.string().required("Required"),
+      category_name: Yup.string().required("Category name is required"),
+      sector_name: Yup.string().required("Sector is required"),
     }),
     onSubmit: async (values, { resetForm }) => {
       const parsedValues = {
@@ -61,6 +65,7 @@ const AddCategoryForm = () => {
         );
         console.log("Category added successfully:", response.data);
         resetForm();
+        navigate("/dashboard/category");
       } catch (error) {
         console.error("Error posting category:", error.response?.data || error.message);
         setErrorMessage(error.response.data.error);

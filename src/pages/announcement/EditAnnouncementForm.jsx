@@ -41,6 +41,7 @@ const EditAnnouncementForm = () => {
   const [receiverError, setReceiverError] = useState("");
   const [imageError, setImageError] = useState(""); // Image file error state
   const [errorMessage, setErrorMessage] = useState(""); // General error message
+  const [successMessage, setSuccessMessage] = useState("");  // Add this state for success messages
 
   const roles = [
     { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
@@ -257,12 +258,8 @@ const EditAnnouncementForm = () => {
                 {descriptionError}
               </Typography>
             )}
-          </Box>
-        </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <TextField
+<TextField
               fullWidth
               label="Link"
               value={link}
@@ -275,7 +272,13 @@ const EditAnnouncementForm = () => {
                 {linkError}
               </Typography>
             )}
-
+          </Box>
+        </Grid>
+  
+        <Grid item xs={12} md={6}>
+          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
+            
+  
             <FormControl fullWidth margin="normal">
               <Typography variant="h6">Select Receivers</Typography>
               <FormControlLabel
@@ -301,18 +304,19 @@ const EditAnnouncementForm = () => {
                 {receiverError}
               </Typography>
             )}
+            {/* The "Update Announcement" button placed here */}
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ marginTop: 3, width: "100%" }}
+            >
+              Update Announcement
+            </Button>
           </Box>
         </Grid>
       </Grid>
-
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        sx={{ marginTop: 3, width: "100%" }}
-      >
-        Update Announcement
-      </Button>
+  
       {errorMessage && (
         <Typography variant="body2" sx={{ color: "red", marginTop: "20px" }}>
           {errorMessage}
@@ -320,6 +324,7 @@ const EditAnnouncementForm = () => {
       )}
     </Box>
   );
+  
 };
 
 export default EditAnnouncementForm;

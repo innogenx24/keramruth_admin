@@ -449,6 +449,18 @@ export default function AdminDashboard() {
           >
             Admin Dashboard
           </Typography>
+          {/* <Box sx={{ flexGrow: 2, display: "flex", justifyContent: "center" }}>
+        <input
+          type="text"
+          placeholder="Search..."
+          style={{
+            padding: "4px 10px",
+            borderRadius: "2px",
+            border: "1px solid #001",
+            width: "300px",
+          }}
+        />
+      </Box> */}
           <div style={{ display: "flex", alignItems: "center" }}>
            <Avatar
               alt="Profile Picture"

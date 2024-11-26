@@ -31,8 +31,12 @@ const AddMemberForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
-  const [selectClub, setSelectedClub] = useState("500 Litres");
-  const fileInputRef = useRef(null); // Ref to reset file input
+  // const [selectClub, setSelectedClub] = useState("500 Litres");
+  // const fileInputRef = useRef(null); // Ref to reset file input
+  const [states, setStates] = useState([]); // Define states
+  const [districts, setDistricts] = useState([]); // Define districts
+  const [selectedClub, setSelectedClub] = useState("500 Litres");
+  const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedRole, setSelectedRole] = useState("");
   const { allmembers } = useSelector((state) => state.allmembers);
@@ -49,11 +53,79 @@ const AddMemberForm = () => {
     if (success) {
       setErrorMessage('Member added successfully!');
       setOpenSnackbar(true);
+      navigate('/dashboard/members');
     }
   }
   }, [error, success]);
+  // const [loading, setLoading] = useState(false);
 
-  // Fetch clubs from the API
+  // State to City mapping
+const stateDistrictMapping = {
+  "Andhra Pradesh": [
+    "Anakapalli", "Anantapur", "Bapatla", "Chittoor", "East Godavari", "Eluru", 
+    "Guntur", "Kakinada", "Konaseema", "Krishna", "Kurnool", "Nandyal", "Nellore", 
+    "Parvathipuram Manyam", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai", 
+    "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari", 
+    "YSR Kadapa", "Alluri Sitharama Raju", "NTR", "Palnadu"
+  ],
+  "Arunachal Pradesh": [
+    "Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", 
+    "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare", 
+    "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"
+  ],
+  "Assam": [
+    "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", 
+    "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", 
+    "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", 
+    "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", 
+    "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", 
+    "West Karbi Anglong"
+  ],
+  "Bihar": [
+    "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", 
+    "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", 
+    "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", 
+    "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", 
+    "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"
+  ],
+  "Chhattisgarh": [
+    "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", 
+    "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa", 
+    "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Korea", "Mahasamund", "Mungeli", 
+    "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"
+  ],
+    "Goa": ["North Goa", "South Goa","Panaji", "Vasco da Gama", "Margao"],
+    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Junagadh", "Kheda", "Mehsana", "Patan", "Sabarkantha", "Anand", "Banaskantha", "Dahod", "Narmada", "Porbandar", "Chhota Udepur", "Gir Somnath", "Mahisagar", "Morbi", "Navajo", "Surendranagar", "Tapi", "Valsad"],
+    "Haryana": ["Chandigarh", "Faridabad", "Gurugram", "Ambala", "Hisar", "Karnal", "Panipat", "Rewari", "Sonipat", "Yamunanagar", "Bhiwani", "Rohtak", "Sirsa", "Jhajjar", "Mahendragarh", "Nuh", "Panchkula", "Fatehabad", "Palwal", "Kaithal"],
+    "Himachal Pradesh": ["Shimla", "Manali", "Kullu", "Dharamsala", "Kangra", "Solan", "Mandi", "Bilaspur", "Hamirpur", "Una", "Sirmaur", "Chamba", "Kullu", "Lahaul and Spiti", "Una"],
+    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Hazaribagh", "Bokaro", "Deoghar", "Giridih", "Dumka", "Khunti", "Pakur", "Sahebganj", "Ramgarh", "Godda", "Latehar", "Palamu", "Simdega", "Chatra", "Garhwa", "Koderma", "Saraikela Kharsawan"],
+    "Karnataka": ["Bangalore", "Mysuru", "Mangalore", "Hubli", "Belgaum", "Bidar", "Chikkaballapur", "Chikkamagaluru", "Davanagere", "Hassan", "Hubli", "Kolar", "Koppal", "Mandya", "Raichur", "Ramanagara", "Shivamogga", "Tumkur", "Udupi", "Ballari", "Chitradurga", "Dakshina Kannada", "Gadag", "Haveri", "Kodagu", "Bagalkot", "Yadgir"],
+    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Kottayam", "Alappuzha", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Malappuram", "Palakkad", "Pathanamthitta", "Pernakulam", "Thrissur", "Wayanad"],
+    "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Ujjain", "Jabalpur", "Sagar", "Rewa", "Satna", "Dewas", "Ratlam", "Shivpuri", "Sehore", "Shahdol", "Chhindwara", "Mandla", "Tikamgarh", "Panna", "Khargone", "Burhanpur", "Neemuch", "Mandsaur", "Balaghat", "Betul", "Hoshangabad", "Khandwa", "Alirajpur", "Anuppur", "Ashoknagar", "Chhatarpur", "Dindori", "Harda", "Jhabua", "Katni", "Narsinghpur", "Seoni", "Shivpuri", "Singrauli", "Umaria"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Thane", "Solapur", "Sangli", "Ratnagiri", "Jalgaon", "Satara", "Kolhapur", "Latur", "Nanded", "Amravati", "Akola", "Yavatmal", "Buldhana", "Hingoli", "Wardha", "Washim", "Chandrapur", "Gadchiroli", "Bhandara", "Sindhudurg", "Palghar"],
+    "Manipur": ["Imphal", "Thoubal", "Kangpokpi", "Bishnupur", "Churachandpur", "Senapati", "Ukhrul", "Tamenglong", "Noney", "Peren"],
+    "Meghalaya": ["East Khasi Hills", "West Khasi Hills", "Ri-Bhoi", "West Jaintia Hills", "East Jaintia Hills", "South Garo Hills", "North Garo Hills", "West Garo Hills"],
+    "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Kolasib", "Mamit", "Serchhip", "Lawngtlai", "Hnahthial", "Siaha"],
+    "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Mon", "Phek", "Tuensang", "Zunheboto"],
+    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Balasore", "Baripada", "Bargarh", "Jagatsinghpur", "Jajpur", "Kendrapara", "Khurda", "Koraput", "Nayagarh", "Puri", "Sambalpur", "Sundargarh", "Angul", "Ganjam", "Kalahandi", "Dhenkanal", "Deogarh", "Nuapada", "Malkangiri", "Rayagada", "Mayurbhanj"],
+    "Punjab": ["Chandigarh", "Amritsar", "Ludhiana", "Jalandhar", "Patiala", "Bathinda", "Firozpur", "Hoshiarpur", "Rupnagar", "Moga", "Faridkot", "Barnala", "Sangrur", "Mansa", "Muktsar", "Kapurthala", "Tarn Taran", "Shaheed Bhagat Singh Nagar", "Fatehgarh Sahib", "Sri Muktsar Sahib"],
+    "Rajasthan": ["Jaipur", "Udaipur", "Jodhpur", "Ajmer", "Kota", "Alwar", "Bikaner", "Bundi", "Churu", "Dausa", "Hanumangarh", "Jhunjhunu", "Jhalawar", "Nagaur", "Pali", "Rajsamand", "Sikar", "Sirohi", "Tonk", "Barmer", "Banswara", "Baran", "Bhilwara", "Dholpur", "Dungarpur", "Karauli", "Pali", "Pratapgarh", "Rajasmand", "Sawai Madhopur", "Shri Ganganagar"],
+    "Sikkim": ["Gangtok", "Namchi", "Pakyong", "Mangan", "Rangpo"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Trichy", "Salem", "Tirunelveli", "Erode", "Vellore", "Tirupur", "Dharmapuri", "Cuddalore", "Kanchipuram", "Nagapattinam", "Karur", "Pudukkottai", "Thanjavur", "Villupuram", "Dindigul", "Kanyakumari", "Ramanathapuram", "Thoothukudi", "Virudhunagar", "Sivaganga", "Krishnagiri", "Ariyalur", "Perambalur", "Tiruvarur"],
+    "Telangana": ["Hyderabad", "Warangal", "Khammam", "Adilabad", "Nalgonda", "Karimnagar", "Mahabubnagar", "Nizamabad", "Medak", "Khammam", "Rangareddy", "Siddipet", "Jangaon", "Peddapalli", "Suryapet", "Warangal Rural", "Warangal Urban", "Mancherial", "Bhupalpally", "Mulugu", "Jayashankar", "Jogulamba Gadwal"],
+    "Tripura": ["Agartala", "Udaipur", "Belonia", "Kailashahar", "Dharmanagar", "Ambassa", "Sabroom", "Khowai", "Teliamura", "Jolaibari"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Allahabad", "Gorakhpur", "Noida", "Meerut", "Mathura", "Firozabad", "Jhansi", "Ghaziabad", "Aligarh", "Bareilly", "Shahjahanpur", "Rampur", "Bijnor", "Moradabad", "Muzaffarnagar", "Saharanpur", "Jaunpur", "Sitapur", "Etawah", "Mau", "Azamgarh", "Ballia"],
+    "Uttarakhand": ["Dehradun", "Haridwar", "Nainital", "Rishikesh", "Almora", "Bageshwar", "Chamoli", "Champawat", "Haldwani", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
+    "West Bengal": ["Kolkata", "Darjeeling", "Siliguri", "Asansol", "Howrah", "Bardhaman", "Malda", "Purulia", "Hooghly", "North 24 Parganas", "South 24 Parganas", "Maldah", "Birbhum", "Jalpaiguri", "Murshidabad", "Nadia", "Bankura", "Cooch Behar", "Purba Medinipur", "Paschim Medinipur"],
+    "Andaman and Nicobar Islands": ["Port Blair"],
+    "Chandigarh": ["Chandigarh"],
+    "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
+    "Lakshadweep": ["Kavaratti"],
+    "Delhi": ["New Delhi", "Old Delhi", "Dwarka", "Rohini"],
+    "Puducherry": ["Puducherry", "Auroville", "Mahe"],
+  };
+  
+
   const fetchClubs = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -67,7 +139,7 @@ const AddMemberForm = () => {
 
       const result = await response.json();
       if (result.success) {
-        setClubs(result.data); // Populate clubs data
+        setClubs(result.data);
       } else {
         console.error("Error fetching clubs:", result.message);
       }
@@ -77,7 +149,6 @@ const AddMemberForm = () => {
     }
   };
 
-  // Fetch clubs on component mount
   useEffect(() => {
     fetchClubs();
   }, []);
@@ -85,7 +156,6 @@ const AddMemberForm = () => {
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
   }, [selectedRole, dispatch]);
-
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -94,33 +164,29 @@ const AddMemberForm = () => {
       setImagePreview(URL.createObjectURL(file)); // Create a preview URL
     }
   };
-
-  // Formik form setup
+  // Formik setup
   const formik = useFormik({
     initialValues: {
       role_id: "",
       image: null,
       full_name: "",
-      // username: "",
       mobile_number: "",
       email: "",
       password: "",
       pincode: "",
-      country: "",
+      country: "India", // Set default country value
       state: "",
       district: "",
       city: "",
       street_name: "",
       building_no_name: "",
       club_name: "",
-
       superior_id: null,
     },
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
       image: Yup.mixed(),
       full_name: Yup.string().required("Required"),
-      // username: Yup.string().required("Required"),
       mobile_number: Yup.number().required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
       password: Yup.string().required("Required"),
@@ -131,14 +197,12 @@ const AddMemberForm = () => {
       city: Yup.string().required("Required"),
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
-      club_name: Yup.string().required("Please select a club"), // Validate club_name
-
+      club_name: Yup.string().required("Please select a club"),
     }),
     onSubmit: (values, { resetForm }) => {
       const formData = new FormData();
       formData.append("role_id", values.role_id);
       formData.append("full_name", values.full_name);
-      // formData.append("username", values.username);
       formData.append("mobile_number", values.mobile_number);
       formData.append("email", values.email);
       formData.append("password", values.password);
@@ -149,27 +213,39 @@ const AddMemberForm = () => {
       formData.append("city", values.city);
       formData.append("street_name", values.street_name);
       formData.append("building_no_name", values.building_no_name);
-      formData.append("club_name", formik.values.club_name); // Append club_name
+      formData.append("club_name", values.club_name);
       formData.append("image", values.image);
       formData.append("superior_id", values.superior_id);
       
       setIsFormSubmitted(true); 
-      dispatch(makePostMember(formData));
+      // dispatch(makePostMember(formData));
       // resetForm();
       // navigate('/dashboard/members');
+
+      dispatch(makePostMember(formData));
+      resetForm();
     },
   });
 
-  // Handle change when selecting a club
+  // Handle state change to update corresponding districts
+  const handleStateChange = (event) => {
+    const selectedState = event.target.value;
+    formik.setFieldValue("state", selectedState); // Set the selected state in Formik
+    setDistricts(stateDistrictMapping[selectedState] || []); // Update districts based on the state
+    formik.setFieldValue("district", ""); // Clear district field on state change
+  };
+
+  // Handle club change
   const handleClubChange = (event) => {
     setSelectedClub(event.target.value);
   };
 
-  // Handle change when selecting a role
+  // Handle role change
   const handleRoleChange = (event) => {
     formik.setFieldValue("role_id", event.target.value);
     setSelectedRole(event.target.value);
   };
+
 
 
   const handleTogglePasswordVisibility = () => {
@@ -338,41 +414,57 @@ const AddMemberForm = () => {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="country"
-                    label="Country*"
-                    {...formik.getFieldProps("country")}
-                    error={
-                      formik.touched.country && Boolean(formik.errors.country)
-                    }
-                    helperText={formik.touched.country && formik.errors.country}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="state"
-                    label="State*"
-                    {...formik.getFieldProps("state")}
-                    error={formik.touched.state && Boolean(formik.errors.state)}
-                    helperText={formik.touched.state && formik.errors.state}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="district"
-                    label="District*"
-                    {...formik.getFieldProps("district")}
-                    error={
-                      formik.touched.district && Boolean(formik.errors.district)
-                    }
-                    helperText={
-                      formik.touched.district && formik.errors.district
-                    }
-                  />
-                </Grid>
+        <TextField
+          fullWidth
+          name="country"
+          label="Country*"
+          value={formik.values.country} // Bind value from Formik's values
+          InputProps={{
+            readOnly: true, // Make the field read-only
+          }}
+          {...formik.getFieldProps("country")}
+          error={formik.touched.country && Boolean(formik.errors.country)}
+          helperText={formik.touched.country && formik.errors.country}
+        />
+      </Grid>
+
+      <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="state"
+            label="State*"
+            select
+            value={formik.values.state}
+            onChange={handleStateChange}
+            error={formik.touched.state && Boolean(formik.errors.state)}
+            helperText={formik.touched.state && formik.errors.state}
+          >
+            {Object.keys(stateDistrictMapping).map((state) => (
+              <MenuItem key={state} value={state}>
+                {state}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="district"
+            label="District*"
+            select
+            value={formik.values.district}
+            onChange={formik.handleChange}
+            error={formik.touched.district && Boolean(formik.errors.district)}
+            helperText={formik.touched.district && formik.errors.district}
+          >
+            {districts.map((district) => (
+              <MenuItem key={district} value={district}>
+                {district}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
@@ -562,9 +654,14 @@ const AddMemberForm = () => {
                 color="success"
                 size="large"
                 type="submit"
+                fullWidth
+
+                sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
+
               >
                 Save
               </Button>
+            
             </Box>
           </Grid>
         </Grid>

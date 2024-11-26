@@ -11,6 +11,7 @@ import {
   IconButton,
   Typography,
   InputAdornment,
+  FormControl,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -79,6 +80,92 @@ const EditMemberForm = () => {
     dispatch(fetchAllMembersRequest());
   }, [dispatch]);
 
+// State to City mapping
+const stateDistrictMapping = {
+  "Andhra Pradesh": [
+    "Anakapalli", "Anantapur", "Bapatla", "Chittoor", "East Godavari", "Eluru", 
+    "Guntur", "Kakinada", "Konaseema", "Krishna", "Kurnool", "Nandyal", "Nellore", 
+    "Parvathipuram Manyam", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai", 
+    "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari", 
+    "YSR Kadapa", "Alluri Sitharama Raju", "NTR", "Palnadu"
+  ],
+  "Arunachal Pradesh": [
+    "Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", 
+    "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare", 
+    "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"
+  ],
+  "Assam": [
+    "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", 
+    "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", 
+    "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", 
+    "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", 
+    "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", 
+    "West Karbi Anglong"
+  ],
+  "Bihar": [
+    "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", 
+    "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", 
+    "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", 
+    "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", 
+    "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"
+  ],
+  "Chhattisgarh": [
+    "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", 
+    "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa", 
+    "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Korea", "Mahasamund", "Mungeli", 
+    "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"
+  ],
+    "Goa": ["North Goa", "South Goa","Panaji", "Vasco da Gama", "Margao"],
+    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Junagadh", "Kheda", "Mehsana", "Patan", "Sabarkantha", "Anand", "Banaskantha", "Dahod", "Narmada", "Porbandar", "Chhota Udepur", "Gir Somnath", "Mahisagar", "Morbi", "Navajo", "Surendranagar", "Tapi", "Valsad"],
+    "Haryana": ["Chandigarh", "Faridabad", "Gurugram", "Ambala", "Hisar", "Karnal", "Panipat", "Rewari", "Sonipat", "Yamunanagar", "Bhiwani", "Rohtak", "Sirsa", "Jhajjar", "Mahendragarh", "Nuh", "Panchkula", "Fatehabad", "Palwal", "Kaithal"],
+    "Himachal Pradesh": ["Shimla", "Manali", "Kullu", "Dharamsala", "Kangra", "Solan", "Mandi", "Bilaspur", "Hamirpur", "Una", "Sirmaur", "Chamba", "Kullu", "Lahaul and Spiti", "Una"],
+    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Hazaribagh", "Bokaro", "Deoghar", "Giridih", "Dumka", "Khunti", "Pakur", "Sahebganj", "Ramgarh", "Godda", "Latehar", "Palamu", "Simdega", "Chatra", "Garhwa", "Koderma", "Saraikela Kharsawan"],
+    "Karnataka": ["Bangalore", "Mysuru", "Mangalore", "Hubli", "Belgaum", "Bidar", "Chikkaballapur", "Chikkamagaluru", "Davanagere", "Hassan", "Hubli", "Kolar", "Koppal", "Mandya", "Raichur", "Ramanagara", "Shivamogga", "Tumkur", "Udupi", "Ballari", "Chitradurga", "Dakshina Kannada", "Gadag", "Haveri", "Kodagu", "Bagalkot", "Yadgir"],
+    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Kottayam", "Alappuzha", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Malappuram", "Palakkad", "Pathanamthitta", "Pernakulam", "Thrissur", "Wayanad"],
+    "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Ujjain", "Jabalpur", "Sagar", "Rewa", "Satna", "Dewas", "Ratlam", "Shivpuri", "Sehore", "Shahdol", "Chhindwara", "Mandla", "Tikamgarh", "Panna", "Khargone", "Burhanpur", "Neemuch", "Mandsaur", "Balaghat", "Betul", "Hoshangabad", "Khandwa", "Alirajpur", "Anuppur", "Ashoknagar", "Chhatarpur", "Dindori", "Harda", "Jhabua", "Katni", "Narsinghpur", "Seoni", "Shivpuri", "Singrauli", "Umaria"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Thane", "Solapur", "Sangli", "Ratnagiri", "Jalgaon", "Satara", "Kolhapur", "Latur", "Nanded", "Amravati", "Akola", "Yavatmal", "Buldhana", "Hingoli", "Wardha", "Washim", "Chandrapur", "Gadchiroli", "Bhandara", "Sindhudurg", "Palghar"],
+    "Manipur": ["Imphal", "Thoubal", "Kangpokpi", "Bishnupur", "Churachandpur", "Senapati", "Ukhrul", "Tamenglong", "Noney", "Peren"],
+    "Meghalaya": ["East Khasi Hills", "West Khasi Hills", "Ri-Bhoi", "West Jaintia Hills", "East Jaintia Hills", "South Garo Hills", "North Garo Hills", "West Garo Hills"],
+    "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Kolasib", "Mamit", "Serchhip", "Lawngtlai", "Hnahthial", "Siaha"],
+    "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Mon", "Phek", "Tuensang", "Zunheboto"],
+    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Balasore", "Baripada", "Bargarh", "Jagatsinghpur", "Jajpur", "Kendrapara", "Khurda", "Koraput", "Nayagarh", "Puri", "Sambalpur", "Sundargarh", "Angul", "Ganjam", "Kalahandi", "Dhenkanal", "Deogarh", "Nuapada", "Malkangiri", "Rayagada", "Mayurbhanj"],
+    "Punjab": ["Chandigarh", "Amritsar", "Ludhiana", "Jalandhar", "Patiala", "Bathinda", "Firozpur", "Hoshiarpur", "Rupnagar", "Moga", "Faridkot", "Barnala", "Sangrur", "Mansa", "Muktsar", "Kapurthala", "Tarn Taran", "Shaheed Bhagat Singh Nagar", "Fatehgarh Sahib", "Sri Muktsar Sahib"],
+    "Rajasthan": ["Jaipur", "Udaipur", "Jodhpur", "Ajmer", "Kota", "Alwar", "Bikaner", "Bundi", "Churu", "Dausa", "Hanumangarh", "Jhunjhunu", "Jhalawar", "Nagaur", "Pali", "Rajsamand", "Sikar", "Sirohi", "Tonk", "Barmer", "Banswara", "Baran", "Bhilwara", "Dholpur", "Dungarpur", "Karauli", "Pali", "Pratapgarh", "Rajasmand", "Sawai Madhopur", "Shri Ganganagar"],
+    "Sikkim": ["Gangtok", "Namchi", "Pakyong", "Mangan", "Rangpo"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Trichy", "Salem", "Tirunelveli", "Erode", "Vellore", "Tirupur", "Dharmapuri", "Cuddalore", "Kanchipuram", "Nagapattinam", "Karur", "Pudukkottai", "Thanjavur", "Villupuram", "Dindigul", "Kanyakumari", "Ramanathapuram", "Thoothukudi", "Virudhunagar", "Sivaganga", "Krishnagiri", "Ariyalur", "Perambalur", "Tiruvarur"],
+    "Telangana": ["Hyderabad", "Warangal", "Khammam", "Adilabad", "Nalgonda", "Karimnagar", "Mahabubnagar", "Nizamabad", "Medak", "Khammam", "Rangareddy", "Siddipet", "Jangaon", "Peddapalli", "Suryapet", "Warangal Rural", "Warangal Urban", "Mancherial", "Bhupalpally", "Mulugu", "Jayashankar", "Jogulamba Gadwal"],
+    "Tripura": ["Agartala", "Udaipur", "Belonia", "Kailashahar", "Dharmanagar", "Ambassa", "Sabroom", "Khowai", "Teliamura", "Jolaibari"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Allahabad", "Gorakhpur", "Noida", "Meerut", "Mathura", "Firozabad", "Jhansi", "Ghaziabad", "Aligarh", "Bareilly", "Shahjahanpur", "Rampur", "Bijnor", "Moradabad", "Muzaffarnagar", "Saharanpur", "Jaunpur", "Sitapur", "Etawah", "Mau", "Azamgarh", "Ballia"],
+    "Uttarakhand": ["Dehradun", "Haridwar", "Nainital", "Rishikesh", "Almora", "Bageshwar", "Chamoli", "Champawat", "Haldwani", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
+    "West Bengal": ["Kolkata", "Darjeeling", "Siliguri", "Asansol", "Howrah", "Bardhaman", "Malda", "Purulia", "Hooghly", "North 24 Parganas", "South 24 Parganas", "Maldah", "Birbhum", "Jalpaiguri", "Murshidabad", "Nadia", "Bankura", "Cooch Behar", "Purba Medinipur", "Paschim Medinipur"],
+    "Andaman and Nicobar Islands": ["Port Blair"],
+    "Chandigarh": ["Chandigarh"],
+    "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
+    "Lakshadweep": ["Kavaratti"],
+    "Delhi": ["New Delhi", "Old Delhi", "Dwarka", "Rohini"],
+    "Puducherry": ["Puducherry", "Auroville", "Mahe"],
+  };
+  
+
+const [districts, setDistricts] = useState([]);
+
+
+// Handle state change
+const handleStateChange = (e) => {
+  const { value } = e.target;
+  setFormData((prev) => ({ ...prev, state: value }));
+  setDistricts(stateDistrictMapping[value] || []); // Update districts based on state
+};
+
+// Update districts when state changes
+useEffect(() => {
+  if (formData.state) {
+    const selectedDistricts = stateDistrictMapping[formData.state] || [];
+    setDistricts(selectedDistricts);
+  } else {
+    setDistricts([]);
+  }
+}, [formData.state]);
 
    // Fetch clubs from the API
    const fetchClubs = async () => {
@@ -183,9 +270,9 @@ useEffect(() => {
     if (!formData.mobile_number) {
       validationErrors.mobile_number = "Mobile Number is required";
       isValid = false;
-    } else if (!/^\d{10,13}$/.test(formData.mobile_number)) {
+    } else if (!/^\d{10}$/.test(formData.mobile_number)) {
       // Phone number regex: Must be exactly 10 digits
-      validationErrors.mobile_number = "Enter a valid 10 to 13 digit Mobile Number";
+      validationErrors.mobile_number = "Enter a valid 10 digits Mobile Number";
       isValid = false;
     }
     
@@ -456,93 +543,118 @@ useEffect(() => {
             </Grid>
           </Box>
 
-          {/* {/ Address Section /} */}
           <Box
-            mt={3}
-            sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}
-          >
-            <InputLabel>Address</InputLabel>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="pincode"
-                  label="Pincode*"
-                  value={formData.pincode}
-                  onChange={handleChange}
-                  error={!!errors.pincode}
-                  helperText={errors.pincode}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="country"
-                  label="Country*"
-                  value={formData.country}
-                  onChange={handleChange}
-                  error={!!errors.country}
-                  helperText={errors.country}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="state"
-                  label="State*"
-                  value={formData.state}
-                  onChange={handleChange}
-                  error={!!errors.state}
-                  helperText={errors.state}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="district"
-                  label="District*"
-                  value={formData.district}
-                  onChange={handleChange}
-                  error={!!errors.district}
-                  helperText={errors.district}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="city"
-                  label="City*"
-                  value={formData.city}
-                  onChange={handleChange}
-                  error={!!errors.city}
-                  helperText={errors.city}
+  mt={3}
+  sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}
+>
+  <InputLabel>Address</InputLabel>
+  <Grid container spacing={2}>
+    {/* Pincode Field */}
+    <Grid item xs={6}>
+      <TextField
+        fullWidth
+        name="pincode"
+        label="Pincode*"
+        value={formData.pincode}
+        onChange={handleChange}
+        error={!!errors.pincode}
+        helperText={errors.pincode}
+      />
+    </Grid>
 
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="street_name"
-                  label="Street Name"
-                  value={formData.street_name}
-                  onChange={handleChange}
-                  error={!!errors.street_name}
-                  helperText={errors.street_name}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  name="building_no_name"
-                  label="Building No / Name"
-                  value={formData.building_no_name}
-                  onChange={handleChange}
-                  error={!!errors.building_no_name}
-                  helperText={errors.building_no_name}
-                />
-              </Grid>
-            </Grid>
-          </Box>
+    {/* Country Field */}
+    <Grid item xs={6}>
+      <TextField
+        fullWidth
+        name="country"
+        label="Country*"
+        value="India"  // Set constant value for country
+        disabled  // Disable the field so the user cannot edit it
+        InputProps={{
+          readOnly: true,  // Ensure the field is read-only
+        }}
+      />
+    </Grid>
+
+    {/* State Field */}
+    <Grid item xs={6}>
+      <FormControl fullWidth>
+        <InputLabel>State</InputLabel>
+        <Select
+          label="State"
+          name="state"
+          value={formData.state}
+          onChange={handleStateChange}
+        >
+          {Object.keys(stateDistrictMapping).map((state) => (
+            <MenuItem key={state} value={state}>
+              {state}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>
+
+    {/* District Field */}
+    <Grid item xs={6}>
+      <FormControl fullWidth>
+        <InputLabel>District</InputLabel>
+        <Select
+          label="District"
+          name="district"
+          value={formData.district}
+          onChange={handleChange}
+        >
+          {districts.map((district) => (
+            <MenuItem key={district} value={district}>
+              {district}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>
+
+    {/* City Field */}
+    <Grid item xs={6}>
+      <TextField
+        fullWidth
+        name="city"
+        label="City*"
+        value={formData.city}
+        onChange={handleChange}
+        error={!!errors.city}
+        helperText={errors.city}
+      />
+    </Grid>
+
+    {/* Street Name Field */}
+    <Grid item xs={6}>
+      <TextField
+        fullWidth
+        name="street_name"
+        label="Street Name"
+        value={formData.street_name}
+        onChange={handleChange}
+        error={!!errors.street_name}
+        helperText={errors.street_name}
+      />
+    </Grid>
+
+    {/* Building No / Name Field */}
+    <Grid item xs={6}>
+      <TextField
+        fullWidth
+        name="building_no_name"
+        label="Building No / Name"
+        value={formData.building_no_name}
+        onChange={handleChange}
+        error={!!errors.building_no_name}
+        helperText={errors.building_no_name}
+      />
+    </Grid>
+  </Grid>
+</Box>
+
 
 
         </Grid>
@@ -572,15 +684,23 @@ useEffect(() => {
               {renderDropdownOptions()}
 
             </Grid>
+            <Grid item xs={12}>
+        <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+        </Grid>
           </Box>
         </Grid>
-
+        
         {/* Save Button */}
-        <Grid item xs={12}>
-          <Button variant="contained" color="primary" onClick={handleSave}>
-            Save Member
-          </Button>
-        </Grid>
+        
       </Grid>
       <Snackbar
   open={openSnackbar}

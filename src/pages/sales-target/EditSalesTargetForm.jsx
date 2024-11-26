@@ -217,11 +217,22 @@ export default function EditSalesTarget() {
             </Card>
           </Grid>
           <Grid item xs={12}>
-            <Box display="flex" justifyContent="center" mt={3}>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>
+             
+
+              <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+
+              
+              sx={{ marginTop: "24px",    width: "50%",
+                borderRadius: "15px", padding: "8px" }}
+            >
                 Update Sales Target
-              </Button>
-            </Box>
+                </Button>
+
+
           </Grid>
         </Grid>
       )}

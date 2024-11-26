@@ -172,12 +172,16 @@ const DocumentsTable = () => {
         />
       </TableCell> */}
       <TableCell>
-        <IconButton onClick={() => handleEditClick(document)} color="primary">
+      <div style={{ display: "flex" }}>
+      <IconButton onClick={() => handleEditClick(document)} color="primary">
           <Edit />
         </IconButton>
         <IconButton onClick={() => handleDeleteOpen(document)} color="secondary">
           <Delete />
         </IconButton>
+
+      </div>
+       
       </TableCell>
     </TableRow>
   ))}

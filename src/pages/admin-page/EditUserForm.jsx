@@ -283,7 +283,6 @@ const EditUserForm = ({ onCancel }) => {
           </Box>
 
           {/* Save Button */}
-          <Box mt={3} textAlign="right">
             <Button
               variant="contained"
               color="success"
@@ -293,7 +292,6 @@ const EditUserForm = ({ onCancel }) => {
             >
               Save Changes
             </Button>
-          </Box>
         </Grid>
       </Grid>
     </Box>

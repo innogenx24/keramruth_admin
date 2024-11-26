@@ -48,8 +48,13 @@ function UserProfile() {
   };
 
   return (
-    <Grid container spacing={2} justifyContent="center">
-      {/* Profile Information */}
+    <Grid container spacing={2} justifyContent="left">
+      <Grid item xs={12}>
+        <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+          Profile Details
+        </Typography>
+      </Grid>
+      
       <Grid item xs={12} sm={4}>
         <Card>
           <CardContent>
@@ -63,11 +68,7 @@ function UserProfile() {
             <Typography align="center" variant="h6">
               {users?.full_name}
             </Typography>
-            <Typography
-              align="center"
-              variant="subtitle1"
-              color="textSecondary"
-            >
+            <Typography align="center" variant="subtitle1" color="textSecondary">
               {users?.username}
             </Typography>
             <Typography align="center" variant="subtitle2">
@@ -75,14 +76,14 @@ function UserProfile() {
             </Typography>
             <Box mt={2}>
               <Typography variant="body2" align="center">
-              {users?.building_no_name}, {users?.street_name}, {users?.city},
+                {users?.building_no_name}, {users?.street_name}, {users?.city},
                 <br /> {users?.state}, {users?.pincode}
               </Typography>
               <Typography variant="body2" align="center">
-              {users?.mobile_number}
+                {users?.mobile_number}
               </Typography>
               <Typography variant="body2" align="center">
-              {users?.email}
+                {users?.email}
               </Typography>
             </Box>
             <Box display="flex" justifyContent="space-between" mt={2}>
@@ -93,7 +94,7 @@ function UserProfile() {
                 variant="contained"
                 color="success"
                 onClick={handleEditProfile}
-                sx={{ minWidth: "100px%" }}
+                sx={{ minWidth: "100px" }}
               >
                 Edit
               </Button>
@@ -101,8 +102,19 @@ function UserProfile() {
           </CardContent>
         </Card>
       </Grid>
+    </Grid>
+  );
+  
+}
 
-      {/* <Grid item xs={12} sm={4}>
+export default UserProfile;
+
+
+
+
+
+
+ {/* <Grid item xs={12} sm={4}>
         <Paper elevation={3}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -147,7 +159,7 @@ function UserProfile() {
       </Grid> */}
 
       {/* ID Card */}
-      <Grid item xs={12} sm={4}>
+      {/* <Grid item xs={12} sm={4}>
         <Card >
           <CardContent >
             <Box display="flex" justifyContent="center" mb={2} marginTop={"73px"}>
@@ -182,9 +194,4 @@ function UserProfile() {
             </Typography>
           </CardContent>
         </Card>
-      </Grid>
-    </Grid>
-  );
-}
-
-export default UserProfile;
+      </Grid> */}
