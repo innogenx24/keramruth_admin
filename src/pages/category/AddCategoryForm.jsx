@@ -4,11 +4,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { makePostCategory } from "../../redux/slices/master-slice/categort-slice/CategoryPostSlice";
+import { useNavigate } from "react-router-dom";
 
 const AddCategoryForm = () => {
   const dispatch = useDispatch();
   const [sectors, setSectors] = useState([]);
   const [selectedSector, setSelectedSector] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSectors = async () => {
@@ -39,8 +41,8 @@ const AddCategoryForm = () => {
       sector_name: "",
     },
     validationSchema: Yup.object({
-      category_name: Yup.string().required("Required"),
-      sector_name: Yup.string().required("Required"),
+      category_name: Yup.string().required("Category name is required"),
+      sector_name: Yup.string().required("Sector is required"),
     }),
     onSubmit: (values, { resetForm }) => {
       const parsedValues = {
@@ -49,6 +51,7 @@ const AddCategoryForm = () => {
       };
       dispatch(makePostCategory(parsedValues));
       resetForm();
+      navigate("/dashboard/category");
     },
   });
 

@@ -6,104 +6,72 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const AddOrEditSector = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // Get state passed via navigation
+  const location = useLocation();
 
   const [isEditMode, setIsEditMode] = useState(false);
-  const [sector, setSector] = useState(null); // For storing sector data when editing
-  const [showErrors, setShowErrors] = useState(false); // Tracks when to show errors
+  const [sector, setSector] = useState(null);
 
-  // If editing, set the sector data from the location state (passed during navigation)
   useEffect(() => {
     if (location.state && location.state.sector) {
       setSector(location.state.sector);
-      setIsEditMode(true); // Switch to edit mode if sector data is available
+      setIsEditMode(true);
     }
   }, [location]);
 
   const formik = useFormik({
     initialValues: {
-      sector_name: sector ? sector.sector_name : "", // Populate sector name if editing
+      sector_name: sector ? sector.sector_name : "",
     },
+    enableReinitialize: true, // Ensures form values update when `sector` changes
     validationSchema: Yup.object({
       sector_name: Yup.string().required("Sector name is required."),
     }),
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values) => {
       try {
-        let response;
+        const url = isEditMode
+          ? `http://88.222.245.236:3002/sectors/${sector.id}`
+          : "http://88.222.245.236:3002/sectors";
+        const method = isEditMode ? "PUT" : "POST";
 
-        if (isEditMode) {
-          // If editing, make a PUT request to update the sector
-          response = await fetch(`http://88.222.245.236:3002/sectors/${sector.id}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          });
-        } else {
-          // If adding, make a POST request to create the sector
-          response = await fetch("http://88.222.245.236:3002/sectors", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          });
-        }
-
-        const data = await response.json();
+        const response = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
 
         if (response.ok) {
-          // On success, navigate back to the sectors list
-          navigate("/dashboard/sectors");
-          resetForm();
+          navigate("/dashboard/sector");
         } else {
-          // Handle error response if needed
-          alert(data.message || "Something went wrong");
+          alert("An error occurred while saving the sector.");
         }
       } catch (error) {
-        console.error("Error occurred while saving sector:", error);
-        alert("An error occurred while saving the sector");
+        console.error("Error saving sector:", error);
       }
     },
   });
 
-  const handleSubmit = (e) => {
-    setShowErrors(true); // Enable error display
-    formik.handleSubmit(e); // Call formik submission
-  };
-
   return (
     <Box p={3}>
-      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+      <Typography variant="h6" sx={{ mb: 2, color: "#989FA9" }}>
         {isEditMode ? "Edit Sector" : "Add Sector"}
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <h2>Sector Details:</h2>
-          <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <form onSubmit={handleSubmit}>
+          <Box sx={{ backgroundColor: "#f5f5f5", p: 3, borderRadius: 2 }}>
+            <form onSubmit={formik.handleSubmit}>
               <TextField
                 fullWidth
                 name="sector_name"
                 label="Sector Name*"
                 value={formik.values.sector_name}
                 onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={showErrors && formik.touched.sector_name && Boolean(formik.errors.sector_name)}
-                helperText={showErrors && formik.touched.sector_name && formik.errors.sector_name}
+                error={formik.touched.sector_name && Boolean(formik.errors.sector_name)}
+                helperText={formik.touched.sector_name && formik.errors.sector_name}
+                sx={{ mb: 2 }}
               />
-              {/* Save Button */}
-              <Box sx={{ mt: 2 }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  sx={{ width: "100%" }}
-                >
-                  {isEditMode ? "Update" : "Save"}
-                </Button>
-              </Box>
+              <Button type="submit" variant="contained" color="primary" fullWidth>
+                {isEditMode ? "Update" : "Save"}
+              </Button>
             </form>
           </Box>
         </Grid>

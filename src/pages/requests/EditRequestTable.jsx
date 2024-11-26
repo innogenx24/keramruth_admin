@@ -31,10 +31,16 @@ const MemberTable = () => {
   const [successMessage, setSuccessMessage] = useState(""); // Success message state
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
   const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
+  const [sortedEditRequests, setSortedEditRequests] = useState([]);
 
   // const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
+// Sort data by updated_at in descending order (initial sort)
+useEffect(() => {
+  const sortedRequests = [...editRequests].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  setSortedEditRequests(sortedRequests);
+}, [editRequests]);
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
@@ -95,7 +101,7 @@ const MemberTable = () => {
     };
   
     try {
-      const response = await fetch(`http://88.222.245.236:3002/api/member-update/update/${memberId}`, {
+      const response = await fetch(`http://localhost:3002/api/member-update/update/${memberId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
@@ -124,7 +130,7 @@ const MemberTable = () => {
   
   const handleReject = async (requestId) => {
     try {
-      const response = await fetch(`http://88.222.245.236:3002/edit-requests/reject/${requestId}`, {
+      const response = await fetch(`http://localhost:3002/edit-requests/reject/${requestId}`, {
         method: "DELETE",  // Change from POST to DELETE to match your server-side API
       });
       const data = await response.json();
@@ -161,8 +167,7 @@ const MemberTable = () => {
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
       Current Details 
       </Typography>
-  <TableContainer component={Paper}>
-  {/* Current Data Table */}
+      <TableContainer component={Paper}>
   <Table>
     <TableHead>
       <TableRow>
@@ -179,7 +184,10 @@ const MemberTable = () => {
       </TableRow>
     </TableHead>
     <TableBody>
-      {editRequests.map((request) => {
+      {sortedEditRequests.map((request) => {
+        // Skip rows with status 'Rejected'
+        if (request.status === 'Rejected') return null;
+
         // Find the corresponding member from combinedMembers
         const member = combinedMembers.find((member) => member.id === request.user_id);
 
@@ -218,7 +226,6 @@ const MemberTable = () => {
               <TableCell>{isEmailSame ? "-" : request.new_email_id}</TableCell>
               <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
               <TableCell>{request.request_reason}</TableCell>
-              <TableCell>{request.status}</TableCell>
               <TableCell>
                 <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
                   <IconButton style={{ color: "red" }} onClick={() => handleReject(request.id)}>
@@ -238,59 +245,76 @@ const MemberTable = () => {
   </Table>
 </TableContainer>
 
-{/* Spacer */}
-<div style={{ margin: "20px 0" }} />
-<Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-Previous History 
+
+      {/* Spacer */}
+      <div style={{ margin: "20px 0" }} />
+
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Accepted / Rejected Data
       </Typography>
-{/* Previous Data Table */}
-<TableContainer component={Paper}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell>ID Proof</TableCell>
-        <TableCell>Name</TableCell>
-        <TableCell>Role</TableCell>
-        <TableCell>Date Of Joining</TableCell>
-        <TableCell>Previous Mobile No</TableCell>
-        <TableCell>Previous Email ID</TableCell>
-        <TableCell>Previous Address</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {editRequests.map((request) => {
-        // Find the corresponding member from combinedMembers
-        const member = combinedMembers.find((member) => member.id === request.user_id);
 
-        // If member is not found or if the member's approval is pending, skip rendering
-        if (!member || member.approved === "Pending") return null;
+      {/* Previous Data Table */}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID Proof</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Date Of Joining</TableCell>
+              <TableCell>Mobile No</TableCell>
+              <TableCell>New Mobile Number</TableCell>
+              <TableCell>New Email ID</TableCell>
+              <TableCell>New Address</TableCell>
+              <TableCell>Request Reason</TableCell>
+              <TableCell>Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedEditRequests.map((request) => {
+              const member = combinedMembers.find((member) => member.id === request.user_id);
+              if (!member) return null;
 
-        // Display previous data even if the data is the same
-        return (
-          <TableRow key={request.id}>
-            <TableCell>
-              {request.image ? (
-                <img
-                  src={`${imageBaseURL}${request.image}`}
-                  style={{ width: 50, height: 50, cursor: "pointer" }}
-                  onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
-                />
-              ) : (
-                "No Image"
-              )}
-            </TableCell>
-            <TableCell>{member.full_name}</TableCell>
-            <TableCell>{member.role_name}</TableCell>
-            <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
-            <TableCell>{member.mobile_number}</TableCell>
-            <TableCell>{request.new_email_id}</TableCell>
-            <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
-  </Table>
-</TableContainer>
+              // Only show completed requests (Accepted / Rejected)
+              if (request.status === "Completed" || request.status === "Rejected") {
+                return (
+                  <TableRow key={request.id}>
+                    <TableCell>
+                      {request.image ? (
+                        <img
+                          src={`${imageBaseURL}${request.image}`}
+                          style={{ width: 50, height: 50, cursor: "pointer" }}
+                          onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
+                        />
+                      ) : (
+                        "No Image"
+                      )}
+                    </TableCell>
+                    <TableCell>{member.full_name}</TableCell>
+                    <TableCell>{member.role_name}</TableCell>
+                    <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>{member.mobile_number}</TableCell>
+                    <TableCell>{request.new_mobile_number}</TableCell>
+                    <TableCell>{request.new_email_id}</TableCell>
+                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+                    <TableCell>{request.request_reason}</TableCell>
+                    <TableCell>
+  <Typography
+    sx={{
+      color: request.status === "Completed" ? "green" : request.status === "Rejected" ? "red" : "black",
+    }}
+  >
+    {request.status}
+  </Typography>
+</TableCell>
+                  </TableRow>
+                );
+              }
+              return null;
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Modal open={imageModal.open} onClose={handleImageModalClose}>
         <Box

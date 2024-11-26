@@ -505,7 +505,7 @@ const AddProductForm = () => {
   </Grid>
           </Box>
         )}
-              <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+              {/* <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography sx={{ marginRight: "8px" }}>
                   Stock Status
                 </Typography>
@@ -520,7 +520,7 @@ const AddProductForm = () => {
                   error={formik.touched.status && Boolean(formik.errors.status)}
                   helperText={formik.touched.status && formik.errors.status}
                 />
-              </Box>
+              </Box> */}
               
               <Button
               type="submit"

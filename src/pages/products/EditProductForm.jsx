@@ -568,7 +568,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
       )}
 
 
-            <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
+            {/* <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>
               <InputLabel sx={{ marginRight: "8px" }}>Stock Status</InputLabel>
               <Switch
   checked={stockStatus} // Use 'checked' instead of 'value'
@@ -576,7 +576,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
   name="stockStatus"
 />
 
-            </Box>
+            </Box> */}
 
 
             <Box sx={{ marginTop: "20px", display: "flex", justifyContent: "flex-start" }}>
