@@ -51,7 +51,7 @@ const AddCategoryForm = () => {
         // Making the API call directly here
         const token = localStorage.getItem('token');
         const response = await axios.post(
-          'http://localhost:3002/category',
+          'http://88.222.245.236:3002/category',
           parsedValues,
           {
             headers: {
