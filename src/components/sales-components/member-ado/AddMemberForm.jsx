@@ -10,6 +10,8 @@ import {
   IconButton,
   Typography,
   InputAdornment,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
@@ -23,7 +25,11 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 const AddMemberForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [clubs, setClubs] = useState([]); // Store the clubs data
+  const [clubs, setClubs] = useState([]);
+  const { loading, success, error, member } = useSelector((state) => state.memberPost);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   const [selectClub, setSelectedClub] = useState("500 Litres");
   const fileInputRef = useRef(null); // Ref to reset file input
@@ -32,12 +38,23 @@ const AddMemberForm = () => {
   const { allmembers } = useSelector((state) => state.allmembers);
   const [imagePreview, setImagePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false); // Add loading state
+  
 
+  useEffect(() => {
+    if (isFormSubmitted) { 
+    if (error) {
+      setErrorMessage(error);
+      setOpenSnackbar(true);
+    }
+    if (success) {
+      setErrorMessage('Member added successfully!');
+      setOpenSnackbar(true);
+    }
+  }
+  }, [error, success]);
 
   // Fetch clubs from the API
   const fetchClubs = async () => {
-    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
@@ -57,7 +74,6 @@ const AddMemberForm = () => {
     } catch (error) {
       console.error("Error fetching clubs:", error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -136,10 +152,11 @@ const AddMemberForm = () => {
       formData.append("club_name", formik.values.club_name); // Append club_name
       formData.append("image", values.image);
       formData.append("superior_id", values.superior_id);
-
-      dispatch(makePostMember(formData)); // make sure your action can handle FormData
-      resetForm();
-      navigate('/dashboard/members');
+      
+      setIsFormSubmitted(true); 
+      dispatch(makePostMember(formData));
+      // resetForm();
+      // navigate('/dashboard/members');
     },
   });
 
@@ -158,6 +175,7 @@ const AddMemberForm = () => {
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
+
 
   return (
     <Box p={3}>
@@ -551,6 +569,20 @@ const AddMemberForm = () => {
           </Grid>
         </Grid>
       </form>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={error ? "error" : "success"}
+          sx={{ width: "100%", background: error ? 'red' : 'green', color: 'white' }}
+        >
+          {errorMessage || "An error occurred while updating member data."}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

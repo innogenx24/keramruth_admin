@@ -17,7 +17,7 @@ function* postMember(action) {
     yield put(memberPostSuccess(response.data));
     yield put(fetchMembersRequest({ roleId: role_id }));
   } catch (error) {
-    yield put(memberPostFailure(error.message));
+    yield put(memberPostFailure(error.response.data.error));
   }
 }
 

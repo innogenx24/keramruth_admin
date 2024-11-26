@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { Button, Typography, Box, TextField, Grid, Select, MenuItem, InputLabel } from "@mui/material";
+import { Button, Typography, Box, TextField, Grid, Select, MenuItem, InputLabel, Snackbar, Alert } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { makePostCategory } from "../../redux/slices/master-slice/categort-slice/CategoryPostSlice";
+import axios from 'axios';
 
 const AddCategoryForm = () => {
-  const dispatch = useDispatch();
   const [sectors, setSectors] = useState([]);
   const [selectedSector, setSelectedSector] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchSectors = async () => {
@@ -18,7 +18,6 @@ const AddCategoryForm = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log("Fetched sectors:", data); // Debugging log
         setSectors(data);
       } catch (error) {
         console.error("Error fetching sectors:", error);
@@ -42,15 +41,37 @@ const AddCategoryForm = () => {
       category_name: Yup.string().required("Required"),
       sector_name: Yup.string().required("Required"),
     }),
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: async (values, { resetForm }) => {
       const parsedValues = {
         ...values,
         parent_category_id: parseInt(values.parent_category_id, 10),
       };
-      dispatch(makePostCategory(parsedValues));
-      resetForm();
+      
+      try {
+        // Making the API call directly here
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+          'http://localhost:3002/category',
+          parsedValues,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Category added successfully:", response.data);
+        resetForm();
+      } catch (error) {
+        console.error("Error posting category:", error.response?.data || error.message);
+        setErrorMessage(error.response.data.error);
+        setOpenSnackbar(true);
+      }
     },
   });
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   return (
     <Box p={3}>
@@ -114,6 +135,19 @@ const AddCategoryForm = () => {
           </Box>
         </Grid>
       </Grid>
+      <Snackbar
+  open={openSnackbar}
+  autoHideDuration={6000}
+  onClose={handleCloseSnackbar}
+  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+  <Alert
+    onClose={handleCloseSnackbar}
+    severity="error"
+    sx={{ width: "100%", background:'red', color: 'white' }}
+  >
+    {errorMessage || "An error occurred while updating member data."}
+  </Alert>
+</Snackbar>
     </Box>
   );
 };
