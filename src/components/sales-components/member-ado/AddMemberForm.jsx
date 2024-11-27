@@ -187,7 +187,10 @@ const stateDistrictMapping = {
       role_id: Yup.string().required("Please select one Role"),
       image: Yup.mixed(),
       full_name: Yup.string().required("Required"),
-      mobile_number: Yup.number().required("Required"),
+      // mobile_number: Yup.number().required("Required"),
+      mobile_number: Yup.string()
+      .required("Required")
+      .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
       email: Yup.string().email("Invalid email address").required("Required"),
       password: Yup.string().required("Required"),
       pincode: Yup.number().required("Required"),

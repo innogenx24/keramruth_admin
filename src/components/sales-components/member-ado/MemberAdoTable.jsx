@@ -142,6 +142,7 @@ const MemberAdoTable = () => {
                   <TableCell>No.</TableCell>
                   {/* <TableCell>Id User</TableCell> */}
                   <TableCell>Username</TableCell>
+                  <TableCell>Full Name</TableCell>
                   {/* <TableCell>Status/Month</TableCell> */}
                   <TableCell>Mobile No.</TableCell>
                   <TableCell>Action</TableCell>
@@ -179,6 +180,7 @@ const MemberAdoTable = () => {
           />
         </div>
       </TableCell> */}
+        <TableCell>{member?.full_name}</TableCell>
       <TableCell>{member?.mobile_number}</TableCell>
       <TableCell>
         {/* <IconButton color="primary">
