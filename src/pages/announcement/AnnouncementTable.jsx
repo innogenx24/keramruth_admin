@@ -38,7 +38,10 @@ const AnnouncementTable = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setAnnouncements(response.data.data);
+
+      // Sort announcements by ID in descending order
+      const sortedAnnouncements = response.data.data.sort((a, b) => b.id - a.id);
+      setAnnouncements(sortedAnnouncements);
     } catch (error) {
       console.error("Error fetching announcements:", error);
     }
@@ -129,7 +132,7 @@ const AnnouncementTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
-              <TableCell>Announcement ID</TableCell>
+              <TableCell>Announcement Image</TableCell>
               <TableCell>Announcement Heading</TableCell>
               <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>Description</TableCell>
               <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>Applying on</TableCell>
@@ -137,52 +140,49 @@ const AnnouncementTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-  {announcements.map((announcement, index) => (
-    <TableRow key={announcement.id}>
-      <TableCell>{index + 1}</TableCell>
-      <TableCell style={{ width: 100, textAlign: "center" }}>
-        {announcement.image ? (
-          <img
-            src={getImageURL(announcement.image)}
-            alt="Announcement"
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-              borderRadius: "5px",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-            }}
-          />
-        ) : (
-          <span style={{ color: "#999" }}>No Image Available</span>
-        )}
-      </TableCell>
-      <TableCell>{announcement.heading}</TableCell>
-      <TableCell
-        style={{
-          maxWidth: 300,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        {announcement.description}
-      </TableCell>
-      <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
-        {announcement.receiver.join(", ")}
-      </TableCell>
-      <TableCell>
-        <IconButton onClick={() => handleEditClick(announcement)} color="primary">
-          <EditIcon />
-        </IconButton>
-        <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
-          <DeleteIcon />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-
+            {announcements.map((announcement, index) => (
+              <TableRow key={announcement.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell style={{ width: 100, textAlign: "center" }}>
+                  {announcement.image ? (
+                    <img
+                      src={getImageURL(announcement.image)}
+                      alt="Announcement"
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <span style={{ color: "#999" }}>No Image Available</span>
+                  )}
+                </TableCell>
+                <TableCell>{announcement.heading}</TableCell>
+                <TableCell
+                  style={{
+                    maxWidth: 300,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {announcement.description}
+                </TableCell>
+                <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
+                  {announcement.receiver.join(", ")}
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEditClick(announcement)} color="primary">
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
 

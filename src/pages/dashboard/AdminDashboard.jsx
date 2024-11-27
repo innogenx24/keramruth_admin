@@ -16,32 +16,28 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import Collapse from "@mui/material/Collapse";
-import AppLogo from "../../assets/logo/AppLogo";
 import "./AdminDashboard.scss";
-import HomeIcon from "@mui/icons-material/Home";
 import ProductIcon from "@mui/icons-material/Store";
 import MembersIcon from "@mui/icons-material/Group";
-import AnnouncementIcon from "@mui/icons-material/Announcement";
-import ReportIcon from "@mui/icons-material/Assessment";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import SalesTargetIcon from "@mui/icons-material/TrendingUp";
-import StockIcon from "@mui/icons-material/Inventory";
-import RolesIcon from "@mui/icons-material/AssignmentInd";
 import { Avatar } from "@mui/material";
-import UserProfile from "./UserProfile"; // Import UserProfile component
 import { signOut } from "../../redux/slices/authSlice";
-import { MdAccessTimeFilled } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
-import { GrAnnounce } from "react-icons/gr";
-import { FaCcDinersClub } from "react-icons/fa";
 import { FaCodePullRequest } from "react-icons/fa6";
-import { IoDocument } from "react-icons/io5";
 import AppLogo2 from "../../assets/logo/AppLogo2";
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import DescriptionIcon from '@mui/icons-material/Description';
+import EditNoteIcon from '@mui/icons-material/EditNote'; // If you want an edit note icon
+import NotificationsIcon from '@mui/icons-material/Notifications'; // Bell style icon
+import TrackChangesIcon from '@mui/icons-material/TrackChanges'; // Target icon
+import GroupsIcon from '@mui/icons-material/Groups'; // Represents a community or club
+import CategoryIcon from '@mui/icons-material/Category'; // Icon for categories
+import BusinessIcon from '@mui/icons-material/Business'; // Business sector
+import TimerIcon from '@mui/icons-material/Timer'; // Specific timer icon
+import { FaUserTie } from 'react-icons/fa';  // FontAwesome Role Icon (Professional Role)
 
 // Drawer width
 // const drawerWidth = 240;
@@ -226,15 +222,16 @@ export default function AdminDashboard() {
       icon: <MembersIcon />,
     },
     {
-      text: "Announcement",
-      path: "/dashboard/announcement",
-      icon: <GrAnnounce />,
-    },
-    {
       text: "Pending Orders",
       path: "/dashboard/pending-orders",
-      icon: <GrAnnounce />,
+      icon: <PendingActionsIcon />,
     },
+    {
+      text: "Announcements",
+      path: "/dashboard/announcement",
+      icon: <NotificationsIcon />,
+    },
+    
 
     // {
     //   text: "Report",
@@ -254,7 +251,7 @@ export default function AdminDashboard() {
     {
       text: "Documents",
       path: "/dashboard/documents",
-      icon: <IoDocument />,
+      icon: <DescriptionIcon />,
     },
     {
       text: "Requests",
@@ -265,7 +262,7 @@ export default function AdminDashboard() {
           text: "Edit Request",
           path: "/dashboard/edit-request",
           default: true,
-          icon: <FaCodePullRequest />,
+          icon: <EditNoteIcon />,
         },
         // {
         //   text: "Delete Request",
@@ -288,7 +285,7 @@ export default function AdminDashboard() {
         {
           text: "Sales Target",
           path: "/dashboard/sales-target",
-          icon: <SalesTargetIcon />,
+          icon: <TrackChangesIcon />,
         },
         // {
         //   text: "Minimum Stock",
@@ -296,18 +293,18 @@ export default function AdminDashboard() {
         //   icon: <StockIcon />,
         // },
         // { text: "Roles", path: "/dashboard/roles", icon: <RolesIcon /> },
-        { text: "Club", path: "/dashboard/club", icon: <FaCcDinersClub /> },
-        { text: "Category", path: "/dashboard/category", icon: <RolesIcon /> },
+        { text: "Club", path: "/dashboard/club", icon: <GroupsIcon  /> },
+        { text: "Category", path: "/dashboard/category", icon: <CategoryIcon /> },
         {
           text: "Sector",
           path: "/dashboard/sector",
-          icon: <StockIcon />,
+          icon: <BusinessIcon />,
         },
-        { text: "Role", path: "/dashboard/role", icon: <RolesIcon /> },
+        { text: "Roles", path: "/dashboard/role", icon: <FaUserTie  /> },
         {
           text: "Set Time",
           path: "/dashboard/orders_time_set",
-          icon: <MdAccessTimeFilled />,
+          icon: <TimerIcon />,
         },
         // {
         //   text: "Document PDF",
@@ -348,8 +345,8 @@ export default function AdminDashboard() {
             sx={{
               color:
                 location.pathname === item.path || openExpand[item.text]
-                  ? "#fff"
-                  : "inherit",
+                  ? "#000"
+                  : "#000",
             }}
           >
             {item.icon}
@@ -400,7 +397,7 @@ export default function AdminDashboard() {
                   <ListItemIcon
                     sx={{
                       color:
-                        location.pathname === subItem.path ? "gray" : "#000",
+                        location.pathname === subItem.path ? "#000" : "#000",
                     }}
                   >
                     {subItem.icon}
@@ -412,7 +409,7 @@ export default function AdminDashboard() {
                       fontWeight: 500,
                       fontSize: "16px",
                       color:
-                        location.pathname === subItem.path ? "#000" : "#fff", // Adjust text color for selected state
+                        location.pathname === subItem.path ? "#000" : "#2a2a2a", // Adjust text color for selected state
                     }}
                   />
                 </ListItemButton>

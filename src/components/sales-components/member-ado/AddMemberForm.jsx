@@ -312,23 +312,25 @@ const stateDistrictMapping = {
                     }
                   />
                 </Grid> */}
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    name="mobile_number"
-                    label="Mobile No*"
-                    type="number"
-                    {...formik.getFieldProps("mobile_number")}
-                    error={
-                      formik.touched.mobile_number &&
-                      Boolean(formik.errors.mobile_number)
-                    }
-                    helperText={
-                      formik.touched.mobile_number &&
-                      formik.errors.mobile_number
-                    }
-                  />
-                </Grid>
+               <Grid item xs={12}>
+  <TextField
+    fullWidth
+    name="mobile_number"
+    label="Mobile No*"
+    type="tel"  
+    {...formik.getFieldProps("mobile_number")}
+    error={
+      formik.touched.mobile_number &&
+      Boolean(formik.errors.mobile_number)
+    }
+    helperText={
+      formik.touched.mobile_number &&
+      formik.errors.mobile_number
+    }
+    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} 
+  />
+</Grid>
+
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
