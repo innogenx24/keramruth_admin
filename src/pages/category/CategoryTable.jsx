@@ -79,6 +79,9 @@ const CategoryTable = () => {
     setSelectedClub(null); // Reset selected club
   };
 
+  // Sort the category list in descending order by 'id'
+  const sortedCategoryList = [...categoryList].sort((a, b) => b.id - a.id);
+
   return (
     <Box sx={{ width: "100%", p: 2 }}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -102,7 +105,7 @@ const CategoryTable = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>No.</TableCell>
-                  <TableCell>Id</TableCell>
+                  {/* <TableCell>Id</TableCell> */}
                   <TableCell>Category Name</TableCell>
                   <TableCell>Sector Name</TableCell>
 
@@ -110,43 +113,43 @@ const CategoryTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {categoryList.map((row, index) => (
-                  <TableRow key={row?.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      <Typography>{row?.id}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Typography sx={{ marginLeft: "10px" }}>
-                          {row?.category_name}
-                        </Typography>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Typography sx={{ marginLeft: "10px" }}>
-                          {row?.sector_name}
-                        </Typography>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="secondary"
-                        onClick={() => handleEditClick(row)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDeleteClick(row)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+  {sortedCategoryList.map((row, index) => (
+    <TableRow key={row?.id}>
+      <TableCell>{index + 1}</TableCell>
+      {/* <TableCell>
+        <Typography>{row?.id}</Typography>
+      </TableCell> */}
+      <TableCell>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Typography sx={{ marginLeft: "10px" }}>
+            {row?.category_name}
+          </Typography>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Typography sx={{ marginLeft: "10px" }}>
+            {row?.sector_name}
+          </Typography>
+        </div>
+      </TableCell>
+      <TableCell>
+        <IconButton
+          color="secondary"
+          onClick={() => handleEditClick(row)}
+        >
+          <EditIcon />
+        </IconButton>
+        <IconButton
+          color="error"
+          onClick={() => handleDeleteClick(row)}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
             </Table>
           </TableContainer>
         </>

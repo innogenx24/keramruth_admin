@@ -227,7 +227,7 @@ const OrderManagement = () => {
                               <TableCell>{item.quantity}</TableCell>
                               <TableCell>{item.basePrice}</TableCell>
 
-                              <TableCell>${parseFloat(item.finalPrice).toFixed(2)}</TableCell>
+                              <TableCell>Rs. {parseFloat(item.finalPrice).toFixed(2)}</TableCell>
                              
                             </TableRow>
                           ))}

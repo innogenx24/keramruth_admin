@@ -31,24 +31,27 @@ const ClubTable = () => {
   const [selectedClub, setSelectedClub] = useState(null); // State to hold selected club for editing
   const [openDeleteModal, setOpenDeleteModal] = useState(false); // State to control delete modal
   const navigate = useNavigate();
+
   // Fetch clubs from API
   const fetchClubs = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
-  
+
       const response = await fetch("http://88.222.245.236:3002/club", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       const result = await response.json();
       if (result.success) {
-        setClubs(result.data); // Set the clubs from the data property
+        // Sort clubs based on the 'id' field in descending order
+        const sortedClubs = result.data.sort((a, b) => b.id - a.id);
+        setClubs(sortedClubs); // Set the sorted clubs
       } else {
-        console.error("Error fetching clubs:", result.message); // Handle any error messages
+        console.error("Error fetching clubs:", result.message);
       }
     } catch (error) {
       console.error("Error fetching clubs:", error);
@@ -56,8 +59,6 @@ const ClubTable = () => {
       setLoading(false);
     }
   };
-  
-  
 
   useEffect(() => {
     fetchClubs(); // Fetch clubs on component mount
@@ -132,40 +133,39 @@ const ClubTable = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-  {clubs.length > 0 ? (
-    clubs.map((club, index) => (
-      <TableRow key={club.id}>
-        <TableCell>{index + 1}</TableCell>
-        <TableCell>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Avatar alt={club.club_name} src={club.avatar} /> {/* Assuming avatar is a field in your API */}
-            <Typography sx={{ marginLeft: "10px" }}>
-              {club.club_name} {/* Correctly accessing club_name */}
-            </Typography>
-          </div>
-        </TableCell>
-        <TableCell>
-          <Typography>{parseInt(club.litre_quantity, 10)}</Typography> {/* Convert to integer and append 'L' */}
-        </TableCell>
-        <TableCell>
-          <IconButton color="secondary" onClick={() => handleEditClick(club)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton color="error" onClick={() => handleDeleteClick(club)}>
-            <DeleteIcon />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-      <TableCell colSpan={4} align="center">
-        No clubs available
-      </TableCell>
-    </TableRow>
-  )}
-</TableBody>
-
+                  {clubs.length > 0 ? (
+                    clubs.map((club, index) => (
+                      <TableRow key={club.id}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <Avatar alt={club.club_name} src={club.avatar} />
+                            <Typography sx={{ marginLeft: "10px" }}>
+                              {club.club_name}
+                            </Typography>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>{parseInt(club.litre_quantity, 10)}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton color="secondary" onClick={() => handleEditClick(club)}>
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton color="error" onClick={() => handleDeleteClick(club)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} align="center">
+                        No clubs available
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
               </Table>
             </TableContainer>
           )}
@@ -181,7 +181,7 @@ const ClubTable = () => {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete the club "{selectedClub?.name}"?
+            Are you sure you want to delete the club "{selectedClub?.club_name}"?
           </Typography>
         </DialogContent>
         <DialogActions>

@@ -28,6 +28,7 @@ const DocumentsTable = () => {
   
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
+  // Fetching documents and sorting them by ID in descending order
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
@@ -38,13 +39,14 @@ const DocumentsTable = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
-      setDocuments(response.data.data);
+
+      // Sort documents by ID in descending order
+      const sortedDocuments = response.data.data.sort((a, b) => b.id - a.id);
+      setDocuments(sortedDocuments);
     } catch (error) {
       console.error("Error fetching documents:", error);
     }
   };
-  
 
   useEffect(() => {
     fetchDocuments();
@@ -134,59 +136,46 @@ const DocumentsTable = () => {
               <TableCell>Heading</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Applying On</TableCell>
-              {/* <TableCell>Activate Status</TableCell> */}
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-  {documents.map((document, index) => (
-    <TableRow key={document.id}>
-      <TableCell>{index + 1}</TableCell>
-      <TableCell style={{ width: 100, textAlign: "center" }}>
-        {document.image ? (
-          <img
-            src={`${imageBaseURL}${document.image}`}
-            alt={document.heading}
-            style={{
-              width: "80px",
-              height: "80px",
-              objectFit: "cover",
-              borderRadius: "5px",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-            }}
-          />
-        ) : (
-          <span style={{ color: "#999" }}>No Image Available</span>
-        )}
-      </TableCell>
-      <TableCell>{document.heading}</TableCell>
-      <TableCell style={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-        {document.description}
-      </TableCell>
-      <TableCell>{document.receiver}</TableCell>
-      {/* <TableCell>
-        <Switch
-          checked={document.activateStatus}
-          onChange={() => handleToggleSwitch(document)}
-          color="success"
-        />
-      </TableCell> */}
-      <TableCell>
-      <div style={{ display: "flex" }}>
-      <IconButton onClick={() => handleEditClick(document)} color="primary">
-          <Edit />
-        </IconButton>
-        <IconButton onClick={() => handleDeleteOpen(document)} color="secondary">
-          <Delete />
-        </IconButton>
-
-      </div>
-       
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-
+            {documents.map((document, index) => (
+              <TableRow key={document.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell style={{ width: 100, textAlign: "center" }}>
+                  {document.image ? (
+                    <img
+                      src={`${imageBaseURL}${document.image}`}
+                      alt={document.heading}
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <span style={{ color: "#999" }}>No Image Available</span>
+                  )}
+                </TableCell>
+                <TableCell>{document.heading}</TableCell>
+                <TableCell style={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {document.description}
+                </TableCell>
+                <TableCell>{document.receiver}</TableCell>
+                <TableCell>
+                  <div style={{ display: "flex" }}>
+                    <IconButton onClick={() => handleEditClick(document)} color="primary">
+                      <Edit />
+                    </IconButton>
+                    <IconButton onClick={() => handleDeleteOpen(document)} color="secondary">
+                      <Delete />
+                    </IconButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
 
@@ -194,9 +183,7 @@ const DocumentsTable = () => {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete the document with ID "
-            {documentToDelete?.documentID}" and heading "
-            {documentToDelete?.heading}"?
+            Are you sure you want to delete the document with ID "{documentToDelete?.id}" and heading "{documentToDelete?.heading}"?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

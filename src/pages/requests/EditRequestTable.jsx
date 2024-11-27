@@ -223,7 +223,10 @@ useEffect(() => {
               <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>{member.mobile_number}</TableCell>
               <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
-              <TableCell>{isEmailSame ? "-" : request.new_email_id}</TableCell>
+              <TableCell sx={{ whiteSpace: 'nowrap', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {isEmailSame ? "-" : request.new_email_id}
+</TableCell>
+
               <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
               <TableCell>{request.request_reason}</TableCell>
               <TableCell>
@@ -262,7 +265,8 @@ useEffect(() => {
               <TableCell>Name</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Date Of Joining</TableCell>
-              <TableCell>Mobile No</TableCell>
+              {/* <TableCell>Mobile No</TableCell> */}
+
               <TableCell>New Mobile Number</TableCell>
               <TableCell>New Email ID</TableCell>
               <TableCell>New Address</TableCell>
@@ -293,10 +297,13 @@ useEffect(() => {
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{member.role_name}</TableCell>
                     <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell>{member.mobile_number}</TableCell>
+                    {/* <TableCell>{member.mobile_number}</TableCell> */}
+                    
+
                     <TableCell>{request.new_mobile_number}</TableCell>
-                    <TableCell>{request.new_email_id}</TableCell>
-                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+                    <TableCell sx={{ whiteSpace: 'nowrap', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+  {request.new_email_id}
+</TableCell>                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
                     <TableCell>{request.request_reason}</TableCell>
                     <TableCell>
   <Typography

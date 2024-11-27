@@ -23,7 +23,6 @@ import EditRoleForm from "./EditRoleForm"; // Import your EditClubForm component
 import { useNavigate } from "react-router-dom";
 import { fetchRolesRequest } from "../../redux/slices/master-slice/role-slice/RoleGetSlice";
 import { useSelector, useDispatch } from "react-redux";
-// import { deleteClubRequest } from "../../redux/slices/master-slice/club-slice/ClubDeleteSlice";
 
 const RoleTable = () => {
   const dispatch = useDispatch();
@@ -37,6 +36,9 @@ const RoleTable = () => {
   useEffect(() => {
     dispatch(fetchRolesRequest());
   }, [dispatch]);
+
+  // Sort rolesList by ID in descending order
+  const sortedRolesList = [...rolesList].sort((a, b) => b.id - a.id);
 
   // Function to handle the click of "Add Club" button
   const handleAddClubClick = () => {
@@ -58,10 +60,8 @@ const RoleTable = () => {
   const handleConfirmDelete = () => {
     // Add your deletion logic here
     console.log("Deleted Club:", selectedClub);
-    // dispatch(deleteClubRequest(selectedClub?.id));
     setOpenDeleteModal(false); // Close the modal after deletion
     setSelectedClub(null); // Reset selected club
-    // window.location.reload();
   };
 
   // Function to cancel deletion
@@ -79,11 +79,7 @@ const RoleTable = () => {
       {showTable ? (
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddClubClick}
-            >
+            <Button variant="contained" color="primary" onClick={handleAddClubClick}>
               + Add Role
             </Button>
           </Box>
@@ -93,18 +89,15 @@ const RoleTable = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>No.</TableCell>
-                  <TableCell>Role Id</TableCell>
                   <TableCell>Role Name</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rolesList?.map((row, index) => (
+                {sortedRolesList?.map((row, index) => (
                   <TableRow key={row?.id}>
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      <Typography>{row?.id}</Typography>
-                    </TableCell>
+                    
                     <TableCell>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Typography sx={{ marginLeft: "10px" }}>
@@ -144,8 +137,7 @@ const RoleTable = () => {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete the role "{selectedClub?.role_name}
-            "?
+            Are you sure you want to delete the role "{selectedClub?.role_name}"?
           </Typography>
         </DialogContent>
         <DialogActions>

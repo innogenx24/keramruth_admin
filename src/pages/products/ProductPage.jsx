@@ -94,7 +94,6 @@ const ProductPage = () => {
       });
 
       if (response.ok) {
-        // Optionally, update the local state or refetch the products
         dispatch(fetchProductsRequest()); // Refetching for simplicity; consider updating state directly if needed
       } else {
         console.error("Failed to update product status");
@@ -104,37 +103,7 @@ const ProductPage = () => {
     }
   };
 
-  if (showAddProduct) {
-    return (
-      <EditProductForm
-        handleBackToProducts={handleBackToProducts}
-        editProduct={editProduct} // Pass the product to be edited
-      />
-    );
-  }
-
-  const handleStatusToggle = async (productId, newStatus) => {
-    try {
-      const response = await fetch(`http://88.222.245.236:3002/products/admin_product/${productId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-  
-      if (response.ok) {
-        // Trigger the dispatch to re-fetch the products after the status update
-        dispatch(fetchProductsRequest());
-      } else {
-        console.error("Failed to update Product status");
-      }
-    } catch (error) {
-      console.error("Error updating product status", error);
-    }
-  };
-  
-  
+  const sortedProducts = [...productsList].sort((a, b) => b.id - a.id); // Sort by ID in descending order
 
   return (
     <div>
@@ -174,7 +143,7 @@ const ProductPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {productsList.map((product, index)=> (
+            {sortedProducts.map((product, index) => (
               <TableRow key={product.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell style={{ display: "flex", alignItems: "center" }}>
@@ -189,7 +158,6 @@ const ProductPage = () => {
                 </TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.category_name}</TableCell>
-
                 <TableCell>{product.productVolume}</TableCell>
                 <TableCell>{product.price}</TableCell>
                 <TableCell>

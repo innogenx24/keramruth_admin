@@ -31,7 +31,10 @@ const SectorTable = () => {
       try {
         const response = await fetch("http://88.222.245.236:3002/sectors");
         const data = await response.json();
-        setSectors(data);
+
+        // Sort sectors by ID in descending order
+        const sortedSectors = data.sort((a, b) => b.id - a.id);
+        setSectors(sortedSectors);
       } catch (error) {
         console.error("Error fetching sectors:", error);
       }
@@ -60,9 +63,13 @@ const SectorTable = () => {
       setOpenDeleteModal(false);
       setSelectedSector(null);
 
+      // Fetch updated sectors list after deletion
       const response = await fetch("http://88.222.245.236:3002/sectors");
       const data = await response.json();
-      setSectors(data);
+
+      // Sort sectors by ID in descending order after deletion
+      const sortedSectors = data.sort((a, b) => b.id - a.id);
+      setSectors(sortedSectors);
     } catch (error) {
       console.error("Error deleting sector:", error);
     }
