@@ -331,7 +331,7 @@ export default function AdminDashboard() {
           ...(openExpand[item.text]
             ? {
                 background: "linear-gradient(90deg, #01C572 0%, #187E53 100%)",
-                color: "#fff",
+                color: "#000",
                 borderRadius: "4px 4px 0 0",
               }
             : {}),

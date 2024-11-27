@@ -479,7 +479,7 @@ useEffect(() => {
                   helperText={errors.name}
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="username"
@@ -489,7 +489,7 @@ useEffect(() => {
                   error={!!errors.username}
                   helperText={errors.username}
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <TextField
                   fullWidth
