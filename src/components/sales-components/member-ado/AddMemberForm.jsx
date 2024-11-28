@@ -42,59 +42,59 @@ const AddMemberForm = () => {
   const { allmembers } = useSelector((state) => state.allmembers);
   const [imagePreview, setImagePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  
+
 
   useEffect(() => {
-    if (isFormSubmitted) { 
-    if (error) {
-      setErrorMessage(error);
-      setOpenSnackbar(true);
+    if (isFormSubmitted) {
+      if (error) {
+        setErrorMessage(error);
+        setOpenSnackbar(true);
+      }
+      if (success) {
+        setErrorMessage('Member added successfully!');
+        setOpenSnackbar(true);
+        navigate('/dashboard/members');
+      }
     }
-    if (success) {
-      setErrorMessage('Member added successfully!');
-      setOpenSnackbar(true);
-      navigate('/dashboard/members');
-    }
-  }
   }, [error, success]);
   // const [loading, setLoading] = useState(false);
 
   // State to City mapping
-const stateDistrictMapping = {
-  "Andhra Pradesh": [
-    "Anakapalli", "Anantapur", "Bapatla", "Chittoor", "East Godavari", "Eluru", 
-    "Guntur", "Kakinada", "Konaseema", "Krishna", "Kurnool", "Nandyal", "Nellore", 
-    "Parvathipuram Manyam", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai", 
-    "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari", 
-    "YSR Kadapa", "Alluri Sitharama Raju", "NTR", "Palnadu"
-  ],
-  "Arunachal Pradesh": [
-    "Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada", 
-    "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare", 
-    "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"
-  ],
-  "Assam": [
-    "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang", 
-    "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat", 
-    "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong", 
-    "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari", 
-    "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri", 
-    "West Karbi Anglong"
-  ],
-  "Bihar": [
-    "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", 
-    "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", 
-    "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", 
-    "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", 
-    "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"
-  ],
-  "Chhattisgarh": [
-    "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur", 
-    "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa", 
-    "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Korea", "Mahasamund", "Mungeli", 
-    "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"
-  ],
-    "Goa": ["North Goa", "South Goa","Panaji", "Vasco da Gama", "Margao"],
+  const stateDistrictMapping = {
+    "Andhra Pradesh": [
+      "Anakapalli", "Anantapur", "Bapatla", "Chittoor", "East Godavari", "Eluru",
+      "Guntur", "Kakinada", "Konaseema", "Krishna", "Kurnool", "Nandyal", "Nellore",
+      "Parvathipuram Manyam", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai",
+      "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari",
+      "YSR Kadapa", "Alluri Sitharama Raju", "NTR", "Palnadu"
+    ],
+    "Arunachal Pradesh": [
+      "Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada",
+      "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare",
+      "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"
+    ],
+    "Assam": [
+      "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang",
+      "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat",
+      "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong",
+      "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari",
+      "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri",
+      "West Karbi Anglong"
+    ],
+    "Bihar": [
+      "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar",
+      "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur",
+      "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger",
+      "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur",
+      "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"
+    ],
+    "Chhattisgarh": [
+      "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur",
+      "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa",
+      "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Korea", "Mahasamund", "Mungeli",
+      "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"
+    ],
+    "Goa": ["North Goa", "South Goa", "Panaji", "Vasco da Gama", "Margao"],
     "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Junagadh", "Kheda", "Mehsana", "Patan", "Sabarkantha", "Anand", "Banaskantha", "Dahod", "Narmada", "Porbandar", "Chhota Udepur", "Gir Somnath", "Mahisagar", "Morbi", "Navajo", "Surendranagar", "Tapi", "Valsad"],
     "Haryana": ["Chandigarh", "Faridabad", "Gurugram", "Ambala", "Hisar", "Karnal", "Panipat", "Rewari", "Sonipat", "Yamunanagar", "Bhiwani", "Rohtak", "Sirsa", "Jhajjar", "Mahendragarh", "Nuh", "Panchkula", "Fatehabad", "Palwal", "Kaithal"],
     "Himachal Pradesh": ["Shimla", "Manali", "Kullu", "Dharamsala", "Kangra", "Solan", "Mandi", "Bilaspur", "Hamirpur", "Una", "Sirmaur", "Chamba", "Kullu", "Lahaul and Spiti", "Una"],
@@ -124,7 +124,7 @@ const stateDistrictMapping = {
     "Delhi": ["New Delhi", "Old Delhi", "Dwarka", "Rohini"],
     "Puducherry": ["Puducherry", "Auroville", "Mahe"],
   };
-  
+
 
   const fetchClubs = async () => {
     try {
@@ -181,7 +181,7 @@ const stateDistrictMapping = {
       street_name: "",
       building_no_name: "",
       club_name: "",
-      superior_id: null,
+      superior_id: "",
     },
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
@@ -189,8 +189,8 @@ const stateDistrictMapping = {
       full_name: Yup.string().required("Required"),
       // mobile_number: Yup.number().required("Required"),
       mobile_number: Yup.string()
-      .required("Required")
-      .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
+        .required("Required")
+        .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
       email: Yup.string().email("Invalid email address").required("Required"),
       password: Yup.string().required("Required"),
       pincode: Yup.number().required("Required"),
@@ -203,6 +203,7 @@ const stateDistrictMapping = {
       club_name: Yup.string().required("Please select a club"),
     }),
     onSubmit: (values, { resetForm }) => {
+
       const formData = new FormData();
       formData.append("role_id", values.role_id);
       formData.append("full_name", values.full_name);
@@ -218,12 +219,13 @@ const stateDistrictMapping = {
       formData.append("building_no_name", values.building_no_name);
       formData.append("club_name", values.club_name);
       formData.append("image", values.image);
-      formData.append("superior_id", values.superior_id);
-      
-      setIsFormSubmitted(true); 
-      // dispatch(makePostMember(formData));
-      // resetForm();
-      // navigate('/dashboard/members');
+      // formData.append("superior_id", values.superior_id);
+      const finalSuperiorId = selectedD || selectedSd || selectedMd || selectedAdo || selectedAdmin;
+      formData.append("superior_id", finalSuperiorId);
+      console.log("Form Data:", formData);
+      console.log("Form Data:", formData);
+
+      setIsFormSubmitted(true);
 
       dispatch(makePostMember(formData));
       resetForm();
@@ -253,6 +255,96 @@ const stateDistrictMapping = {
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  /////**dropdown implementation****//// */
+  //////////////////////////////////////////
+  const [mds, setMds] = useState([]);
+  const [sds, setSds] = useState([]);
+  const [ds, setDs] = useState([]);
+  const [selectedAdo, setSelectedAdo] = useState(null);
+  const [selectedMd, setSelectedMd] = useState(null);
+  const [selectedSd, setSelectedSd] = useState(null);
+  const [selectedD, setSelectedD] = useState(null);
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
+
+
+  useEffect(() => {
+    if (selectedRole) {
+      // Reset dependent states when role changes
+      setSelectedAdmin(null)
+      setSelectedAdo(null);
+      setSelectedMd(null);
+      setSelectedSd(null);
+      setSelectedD(null);
+    }
+  }, [selectedRole]);
+
+  useEffect(() => {
+    if (selectedAdo && ["3", "4", "5", "6"].includes(selectedRole)) {
+      // Fetch MDs based on selected ADO
+      fetch(`http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${selectedAdo}&roleId=3`)
+        .then((res) => res.json())
+        .then((data) => setMds(data))
+        .catch((err) => console.error("Error fetching MDs:", err));
+    }
+  }, [selectedAdo, selectedRole]);
+
+  useEffect(() => {
+    if (selectedMd && ["4", "5", "6"].includes(selectedRole)) {
+      // Fetch SDs based on selected MD
+      fetch(`http://88.222.245.236:3002/directMembers/users-by-md?mdId=${selectedMd}&roleId=4`)
+        .then((res) => res.json())
+        .then((data) => setSds(data))
+        .catch((err) => console.error("Error fetching SDs:", err));
+    }
+  }, [selectedMd, selectedRole]);
+
+  useEffect(() => {
+    if (selectedSd && ["5", "6"].includes(selectedRole)) {
+      // Fetch Ds based on selected SD
+      fetch(`http://88.222.245.236:3002/directMembers/users-by-sd?sdId=${selectedSd}&roleId=5`)
+        .then((res) => res.json())
+        .then((data) => setDs(data))
+        .catch((err) => console.error("Error fetching Ds:", err));
+    }
+  }, [selectedSd, selectedRole]);
+
+  const handleAdminChange = (adminId) => {
+    setSelectedAdmin(adminId);
+    setSelectedAdo(null);
+    setSelectedSd(null);
+    setSds([]);
+    setSelectedD(null);
+    setDs([]);
+  };
+
+  const handleAdoChange = (adoId) => {
+    setSelectedAdo(adoId);
+    setSelectedMd(null);
+    setMds([]);
+    setSelectedSd(null);
+    setSds([]);
+    setSelectedD(null);
+    setDs([]);
+  };
+
+  const handleMdChange = (mdId) => {
+    setSelectedMd(mdId);
+    setSelectedSd(null);
+    setSds([]);
+    setSelectedD(null);
+    setDs([]);
+  };
+
+  const handleSdChange = (sdId) => {
+    setSelectedSd(sdId);
+    setSelectedD(null);
+    setDs([]);
+  };
+
+  const handleDChange = (dId) => {
+    setSelectedD(dId);
   };
 
 
@@ -285,32 +377,32 @@ const stateDistrictMapping = {
 
                 {/* Image Upload Section */}
                 <Grid item xs={12}>
-  <InputLabel>Add Image*</InputLabel>
-  <IconButton color="primary" component="label">
-    <AddPhotoAlternateIcon />
-    <input
-      type="file"
-      hidden
-      accept="image/*"
-      onChange={handleImageChange}
-    />
-  </IconButton>
-  {selectedFile && (
-    <Typography variant="body2" sx={{ marginTop: "10px" }}>
-      Selected file: {selectedFile.name}
-    </Typography>
-  )}
-  {/* Preview the uploaded image */}
-  {imagePreview && (
-    <Box mt={2}>
-      <img
-        src={imagePreview}
-        alt="Preview"
-        style={{ width: "100%", maxWidth: "300px", height: "auto", borderRadius: "8px" }}
-      />
-    </Box>
-  )}
-</Grid>
+                  <InputLabel>Add Image*</InputLabel>
+                  <IconButton color="primary" component="label">
+                    <AddPhotoAlternateIcon />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </IconButton>
+                  {selectedFile && (
+                    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+                      Selected file: {selectedFile.name}
+                    </Typography>
+                  )}
+                  {/* Preview the uploaded image */}
+                  {imagePreview && (
+                    <Box mt={2}>
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        style={{ width: "100%", maxWidth: "300px", height: "auto", borderRadius: "8px" }}
+                      />
+                    </Box>
+                  )}
+                </Grid>
 
 
                 <Grid item xs={12}>
@@ -342,24 +434,24 @@ const stateDistrictMapping = {
                     }
                   />
                 </Grid> */}
-               <Grid item xs={12}>
-  <TextField
-    fullWidth
-    name="mobile_number"
-    label="Mobile No*"
-    type="tel"  
-    {...formik.getFieldProps("mobile_number")}
-    error={
-      formik.touched.mobile_number &&
-      Boolean(formik.errors.mobile_number)
-    }
-    helperText={
-      formik.touched.mobile_number &&
-      formik.errors.mobile_number
-    }
-    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} 
-  />
-</Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    name="mobile_number"
+                    label="Mobile No*"
+                    type="tel"
+                    {...formik.getFieldProps("mobile_number")}
+                    error={
+                      formik.touched.mobile_number &&
+                      Boolean(formik.errors.mobile_number)
+                    }
+                    helperText={
+                      formik.touched.mobile_number &&
+                      formik.errors.mobile_number
+                    }
+                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                  />
+                </Grid>
 
                 <Grid item xs={12}>
                   <TextField
@@ -372,30 +464,30 @@ const stateDistrictMapping = {
                   />
                 </Grid>
                 <Grid item xs={12}>
-      <TextField
-        fullWidth
-        name="password"
-        label="Password*"
-        type={showPassword ? "text" : "password"} // Toggle type based on state
-        {...formik.getFieldProps("password")}
-        error={formik.touched.password && Boolean(formik.errors.password)}
-        helperText={formik.touched.password && formik.errors.password}
-        InputProps={{
-          // Add an icon button to toggle visibility
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={handleTogglePasswordVisibility}
-                edge="end"
-                aria-label="toggle password visibility"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-    </Grid>
+                  <TextField
+                    fullWidth
+                    name="password"
+                    label="Password*"
+                    type={showPassword ? "text" : "password"} // Toggle type based on state
+                    {...formik.getFieldProps("password")}
+                    error={formik.touched.password && Boolean(formik.errors.password)}
+                    helperText={formik.touched.password && formik.errors.password}
+                    InputProps={{
+                      // Add an icon button to toggle visibility
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={handleTogglePasswordVisibility}
+                            edge="end"
+                            aria-label="toggle password visibility"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
               </Grid>
             </Box>
 
@@ -419,57 +511,57 @@ const stateDistrictMapping = {
                   />
                 </Grid>
                 <Grid item xs={6}>
-        <TextField
-          fullWidth
-          name="country"
-          label="Country*"
-          value={formik.values.country} // Bind value from Formik's values
-          InputProps={{
-            readOnly: true, // Make the field read-only
-          }}
-          {...formik.getFieldProps("country")}
-          error={formik.touched.country && Boolean(formik.errors.country)}
-          helperText={formik.touched.country && formik.errors.country}
-        />
-      </Grid>
+                  <TextField
+                    fullWidth
+                    name="country"
+                    label="Country*"
+                    value={formik.values.country} // Bind value from Formik's values
+                    InputProps={{
+                      readOnly: true, // Make the field read-only
+                    }}
+                    {...formik.getFieldProps("country")}
+                    error={formik.touched.country && Boolean(formik.errors.country)}
+                    helperText={formik.touched.country && formik.errors.country}
+                  />
+                </Grid>
 
-      <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="state"
-            label="State*"
-            select
-            value={formik.values.state}
-            onChange={handleStateChange}
-            error={formik.touched.state && Boolean(formik.errors.state)}
-            helperText={formik.touched.state && formik.errors.state}
-          >
-            {Object.keys(stateDistrictMapping).map((state) => (
-              <MenuItem key={state} value={state}>
-                {state}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="state"
+                    label="State*"
+                    select
+                    value={formik.values.state}
+                    onChange={handleStateChange}
+                    error={formik.touched.state && Boolean(formik.errors.state)}
+                    helperText={formik.touched.state && formik.errors.state}
+                  >
+                    {Object.keys(stateDistrictMapping).map((state) => (
+                      <MenuItem key={state} value={state}>
+                        {state}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
 
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="district"
-            label="District*"
-            select
-            value={formik.values.district}
-            onChange={formik.handleChange}
-            error={formik.touched.district && Boolean(formik.errors.district)}
-            helperText={formik.touched.district && formik.errors.district}
-          >
-            {districts.map((district) => (
-              <MenuItem key={district} value={district}>
-                {district}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="district"
+                    label="District*"
+                    select
+                    value={formik.values.district}
+                    onChange={formik.handleChange}
+                    error={formik.touched.district && Boolean(formik.errors.district)}
+                    helperText={formik.touched.district && formik.errors.district}
+                  >
+                    {districts.map((district) => (
+                      <MenuItem key={district} value={district}>
+                        {district}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
                 <Grid item xs={6}>
                   <TextField
                     fullWidth
@@ -520,132 +612,137 @@ const stateDistrictMapping = {
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Club & Superior Distributors</InputLabel>
               <Grid container spacing={2}>
-              <Grid item xs={12}>
-  <InputLabel>Club*</InputLabel>
-  <Select
-    fullWidth
-    name="club_name"
-    value={formik.values.club_name}
-    onChange={(e) => {
-      formik.setFieldValue("club_name", e.target.value); // Set club_name directly
-    }}
-    error={Boolean(formik.touched.club_name && formik.errors.club_name)}
-  >
-    <MenuItem value="">Select Club</MenuItem>
-    {clubs.map((club) => (
-      <MenuItem key={club.id} value={club.club_name}>
-        {club.club_name}
-      </MenuItem>
-    ))}
-  </Select>
-  {formik.touched.club_name && formik.errors.club_name && (
-    <Typography color="error">{formik.errors.club_name}</Typography>
-  )}
-</Grid>
-
-
-
-
-                {(selectedRole === "6" ||
-                  selectedRole === "5" ||
-                  selectedRole === "4" ||
-                  selectedRole === "3") && (
-                    <Grid item xs={12}>
-                      <InputLabel>Area Development Officer</InputLabel>
-                      <Select
-                        fullWidth
-                        defaultValue=""
-                        name="superior_id"
-                        value={formik.values.superior_id}
-                        onChange={(event) => {
-                          formik.setFieldValue("superior_id", event.target.value);
-                        }}
-                        error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-                        helperText={formik.touched.superior_id && formik.errors.superior_id}
-                      >
-                        <MenuItem value="">Select (ADO)</MenuItem>
-                        {allmembers?.ADOs?.map((item) => (
-                          <MenuItem key={item?.id} value={item?.id}>
-                            {item?.username}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Grid>
+                <Grid item xs={12}>
+                  <InputLabel>Club*</InputLabel>
+                  <Select
+                    fullWidth
+                    name="club_name"
+                    value={formik.values.club_name}
+                    onChange={(e) => {
+                      formik.setFieldValue("club_name", e.target.value); // Set club_name directly
+                    }}
+                    error={Boolean(formik.touched.club_name && formik.errors.club_name)}
+                  >
+                    <MenuItem value="">Select Club</MenuItem>
+                    {clubs.map((club) => (
+                      <MenuItem key={club.id} value={club.club_name}>
+                        {club.club_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {formik.touched.club_name && formik.errors.club_name && (
+                    <Typography color="error">{formik.errors.club_name}</Typography>
                   )}
+                </Grid>
 
-                {(selectedRole === "6" ||
-                  selectedRole === "5" ||
-                  selectedRole === "4") && (
-                    <Grid item xs={12}>
-                      <InputLabel>Master Distributor</InputLabel>
-                      <Select
-                        fullWidth
-                        defaultValue=""
-                        name="superior_id"
-                        value={formik.values.superior_id}
-                        onChange={(event) => {
-                          formik.setFieldValue("superior_id", event.target.value);
-                        }}
-                        error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-                        helperText={formik.touched.superior_id && formik.errors.superior_id}
-                      >
-                        <MenuItem value="">Select Master Distributor</MenuItem>
-                        {allmembers?.MDs?.map((item) => (
-                          <MenuItem key={item?.id} value={item?.id}>
-                            {item?.username}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Grid>
-                  )}
-
-                {(selectedRole === "6" || selectedRole === "5") && (
+                {selectedRole === "2" ? (
                   <Grid item xs={12}>
-                    <InputLabel>Super Distributor</InputLabel>
+                    <InputLabel>Admin</InputLabel>
                     <Select
                       fullWidth
-                      defaultValue=""
                       name="superior_id"
-                      value={formik.values.superior_id}
-                      onChange={(event) => {
-                        formik.setFieldValue("superior_id", event.target.value);
-                      }}
-                      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-                      helperText={formik.touched.superior_id && formik.errors.superior_id}
+                      value={selectedAdmin || ""} // Show previous ADO for reference
+                      onChange={(e) => handleAdminChange(e.target.value)}
                     >
-                      <MenuItem value="">Select Super Distributor</MenuItem>
-                      {allmembers?.SDs?.map((item) => (
+                      <MenuItem value="">Select Admin</MenuItem>
+                      {allmembers?.Admins?.map((item) => (
                         <MenuItem key={item?.id} value={item?.id}>
                           {item?.username}
                         </MenuItem>
                       ))}
                     </Select>
                   </Grid>
-                )}
+                ) : null}
 
-                {selectedRole === "6" && (
+                {selectedRole === "3" || selectedRole === "4" || selectedRole === "5" || selectedRole === "6" ? (
                   <Grid item xs={12}>
-                    <InputLabel>Distributor</InputLabel>
+                    <InputLabel>Area Development Officer (ADO)</InputLabel>
                     <Select
                       fullWidth
-                      defaultValue=""
                       name="superior_id"
-                      value={formik.values.superior_id}
-                      onChange={(event) => {
-                        formik.setFieldValue("superior_id", event.target.value);
-                      }}
-                      error={formik.touched.superior_id && Boolean(formik.errors.superior_id)}
-                      helperText={formik.touched.superior_id && formik.errors.superior_id}
+                      value={selectedAdo || ""} // Show previous ADO for reference
+                      onChange={(e) => handleAdoChange(e.target.value)}
                     >
-                      <MenuItem value="">Select Distributor</MenuItem>
-                      {allmembers?.Ds?.map((item) => (
+                      <MenuItem value="">Select ADO</MenuItem>
+                      {allmembers?.ADOs?.map((item) => (
                         <MenuItem key={item?.id} value={item?.id}>
                           {item?.username}
                         </MenuItem>
                       ))}
                     </Select>
                   </Grid>
-                )}
+                ) : null}
+
+
+                {selectedRole === "4" || selectedRole === "5" || selectedRole === "6" ? (
+                  <Grid item xs={12}>
+                    <InputLabel>Master Distributor (MD)</InputLabel>
+                    <Select
+                      fullWidth
+                      name="superior_id"
+                      value={selectedMd || ""} // Show previous MD for reference
+                      onChange={(e) => handleMdChange(e.target.value)}
+                    >
+                      <MenuItem value="">Select MD</MenuItem>
+                      {mds.length > 0 ? (
+                        mds.map((item) => (
+                          <MenuItem key={item?.id} value={item?.id}>
+                            {item?.username}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem disabled>No MDs available</MenuItem>
+                      )}
+
+                    </Select>
+                  </Grid>
+                ) : null}
+
+                {selectedRole === "5" || selectedRole === "6" ? (
+                  <Grid item xs={12}>
+                    <InputLabel>Super Distributor (SD)</InputLabel>
+                    <Select
+                      fullWidth
+                      name="superior_id"
+                      value={selectedSd || ""} // Show previous SD for reference
+                      onChange={(e) => handleSdChange(e.target.value)}
+                    >
+                      <MenuItem value="">Select SD</MenuItem>
+                      {sds.length > 0 ? (
+                        sds?.map((item) => (
+                          <MenuItem key={item?.id} value={item?.id}>
+                            {item?.username}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem disabled>No SDs available</MenuItem>
+                      )}
+                    </Select>
+                  </Grid>
+                ) : null}
+
+                {selectedRole === "6" ? (
+                  <Grid item xs={12}>
+                    <InputLabel>Distributor (D)</InputLabel>
+                    <Select
+                      fullWidth
+                      name="superior_id"
+                      value={selectedD || ""}
+                      onChange={(e) => handleDChange(e.target.value)}
+                    >
+                      <MenuItem value="">Select D</MenuItem>
+                      {ds.length > 0 ? (
+                        ds?.map((item) => (
+                          <MenuItem key={item?.id} value={item?.id}>
+                            {item?.username}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem disabled>No Ds available</MenuItem>
+                      )}
+                    </Select>
+                  </Grid>
+                ) : null}
 
 
 
@@ -666,7 +763,7 @@ const stateDistrictMapping = {
               >
                 Save
               </Button>
-            
+
             </Box>
           </Grid>
         </Grid>
