@@ -159,7 +159,7 @@ const stateDistrictMapping = {
       street_name: "",
       building_no_name: "",
       club_name: "",
-      superior_id: null,
+      superior_id: "",
     },
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
