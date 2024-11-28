@@ -137,6 +137,7 @@ const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Username</TableCell>
+                  <TableCell>Full Name</TableCell>
                   <TableCell>Mobile No.</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
@@ -148,7 +149,6 @@ const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
       <TableCell>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar
-            alt={member?.full_name}
             src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
           />
           <Typography style={{ marginLeft: "10px" }}>
@@ -156,6 +156,8 @@ const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
           </Typography>
         </div>
       </TableCell>
+      <TableCell>{member?.full_name}</TableCell>
+
       <TableCell>{member?.mobile_number}</TableCell>
       <TableCell>
         <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>

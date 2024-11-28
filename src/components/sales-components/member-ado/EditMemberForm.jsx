@@ -49,7 +49,7 @@ const EditMemberForm = () => {
     district: "",
     city: "",
     street: "",
-    club_name: "", // Added for club name selection
+    club_name: "",
 
     superior_id: "",
     password: "",
