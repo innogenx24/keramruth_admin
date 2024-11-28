@@ -223,7 +223,12 @@ useEffect(() => {
               <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>{member.mobile_number}</TableCell>
               <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <TableCell sx={{ 
+     
+     WebkitBoxOrient: 'vertical', 
+     WebkitLineClamp: 2, 
+     wordBreak: 'break-word', 
+ }}>
               {isEmailSame ? "-" : request.new_email_id}
 </TableCell>
 
@@ -297,13 +302,18 @@ useEffect(() => {
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{member.role_name}</TableCell>
                     <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
-                    {/* <TableCell>{member.mobile_number}</TableCell> */}
+                    <TableCell>{request.new_mobile_number}</TableCell>
                     
 
-                    <TableCell>{request.new_mobile_number}</TableCell>
-                    <TableCell sx={{ whiteSpace: 'nowrap', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <TableCell sx={{ 
+     
+    WebkitBoxOrient: 'vertical', 
+    WebkitLineClamp: 2, 
+    wordBreak: 'break-word', 
+}}>
   {request.new_email_id}
-</TableCell>                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+</TableCell>
+           <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
                     <TableCell>{request.request_reason}</TableCell>
                     <TableCell>
   <Typography

@@ -159,7 +159,12 @@ const DocumentsTable = () => {
                   )}
                 </TableCell>
                 <TableCell>{document.heading}</TableCell>
-                <TableCell style={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <TableCell sx={{ 
+     
+     WebkitBoxOrient: 'vertical', 
+     WebkitLineClamp: 2, 
+     wordBreak: 'break-word', 
+ }}>
                   {document.description}
                 </TableCell>
                 <TableCell>{document.receiver}</TableCell>

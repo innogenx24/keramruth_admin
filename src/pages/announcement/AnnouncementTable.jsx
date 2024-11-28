@@ -160,12 +160,14 @@ const AnnouncementTable = () => {
                 </TableCell>
                 <TableCell>{announcement.heading}</TableCell>
                 <TableCell
-                  style={{
-                    maxWidth: 300,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
+                  sx={{ 
+     
+                    WebkitBoxOrient: 'vertical', 
+                    WebkitLineClamp: 4, 
+                    wordBreak: 'break-word',
+                    maxWidth: '250px' 
+ 
+                }}
                 >
                   {announcement.description}
                 </TableCell>
