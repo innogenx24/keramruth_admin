@@ -201,6 +201,7 @@ const AddMemberForm = () => {
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
       club_name: Yup.string().required("Please select a club"),
+      superior_id: Yup.string().required("Please select aany one  superior_id"),
     }),
     onSubmit: (values, { resetForm }) => {
 
@@ -643,6 +644,7 @@ const AddMemberForm = () => {
                       name="superior_id"
                       value={selectedAdmin || ""} // Show previous ADO for reference
                       onChange={(e) => handleAdminChange(e.target.value)}
+                      error={Boolean(!selectedAdmin)}
                     >
                       <MenuItem value="">Select Admin</MenuItem>
                       {allmembers?.Admins?.map((item) => (
@@ -662,6 +664,7 @@ const AddMemberForm = () => {
                       name="superior_id"
                       value={selectedAdo || ""} // Show previous ADO for reference
                       onChange={(e) => handleAdoChange(e.target.value)}
+                      error={Boolean(!selectedAdo)}
                     >
                       <MenuItem value="">Select ADO</MenuItem>
                       {allmembers?.ADOs?.map((item) => (
