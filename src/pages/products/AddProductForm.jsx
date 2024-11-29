@@ -26,6 +26,7 @@ const AddProductForm = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [imageError, setImageError] = useState(""); 
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -142,9 +143,32 @@ const AddProductForm = () => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const fileSizeLimit = 2 * 1024 * 1024; // 2MB limit
+      const validImageTypes = ["image/jpeg", "image/png"]; // Allowed file types (JPEG, PNG)
+  
+      // Check file type
+      if (!validImageTypes.includes(file.type)) {
+        setImageError("Only JPEG (JPG) and PNG images are allowed.");
+        setSelectedFile(null);
+        setImagePreview("");
+        formik.setFieldValue("image", null); // Reset Formik image field
+        return;
+      }
+  
+      // Check file size
+      if (file.size > fileSizeLimit) {
+        setImageError("Image size must be 2MB or less.");
+        setSelectedFile(null);
+        setImagePreview("");
+        formik.setFieldValue("image", null); // Reset Formik image field
+        return;
+      }
+  
+      // If the file passes both checks, proceed with setting the image preview and file
+      setImageError(""); // Clear any previous error
       formik.setFieldValue("image", file);
       setSelectedFile(file);
-
+  
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -182,39 +206,47 @@ const AddProductForm = () => {
               <Typography variant="h6" gutterBottom>
                 Products Details
               </Typography>
-              <InputLabel sx={{
-                color:'#232428'
-              }}>
-                Add Images
-                </InputLabel>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
-                  <AddPhotoAlternateIcon />
-                </IconButton>
-                {/* Hidden file input */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  ref={fileInputRef}
-                  style={{ display: 'none' }} // Hide the input
-                />
-              </Box>
-              {selectedFile && <Typography variant="body2" sx={{ marginTop: 1 }}>{selectedFile.name}</Typography>} {/* Display the image name */}
-              {imagePreview && (
-                <div>
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    style={{
-                      width: "200px",
-                      height: "auto",
-                      marginTop: "10px",
-                      marginBottom: "16px",
-                    }}
-                  />
-                </div>
-              )}
+              <InputLabel sx={{ color: '#232428' }}>
+  Add Images
+</InputLabel>
+<Box sx={{ display: "flex", alignItems: "center" }}>
+  <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
+    <AddPhotoAlternateIcon />
+  </IconButton>
+  {/* Hidden file input */}
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    ref={fileInputRef}
+    style={{ display: 'none' }} // Hide the input
+  />
+</Box>
+
+{selectedFile && <Typography variant="body2" sx={{ marginTop: 1 }}>{selectedFile.name}</Typography>}
+
+{imagePreview && (
+  <div>
+    <img
+      src={imagePreview}
+      alt="Preview"
+      style={{
+        width: "200px",
+        height: "auto",
+        marginTop: "10px",
+        marginBottom: "16px",
+      }}
+    />
+  </div>
+)}
+
+{/* Display image error message */}
+{imageError && (
+  <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+    {imageError}
+  </Typography>
+)}
+
 
               <TextField
                 fullWidth

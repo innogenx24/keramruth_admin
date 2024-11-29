@@ -159,11 +159,28 @@ const AddMemberForm = () => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Check file type (JPEG, JPG, PNG)
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMessage("Only JPEG, JPG, or PNG images are allowed.");
+        return; // Stop further processing if the file type is not allowed
+      }
+  
+      // Check file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        setErrorMessage("File size must be less than 2MB.");
+        return; // Stop further processing if the file size exceeds 2MB
+      }
+  
+      // If validation passes, set the selected file and preview
       setSelectedFile(file);
       formik.setFieldValue("image", file); // Set the image in Formik field
       setImagePreview(URL.createObjectURL(file)); // Create a preview URL
+      setErrorMessage(""); // Clear any previous error message
+      setOpenSnackbar(false); // Hide the snackbar error
     }
   };
+  
   // Formik setup
   const formik = useFormik({
     initialValues: {
@@ -375,35 +392,40 @@ const AddMemberForm = () => {
                     <MenuItem value="6">Customers</MenuItem>
                   </Select>
                 </Grid>
-
-                {/* Image Upload Section */}
                 <Grid item xs={12}>
-                  <InputLabel>Add Image*</InputLabel>
-                  <IconButton color="primary" component="label">
-                    <AddPhotoAlternateIcon />
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </IconButton>
-                  {selectedFile && (
-                    <Typography variant="body2" sx={{ marginTop: "10px" }}>
-                      Selected file: {selectedFile.name}
-                    </Typography>
-                  )}
-                  {/* Preview the uploaded image */}
-                  {imagePreview && (
-                    <Box mt={2}>
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        style={{ width: "100%", maxWidth: "300px", height: "auto", borderRadius: "8px" }}
-                      />
-                    </Box>
-                  )}
-                </Grid>
+  <InputLabel>Add Image*</InputLabel>
+  <IconButton color="primary" component="label">
+    <AddPhotoAlternateIcon />
+    <input
+      type="file"
+      hidden
+      accept="image/*"
+      onChange={handleImageChange}
+    />
+  </IconButton>
+  {selectedFile && (
+    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+      Selected file: {selectedFile.name}
+    </Typography>
+  )}
+  {/* Preview the uploaded image */}
+  {imagePreview && (
+    <Box mt={2}>
+      <img
+        src={imagePreview}
+        alt="Preview"
+        style={{ width: "100%", maxWidth: "300px", height: "auto", borderRadius: "8px" }}
+      />
+    </Box>
+  )}
+  {/* Display error message below image upload */}
+  {errorMessage && (
+    <Typography color="error" variant="body2" sx={{ marginTop: "10px" }}>
+      {errorMessage}
+    </Typography>
+  )}
+</Grid>
+
 
 
                 <Grid item xs={12}>

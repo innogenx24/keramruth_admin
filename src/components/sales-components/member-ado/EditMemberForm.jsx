@@ -30,7 +30,7 @@ const EditMemberForm = () => {
   const [imageName, setImageName] = useState(""); // Store image file name for display
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const [showPassword, setShowPassword] = useState(false);
-  //
+  const [imageError, setImageError] = useState(""); // Store image error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -231,9 +231,29 @@ useEffect(() => {
     }
   }, [memberId, navigate]);
 
+  // Handle image upload with validation for size and format
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate image size (2MB max)
+      if (file.size > 2 * 1024 * 1024) {
+        setImageError("Image size less than 2MB only.");
+        setImage(null); // Clear the image
+        setImageName(""); // Reset image name
+        return;
+      }
+
+      // Validate image type (JPEG, PNG)
+      const validTypes = ["image/jpeg", "image/png"];
+      if (!validTypes.includes(file.type)) {
+        setImageError("Only JPEG and PNG images are allowed.");
+        setImage(null); // Clear the image
+        setImageName(""); // Reset image name
+        return;
+      }
+
+      // Reset error and set image
+      setImageError("");
       setImage(file);
       setImageName(file.name);
     }
@@ -334,6 +354,13 @@ useEffect(() => {
   // Save updated member data
 
   const handleSave = () => {
+
+
+    // Only proceed if the image is valid
+    if (imageError) {
+      return;
+    }
+
     const isValid = validateForm();
     if (!isValid) return;
     const token = localStorage.getItem("token");
@@ -439,34 +466,28 @@ useEffect(() => {
                   <MenuItem value="6">Customer</MenuItem>
                 </Select>
               </Grid>
-              <Grid item xs={12}>
-  <InputLabel>Edit Image</InputLabel>
-  <IconButton color="primary" component="label">
-    <AddPhotoAlternateIcon />
-    <input type="file" hidden onChange={handleImageUpload} />
-  </IconButton>
-  {imageName && <Typography variant="body2">{imageName}</Typography>}
-  <Box mt={2}>
-    {image ? (
-      // Show preview of the uploaded image
-      <img
-        src={URL.createObjectURL(image)}
-        alt="Uploaded Preview"
-        style={{ maxWidth: "100%", maxHeight: "200px" }}
-      />
-    ) : formData.image ? (
-      // Show previously uploaded image
-      <img
-        src={`${imageBaseURL}${formData.image}`}
-        alt="Current Profile"
-        style={{ maxWidth: "100%", maxHeight: "200px" }}
-      />
-    ) : (
-      // Fallback for no image
-      <Typography variant="body2">No image uploaded</Typography>
-    )}
-  </Box>
-</Grid>
+             <Grid item xs={12}>
+        <InputLabel>Edit Image</InputLabel>
+        <IconButton color="primary" component="label">
+          <AddPhotoAlternateIcon />
+          <input type="file" hidden onChange={handleImageUpload} />
+        </IconButton>
+        {imageName && <Typography variant="body2">{imageName}</Typography>}
+        {imageError && (
+          <Typography variant="body2" color="error">{imageError}</Typography>
+        )}
+        <Box mt={2}>
+          {image ? (
+            <img
+              src={URL.createObjectURL(image)}
+              alt="Uploaded Preview"
+              style={{ maxWidth: "100%", maxHeight: "200px" }}
+            />
+          ) : (
+            <Typography variant="body2">No image uploaded</Typography>
+          )}
+        </Box>
+      </Grid>
 
               <Grid item xs={12}>
                 <TextField

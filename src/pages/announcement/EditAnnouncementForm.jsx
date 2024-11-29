@@ -90,27 +90,43 @@ const EditAnnouncementForm = () => {
     if (file) {
       const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB size limit
       const fileSizeMB = file.size / (1024 * 1024); // Convert size to MB
-
-      // Validate file size
-      if (fileSizeMB > 2) {
-        setImageError("File size must be less than 2MB");
+  
+      // Validate file format
+      const validFormats = ['image/jpeg', 'image/png'];
+      if (!validFormats.includes(file.type)) {
+        setImageError("Only JPEG, JPG, or PNG images are allowed.");
         setImageFile(null); // Clear selected file
         setImageFileName("");
         setPreviewUrl("");
         setExistingImage(""); // Clear existing image if error occurs
-      } else {
-        setImageError(""); // Clear error if file is valid
-        setImageFile(file);
-        setImageFileName(file.name);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewUrl(reader.result);
-        };
-        reader.readAsDataURL(file);
-        setExistingImage(""); // Clear existing image if new file is selected
+        return;
       }
+  
+      // Validate file size
+      if (fileSizeMB > 2) {
+        setImageError("File size must be less than 2MB.");
+        setImageFile(null); // Clear selected file
+        setImageFileName("");
+        setPreviewUrl("");
+        setExistingImage(""); // Clear existing image if error occurs
+        return;
+      }
+  
+      // Clear error if file is valid
+      setImageError("");
+      setImageFile(file);
+      setImageFileName(file.name);
+  
+      // Generate image preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setExistingImage(""); // Clear existing image if new file is selected
     }
   };
+  
 
   const validateLink = (url) => {
     const regex = /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;

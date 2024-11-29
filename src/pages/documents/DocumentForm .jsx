@@ -78,11 +78,18 @@ const DocumentForm = () => {
   });
   
   
-
   const handleImageChange = (event) => {
     const file = event.target.files[0];
+  
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
+  
+      // Check if file type is JPEG/JPG or PNG
+      const validImageTypes = ['image/jpeg', 'image/png'];
+      if (!validImageTypes.includes(file.type)) {
+        setImageError("Only JPEG, JPG, or PNG images are allowed");
+        return; // Prevent further actions if the file type is invalid
+      }
   
       // Check if file size exceeds 2MB
       if (fileSizeMB > 2) {
@@ -92,6 +99,7 @@ const DocumentForm = () => {
         setImageError(""); // Clear error if file is valid
       }
   
+      // If all checks pass, update the form and image preview
       formik.setFieldValue("image", file.name);
       setSelectedFile(file);
       setImageName(file.name);
@@ -103,6 +111,7 @@ const DocumentForm = () => {
       reader.readAsDataURL(file);
     }
   };
+  
 
   const handleReceiverChange = (event) => {
     const value = event.target.value;

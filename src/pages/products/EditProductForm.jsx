@@ -99,12 +99,41 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
+    
     if (file) {
+      // Check the file type (only allow jpeg, jpg, png)
+      const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!validImageTypes.includes(file.type)) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          image: 'Only JPEG, JPG, and PNG formats are allowed.'
+        }));
+        setSelectedImage(null);
+        setImagePreview(null);
+        setImageName("");
+        return;
+      }
+  
+      // Check file size (limit to 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        setErrors(prevErrors => ({
+          ...prevErrors,
+          image: 'Image size less than 2MB only.'
+        }));
+        setSelectedImage(null);
+        setImagePreview(null);
+        setImageName("");
+        return;
+      }
+  
+      // If valid, update the state with the selected image
+      setErrors(prevErrors => ({ ...prevErrors, image: '' })); // Clear any previous error
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
       setImageName(file.name);
     }
   };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -305,6 +334,11 @@ const EditProductForm = ({ handleBackToProducts }) => {
               </div>
             )}
 
+{errors.image && (
+  <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+    {errors.image}
+  </Typography>
+)}
 
 
             <TextField

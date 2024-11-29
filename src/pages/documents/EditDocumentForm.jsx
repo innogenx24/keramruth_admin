@@ -90,12 +90,11 @@ const EditDocumentForm = () => {
     }
   };
 
-
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert file size to MB
-
+  
       // Check if file size exceeds 2MB
       if (fileSizeMB > 2) {
         setImageError("File size must be less than 2MB");
@@ -104,12 +103,22 @@ const EditDocumentForm = () => {
       } else {
         setImageError(""); // Clear error if file size is valid
       }
-
+  
+      // Check if file type is JPEG, JPG, or PNG
+      const validImageTypes = ['image/jpeg', 'image/png'];
+      if (!validImageTypes.includes(file.type)) {
+        setImageError("Only JPEG, JPG, and PNG images are allowed");
+        setImage(null); // Reset image if the file type is not valid
+        return; // Prevent further actions
+      } else {
+        setImageError(""); // Clear error if file type is valid
+      }
+  
       setImage(file);
       setImageName(file.name);
     }
   };
-
+  
   const validateLink = (link) => {
     const validLinkRegex = /^(https?:\/\/|https:\/\/www\.youtube\.com\/watch\?v=)/;
     return validLinkRegex.test(link);

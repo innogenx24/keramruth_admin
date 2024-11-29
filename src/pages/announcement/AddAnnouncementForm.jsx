@@ -70,13 +70,22 @@ const AddAnnouncementDetails = ({ onClose }) => {
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
   
+      // Check if the file type is valid (JPEG, JPG, PNG)
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        setImageError("Only JPEG, JPG, and PNG files are allowed.");
+        setImageFile(null); // Clear any previously selected file
+        setImageFileName("");
+        setPreviewUrl("");
+      } 
       // Check if file size exceeds 2MB
-      if (fileSizeMB > 2) {
+      else if (fileSizeMB > 2) {
         setImageError("File size must be less than 2MB");
         setImageFile(null); // Clear any previously selected file
         setImageFileName("");
         setPreviewUrl("");
-      } else {
+      } 
+      else {
         setImageError(""); // Clear error if file is valid
         setImageFile(file);
         setImageFileName(file.name);
@@ -89,6 +98,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
       }
     }
   };
+  
 
   const validateLink = (value) => {
     // Updated regex for validating general and specific URLs
