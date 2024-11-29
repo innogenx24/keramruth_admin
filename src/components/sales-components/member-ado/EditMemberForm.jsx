@@ -466,28 +466,37 @@ useEffect(() => {
                   <MenuItem value="6">Customer</MenuItem>
                 </Select>
               </Grid>
-             <Grid item xs={12}>
-        <InputLabel>Edit Image</InputLabel>
-        <IconButton color="primary" component="label">
-          <AddPhotoAlternateIcon />
-          <input type="file" hidden onChange={handleImageUpload} />
-        </IconButton>
-        {imageName && <Typography variant="body2">{imageName}</Typography>}
-        {imageError && (
+              <Grid item xs={12}>
+  <InputLabel>Edit Image</InputLabel>
+  <IconButton color="primary" component="label">
+    <AddPhotoAlternateIcon />
+    <input type="file" hidden onChange={handleImageUpload} />
+  </IconButton>
+  {imageName && <Typography variant="body2">{imageName}</Typography>}
+  {imageError && (
           <Typography variant="body2" color="error">{imageError}</Typography>
         )}
-        <Box mt={2}>
-          {image ? (
-            <img
-              src={URL.createObjectURL(image)}
-              alt="Uploaded Preview"
-              style={{ maxWidth: "100%", maxHeight: "200px" }}
-            />
-          ) : (
-            <Typography variant="body2">No image uploaded</Typography>
-          )}
-        </Box>
-      </Grid>
+  <Box mt={2}>
+    {image ? (
+      // Show preview of the uploaded image
+      <img
+        src={URL.createObjectURL(image)}
+        alt="Uploaded Preview"
+        style={{ maxWidth: "100%", maxHeight: "200px" }}
+      />
+    ) : formData.image ? (
+      // Show previously uploaded image
+      <img
+        src={`${imageBaseURL}${formData.image}`}
+        alt="Current Profile"
+        style={{ maxWidth: "100%", maxHeight: "200px" }}
+      />
+    ) : (
+      // Fallback for no image
+      <Typography variant="body2">No image uploaded</Typography>
+    )}
+  </Box>
+</Grid>
 
               <Grid item xs={12}>
                 <TextField
