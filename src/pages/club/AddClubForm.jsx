@@ -104,6 +104,7 @@ const AddClubForm = () => {
               error={!!errors.clubName}
               helperText={errors.clubName}
             />
+            {error && <Typography color="error">{error}</Typography>}
 
             {/* Litre Quantity Field */}
             <TextField
@@ -119,7 +120,6 @@ const AddClubForm = () => {
             />
 
             {/* API Error Message */}
-            {error && <Typography color="error">{error}</Typography>}
 
             {/* Save Button */}
             <Box sx={{ mt: 2 }}>

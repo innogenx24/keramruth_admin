@@ -90,7 +90,7 @@ const RoleTable = () => {
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Role Name</TableCell>
-                  <TableCell>Action</TableCell>
+                  {/* <TableCell>Action</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -106,7 +106,7 @@ const RoleTable = () => {
                       </div>
                     </TableCell>
 
-                    <TableCell>
+                    {/* <TableCell>
                       <IconButton
                         color="secondary"
                         onClick={() => handleEditClick(row)}
@@ -119,7 +119,7 @@ const RoleTable = () => {
                       >
                         <DeleteIcon />
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

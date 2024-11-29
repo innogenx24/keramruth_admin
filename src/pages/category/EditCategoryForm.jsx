@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
@@ -10,15 +10,11 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { makeEditCategory } from "../../redux/slices/master-slice/categort-slice/CategoryEditSlice";
-  import { useNavigate } from "react-router-dom";
-  
-const EditCategoryForm = ({ onCancel }) => {
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const navigate = useNavigate();
+import axios from "axios";
 
+const EditCategoryForm = ({ onCancel }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { club } = location.state || {}; // Get the club data from location state
 
   const [sectors, setSectors] = useState([]); // State to store fetched sectors
@@ -30,7 +26,9 @@ const EditCategoryForm = ({ onCancel }) => {
   });
 
   const [errors, setErrors] = useState({}); // State to track field errors
+  const [serverError, setServerError] = useState(""); // State to track server error
 
+  // Fetch sectors
   useEffect(() => {
     const fetchSectors = async () => {
       try {
@@ -47,9 +45,20 @@ const EditCategoryForm = ({ onCancel }) => {
     fetchSectors();
   }, []);
 
+  // Fetch category data by ID when the component mounts
   useEffect(() => {
-    if (club) {
-      setCategory(club); // Set category state when club data is available
+    if (club && club.id) {
+      const fetchCategoryDetails = async () => {
+        try {
+          const response = await axios.get(
+            `http://88.222.245.236:3002/category/${club.id}`
+          );
+          setCategory(response.data); // Set fetched category data
+        } catch (error) {
+          console.error("Error fetching category details:", error);
+        }
+      };
+      fetchCategoryDetails();
     }
   }, [club]);
 
@@ -81,32 +90,42 @@ const EditCategoryForm = ({ onCancel }) => {
   };
 
   // Handle form submission (update logic)
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
     if (!validateFields()) {
       return; // Stop submission if validation fails
     }
 
-    // Prepare data for dispatch
-    const parsedValues = {
-      ...category,
-      id: parseInt(category.id, 10), // Ensure id is an integer
-    };
+    const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
 
-    // Dispatch the action to edit the category
-    dispatch(makeEditCategory(parsedValues));
-
-    // Reset the form
-    setCategory({
-      id: "",
-      category_name: "",
-      parent_category_id: "",
-      sector_name: "",
-    });
-    navigate("/dashboard/category");
-
-    setErrors({}); // Clear errors after successful submission
+    try {
+      const response = await axios.put(
+        `http://88.222.245.236:3002/category/${category.id}`,
+        category,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // Reset the form on successful update
+      setCategory({
+        id: "",
+        category_name: "",
+        parent_category_id: "",
+        sector_name: "",
+      });
+      setErrors({});
+      navigate("/dashboard/category");
+    } catch (error) {
+      if (error.response && error.response.data.error === "Category with this name already exists") {
+        setServerError("Category with this name already exists.");
+      } else {
+        console.error("Error updating category:", error);
+        setServerError("An error occurred while updating the category.");
+      }
+    }
   };
 
   return (
@@ -127,6 +146,8 @@ const EditCategoryForm = ({ onCancel }) => {
         error={!!errors.category_name}
         helperText={errors.category_name}
       />
+
+      {serverError && <Typography color="error">{serverError}</Typography>}
 
       {/* Select Sector Dropdown */}
       <InputLabel sx={{ mt: 2 }}>Select Sector*</InputLabel>
@@ -160,12 +181,7 @@ const EditCategoryForm = ({ onCancel }) => {
 
       {/* Submit and Cancel Buttons */}
       <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          sx={{ width: "100%" }}
-        >
+        <Button variant="contained" color="primary" type="submit" sx={{ width: "100%" }}>
           Save Changes
         </Button>
       </Box>

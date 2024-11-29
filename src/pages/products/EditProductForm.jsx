@@ -19,6 +19,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const [serverError, setServerError] = useState("");
 
   const [errors, setErrors] = useState({
     name: '',
@@ -155,7 +156,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
       formErrors.name = 'Product name is required';
     } else if (productDetails.name.length < 3) {
       formErrors.name = 'Product name must be at least 3 characters';
-    } else if (productDetails.name.length > 30) {
+    } else if (productDetails.name.length > 225) {
       formErrors.name = 'Product name must be less than 30 characters';
     }
     if (!productDetails.productVolume) {
@@ -227,22 +228,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
     formData.append("stock_quantity", productDetails.stock_quantity || "0");
     formData.append("quantity_type", productDetails.quantity_type || "Unit");
     formData.append("status", stockStatus ? 1 : 0);
-  
-    // Validate and handle dates
-    const validFromDate = productDetails.fromDate
-      ? new Date(productDetails.fromDate).toISOString().slice(0, 10)
-      : "1970-01-01"; // Default to 1970-01-01 if no date is provided or autoUpdate is off
-    const validToDate = productDetails.toDate
-      ? new Date(productDetails.toDate).toISOString().slice(0, 10)
-      : "1970-01-01";
-  
-    formData.append("fromDate", autoUpdate ? validFromDate : "1970-01-01");
-    formData.append("toDate", autoUpdate ? validToDate : "1970-01-01");
-    formData.append("ADO_price", autoUpdate ? productDetails.ADO_price || "0" : "0");
-    formData.append("MD_price", autoUpdate ? productDetails.MD_price || "0" : "0");
-    formData.append("SD_price", autoUpdate ? productDetails.SD_price || "0" : "0");
-    formData.append("distributor_price", autoUpdate ? productDetails.distributor_price || "0" : "0");
-    formData.append("customer_price", autoUpdate ? productDetails.customer_price || "0" : "0");
+    formData.append("fromDate", autoUpdate ? productDetails.fromDate || "1970-01-01" : "1970-01-01");
+    formData.append("toDate", autoUpdate ? productDetails.toDate || "1970-01-01" : "1970-01-01");
   
     if (selectedImage) {
       formData.append("image", selectedImage);
@@ -250,27 +237,30 @@ const EditProductForm = ({ handleBackToProducts }) => {
   
     try {
       const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
-        method: 'PUT',
+        method: "PUT",
         body: formData,
       });
   
       if (!response.ok) {
-        throw new Error("Error updating product");
+        const errorData = await response.json();
+        if (errorData.error === "Product name is already exists.") {
+          setServerError("Product name is already exists.");
+        } else {
+          throw new Error("Error updating product");
+        }
+      } else {
+        setProductDetails(initialProductDetails);
+        setSelectedImage(null);
+        setImagePreview(null);
+        setImageName("");
+        setAutoUpdate(true);
+        setStockStatus(true);
+        navigate("/dashboard/products");
       }
-  
-      setProductDetails(initialProductDetails);
-      setSelectedImage(null);
-      setImagePreview(null);
-      setImageName("");
-      setAutoUpdate(true);
-      setStockStatus(true);
-  
-      navigate("/dashboard/products");
     } catch (error) {
       console.error("Error updating product:", error);
     }
   };
-  
 
 
   return (
@@ -341,18 +331,22 @@ const EditProductForm = ({ handleBackToProducts }) => {
 )}
 
 
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Product Name*"
-              name="name"
-              value={productDetails.name}
-              onChange={handleInputChange}
-              placeholder="Enter Product Name"
-              sx={{ marginBottom: "16px" }}
-              error={Boolean(errors.name)}
-              helperText={errors.name}   
-            />
+<TextField 
+  fullWidth
+  variant="outlined"
+  label="Product Name*"
+  name="name"
+  value={productDetails.name}
+  onChange={(e) => {
+    handleInputChange(e);
+    setServerError(""); // Clear server error on input change
+  }}
+  placeholder="Enter Product Name"
+  sx={{ marginBottom: "16px" }}
+  error={Boolean(errors.name) || Boolean(serverError)}
+  helperText={errors.name || serverError}   
+/>
+
 
             <TextField
               fullWidth

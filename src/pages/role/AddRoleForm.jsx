@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Button, Typography, Box, TextField, Grid } from "@mui/material";
-import { makePostRole } from "../../redux/slices/master-slice/role-slice/RolePostSlice";
-import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Import axios for API calls
 
 const AddRoleForm = () => {
-  const dispatch = useDispatch();
   const [showErrors, setShowErrors] = useState(false); // Track whether errors should be shown
+  const [error, setError] = useState(""); // To store backend error message
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -18,14 +17,34 @@ const AddRoleForm = () => {
     validationSchema: Yup.object({
       role_name: Yup.string().required("Role name is required."),
     }),
-    onSubmit: (values, { resetForm }) => {
-      const parsedValues = {
-        ...values,
-      };
-      dispatch(makePostRole(parsedValues));
-      resetForm();
-      navigate("/dashboard/role"); // Navigate to the product list page after submission
+    onSubmit: async (values, { resetForm }) => {
+      const parsedValues = { ...values };
 
+      try {
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+
+        const response = await axios.post(
+          "http://88.222.245.236:3002/roles/create", // API URL
+          parsedValues, // The role data to be sent
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Set the authorization header
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          resetForm();
+          navigate("/dashboard/role"); // Navigate to the role list page after successful submission
+        }
+      } catch (error) {
+        // Handle errors, including the "Role name already exists" case
+        if (error.response?.data?.message === "Role name already exists") {
+          setError("Role name already exists");
+        } else {
+          setError("An error occurred while adding the role.");
+        }
+      }
     },
   });
 
@@ -57,6 +76,8 @@ const AddRoleForm = () => {
                   showErrors && formik.touched.role_name && formik.errors.role_name
                 }
               />
+              {/* Show backend error message under role_name field */}
+              {error && <Typography color="error">{error}</Typography>}
 
               {/* Save Button */}
               <Box sx={{ mt: 2 }}>

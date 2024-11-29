@@ -14,28 +14,24 @@ import {
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { makePostProduct } from "../../redux/slices/product-slice/ProductPostSlice";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AddProductForm = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [imageError, setImageError] = useState(""); 
+  const [serverError, setServerError] = useState(""); // State to hold server error
 
-  // Fetch categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await fetch("http://88.222.245.236:3002/category");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -45,10 +41,9 @@ const AddProductForm = () => {
     fetchCategories();
   }, []);
 
-  // Handle category change
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
-    formik.setFieldValue("category_name", event.target.value); // Update Formik value
+    formik.setFieldValue("category_name", event.target.value);
   };
 
   const formik = useFormik({
@@ -65,25 +60,16 @@ const AddProductForm = () => {
       adoPrice: "",
       stock_quantity: "",
       quantity_type: "",
-      createdBy: "",
       category_name: "",
       fromDate: "",
       toDate: "",
-      ADO_price: "",
-      MD_price: "",
-      SD_price: "",
-      distributor_price: "",
-      customer_price: "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
-      .required("Required")
-      .min(3, "Name must be at least 3 characters long")
-      .max(30, "Name cannot be more than 30 characters long"),
-      productVolume: Yup.string()
-      .required("Required")
-      .matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
-      // price: Yup.number().required("Required").min(0).default(0),
+        .required("Required")
+        .min(3, "Name must be at least 3 characters long")
+        .max(30, "Name cannot be more than 30 characters long"),
+      productVolume: Yup.string().required("Required").matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
       price: Yup.number().required("Required").min(0),
       distributorPrice: Yup.number().required("Required").min(0),
       sdPrice: Yup.number().required("Required").min(0),
@@ -91,91 +77,64 @@ const AddProductForm = () => {
       adoPrice: Yup.number().required("Required").min(0),
       quantity_type: Yup.string().required("Required"),
       category_name: Yup.string().required("Required"),
-      stock_quantity: Yup.number().required("Stock quantity is required").min(0, "Stock quantity must be greater than or equal to 0"),
-
+      stock_quantity: Yup.number().required("Stock quantity is required").min(0),
     }),
-    onSubmit: (values, { resetForm }) => {
-      const randomProductCode = Math.floor(100000 + Math.random() * 900000); // Generate random 6-digit number
+    onSubmit: async (values, { resetForm }) => {
+      const randomProductCode = Math.floor(100000 + Math.random() * 900000);
       const formData = new FormData();
-      formData.append("autoUpdate", values.autoUpdate);
-      formData.append("status", values.status);
       formData.append("product_code", randomProductCode);
       formData.append("name", values.name);
-      formData.append("description", values.description);
       formData.append("productVolume", values.productVolume);
-      formData.append("price", values.price || 0);
+      formData.append("price", values.price);
       formData.append("distributorPrice", values.distributorPrice);
-      formData.append("stock_quantity", values.stock_quantity); // Add stock_quantity to FormData
       formData.append("sdPrice", values.sdPrice);
       formData.append("mdPrice", values.mdPrice);
       formData.append("adoPrice", values.adoPrice);
       formData.append("quantity_type", values.quantity_type);
       formData.append("category_name", values.category_name);
-    
-      // Include date fields only if autoUpdate is enabled
-      if (values.autoUpdate) {
-        formData.append("fromDate", values.fromDate);
-        formData.append("toDate", values.toDate);
+      formData.append("stock_quantity", values.stock_quantity);
+
+      if (selectedFile) formData.append("image", selectedFile);
+
+      try {
+        const token = localStorage.getItem('token');
+        await axios.post("http://88.222.245.236:3002/products", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        navigate("/dashboard/products");
+      } catch (error) {
+        if (error.response && error.response.data.error) {
+          setServerError(error.response.data.error); // Set server error
+        } else {
+          console.error("Error submitting product:", error);
+        }
       }
-    
-      formData.append("ADO_price", values.ADO_price || 0);
-      formData.append("MD_price", values.MD_price || 0);
-      formData.append("SD_price", values.SD_price || 0);
-      formData.append("distributor_price", values.distributor_price || 0);
-      formData.append("customer_price", values.customer_price || 0);
-    
-      if (selectedFile) {
-        formData.append("image", selectedFile); // Attach the selected file
-      }
-    
-      dispatch(makePostProduct(formData)); // Dispatch product creation action
-      resetForm();
-      setSelectedFile(null);
-      setImagePreview("");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-      navigate("/dashboard/products"); // Navigate to the product list page after submission
     },
-    
   });
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const fileSizeLimit = 2 * 1024 * 1024; // 2MB limit
-      const validImageTypes = ["image/jpeg", "image/png"]; // Allowed file types (JPEG, PNG)
-  
-      // Check file type
+      const fileSizeLimit = 2 * 1024 * 1024;
+      const validImageTypes = ["image/jpeg", "image/png"];
       if (!validImageTypes.includes(file.type)) {
-        setImageError("Only JPEG (JPG) and PNG images are allowed.");
-        setSelectedFile(null);
-        setImagePreview("");
-        formik.setFieldValue("image", null); // Reset Formik image field
+        setImageError("Only JPEG and PNG images are allowed.");
         return;
       }
-  
-      // Check file size
       if (file.size > fileSizeLimit) {
         setImageError("Image size must be 2MB or less.");
-        setSelectedFile(null);
-        setImagePreview("");
-        formik.setFieldValue("image", null); // Reset Formik image field
         return;
       }
-  
-      // If the file passes both checks, proceed with setting the image preview and file
-      setImageError(""); // Clear any previous error
-      formik.setFieldValue("image", file);
+      setImageError("");
       setSelectedFile(file);
-  
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
+      reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
+
 
   return(
     <Box
@@ -248,17 +207,21 @@ const AddProductForm = () => {
 )}
 
 
-              <TextField
-                fullWidth
-                variant="outlined"
-                name="name"
-                label="Product Name*"
-                placeholder="Enter Product Name"
-                sx={{ marginBottom: "16px" }}
-                {...formik.getFieldProps("name")}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                helperText={formik.touched.name && formik.errors.name}
-              />
+<TextField
+        fullWidth
+        variant="outlined"
+        name="name"
+        label="Product Name*"
+        placeholder="Enter Product Name"
+        sx={{ marginBottom: "16px" }}
+        {...formik.getFieldProps("name")}
+        error={formik.touched.name && Boolean(formik.errors.name)}
+        helperText={formik.touched.name && formik.errors.name}
+        
+      />
+
+{serverError && <Typography color="error">{serverError}</Typography>}
+
               <TextField
                 fullWidth
                 variant="outlined"
