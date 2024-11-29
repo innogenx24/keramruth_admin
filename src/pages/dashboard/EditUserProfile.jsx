@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import {
   Grid,
   TextField,
@@ -11,13 +11,10 @@ import {
   MenuItem,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { makeEditUser } from "../../redux/slices/user-profile-slice/UserEditSlice";
+import axios from "axios";
 
 const EditUserProfile = () => {
-  const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.users);
   const navigate = useNavigate();
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
@@ -26,21 +23,43 @@ const EditUserProfile = () => {
   const [imageError, setImageError] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState(""); // To hold the error message for display
 
   const [user, setUser] = useState({
-    building_no_name: "",
-    city: "",
-    email: "",
     full_name: "",
     mobile_number: "",
+    email: "",
     pincode: "",
     street_name: "",
+    city: "",
     state: "",
     country: "",
     image: "",
   });
 
   const [cities, setCities] = useState([]);
+  const [users, setUsers] = useState(null); // Add users state
+
+
+
+   // Fetch user data from API (replace with actual API call)
+   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://88.222.245.236:3002/api/admin/admin-details", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUsers(response.data); // Store fetched data
+      } catch (error) {
+        console.error("Error fetching user data", error);
+      }
+    };
+
+    fetchUserData();
+  }, []); // Run once on component mount
 
   // State to City mapping
 const stateCityMap = {
@@ -165,15 +184,28 @@ const stateCityMap = {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
+      const fileSizeLimit = 2 * 1024 * 1024; // 2MB limit
+      const validImageTypes = ["image/jpeg", "image/png"]; // Allowed file types (JPEG, PNG)
+  
+      // Check file type
+      if (!validImageTypes.includes(file.type)) {
+        setImageError("Only JPEG (JPG) and PNG images are allowed.");
+        return;
+      }
+  
+      // Check file size
+      if (file.size > fileSizeLimit) {
         setImageError("Image size must be 2MB or less.");
         return;
       }
+  
+      // If the file passes both checks, set the image preview and file
       setSelectedImage(URL.createObjectURL(file));
       setImageFile(file);
-      setImageError("");
+      setImageError(""); // Clear error message if the file is valid
     }
   };
+  
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -193,11 +225,8 @@ const stateCityMap = {
     formData.append("pincode", user.pincode);
     formData.append("street_name", user.street_name);
     formData.append("city", user.city);
-    formData.append("district", user.city);
     formData.append("state", user.state);
     formData.append("country", user.country);
-    formData.append("building_no_name", user.building_no_name);
-    formData.append("username", user.username);
 
     if (imageFile) {
       formData.append("image", imageFile);
@@ -206,18 +235,38 @@ const stateCityMap = {
     }
 
     try {
-      const response = await dispatch(makeEditUser(formData));
-      if (!response.error) {
+      const token = localStorage.getItem("token"); // Get the token from localStorage
+      const response = await axios.put("http://88.222.245.236:3002/api/admin/update", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
         navigate("/dashboard/profile");
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          mobile_number: response.error.message === "Mobile number already in use" ? "Mobile number already in use." : "",
-          email: response.error.message === "Email already in use" ? "Email already in use." : ""
-        }));
       }
     } catch (error) {
-      console.error("Submission error: ", error);
+      console.error("Error updating member data", error);
+
+      // Check if the error response contains a message and set the error message
+      if (error.response && error.response.data && error.response.data.error) {
+        const message = error.response.data.error;
+        setErrorMessage(message);
+
+        if (message === "Mobile number already in use") {
+          setErrors((prev) => ({
+            ...prev,
+            mobile_number: "Mobile number already in use.",
+          }));
+        } else if (message === "Email already in use") {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Email already in use.",
+          }));
+        }
+      } else {
+        setErrorMessage("An unknown error occurred.");
+      }
     }
   };
 
