@@ -139,7 +139,6 @@ const ClubTable = () => {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>
                           <div style={{ display: "flex", alignItems: "center" }}>
-                            <Avatar alt={club.club_name} src={club.avatar} />
                             <Typography sx={{ marginLeft: "10px" }}>
                               {club.club_name}
                             </Typography>

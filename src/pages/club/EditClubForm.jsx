@@ -58,8 +58,8 @@ const EditClubForm = () => {
         console.log("Club updated successfully:", result.data);
         navigate("/dashboard/club");
       } else {
-        setError(result.message || "Failed to update club.");
-        console.error("Failed to update club:", result.message);
+        setError(result.message || "Club name already exists.");
+        console.error("Club name already exists", result.message);
       }
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
@@ -84,6 +84,8 @@ const EditClubForm = () => {
           error={formErrors.clubName}
           helperText={formErrors.clubName ? "Club name is required." : ""}
         />
+                {error && <Typography color="error">{error}</Typography>}
+
         <TextField
           label="Litre Quantity"
           value={litreQuantity}
@@ -94,7 +96,6 @@ const EditClubForm = () => {
           helperText={formErrors.litreQuantity ? "Numbers only allowed" : ""}
         />
 
-        {error && <Typography color="error">{error}</Typography>}
 
         <Box
           sx={{

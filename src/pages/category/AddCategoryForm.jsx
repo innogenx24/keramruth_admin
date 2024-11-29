@@ -3,15 +3,13 @@ import { Button, Typography, Box, TextField, Grid, Select, MenuItem, InputLabel,
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from 'axios';
-import { useDispatch } from "react-redux";
-import { makePostCategory } from "../../redux/slices/master-slice/categort-slice/CategoryPostSlice";
 import { useNavigate } from "react-router-dom";
 
 const AddCategoryForm = () => {
   const [sectors, setSectors] = useState([]);
-  const [selectedSector, setSelectedSector] = useState("");
+  const [serverError, setServerError] = useState(""); // Store server error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,16 +28,11 @@ const AddCategoryForm = () => {
     fetchSectors();
   }, []);
 
-  const handleSectorChange = (event) => {
-    setSelectedSector(event.target.value);
-    formik.setFieldValue("sector_name", event.target.value);
-  };
-
   const formik = useFormik({
     initialValues: {
       category_name: "",
       parent_category_id: "",
-      sector_name: "",
+      sector_name: "", // This should hold the sector id, not the name
     },
     validationSchema: Yup.object({
       category_name: Yup.string().required("Category name is required"),
@@ -50,7 +43,7 @@ const AddCategoryForm = () => {
         ...values,
         parent_category_id: parseInt(values.parent_category_id, 10),
       };
-      
+
       try {
         // Making the API call directly here
         const token = localStorage.getItem('token');
@@ -68,11 +61,16 @@ const AddCategoryForm = () => {
         navigate("/dashboard/category");
       } catch (error) {
         console.error("Error posting category:", error.response?.data || error.message);
-        setErrorMessage(error.response.data.error);
+        setServerError(error.response?.data?.error || "Category name is already exists.");
         setOpenSnackbar(true);
       }
     },
   });
+
+  const handleSectorChange = (event) => {
+    const selectedSector = event.target.value;
+    formik.setFieldValue("sector_name", selectedSector); // Update Formik value
+  };
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -97,6 +95,7 @@ const AddCategoryForm = () => {
                 error={formik.touched.category_name && Boolean(formik.errors.category_name)}
                 helperText={formik.touched.category_name && formik.errors.category_name}
               />
+              {serverError && <Typography color="error">{serverError}</Typography>}
 
               <InputLabel sx={{ mt: 2 }}>Select Sector*</InputLabel>
               <Select
@@ -114,7 +113,7 @@ const AddCategoryForm = () => {
                   <MenuItem value="" disabled>No Sectors Available</MenuItem>
                 ) : (
                   sectors.map((sector) => (
-                    <MenuItem key={sector.id} value={sector.sector_name}>
+                    <MenuItem key={sector.id} value={sector.id}> {/* Use sector.id here */}
                       <span style={{ color: "black" }}>{sector.sector_name}</span>
                     </MenuItem>
                   ))
@@ -140,19 +139,8 @@ const AddCategoryForm = () => {
           </Box>
         </Grid>
       </Grid>
-      <Snackbar
-  open={openSnackbar}
-  autoHideDuration={6000}
-  onClose={handleCloseSnackbar}
-  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-  <Alert
-    onClose={handleCloseSnackbar}
-    severity="error"
-    sx={{ width: "100%", background:'red', color: 'white' }}
-  >
-    {errorMessage || "An error occurred while updating member data."}
-  </Alert>
-</Snackbar>
+
+      
     </Box>
   );
 };

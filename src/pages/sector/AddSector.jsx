@@ -10,6 +10,7 @@ const AddOrEditSector = () => {
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [sector, setSector] = useState(null);
+  const [error, setError] = useState(""); // State to hold the error message
 
   useEffect(() => {
     if (location.state && location.state.sector) {
@@ -42,7 +43,12 @@ const AddOrEditSector = () => {
         if (response.ok) {
           navigate("/dashboard/sector");
         } else {
-          alert("An error occurred while saving the sector.");
+          const data = await response.json();
+          if (data.message === "Sector name already exists") {
+            setError("Sector name already exists."); // Set error message
+          } else {
+            alert("An error occurred while saving the sector.");
+          }
         }
       } catch (error) {
         console.error("Error saving sector:", error);
@@ -69,6 +75,8 @@ const AddOrEditSector = () => {
                 helperText={formik.touched.sector_name && formik.errors.sector_name}
                 sx={{ mb: 2 }}
               />
+              {error && <Typography color="error">{error}</Typography>} {/* Display the error message */}
+
               <Button type="submit" variant="contained" color="primary" fullWidth>
                 {isEditMode ? "Update" : "Save"}
               </Button>
