@@ -218,7 +218,7 @@ const AddMemberForm = () => {
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
       club_name: Yup.string().required("Please select a club"),
-      superior_id: Yup.string().required("Please select aany one  superior_id"),
+      // superior_id: Yup.string().required("Please select aany one  superior_id"),
     }),
     onSubmit: (values, { resetForm }) => {
 
