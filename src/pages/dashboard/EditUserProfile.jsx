@@ -256,12 +256,12 @@ const stateCityMap = {
         if (message === "Mobile number already in use") {
           setErrors((prev) => ({
             ...prev,
-            mobile_number: "Mobile number already in use.",
+            mobile_number: "Mobile number already in used.",
           }));
         } else if (message === "Email already in use") {
           setErrors((prev) => ({
             ...prev,
-            email: "Email already in use.",
+            email: "Email already in used.",
           }));
         }
       } else {
@@ -346,6 +346,7 @@ const stateCityMap = {
               {/* Pincode */}
               <TextField
                 fullWidth
+                
                 label="Pincode"
                 name="pincode"
                 value={user.pincode}
@@ -403,13 +404,13 @@ const stateCityMap = {
   
               <Grid container spacing={2} sx={{ marginTop: "10px" }}>
                 <Grid item xs={6}>
-                <FormControl fullWidth sx={{ marginTop: 2 }}>
-                <InputLabel>City</InputLabel>
+                <FormControl fullWidth>
+                <InputLabel>District</InputLabel>
                 <Select
                   name="city"
                   value={user.city}
                   onChange={handleInputChange}
-                  label="City"
+                  label="Districts"
                   disabled={!user.state}
                 >
                   {cities.map((city) => (
@@ -443,6 +444,7 @@ const stateCityMap = {
                     onChange={handleInputChange}
                   />
                 </Grid>
+                
               </Grid>
   
               {/* Save Changes Button */}

@@ -203,15 +203,18 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate the form before submitting
     if (!validateForm()) {
       return; // Stop form submission if validation fails
     }
-  
+
     if (!productDetails.id) {
       console.error("Product ID is missing");
       return;
     }
-  
+
+    // Create a FormData object to append all the form data
     const formData = new FormData();
     formData.append("id", productDetails.id);
     formData.append("product_code", productDetails.product_code);
@@ -223,24 +226,49 @@ const EditProductForm = ({ handleBackToProducts }) => {
     formData.append("sdPrice", productDetails.sdPrice || "0");
     formData.append("mdPrice", productDetails.mdPrice || "0");
     formData.append("adoPrice", productDetails.adoPrice || "0");
+    
+    // Set autoUpdate-related fields (fromDate, toDate, and prices) based on the autoUpdate flag
     formData.append("autoUpdate", autoUpdate ? "true" : "false");
-    formData.append("category_name", selectedCategory || "General");
+    
+    // If autoUpdate is false, set dates to "1970-01-01" and prices to "0"
+    if (!autoUpdate) {
+      formData.append("fromDate", "1970-01-01");
+      formData.append("toDate", "1970-01-01");
+      formData.append("customer_price", "0");
+      formData.append("distributor_price", "0");
+      formData.append("SD_price", "0");
+      formData.append("MD_price", "0");
+      formData.append("ADO_price", "0");
+    } else {
+      // Otherwise, set the dates and prices to the values from the form
+      formData.append("fromDate", productDetails.fromDate || "1970-01-01");
+      formData.append("toDate", productDetails.toDate || "1970-01-01");
+      formData.append("customer_price", productDetails.customer_price || "0");
+      formData.append("distributor_price", productDetails.distributor_price || "0");
+      formData.append("SD_price", productDetails.SD_price || "0");
+      formData.append("MD_price", productDetails.MD_price || "0");
+      formData.append("ADO_price", productDetails.ADO_price || "0");
+    }
+    
+    // Append category, stock, quantity, and status
+    formData.append("category_name", selectedCategory || "");
     formData.append("stock_quantity", productDetails.stock_quantity || "0");
     formData.append("quantity_type", productDetails.quantity_type || "Unit");
     formData.append("status", stockStatus ? 1 : 0);
-    formData.append("fromDate", autoUpdate ? productDetails.fromDate || "1970-01-01" : "1970-01-01");
-    formData.append("toDate", autoUpdate ? productDetails.toDate || "1970-01-01" : "1970-01-01");
-  
+
+    // If an image was selected, append it to the form data
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
-  
+
     try {
+      // Send the PUT request to update the product
       const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
         method: "PUT",
         body: formData,
       });
-  
+
+      // Handle server response
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.error === "Product name is already exists.") {
@@ -249,6 +277,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
           throw new Error("Error updating product");
         }
       } else {
+        // Reset form fields upon success
         setProductDetails(initialProductDetails);
         setSelectedImage(null);
         setImagePreview(null);
@@ -261,6 +290,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
       console.error("Error updating product:", error);
     }
   };
+
 
 
   return (
@@ -387,7 +417,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
         }}
         fullWidth
         variant="outlined"
-        sx={{ marginBottom: "16px" }}
+        sx={{ marginBottom: "16px",borderRadius:"20px" }}
       >
         {categories.map((category) => (
           <MenuItem key={category.id} value={category.category_name}>
@@ -464,6 +494,18 @@ const EditProductForm = ({ handleBackToProducts }) => {
               error={Boolean(errors.sdPrice)}
               helperText={errors.sdPrice} 
             />
+            <TextField
+              fullWidth
+              variant="outlined"
+              name="distributorPrice"
+              value={productDetails.distributorPrice}
+              label="Distributor Price*"
+              placeholder="Enter Distributor Price"
+              sx={{ marginBottom: "16px" }}
+              onChange={handleInputChange}
+              error={Boolean(errors.distributorPrice)}
+              helperText={errors.distributorPrice} 
+            />
              <TextField
         fullWidth
         variant="outlined"
@@ -482,7 +524,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
         name="quantity_type"
         value={productDetails.quantity_type} // Bind to the state
         onChange={handleInputChange} // Handle the change
-        sx={{ marginBottom: "16px" }}
+        sx={{ marginBottom: "16px",borderRadius:"20px" }}
         error={Boolean(errors.quantity_type)}
         helperText={errors.quantity_type}  
       >

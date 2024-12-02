@@ -63,6 +63,11 @@ const AddProductForm = () => {
       category_name: "",
       fromDate: "",
       toDate: "",
+      customer_price:0,
+      distributor_price:0,
+      MD_price:0,
+      SD_price:0,
+      ADO_price:0,
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -93,6 +98,12 @@ const AddProductForm = () => {
       formData.append("quantity_type", values.quantity_type);
       formData.append("category_name", values.category_name);
       formData.append("stock_quantity", values.stock_quantity);
+      formData.append("customer_price", values.customer_price);
+formData.append("distributor_price", values.distributor_price);
+formData.append("MD_price", values.MD_price);
+formData.append("SD_price", values.SD_price);
+formData.append("ADO_price", values.ADO_price);
+
 
       if (selectedFile) formData.append("image", selectedFile);
 
@@ -364,7 +375,7 @@ const AddProductForm = () => {
         value={formik.values.quantity_type}
         onChange={(e) => formik.setFieldValue("quantity_type", e.target.value)} 
         error={formik.touched.quantity_type && Boolean(formik.errors.quantity_type)} 
-        sx={{ marginBottom: "16px" }}
+        sx={{ marginBottom: "16px",borderRadius:"20px" }}
       >
         <MenuItem value="">Select Quantity Type
         
@@ -435,6 +446,7 @@ const AddProductForm = () => {
         onChange={formik.handleChange}
         error={formik.touched.ADO_price && Boolean(formik.errors.ADO_price)}
         helperText={formik.touched.ADO_price && formik.errors.ADO_price}
+
       />
     </Grid>
     <Grid item xs={6}>

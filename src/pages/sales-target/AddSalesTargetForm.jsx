@@ -201,7 +201,7 @@ export default function AddSalesTargetForm() {
           <Card variant="outlined">
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Sales Target for {selectedProduct || "N/A"}:
+                Sales Target for {selectedProduct}:
               </Typography>
               {rolesData.map((roleData) => (
                 <Grid container spacing={2} key={roleData.roleId} alignItems="center" sx={{ mb: 2 }}>
