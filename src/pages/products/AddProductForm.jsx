@@ -68,7 +68,7 @@ const AddProductForm = () => {
       name: Yup.string()
         .required("Required")
         .min(3, "Name must be at least 3 characters long")
-        .max(30, "Name cannot be more than 30 characters long"),
+        .max(100, "Name cannot be more than 100 characters long"),
       productVolume: Yup.string().required("Required").matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
       price: Yup.number().required("Required").min(0),
       distributorPrice: Yup.number().required("Required").min(0),

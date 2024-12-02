@@ -168,11 +168,12 @@ useEffect(() => {
       Current Details 
       </Typography>
       <TableContainer component={Paper}>
+        
   <Table>
     <TableHead>
       <TableRow>
         <TableCell>ID Proof</TableCell>
-        <TableCell>Name</TableCell>
+        <TableCell>Memebr Name</TableCell>
         <TableCell>Role</TableCell>
         <TableCell>Date Of Joining</TableCell>
         <TableCell>Mobile No</TableCell>
@@ -267,7 +268,7 @@ useEffect(() => {
           <TableHead>
             <TableRow>
               <TableCell>ID Proof</TableCell>
-              <TableCell>Name</TableCell>
+              <TableCell>Member Name</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Date Of Joining</TableCell>
               {/* <TableCell>Mobile No</TableCell> */}
