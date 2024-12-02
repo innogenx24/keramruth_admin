@@ -64,6 +64,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const [productDetails, setProductDetails] = useState(initialProductDetails);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(''); 
+  const currentDateWithTimeISO = new Date().toISOString(); 
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -232,8 +234,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
     
     // If autoUpdate is false, set dates to "1970-01-01" and prices to "0"
     if (!autoUpdate) {
-      formData.append("fromDate", "1970-01-01");
-      formData.append("toDate", "1970-01-01");
+      formData.append("fromDate",currentDateWithTimeISO);
+      formData.append("toDate", currentDateWithTimeISO);
       formData.append("customer_price", "0");
       formData.append("distributor_price", "0");
       formData.append("SD_price", "0");
@@ -241,8 +243,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
       formData.append("ADO_price", "0");
     } else {
       // Otherwise, set the dates and prices to the values from the form
-      formData.append("fromDate", productDetails.fromDate || "1970-01-01");
-      formData.append("toDate", productDetails.toDate || "1970-01-01");
+      formData.append("fromDate", productDetails.fromDate ||currentDateWithTimeISO);
+      formData.append("toDate", productDetails.toDate || currentDateWithTimeISO);
       formData.append("customer_price", productDetails.customer_price || "0");
       formData.append("distributor_price", productDetails.distributor_price || "0");
       formData.append("SD_price", productDetails.SD_price || "0");
@@ -263,7 +265,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
     try {
       // Send the PUT request to update the product
-      const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
+      const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
         method: "PUT",
         body: formData,
       });
