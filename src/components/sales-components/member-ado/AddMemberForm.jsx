@@ -240,8 +240,7 @@ const AddMemberForm = () => {
       // formData.append("superior_id", values.superior_id);
       const finalSuperiorId = selectedD || selectedSd || selectedMd || selectedAdo || selectedAdmin;
       formData.append("superior_id", finalSuperiorId);
-      console.log("Form Data:", formData);
-      console.log("Form Data:", formData);
+     
 
       setIsFormSubmitted(true);
 
