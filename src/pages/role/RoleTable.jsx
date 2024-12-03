@@ -38,7 +38,9 @@ const RoleTable = () => {
   }, [dispatch]);
 
   // Sort rolesList by ID in descending order
-  const sortedRolesList = [...rolesList].sort((a, b) => b.id - a.id);
+  // const sortedRolesList = [...rolesList].sort((a, b) => b.id - a.id);
+  const sortedRolesList = rolesList; // No sorting applied
+
 
   // Function to handle the click of "Add Club" button
   const handleAddClubClick = () => {
@@ -78,11 +80,11 @@ const RoleTable = () => {
 
       {showTable ? (
         <>
-          <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+          {/* <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
             <Button variant="contained" color="primary" onClick={handleAddClubClick}>
               + Add Role
             </Button>
-          </Box>
+          </Box> */}
           <h2>Role</h2>
           <TableContainer component={Paper}>
             <Table aria-label="Club Table">
@@ -106,7 +108,7 @@ const RoleTable = () => {
                       </div>
                     </TableCell>
 
-                    <TableCell>
+                    {/* <TableCell>
                       <IconButton
                         color="secondary"
                         onClick={() => handleEditClick(row)}
@@ -119,7 +121,7 @@ const RoleTable = () => {
                       >
                         <DeleteIcon />
                       </IconButton>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

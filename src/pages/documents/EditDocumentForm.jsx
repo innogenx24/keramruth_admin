@@ -143,41 +143,70 @@ const EditDocumentForm = () => {
   const validateForm = () => {
     let formErrors = {};
     let isValid = true;
-
+  
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of the day
+  
     // Heading validation
     if (!heading.trim()) {
       formErrors.heading = "Heading is required";
       isValid = false;
     }
-
+  
     // Description validation
     if (!description.trim()) {
       formErrors.description = "Description is required";
       isValid = false;
     }
-
+  
     // Link validation
     if (!link.trim() || errors.link) {
       formErrors.link = "Link is required and must be a valid URL";
       isValid = false;
     }
-
+  
     // Receiver validation
     if (receiver.length === 0) {
       formErrors.receiver = "At least one role must be selected";
       isValid = false;
     }
-
+  
     // Image validation
     if (!image && !imageName) {
       formErrors.image = "Image is required";
       isValid = false;
     }
-
+  
+    // From Date validation
+    if (autoUpdate && fromDate) {
+      const fromDateObj = new Date(fromDate);
+      if (fromDateObj < today) {
+        formErrors.fromDate = "From Date cannot be in the past";
+        isValid = false;
+      }
+    } else if (autoUpdate && !fromDate) {
+      formErrors.fromDate = "From Date is required";
+      isValid = false;
+    }
+  
+    // To Date validation
+    if (autoUpdate && toDate) {
+      const toDateObj = new Date(toDate);
+      if (toDateObj < today) {
+        formErrors.toDate = "To Date cannot be in the past";
+        isValid = false;
+      } else if (fromDate && toDateObj < new Date(fromDate)) {
+        formErrors.toDate = "To Date cannot be earlier than From Date";
+        isValid = false;
+      }
+    } else if (autoUpdate && !toDate) {
+      formErrors.toDate = "To Date is required";
+      isValid = false;
+    }
+  
     setErrors(formErrors);
     return isValid;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -348,24 +377,28 @@ const EditDocumentForm = () => {
               <Box sx={{ mt: 2 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="From Date"
-                      type="date"
-                      value={fromDate}
-                      onChange={(e) => setFromDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                    />
+                  <TextField
+  fullWidth
+  label="From Date"
+  type="date"
+  value={fromDate}
+  onChange={(e) => setFromDate(e.target.value)}
+  InputLabelProps={{ shrink: true }}
+  error={!!errors.fromDate}
+  helperText={errors.fromDate}
+/>
                   </Grid>
                   <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="To Date"
-                      type="date"
-                      value={toDate}
-                      onChange={(e) => setToDate(e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                    />
+                  <TextField
+  fullWidth
+  label="To Date"
+  type="date"
+  value={toDate}
+  onChange={(e) => setToDate(e.target.value)}
+  InputLabelProps={{ shrink: true }}
+  error={!!errors.toDate}
+  helperText={errors.toDate}
+/>
                   </Grid>
                 </Grid>
               </Box>

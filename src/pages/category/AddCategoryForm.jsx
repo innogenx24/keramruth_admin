@@ -35,7 +35,9 @@ const AddCategoryForm = () => {
       sector_name: "", // This should hold the sector id, not the name
     },
     validationSchema: Yup.object({
-      category_name: Yup.string().required("Category name is required"),
+      category_name: Yup.string()
+        .required("Category name is required")
+        .matches(/^[a-zA-Z0-9\s]*$/, "Category name must contain only letters, numbers, and spaces."),
       sector_name: Yup.string().required("Sector is required"),
     }),
     onSubmit: async (values, { resetForm }) => {

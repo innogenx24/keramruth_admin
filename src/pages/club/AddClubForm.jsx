@@ -12,16 +12,24 @@ const AddClubForm = () => {
   const [submitted, setSubmitted] = useState(false); // Track if form is submitted
 
   // Validate form fields
-  const validate = () => {
-    let formErrors = {};
-    if (!clubName.trim()) formErrors.clubName = "Club name is required.";
-    if (!litreQuantity.trim()) {
-      formErrors.litreQuantity = "Litre quantity is required.";
-    } else if (!/^\d+$/.test(litreQuantity)) {
-      formErrors.litreQuantity = "Numbers only allowed.";
-    }
-    return formErrors;
-  };
+const validate = () => {
+  let formErrors = {};
+  const alphanumericRegex = /^[a-zA-Z0-9\s]+$/; // Alphanumeric with spaces allowed
+  
+  if (!clubName.trim()) {
+    formErrors.clubName = "Club name is required.";
+  } else if (!alphanumericRegex.test(clubName)) {
+    formErrors.clubName = "Special characters is not allowed.";
+  }
+
+  if (!litreQuantity.trim()) {
+    formErrors.litreQuantity = "Litre quantity is required.";
+  } else if (!/^\d+$/.test(litreQuantity)) {
+    formErrors.litreQuantity = "Numbers only allowed.";
+  }
+
+  return formErrors;
+};
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -69,19 +77,37 @@ const AddClubForm = () => {
   };
 
   // Handle input changes and clear errors
-  const handleInputChange = (setter, field) => (e) => {
-    const value = e.target.value;
-    setter(value);
+const handleInputChange = (setter, field) => (e) => {
+  const value = e.target.value;
+  setter(value);
 
-    if (submitted) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: field === "litreQuantity" && !/^\d+$/.test(value) && value !== "" 
-          ? "Numbers only allowed."
-          : "",
-      }));
-    }
-  };
+  if (submitted) {
+    setErrors((prev) => {
+      const updatedErrors = { ...prev };
+
+      if (field === "clubName") {
+        const alphanumericRegex = /^[a-zA-Z0-9\s]+$/;
+        updatedErrors[field] =
+          !value.trim()
+            ? "Club name is required."
+            : !alphanumericRegex.test(value)
+            ? "Only letters, numbers, and spaces are allowed."
+            : "";
+      }
+
+      if (field === "litreQuantity") {
+        updatedErrors[field] =
+          !value.trim()
+            ? "Litre quantity is required."
+            : !/^\d+$/.test(value) && value !== ""
+            ? "Numbers only allowed."
+            : "";
+      }
+
+      return updatedErrors;
+    });
+  }
+};
 
   return (
     <Box p={3} component="form" onSubmit={handleSubmit}>

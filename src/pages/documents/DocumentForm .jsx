@@ -1,6 +1,17 @@
 import React, { useState, useRef } from "react";
-import { Box, TextField, Button, Grid, Typography, Switch, InputLabel, IconButton, FormControlLabel, Checkbox } from "@mui/material";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import {
+  Box,
+  TextField,
+  Button,
+  Grid,
+  Typography,
+  Switch,
+  InputLabel,
+  IconButton,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -12,14 +23,16 @@ const validateLink = (url) => {
 
 const DocumentForm = () => {
   const navigate = useNavigate();
-  
+
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageName, setImageName] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const roles = ["Area Development Officer", "Master Distributor", "Super Distributor", "Distributor", "Customer"];
-  const [imageError, setImageError] = useState("");  // Add state for image error
+  const [imageError, setImageError] = useState("");
+
+  const today = new Date().toISOString().split("T")[0]; // Get current date in 'yyyy-MM-dd' format
 
   const generateDocumentID = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
@@ -43,9 +56,15 @@ const DocumentForm = () => {
       description: Yup.string().required("Description is required"),
       link: Yup.string()
         .required("Link is required")
-        .test("isValidURL", "Enter a valid URL", value => validateLink(value)),
+        .test("isValidURL", "Enter a valid URL", (value) => validateLink(value)),
       receiver: Yup.array().min(1, "At least one role must be selected").required("Receiver is required"),
-    }),
+      fromDate: Yup.date()
+        .nullable()
+        .min(today, "From Date cannot be in the past"),
+      toDate: Yup.date()
+        .nullable()
+        .min(Yup.ref("fromDate"), "To Date must be after From Date"),
+  }),
     onSubmit: (values) => {
       const formData = new FormData();
       formData.append("documentID", values.documentID);
@@ -55,14 +74,22 @@ const DocumentForm = () => {
       formData.append("receiver", JSON.stringify(values.receiver));
       formData.append("autoUpdate", values.autoUpdate);
       formData.append("activateStatus", values.activateStatus);
-      if (values.fromDate) formData.append("fromDate", values.fromDate);
-      if (values.toDate) formData.append("toDate", values.toDate);
+      
+      // Check if autoUpdate is false, set From Date and To Date to null
+      if (values.autoUpdate) {
+        if (values.fromDate) formData.append("fromDate", values.fromDate);
+        if (values.toDate) formData.append("toDate", values.toDate);
+      } else {
+        formData.append("fromDate", null);
+        formData.append("toDate", null);
+      }
+      
       if (selectedFile) {
         formData.append("image", selectedFile);
         formData.append("imageName", selectedFile.name);
       }
-  
-      fetch("http://localhost:3002/documents/create", {
+    
+      fetch("http://88.222.245.236:3002/documents/create", {
         method: "POST",
         body: formData,
       })
@@ -74,48 +101,33 @@ const DocumentForm = () => {
         .catch((error) => {
           console.error("Error:", error);
         });
-    },
+    },    
   });
-  
-  
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-  
     if (file) {
-      const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
-  
-      // Check if file type is JPEG/JPG or PNG
-      const validImageTypes = ['image/jpeg', 'image/png'];
+      const fileSizeMB = file.size / (1024 * 1024);
+      const validImageTypes = ["image/jpeg", "image/png"];
       if (!validImageTypes.includes(file.type)) {
         setImageError("Only JPEG, JPG, or PNG images are allowed");
-        return; // Prevent further actions if the file type is invalid
+        return;
       }
-  
-      // Check if file size exceeds 2MB
       if (fileSizeMB > 2) {
         setImageError("File size must be less than 2MB");
-        return; // Prevent further actions if size is too large
+        return;
       } else {
-        setImageError(""); // Clear error if file is valid
+        setImageError("");
       }
-  
-      // If all checks pass, update the form and image preview
       formik.setFieldValue("image", file.name);
       setSelectedFile(file);
       setImageName(file.name);
-  
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
-  };
-  
-
-  const handleReceiverChange = (event) => {
-    const value = event.target.value;
-    formik.setFieldValue("receiver", value);
   };
 
   const handleSelectAllChange = () => {
@@ -126,6 +138,7 @@ const DocumentForm = () => {
       formik.setFieldValue("receiver", []);
     }
   };
+
 
   return (
     <Box sx={{ padding: "20px", maxWidth: "1200px", margin: "0 auto", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
@@ -262,46 +275,39 @@ const DocumentForm = () => {
               </Box>
 
               {formik.values.autoUpdate && (
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="From Date"
-                      type="date"
-                      name="fromDate"
-                      value={formik.values.fromDate}
-                      onChange={formik.handleChange}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      label="To Date"
-                      type="date"
-                      name="toDate"
-                      value={formik.values.toDate}
-                      onChange={formik.handleChange}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </Grid>
-                </Grid>
-              )}
- {/* Activate Status Switch */}
- <Box sx={{ display: "flex", alignItems: "center", marginTop: 2 }}>
-                <Switch
-                  checked={formik.values.activateStatus}
-                  onChange={() => formik.setFieldValue("activateStatus", !formik.values.activateStatus)}
-                  color="primary"
+            <Grid container spacing={2} sx={{ marginTop: 2 }}>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="From Date"
+                  type="date"
+                  name="fromDate"
+                  value={formik.values.fromDate}
+                  onChange={formik.handleChange}
+                  error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
+                  helperText={formik.touched.fromDate && formik.errors.fromDate}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
-                <Typography variant="body1" sx={{ marginLeft: 1 }}>
-                  Activate Status
-                </Typography>
-              </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="To Date"
+                  type="date"
+                  name="toDate"
+                  value={formik.values.toDate}
+                  onChange={formik.handleChange}
+                  error={formik.touched.toDate && Boolean(formik.errors.toDate)}
+                  helperText={formik.touched.toDate && formik.errors.toDate}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+            </Grid>
+          )}
               <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
               <Button
               type="submit"

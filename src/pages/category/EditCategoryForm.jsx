@@ -79,15 +79,22 @@ const EditCategoryForm = ({ onCancel }) => {
 
   const validateFields = () => {
     const newErrors = {};
+  
     if (!category.category_name.trim()) {
       newErrors.category_name = "Category name is required.";
+    } 
+    else if (!/^[a-zA-Z0-9 ]*$/.test(category.category_name)) {
+      newErrors.category_name = "Special characters is not allowed.";
     }
+  
     if (!category.sector_name.trim()) {
       newErrors.sector_name = "Sector selection is required.";
     }
+  
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
+    return Object.keys(newErrors).length === 0; 
   };
+  
 
   // Handle form submission (update logic)
   const handleFormSubmit = async (e) => {

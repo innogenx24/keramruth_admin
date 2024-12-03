@@ -39,9 +39,15 @@ const EditRoleForm = ({ onCancel }) => {
   // Function to validate the form before submitting
   const validateForm = () => {
     const newErrors = {};
+
+    // Role name should only contain letters, numbers, and spaces
+    const roleNamePattern = /^[a-zA-Z0-9 ]*$/;
     if (!roleName.role_name.trim()) {
       newErrors.role_name = "Role name is required";
+    } else if (!roleNamePattern.test(roleName.role_name)) {
+      newErrors.role_name = "Special characters is not allowed.";
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Returns true if no errors
   };
@@ -91,7 +97,7 @@ const EditRoleForm = ({ onCancel }) => {
           variant="contained"
           color="primary"
           type="submit"
-          sx={{ width: "100%" }} // Set button width to 100%
+          sx={{ width: "100%" }} 
         >
           Save Changes
         </Button>

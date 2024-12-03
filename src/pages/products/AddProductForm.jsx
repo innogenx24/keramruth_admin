@@ -11,7 +11,7 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -24,8 +24,11 @@ const AddProductForm = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [imageError, setImageError] = useState(""); 
-  const [serverError, setServerError] = useState(""); // State to hold server error
+  const [imageError, setImageError] = useState("");
+  const [serverError, setServerError] = useState("");
+
+  const currentDate = new Date().toISOString().split("T")[0]; // Current date in yyyy-mm-dd format
+  const currentDateWithTimeISO = new Date().toISOString(); // Full ISO date with time
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -63,18 +66,20 @@ const AddProductForm = () => {
       category_name: "",
       fromDate: "",
       toDate: "",
-      customer_price:0,
-      distributor_price:0,
-      MD_price:0,
-      SD_price:0,
-      ADO_price:0,
+      customer_price: 0,
+      distributor_price: 0,
+      MD_price: 0,
+      SD_price: 0,
+      ADO_price: 0,
     },
     validationSchema: Yup.object({
       name: Yup.string()
         .required("Required")
         .min(3, "Name must be at least 3 characters long")
         .max(100, "Name cannot be more than 100 characters long"),
-      productVolume: Yup.string().required("Required").matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
+      productVolume: Yup.string()
+        .required("Required")
+        .matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
       price: Yup.number().required("Required").min(0),
       distributorPrice: Yup.number().required("Required").min(0),
       sdPrice: Yup.number().required("Required").min(0),
@@ -83,10 +88,19 @@ const AddProductForm = () => {
       quantity_type: Yup.string().required("Required"),
       category_name: Yup.string().required("Required"),
       stock_quantity: Yup.number().required("Stock quantity is required").min(0),
+      fromDate: Yup.date(),
+    toDate: Yup.date()
+      .test("is-after", "To Date must be after From Date", function (value) {
+        const { fromDate } = this.parent;  // Get the fromDate value
+        // Check if toDate is after fromDate, if fromDate is set
+        return !fromDate || new Date(value) > new Date(fromDate);
+      }),
+      
     }),
     onSubmit: async (values, { resetForm }) => {
       const randomProductCode = Math.floor(100000 + Math.random() * 900000);
       const formData = new FormData();
+
       formData.append("product_code", randomProductCode);
       formData.append("name", values.name);
       formData.append("productVolume", values.productVolume);
@@ -98,17 +112,31 @@ const AddProductForm = () => {
       formData.append("quantity_type", values.quantity_type);
       formData.append("category_name", values.category_name);
       formData.append("stock_quantity", values.stock_quantity);
-      formData.append("customer_price", values.customer_price);
-formData.append("distributor_price", values.distributor_price);
-formData.append("MD_price", values.MD_price);
-formData.append("SD_price", values.SD_price);
-formData.append("ADO_price", values.ADO_price);
+      formData.append("autoUpdate", values.autoUpdate);
 
+      if (!values.autoUpdate) {
+
+        formData.append("fromDate", currentDateWithTimeISO);
+        formData.append("toDate", currentDateWithTimeISO);
+        formData.append("customer_price", "0");
+        formData.append("distributor_price", "0");
+        formData.append("SD_price", "0");
+        formData.append("MD_price", "0");
+        formData.append("ADO_price", "0");
+      } else {
+        formData.append("fromDate", values.fromDate || currentDateWithTimeISO);
+        formData.append("toDate", values.toDate || currentDateWithTimeISO);
+        formData.append("customer_price", values.customer_price || "0");
+        formData.append("distributor_price", values.distributor_price || "0");
+        formData.append("SD_price", values.SD_price || "0");
+        formData.append("MD_price", values.MD_price || "0");
+        formData.append("ADO_price", values.ADO_price || "0");
+      }
 
       if (selectedFile) formData.append("image", selectedFile);
 
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         await axios.post("http://88.222.245.236:3002/products", formData, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -117,13 +145,14 @@ formData.append("ADO_price", values.ADO_price);
         navigate("/dashboard/products");
       } catch (error) {
         if (error.response && error.response.data.error) {
-          setServerError(error.response.data.error); // Set server error
+          setServerError(error.response.data.error);
         } else {
           console.error("Error submitting product:", error);
         }
       }
     },
   });
+
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -145,7 +174,6 @@ formData.append("ADO_price", values.ADO_price);
       reader.readAsDataURL(file);
     }
   };
-
 
   return(
     <Box
@@ -406,32 +434,39 @@ formData.append("ADO_price", values.ADO_price);
         {formik.values.autoUpdate && (
           <Box sx={{ mt: 2 }}>
             <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="From Date"
-                  type="date"
-                  value={formik.values.fromDate}
-                  onChange={(e) => formik.setFieldValue("fromDate", e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                  margin="normal"
-                  error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
-                  helperText={formik.touched.fromDate && formik.errors.fromDate}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="To Date"
-                  type="date"
-                  value={formik.values.toDate}
-                  onChange={(e) => formik.setFieldValue("toDate", e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                  margin="normal"
-                  error={formik.touched.toDate && Boolean(formik.errors.toDate)}
-                  helperText={formik.touched.toDate && formik.errors.toDate}
-                />
-              </Grid>
+            <Grid item xs={6}>
+  <TextField
+    fullWidth
+    label="From Date"
+    type="date"
+    value={formik.values.fromDate}
+    onChange={(e) => formik.setFieldValue("fromDate", e.target.value)}
+    InputLabelProps={{ shrink: true }}
+    margin="normal"
+    error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
+    helperText={formik.touched.fromDate && formik.errors.fromDate}
+    InputProps={{
+      inputProps: { min: currentDate }, // Disable past dates
+    }}
+  />
+</Grid>
+<Grid item xs={6}>
+  <TextField
+    fullWidth
+    label="To Date"
+    type="date"
+    value={formik.values.toDate}
+    onChange={(e) => formik.setFieldValue("toDate", e.target.value)}
+    InputLabelProps={{ shrink: true }}
+    margin="normal"
+    error={formik.touched.toDate && Boolean(formik.errors.toDate)}
+    helperText={formik.touched.toDate && formik.errors.toDate}
+    InputProps={{
+      inputProps: { min: currentDate }, // Disable past dates
+    }}
+  />
+</Grid>
+
             </Grid>
             <Typography variant="h6">Set Price</Typography>
   <Grid container spacing={2}>

@@ -65,6 +65,16 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(''); 
   const currentDateWithTimeISO = new Date().toISOString(); 
+  const currentDate = new Date().toISOString().split('T')[0]; // Current date in yyyy-mm-dd format
+
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split('T')[0];
+    setProductDetails((prevDetails) => ({
+      ...prevDetails,
+      fromDate: currentDate,
+      toDate: currentDate,
+    }));
+  }, []);
 
 
   useEffect(() => {
@@ -194,6 +204,12 @@ const EditProductForm = ({ handleBackToProducts }) => {
       if (!productDetails.quantity_type) {
         formErrors.quantity_type = 'quantity_type is required';
       }
+  // Validate date order
+  const fromDate = new Date(productDetails.fromDate);
+  const toDate = new Date(productDetails.toDate);
+  if (toDate <= fromDate) {
+    formErrors.toDate = 'To Date must be after From Date';
+  }
   
     // Set errors to state
     setErrors(formErrors);
@@ -265,7 +281,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
     try {
       // Send the PUT request to update the product
-      const response = await fetch(`http://localhost:3002/products/${productDetails.id}`, {
+      const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
         method: "PUT",
         body: formData,
       });
@@ -550,32 +566,44 @@ const EditProductForm = ({ handleBackToProducts }) => {
       {autoUpdate && (
         <Box sx={{ mt: 2 }}>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="From Date"
-                type="date"
-                name="fromDate"
-                value={productDetails.fromDate}
-                onChange={handleInputChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="To Date"
-                type="date"
-                name="toDate"
-                value={productDetails.toDate}
-                onChange={handleInputChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Grid>
+          <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="From Date"
+          type="date"
+          name="fromDate"
+          value={productDetails.fromDate}
+          onChange={handleInputChange}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          InputProps={{
+            inputProps: {
+              min: currentDate, // Prevent past dates
+            },
+          }}
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <TextField
+          fullWidth
+          label="To Date"
+          type="date"
+          name="toDate"
+          value={productDetails.toDate}
+          onChange={handleInputChange}
+          error={Boolean(errors.toDate)}
+          helperText={errors.toDate}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          InputProps={{
+            inputProps: {
+              min: currentDate, // Prevent past dates
+            },
+          }}
+        />
+      </Grid>
           </Grid>
           <Typography variant="h6">Set Price</Typography>
       <Grid container spacing={2}>

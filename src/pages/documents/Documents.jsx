@@ -14,7 +14,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Switch,
 } from "@mui/material";
 import { Delete, Edit, Add as AddIcon } from "@mui/icons-material";
 import axios from "axios";
@@ -147,10 +146,9 @@ const DocumentsTable = () => {
                   {document.image ? (
                     <img
                       src={`${imageBaseURL}${document.image}`}
-                      alt={document.heading}
                       style={{
-                        width: "80px",
-                        height: "80px",
+                        width: "60px",
+                        height: "60px",
                         objectFit: "cover",
                       }}
                     />
@@ -167,7 +165,12 @@ const DocumentsTable = () => {
  }}>
                   {document.description}
                 </TableCell>
-                <TableCell>{document.receiver}</TableCell>
+<TableCell>
+  {Array.isArray(document.receiver) 
+    ? document.receiver.join(", ") 
+    : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
+  }
+</TableCell>
                 <TableCell>
                   <div style={{ display: "flex" }}>
                     <IconButton onClick={() => handleEditClick(document)} color="primary">

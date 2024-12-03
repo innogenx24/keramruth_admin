@@ -13,20 +13,34 @@ const EditClubForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [formErrors, setFormErrors] = useState({
-    clubName: false,
-    litreQuantity: false,
+    clubName: "",
+    litreQuantity: "",
   });
 
-  // Function to validate the form fields
   const validateFields = () => {
+    const alphanumericRegex = /^[a-zA-Z0-9\s]+$/; // Alphanumeric with spaces allowed
+  
     const errors = {
-      clubName: clubName.trim() === "",
-      litreQuantity: litreQuantity === "" || isNaN(litreQuantity),
+      clubName: "",
+      litreQuantity: "",
     };
+  
+    if (!clubName.trim()) {
+      errors.clubName = "Club name is required.";
+    } else if (!alphanumericRegex.test(clubName)) {
+      errors.clubName = "Special characters is not allowed.";
+    }
+  
+    if (litreQuantity === "" || litreQuantity === null || litreQuantity === undefined) {
+      errors.litreQuantity = "Litre quantity is required.";
+    } else if (isNaN(litreQuantity)) {
+      errors.litreQuantity = "Numbers only allowed.";
+    }
+  
     setFormErrors(errors);
-    return !Object.values(errors).includes(true);
+    return !Object.values(errors).some((error) => error);
   };
-
+  
   // Function to handle form submission
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -81,10 +95,10 @@ const EditClubForm = () => {
           onChange={(e) => setClubName(e.target.value)}
           fullWidth
           margin="normal"
-          error={formErrors.clubName}
-          helperText={formErrors.clubName ? "Club name is required." : ""}
+          error={!!formErrors.clubName}
+          helperText={formErrors.clubName}
         />
-                {error && <Typography color="error">{error}</Typography>}
+        {error && <Typography color="error">{error}</Typography>}
 
         <TextField
           label="Litre Quantity"
@@ -92,10 +106,9 @@ const EditClubForm = () => {
           onChange={(e) => setLitreQuantity(e.target.value)}
           fullWidth
           margin="normal"
-          error={formErrors.litreQuantity}
-          helperText={formErrors.litreQuantity ? "Numbers only allowed" : ""}
+          error={!!formErrors.litreQuantity}
+          helperText={formErrors.litreQuantity}
         />
-
 
         <Box
           sx={{

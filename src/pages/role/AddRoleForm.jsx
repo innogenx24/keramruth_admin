@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"; 
 import { Button, Typography, Box, TextField, Grid } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -15,7 +15,9 @@ const AddRoleForm = () => {
       role_name: "",
     },
     validationSchema: Yup.object({
-      role_name: Yup.string().required("Role name is required."),
+      role_name: Yup.string()
+        .required("Role name is required.")
+        .matches(/^[a-zA-Z0-9 ]*$/, "Special characters is not allowed."), 
     }),
     onSubmit: async (values, { resetForm }) => {
       const parsedValues = { ...values };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
 import { Button, Typography, Box, TextField, Grid } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -25,7 +25,9 @@ const AddOrEditSector = () => {
     },
     enableReinitialize: true, // Ensures form values update when `sector` changes
     validationSchema: Yup.object({
-      sector_name: Yup.string().required("Sector name is required."),
+      sector_name: Yup.string()
+        .required("Sector name is required.")
+        .matches(/^[a-zA-Z0-9 ]*$/, "Special characters is not allowed."), // Regex validation
     }),
     onSubmit: async (values) => {
       try {

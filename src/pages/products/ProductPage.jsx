@@ -150,7 +150,11 @@ const ProductPage = () => {
                   {product.image ? (
                     <img
                       src={`${imageBaseURL}${product.image}`}
-                      style={{ width: 50, height: 50, marginRight: 10, borderRadius: 2 }}
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        objectFit: "cover",
+                      }}
                     />
                   ) : (
                     <span>No Image Available</span>
