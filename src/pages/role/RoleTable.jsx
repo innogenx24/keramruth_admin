@@ -92,7 +92,7 @@ const RoleTable = () => {
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Role Name</TableCell>
-                  <TableCell>Action</TableCell>
+                  {/* <TableCell>Action</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
