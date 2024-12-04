@@ -15,10 +15,10 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
+  TablePagination,
 } from "@mui/material";
 import { Add, Delete, Edit } from "@mui/icons-material";
 import EditProductForm from "./EditProductForm";
-import "./product.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ProductPriceModal from "./ProductPriceModal";
@@ -37,6 +37,9 @@ const ProductPage = () => {
   const [isOpen, setIsOpen] = useState(false);  
   const [selectedProduct, setSelectedProduct] = useState(null);  
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+
+  const [page, setPage] = useState(0); // Pagination state
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
@@ -105,10 +108,33 @@ const ProductPage = () => {
 
   const sortedProducts = [...productsList].sort((a, b) => b.id - a.id); // Sort by ID in descending order
 
+  const columns = [
+    { id: 'no', label: 'No.' },
+    { id: 'image', label: 'Product Image' },
+    { id: 'name', label: 'Product Name' },
+    { id: 'category_name', label: 'Category Name' },
+    { id: 'productVolume', label: 'Product Volume' },
+    { id: 'price', label: 'MRP' },
+    { id: 'price', label: 'Distributors Prices' },
+    { id: 'stock_status', label: 'Stock Status' },
+    { id: 'action', label: 'Action' }
+  ];
+
+  // Handle page change
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to the first page when changing rows per page
+  };
+
   return (
     <div>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-        Products
+        All Products
       </Typography>
       <div
         style={{
@@ -126,72 +152,102 @@ const ProductPage = () => {
           Add Product
         </Button>
       </div>
-      <h2>All Products</h2>
-      <TableContainer component={Paper}>
-        <Table aria-label="product table">
-          <TableHead>
-            <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Product Image</TableCell>
-              <TableCell>Product Name</TableCell>
-              <TableCell>Category Name</TableCell>
-              <TableCell>Product Volume</TableCell>
-              <TableCell>MRP</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Stock Status</TableCell>
-              <TableCell>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedProducts.map((product, index) => (
-              <TableRow key={product.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell style={{ display: "flex", alignItems: "center" }}>
-                  {product.image ? (
-                    <img
-                      src={`${imageBaseURL}${product.image}`}
-                      style={{
-                        width: "60px",
-                        height: "60px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : (
-                    <span>No Image Available</span>
-                  )}
-                </TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category_name}</TableCell>
-                <TableCell>{product.productVolume}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>
-                  <Button onClick={() => handleViewClick(product)}>View</Button>
-                </TableCell>
-                <TableCell>
-                  <Switch
-                    checked={product.status}
-                    onChange={() => handleToggleStockStatus(product)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handleEditProductClick(product)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    color="secondary"
-                    onClick={() => handleDeleteProductClick(product)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+
+      <TableContainer component={Paper} sx={{ maxHeight: "480px", overflowY: "auto" }}>
+  <Table aria-label="product table">
+    <TableHead sx={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "white" }}>
+      <TableRow>
+        {columns.map((column) => (
+          <TableCell key={column.id}>{column.label}</TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {sortedProducts
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Slice data for pagination
+        .map((product, index) => (
+          <TableRow key={product.id}>
+            <TableCell>{index + 1}</TableCell>
+            <TableCell>
+              {product.image ? (
+                <img
+                  src={`${imageBaseURL}${product.image}`}
+                  style={{
+                    width: "60px",
+                    height: "60px",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <span>No Image Available</span>
+              )}
+            </TableCell>
+            <TableCell>{product.name}</TableCell>
+            <TableCell>{product.category_name}</TableCell>
+            <TableCell>{product.productVolume}</TableCell>
+            <TableCell>{product.price}</TableCell>
+            <TableCell>
+              <Button onClick={() => handleViewClick(product)}>View</Button>
+            </TableCell>
+            <TableCell>
+              <Switch
+                checked={product.status}
+                onChange={() => handleToggleStockStatus(product)}
+              />
+            </TableCell>
+            <TableCell>
+              <IconButton
+                color="primary"
+                onClick={() => handleEditProductClick(product)}
+              >
+                <Edit />
+              </IconButton>
+              <IconButton
+                color="secondary"
+                onClick={() => handleDeleteProductClick(product)}
+              >
+                <Delete />
+              </IconButton>
+            </TableCell>
+          </TableRow>
+        ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+
+
+<TablePagination
+  rowsPerPageOptions={[]} // Disable the rows per page dropdown
+  component="div"
+  count={sortedProducts.length} // Total number of products
+  rowsPerPage={rowsPerPage}
+  page={page}
+  onPageChange={handleChangePage}
+  onRowsPerPageChange={handleChangeRowsPerPage}
+  labelDisplayedRows={() => ""} // Remove default range text
+  ActionsComponent={({ count, page, rowsPerPage, onPageChange }) => (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={(event) => onPageChange(event, page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "100px", textAlign: "center" }}>
+        Page {page + 1}
+      </Typography>
+      <Button
+        onClick={(event) => onPageChange(event, page + 1)}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  )}
+/>
+
 
       {isOpen && (  
         <ProductPriceModal  

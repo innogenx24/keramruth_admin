@@ -162,61 +162,94 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
   const validateForm = () => {
     let formErrors = {};
-    
+  
     // Validate required fields
     if (!productDetails.name) {
       formErrors.name = 'Product name is required';
     } else if (productDetails.name.length < 3) {
       formErrors.name = 'Product name must be at least 3 characters';
     } else if (productDetails.name.length > 225) {
-      formErrors.name = 'Product name must be less than 30 characters';
+      formErrors.name = 'Product name must be less than 225 characters';
     }
+  
     if (!productDetails.productVolume) {
       formErrors.productVolume = 'Product volume is required';
     } else if (isNaN(productDetails.productVolume) || productDetails.productVolume <= 0) {
       formErrors.productVolume = 'Please enter a valid positive number for product volume';
     }
+  
+    
+    if (!productDetails.quantity_type) {
+      formErrors.quantity_type = 'Quantity type is required';
+    } 
     if (!productDetails.price) {
-      formErrors.price = 'MRP price is required';
+      formErrors.price = 'Customer price is required';
     } else if (isNaN(productDetails.price) || productDetails.price <= 0) {
-      formErrors.price = 'Please enter a number';
-    }
-    if (!productDetails.adoPrice) {
-      formErrors.adoPrice = 'ADO price is required';
-    } else if (isNaN(productDetails.adoPrice) || productDetails.adoPrice <= 0) {
-      formErrors.adoPrice = 'Please enter a number';
-    }
-    if (!productDetails.mdPrice) {
-      formErrors.mdPrice = 'MD price is required';
-    } else if (isNaN(productDetails.mdPrice) || productDetails.mdPrice <= 0) {
-      formErrors.mdPrice = 'Please enter a number';
-    }
-    if (!productDetails.sdPrice) {
-      formErrors.sdPrice = 'SD price is required';
-    } else if (isNaN(productDetails.sdPrice) || productDetails.sdPrice <= 0) {
-      formErrors.sdPrice = 'Please enter a number';
+      formErrors.price = 'Please enter a valid number';
     }
     if (!productDetails.stock_quantity) {
-      formErrors.stock_quantity = 'Stock quantity is required';
+      formErrors.stock_quantity = 'Stock Quantity is required';
     } else if (isNaN(productDetails.stock_quantity) || productDetails.stock_quantity <= 0) {
-      formErrors.stock_quantity = 'Please enter a number';
+      formErrors.stock_quantity = 'Please enter a valid number';
     }
-      if (!productDetails.quantity_type) {
-        formErrors.quantity_type = 'quantity_type is required';
-      }
-  // Validate date order
-  const fromDate = new Date(productDetails.fromDate);
-  const toDate = new Date(productDetails.toDate);
-  if (toDate <= fromDate) {
-    formErrors.toDate = 'To Date must be after From Date';
-  }
+    if (!productDetails.adoPrice) {
+      formErrors.adoPrice = 'Area Development Officer price is required';
+    } else if (isNaN(productDetails.adoPrice) || productDetails.adoPrice <= 0) {
+      formErrors.adoPrice = 'Please enter a valid number';
+    }
+    if (!productDetails.mdPrice) {
+      formErrors.mdPrice = 'Master Distributor price is required';
+    } else if (isNaN(productDetails.mdPrice) || productDetails.mdPrice <= 0) {
+      formErrors.mdPrice = 'Please enter a valid number';
+    }
+    if (!productDetails.sdPrice) {
+      formErrors.sdPrice = 'Super Distributor price is required';
+    } else if (isNaN(productDetails.sdPrice) || productDetails.sdPrice <= 0) {
+      formErrors.sdPrice = 'Please enter a valid number';
+    }
+    if (!productDetails.distributorPrice) {
+      formErrors.distributorPrice = 'Distributor price is required';
+    } else if (isNaN(productDetails.distributorPrice) || productDetails.distributorPrice <= 0) {
+      formErrors.distributorPrice = 'Please enter a valid number';
+    }
   
-    // Set errors to state
+   
+    if (autoUpdate) {
+      // Validate auto-update specific fields
+      if (!productDetails.fromDate) {
+        formErrors.fromDate = 'From Date is required';
+      }
+      if (!productDetails.toDate) {
+        formErrors.toDate = 'To Date is required';
+      }
+      if (!productDetails.customer_price || productDetails.customer_price <= 0) {
+        formErrors.customer_price = 'Customer Price is required';
+      }
+      if (!productDetails.distributor_price || productDetails.distributor_price <= 0) {
+        formErrors.distributor_price = 'Distributor Price is required';
+      }
+      if (!productDetails.SD_price || productDetails.SD_price <= 0) {
+        formErrors.SD_price = 'SD Price is required';
+      }
+      if (!productDetails.MD_price || productDetails.MD_price <= 0) {
+        formErrors.MD_price = 'MD Price is required';
+      }
+      if (!productDetails.ADO_price || productDetails.ADO_price <= 0) {
+        formErrors.ADO_price = 'ADO Price is required';
+      }
+      // Validate date order
+      const fromDate = new Date(productDetails.fromDate);
+      const toDate = new Date(productDetails.toDate);
+      if (toDate < fromDate) {
+        formErrors.toDate = 'To Date must be after From Date';
+      }
+    }
+  
     setErrors(formErrors);
   
-    // Return true if no errors
     return Object.keys(formErrors).length === 0;
   };
+  
   
 
   const handleFormSubmit = async (e) => {
@@ -574,14 +607,10 @@ const EditProductForm = ({ handleBackToProducts }) => {
           name="fromDate"
           value={productDetails.fromDate}
           onChange={handleInputChange}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          InputProps={{
-            inputProps: {
-              min: currentDate, // Prevent past dates
-            },
-          }}
+          InputLabelProps={{ shrink: true }}
+          InputProps={{ inputProps: { min: currentDate } }}
+          error={Boolean(errors.fromDate)}
+          helperText={errors.fromDate}
         />
       </Grid>
       <Grid item xs={6}>
@@ -594,14 +623,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
           onChange={handleInputChange}
           error={Boolean(errors.toDate)}
           helperText={errors.toDate}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          InputProps={{
-            inputProps: {
-              min: currentDate, // Prevent past dates
-            },
-          }}
+          InputLabelProps={{ shrink: true }}
+          InputProps={{ inputProps: { min: currentDate } }}
         />
       </Grid>
           </Grid>
@@ -615,7 +638,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
             name="ADO_price"
             value={productDetails.ADO_price}
             onChange={handleInputChange}
-          />
+            error={Boolean(errors.ADO_price)}
+            helperText={errors.ADO_price}          />
         </Grid>
         <Grid item xs={6}>
           <Typography variant="h6">Master Distributor Price</Typography>
@@ -625,7 +649,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
             name="MD_price"
             value={productDetails.MD_price}
             onChange={handleInputChange}
-          />
+            error={Boolean(errors.MD_price)}
+            helperText={errors.MD_price}          />
         </Grid>
       </Grid>
 
@@ -638,7 +663,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
             name="SD_price"
             value={productDetails.SD_price}
             onChange={handleInputChange}
-          />
+            error={Boolean(errors.SD_price)}
+            helperText={errors.SD_price}          />
         </Grid>
         <Grid item xs={6}>
           <Typography variant="h6">Distributor Price</Typography>
@@ -648,7 +674,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
             name="distributor_price"
             value={productDetails.distributor_price}
             onChange={handleInputChange}
-          />
+            error={Boolean(errors.distributor_price)}
+            helperText={errors.distributor_price}          />
         </Grid>
       </Grid>
 
@@ -661,11 +688,14 @@ const EditProductForm = ({ handleBackToProducts }) => {
             name="customer_price"
             value={productDetails.customer_price}
             onChange={handleInputChange}
-          />
+            error={Boolean(errors.customer_price)}
+            helperText={errors.customer_price}          />
         </Grid>
       </Grid>
         </Box>
       )}
+
+
 
 
             {/* <Box sx={{ display: "flex", alignItems: "center", marginTop: "16px" }}>

@@ -202,7 +202,7 @@ const AddMemberForm = () => {
     },
     validationSchema: Yup.object({
       role_id: Yup.string().required("Please select one Role"),
-      image: Yup.mixed(),
+      // image: Yup.mixed(),
       full_name: Yup.string().required("Required"),
       // mobile_number: Yup.number().required("Required"),
       mobile_number: Yup.string()

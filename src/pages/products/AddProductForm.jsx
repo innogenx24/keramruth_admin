@@ -66,37 +66,71 @@ const AddProductForm = () => {
       category_name: "",
       fromDate: "",
       toDate: "",
-      customer_price: 0,
-      distributor_price: 0,
-      MD_price: 0,
-      SD_price: 0,
-      ADO_price: 0,
+      customer_price: "",
+      distributor_price: "",
+      MD_price: "",
+      SD_price: "",
+      ADO_price: "",
     },
-    validationSchema: Yup.object({
-      name: Yup.string()
-        .required("Required")
-        .min(3, "Name must be at least 3 characters long")
-        .max(100, "Name cannot be more than 100 characters long"),
-      productVolume: Yup.string()
-        .required("Required")
-        .matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
-      price: Yup.number().required("Required").min(0),
-      distributorPrice: Yup.number().required("Required").min(0),
-      sdPrice: Yup.number().required("Required").min(0),
-      mdPrice: Yup.number().required("Required").min(0),
-      adoPrice: Yup.number().required("Required").min(0),
-      quantity_type: Yup.string().required("Required"),
-      category_name: Yup.string().required("Required"),
-      stock_quantity: Yup.number().required("Stock quantity is required").min(0),
-      fromDate: Yup.date(),
-    toDate: Yup.date()
-      .test("is-after", "To Date must be after From Date", function (value) {
-        const { fromDate } = this.parent;  // Get the fromDate value
-        // Check if toDate is after fromDate, if fromDate is set
-        return !fromDate || new Date(value) > new Date(fromDate);
-      }),
-      
-    }),
+    validationSchema: Yup.lazy((values) =>
+      Yup.object({
+        name: Yup.string()
+          .required("Product name is required")
+          .min(3, "Product name must be at least 3 characters long")
+          .max(100, "Product name cannot be more than 100 characters long"),
+        productVolume: Yup.string()
+          .required("Product volume is required")
+          .matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
+        price: Yup.number().required("Customer price is required").min(0),
+        distributorPrice: Yup.number().required("Distributor price is required").min(0),
+        sdPrice: Yup.number().required("Super distributor price is required").min(0),
+        mdPrice: Yup.number().required("Master distributor price is required").min(0),
+        adoPrice: Yup.number().required("Area development officer price is required").min(0),
+        quantity_type: Yup.string().required("Quantity type is required"),
+        category_name: Yup.string().required("Category name is required"),
+        stock_quantity: Yup.number().required("Stock quantity is required").min(0),
+        fromDate: values.autoUpdate
+          ? Yup.date().required("From Date is required")
+          : Yup.date(),
+        toDate: values.autoUpdate
+          ? Yup.date()
+              .required("To Date is required")
+              .test(
+                "is-after",
+                "To Date must be after From Date",
+                function (value) {
+                  const { fromDate } = this.parent;
+                  return !fromDate || new Date(value) > new Date(fromDate);
+                }
+              )
+          : Yup.date(),
+          customer_price: values.autoUpdate
+          ? Yup.number()
+              .required("Customer price is required")
+              .min(0, "Customer price cannot be negative")
+          : Yup.number().nullable(),
+        distributor_price: values.autoUpdate
+          ? Yup.number()
+              .required("Distributor price is required")
+              .min(0, "Distributor price cannot be negative")
+          : Yup.number().nullable(),
+        SD_price: values.autoUpdate
+          ? Yup.number()
+              .required("SD price is required")
+              .min(0, "SD price cannot be negative")
+          : Yup.number().nullable(),
+        MD_price: values.autoUpdate
+          ? Yup.number()
+              .required("MD price is required")
+              .min(0, "MD price cannot be negative")
+          : Yup.number().nullable(),
+        ADO_price: values.autoUpdate
+          ? Yup.number()
+              .required("ADO price is required")
+              .min(0, "ADO price cannot be negative")
+          : Yup.number().nullable(),
+      })
+    ),
     onSubmit: async (values, { resetForm }) => {
       const randomProductCode = Math.floor(100000 + Math.random() * 900000);
       const formData = new FormData();

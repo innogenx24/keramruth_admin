@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
 import {
   Table,
   TableBody,
@@ -35,10 +35,12 @@ const MemberAdoTable = () => {
   const dispatch = useDispatch();
   const { members } = useSelector((state) => state.members);
   const membersList = Array.isArray(members) ? members : [members];
-  const [showTable, setShowTable] = useState(true); // State to toggle table visibility
-  const [editMember, setEditMember] = useState(null); // State to store the selected member for editing
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false); // State to manage delete modal visibility
-  const [memberToDelete, setMemberToDelete] = useState(null); // State to store the member to be deleted
+  const [showTable, setShowTable] = useState(true);
+  const [editMember, setEditMember] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const [rowsPerPage] = useState(10); // Number of rows per page
   const navigate = useNavigate();
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
@@ -46,9 +48,7 @@ const MemberAdoTable = () => {
     dispatch(fetchMembersRequest({ roleId: 2 }));
   }, [dispatch]);
 
-  // Sort members by ID in descending order
-// Ensure you're sorting a new copy of the array and not the original
-const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
+  const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
 
   // Function to handle the click of "Add Member" button
   const handleAddMemberClick = () => {
@@ -103,8 +103,17 @@ const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
     }
     if (roleId) {
       dispatch(fetchMembersRequest({ roleId }));
+      setCurrentPage(1);
     }
   };
+
+  // Pagination logic
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage + 1); // +1 because page index starts at 0
+  };
+
+  // Slice the members list for the current page
+  const currentMembers = sortedMembersList.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -131,56 +140,77 @@ const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
               + Add Member
             </Button>
           </Box>
-          <TableContainer component={Paper}>
-            <Table aria-label="Member ADO Table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>No.</TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Full Name</TableCell>
-                  <TableCell>Mobile No.</TableCell>
-                  <TableCell>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-  {sortedMembersList.map((member, index) => (
-    <TableRow key={member.id}>
-      <TableCell>{index + 1}</TableCell>
-      <TableCell>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Avatar
-            src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
-          />
-          <Typography style={{ marginLeft: "10px" }}>
-            {member?.username}
-          </Typography>
-        </div>
-      </TableCell>
-      <TableCell>{member?.full_name}</TableCell>
+          <TableContainer
+  component={Paper}
+  sx={{
+    maxHeight: 420, 
+    overflow: "auto",
+  }}
+>
+  <Table stickyHeader aria-label="Member ADO Table">
+    <TableHead>
+      <TableRow>
+        <TableCell>No.</TableCell>
+        <TableCell>Username</TableCell>
+        <TableCell>Full Name</TableCell>
+        <TableCell>Mobile No.</TableCell>
+        <TableCell>Action</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {currentMembers.map((member, index) => (
+        <TableRow key={member.id}>
+          <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
+          <TableCell>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Avatar
+                src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
+              />
+              <Typography style={{ marginLeft: "10px" }}>
+                {member?.username}
+              </Typography>
+            </div>
+          </TableCell>
+          <TableCell>{member?.full_name}</TableCell>
+          <TableCell>{member?.mobile_number}</TableCell>
+          <TableCell>
+            <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
+              <EditIcon />
+            </IconButton>
+            <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
+              <DeleteIcon />
+            </IconButton>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
 
-      <TableCell>{member?.mobile_number}</TableCell>
-      <TableCell>
-        <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
-          <EditIcon />
-        </IconButton>
-        <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
-          <DeleteIcon />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
 
-            </Table>
-          </TableContainer>
+          {/* Pagination Controls */}
+          <Box sx={{ display: "flex", justifyContent: "right", p: 2 }}>
+            <Button
+              onClick={() => handleChangePage(null, currentPage - 2)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Typography sx={{ p: 2 }}>{`Page ${currentPage}`}</Typography>
+            <Button
+              onClick={() => handleChangePage(null, currentPage)}
+              disabled={currentMembers.length < rowsPerPage}
+            >
+              Next
+            </Button>
+          </Box>
 
           {/* Delete Confirmation Modal */}
           <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Are you sure you want to delete the member "
-                {memberToDelete?.full_name}" with ID "{memberToDelete?.id}"?
+                Are you sure you want to delete the member "{memberToDelete?.full_name}" with ID "{memberToDelete?.id}"?
               </DialogContentText>
             </DialogContent>
             <DialogActions>
