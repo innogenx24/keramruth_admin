@@ -414,6 +414,7 @@ useEffect(() => {
     if (!selectedRole) return null;
 
     const roleDropdownMap = {
+      2: { label: "Admin", options: allmembers?.Admins || [] },
       3: { label: "Area Development Officer", options: allmembers?.ADOs || [] },
       4: { label: "Master Distributor", options: allmembers?.MDs || [] },
       5: { label: "Super Distributor", options: allmembers?.SDs || [] },
@@ -694,23 +695,27 @@ useEffect(() => {
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
             <InputLabel>Hierarchy & Club</InputLabel>
             <Grid container spacing={2}>
+         
 
-            <Grid item xs={12}>
-          <InputLabel>Club*</InputLabel>
-          <Select
-            fullWidth
-            value={formData.club_name}
-            name="club_name"
-            onChange={handleChange}
-          >
-            <MenuItem value="">Select Club</MenuItem>
-            {clubs.map((club) => (
-              <MenuItem key={club.id} value={club.club_name}>
-                {club.club_name}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
+            {formData.role_id !== "6" && (
+  <Grid item xs={12}>
+    <InputLabel>Club*</InputLabel>
+    <Select
+      fullWidth
+      value={formData.club_name}
+      name="club_name"
+      onChange={handleChange}
+    >
+      <MenuItem value="">Select Club</MenuItem>
+      {clubs.map((club) => (
+        <MenuItem key={club.id} value={club.club_name}>
+          {club.club_name}
+        </MenuItem>
+      ))}
+    </Select>
+  </Grid>
+)}
+
               {renderDropdownOptions()}
 
             </Grid>

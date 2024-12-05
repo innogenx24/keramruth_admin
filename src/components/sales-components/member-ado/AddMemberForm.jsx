@@ -634,6 +634,7 @@ const AddMemberForm = () => {
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Club & Superior Distributors</InputLabel>
               <Grid container spacing={2}>
+              {selectedRole !== "6" && (
                 <Grid item xs={12}>
                   <InputLabel>Club*</InputLabel>
                   <Select
@@ -656,6 +657,7 @@ const AddMemberForm = () => {
                     <Typography color="error">{formik.errors.club_name}</Typography>
                   )}
                 </Grid>
+              )}
 
                 {selectedRole === "2" ? (
                   <Grid item xs={12}>
