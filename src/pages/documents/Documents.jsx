@@ -189,12 +189,19 @@ const DocumentsTable = () => {
                   )}
                 </TableCell>
                 <TableCell>{document.heading}</TableCell>
-                <TableCell>{document.description}</TableCell>
-                <TableCell>
-                  {Array.isArray(document.receiver)
-                    ? document.receiver.join(", ")
-                    : document.receiver}
-                </TableCell>
+                <TableCell sx={{ 
+     
+     WebkitBoxOrient: 'vertical', 
+     WebkitLineClamp: 2, 
+     wordBreak: 'break-word', 
+ }}>
+                  {document.description}
+                </TableCell>                <TableCell>
+  {Array.isArray(document.receiver) 
+    ? document.receiver.join(", ") 
+    : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
+  }
+</TableCell>
                 <TableCell>
                   <div style={{ display: "flex" }}>
                     <IconButton onClick={() => handleEditClick(document)} color="primary">
