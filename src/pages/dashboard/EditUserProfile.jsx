@@ -242,9 +242,7 @@ const stateCityMap = {
         },
       });
 
-      if (response.data.success) {
         navigate("/dashboard/profile");
-      }
     } catch (error) {
       console.error("Error updating member data", error);
 
