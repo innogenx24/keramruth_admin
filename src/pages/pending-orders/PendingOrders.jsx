@@ -107,7 +107,7 @@ const OrderManagement = () => {
       >
         Previous
       </Button>
-      <Typography variant="body1" style={{ minWidth: "100px", textAlign: "center" }}>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
         Page {page + 1}
       </Typography>
       <Button

@@ -125,12 +125,12 @@ export default function AddSalesTargetForm() {
 
   const handleSubmit = async () => {
     setFormSubmitted(true);
-
+  
     if (!validateFields()) {
       console.error("Validation failed");
       return;
     }
-
+  
     const payload = {
       product_name: selectedProduct,
       targets: rolesData.map((roleData) => ({
@@ -143,17 +143,17 @@ export default function AddSalesTargetForm() {
         ],
       })),
     };
-
+  
     try {
       const response = await fetch(
-        "http://88.222.245.236:3002/salestarget/create",
+        "http://localhost:3002/salestarget/create",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         }
       );
-
+  
       if (response.ok) {
         const result = await response.json();
         console.log("Success:", result);
@@ -161,11 +161,20 @@ export default function AddSalesTargetForm() {
       } else {
         const errorData = await response.json();
         console.error("Error:", errorData.message);
+  
+        // Set the error message for the specific product
+        if (errorData.message === "Sales targets for this product already exist.") {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            product: errorData.message, // Display message for product selection error
+          }));
+        }
       }
     } catch (error) {
       console.error("Network error:", error);
     }
   };
+  
 
   return (
     <div style={{ padding: "20px" }}>
@@ -175,28 +184,29 @@ export default function AddSalesTargetForm() {
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
-          <FormControl fullWidth margin="normal" error={!!errors.product}>
-            <InputLabel>Select Product</InputLabel>
-            <Select
-              value={selectedProduct}
-              onChange={(e) => {
-                const selected = products.find(
-                  (product) => product.name === e.target.value
-                );
-                handleProductChange(selected);
-              }}
-            >
-              <MenuItem value="">
-                <em>Select a Product</em>
-              </MenuItem>
-              {products.map((product) => (
-                <MenuItem key={product.id} value={product.name}>
-                  {product.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {errors.product && <FormHelperText>{errors.product}</FormHelperText>}
-          </FormControl>
+        <FormControl fullWidth margin="normal" error={!!errors.product}>
+  <InputLabel>Select Product</InputLabel>
+  <Select
+    value={selectedProduct}
+    onChange={(e) => {
+      const selected = products.find(
+        (product) => product.name === e.target.value
+      );
+      handleProductChange(selected);
+    }}
+  >
+    <MenuItem value="">
+      <em>Select a Product</em>
+    </MenuItem>
+    {products.map((product) => (
+      <MenuItem key={product.id} value={product.name}>
+        {product.name}
+      </MenuItem>
+    ))}
+  </Select>
+  {errors.product && <FormHelperText>{errors.product}</FormHelperText>}
+</FormControl>
+
 
           <Card variant="outlined">
             <CardContent>

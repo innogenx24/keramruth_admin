@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,6 +26,8 @@ const AnnouncementTable = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [announcementToDelete, setAnnouncementToDelete] = useState(null);
+  const [page, setPage] = useState(0); // Current page number
+  const [rowsPerPage] = useState(10); // Rows per page
   const navigate = useNavigate();
 
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
@@ -81,27 +84,38 @@ const AnnouncementTable = () => {
     navigate("add-announcement");
   };
 
-  const handleToggleSwitch = async (announcement) => {
-    try {
-      const updatedStatus = !announcement.activateStatus;
-      await axios.patch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
-        activateStatus: updatedStatus,
-      });
-      setAnnouncements((prevAnnouncements) =>
-        prevAnnouncements.map((a) =>
-          a.id === announcement.id ? { ...a, activateStatus: updatedStatus } : a
-        )
-      );
-    } catch (error) {
-      console.error("Error updating activate status:", error);
-    }
-  };
-
   const getImageURL = (imagePath) => {
     if (!imagePath) return "";
     const imageName = imagePath.includes("\\") ? imagePath.split("\\").pop() : imagePath;
     return `${imageBaseURL}${imageName}`;
   };
+
+  // Pagination logic
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedAnnouncements = announcements.slice(startIndex, endIndex);
+
+  const renderPagination = (page, setPage, totalRows) => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setPage(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1}
+      </Typography>
+      <Button
+        onClick={() => setPage(page + 1)}
+        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
 
   return (
     <div>
@@ -140,9 +154,9 @@ const AnnouncementTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {announcements.map((announcement, index) => (
+            {paginatedAnnouncements.map((announcement, index) => (
               <TableRow key={announcement.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{startIndex + index + 1}</TableCell>
                 <TableCell style={{ width: 100, textAlign: "center" }}>
                   {announcement.image ? (
                     <img
@@ -161,13 +175,11 @@ const AnnouncementTable = () => {
                 <TableCell>{announcement.heading}</TableCell>
                 <TableCell
                   sx={{ 
-     
                     WebkitBoxOrient: 'vertical', 
                     WebkitLineClamp: 4, 
                     wordBreak: 'break-word',
                     maxWidth: '250px' 
- 
-                }}
+                  }}
                 >
                   {announcement.description}
                 </TableCell>
@@ -187,6 +199,10 @@ const AnnouncementTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <div style={{marginTop:"10px"}}>
+      {renderPagination(page, setPage, announcements.length)}
+
+      </div>
 
       <Dialog open={deleteModalOpen} onClose={handleDeleteClose}>
         <DialogTitle>Confirm Deletion</DialogTitle>

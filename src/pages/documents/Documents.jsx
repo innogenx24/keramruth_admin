@@ -14,17 +14,21 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Typography,
 } from "@mui/material";
 import { Delete, Edit, Add as AddIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const rowsPerPage = 10; // Number of rows per page
+
 const DocumentsTable = () => {
   const [documents, setDocuments] = useState([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
+  const [page, setPage] = useState(0); // Pagination state
   const navigate = useNavigate();
-  
+
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   // Fetching documents and sorting them by ID in descending order
@@ -32,7 +36,7 @@ const DocumentsTable = () => {
     try {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
       if (!token) throw new Error("Token not found");
-  
+
       const response = await axios.get("http://88.222.245.236:3002/documents/admin", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,6 +104,34 @@ const DocumentsTable = () => {
     }
   };
 
+  const renderPagination = () => (
+    <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "15px", padding: "15px" }}>
+      <Button
+        onClick={() => setPage((prev) => prev - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1}
+      </Typography>
+      <Button
+        onClick={() => setPage((prev) => prev + 1)}
+        disabled={page >= Math.ceil(documents.length / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+
+  // Calculate the documents to display on the current page
+  const displayedDocuments = documents.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
   return (
     <div style={{ padding: "20px" }}>
       <TableContainer component={Paper} style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}>
@@ -139,9 +171,9 @@ const DocumentsTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {documents.map((document, index) => (
+            {displayedDocuments.map((document, index) => (
               <TableRow key={document.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                 <TableCell style={{ width: 100, textAlign: "center" }}>
                   {document.image ? (
                     <img
@@ -157,20 +189,12 @@ const DocumentsTable = () => {
                   )}
                 </TableCell>
                 <TableCell>{document.heading}</TableCell>
-                <TableCell sx={{ 
-     
-     WebkitBoxOrient: 'vertical', 
-     WebkitLineClamp: 2, 
-     wordBreak: 'break-word', 
- }}>
-                  {document.description}
+                <TableCell>{document.description}</TableCell>
+                <TableCell>
+                  {Array.isArray(document.receiver)
+                    ? document.receiver.join(", ")
+                    : document.receiver}
                 </TableCell>
-<TableCell>
-  {Array.isArray(document.receiver) 
-    ? document.receiver.join(", ") 
-    : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
-  }
-</TableCell>
                 <TableCell>
                   <div style={{ display: "flex" }}>
                     <IconButton onClick={() => handleEditClick(document)} color="primary">
@@ -186,6 +210,10 @@ const DocumentsTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <div style={{padding:"0px"}}>
+      {renderPagination()}
+
+      </div>
 
       <Dialog open={deleteModalOpen} onClose={handleDeleteClose}>
         <DialogTitle>Confirm Deletion</DialogTitle>

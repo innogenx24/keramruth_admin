@@ -153,7 +153,7 @@ const ProductPage = () => {
         </Button>
       </div>
 
-      <TableContainer component={Paper} sx={{ maxHeight: "480px", overflowY: "auto" }}>
+      <TableContainer component={Paper} >
   <Table aria-label="product table">
     <TableHead sx={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "white" }}>
       <TableRow>
@@ -226,7 +226,7 @@ const ProductPage = () => {
   onRowsPerPageChange={handleChangeRowsPerPage}
   labelDisplayedRows={() => ""} // Remove default range text
   ActionsComponent={({ count, page, rowsPerPage, onPageChange }) => (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "15px" }}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" }}>
       <Button
         onClick={(event) => onPageChange(event, page - 1)}
         disabled={page === 0}
@@ -234,7 +234,7 @@ const ProductPage = () => {
       >
         Previous
       </Button>
-      <Typography variant="body1" style={{ minWidth: "100px", textAlign: "center" }}>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
         Page {page + 1}
       </Typography>
       <Button

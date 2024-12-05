@@ -142,10 +142,7 @@ const MemberAdoTable = () => {
           </Box>
           <TableContainer
   component={Paper}
-  sx={{
-    maxHeight: 420, 
-    overflow: "auto",
-  }}
+  
 >
   <Table stickyHeader aria-label="Member ADO Table">
     <TableHead>
@@ -189,17 +186,23 @@ const MemberAdoTable = () => {
 
 
           {/* Pagination Controls */}
-          <Box sx={{ display: "flex", justifyContent: "right", p: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "right", p: 2, height:"50px"}}>
             <Button
               onClick={() => handleChangePage(null, currentPage - 2)}
               disabled={currentPage === 1}
+              variant="outlined"
+              style={{height:"40px"}}
+
             >
               Previous
             </Button>
-            <Typography sx={{ p: 2 }}>{`Page ${currentPage}`}</Typography>
+            <Typography sx={{ p: 1,height:"40px" }}>{`Page ${currentPage}`}</Typography>
             <Button
               onClick={() => handleChangePage(null, currentPage)}
               disabled={currentMembers.length < rowsPerPage}
+              variant="outlined"
+              style={{height:"40px"}}
+
             >
               Next
             </Button>

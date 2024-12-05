@@ -8,7 +8,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Avatar,
   Typography,
   CircularProgress,
   Button,
@@ -20,19 +19,17 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import AddClubForm from "./AddClubForm"; // Import your AddClubForm component
-import EditClubForm from "./EditClubForm"; // Import your EditClubForm component
 import { useNavigate } from "react-router-dom";
 
 const ClubTable = () => {
-  const [clubs, setClubs] = useState([]); // State to hold club data
-  const [loading, setLoading] = useState(true); // State to control loading
-  const [showTable, setShowTable] = useState(true); // State to toggle table and form visibility
-  const [selectedClub, setSelectedClub] = useState(null); // State to hold selected club for editing
-  const [openDeleteModal, setOpenDeleteModal] = useState(false); // State to control delete modal
+  const [clubs, setClubs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0); // Current page state
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
+  const [selectedClub, setSelectedClub] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch clubs from API
   const fetchClubs = async () => {
     setLoading(true);
     try {
@@ -47,9 +44,8 @@ const ClubTable = () => {
 
       const result = await response.json();
       if (result.success) {
-        // Sort clubs based on the 'id' field in descending order
         const sortedClubs = result.data.sort((a, b) => b.id - a.id);
-        setClubs(sortedClubs); // Set the sorted clubs
+        setClubs(sortedClubs);
       } else {
         console.error("Error fetching clubs:", result.message);
       }
@@ -61,26 +57,22 @@ const ClubTable = () => {
   };
 
   useEffect(() => {
-    fetchClubs(); // Fetch clubs on component mount
+    fetchClubs();
   }, []);
 
-  // Function to handle the click of "Add Club" button
   const handleAddClubClick = () => {
     navigate("add-club");
   };
 
-  // Function to handle editing a club
   const handleEditClick = (club) => {
     navigate("edit-club", { state: { club } });
   };
 
-  // Function to handle deleting a club
   const handleDeleteClick = (club) => {
-    setSelectedClub(club); // Set the selected club for deletion
-    setOpenDeleteModal(true); // Open the delete confirmation modal
+    setSelectedClub(club);
+    setOpenDeleteModal(true);
   };
 
-  // Function to confirm deletion
   const handleConfirmDelete = async () => {
     if (selectedClub) {
       try {
@@ -93,17 +85,43 @@ const ClubTable = () => {
       } catch (error) {
         console.error("Error deleting club:", error);
       } finally {
-        setOpenDeleteModal(false); // Close the modal after deletion
-        setSelectedClub(null); // Reset selected club
+        setOpenDeleteModal(false);
+        setSelectedClub(null);
       }
     }
   };
 
-  // Function to cancel deletion
   const handleCancelDelete = () => {
-    setOpenDeleteModal(false); // Close the modal
-    setSelectedClub(null); // Reset selected club
+    setOpenDeleteModal(false);
+    setSelectedClub(null);
   };
+
+  // Pagination logic
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const renderPagination = () => (
+    <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "15px", padding: "15px" }}>
+      <Button
+        onClick={() => handlePageChange(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1}
+      </Typography>
+      <Button
+        onClick={() => handlePageChange(page + 1)}
+        disabled={page >= Math.ceil(clubs.length / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
 
   return (
     <Box sx={{ width: "100%", p: 2 }}>
@@ -111,68 +129,59 @@ const ClubTable = () => {
         Club Management
       </Typography>
 
-      {showTable ? (
+      {loading ? (
+        <CircularProgress />
+      ) : (
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
             <Button variant="contained" color="primary" onClick={handleAddClubClick}>
               + Add Club
             </Button>
           </Box>
-          <h2>Clubs</h2>
-          {loading ? (
-            <CircularProgress /> // Show loading spinner while fetching data
-          ) : (
-            <TableContainer component={Paper}>
-              <Table aria-label="Club Table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>No.</TableCell>
-                    <TableCell>Club Name</TableCell>
-                    <TableCell>Litre Quantity</TableCell>
-                    <TableCell>Action</TableCell>
+
+          <TableContainer component={Paper} >
+            <Table aria-label="Club Table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>No.</TableCell>
+                  <TableCell>Club Name</TableCell>
+                  <TableCell>Litre Quantity</TableCell>
+                  <TableCell>Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {clubs.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((club, index) => (
+                  <TableRow key={club.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      <Typography>{club.club_name}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>{parseInt(club.litre_quantity, 10)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton color="secondary" onClick={() => handleEditClick(club)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton color="error" onClick={() => handleDeleteClick(club)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {clubs.length > 0 ? (
-                    clubs.map((club, index) => (
-                      <TableRow key={club.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>
-                          <div style={{ display: "flex", alignItems: "center" }}>
-                            <Typography sx={{ marginLeft: "10px" }}>
-                              {club.club_name}
-                            </Typography>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Typography>{parseInt(club.litre_quantity, 10)}</Typography>
-                        </TableCell>
-                        <TableCell>
-                          <IconButton color="secondary" onClick={() => handleEditClick(club)}>
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton color="error" onClick={() => handleDeleteClick(club)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} align="center">
-                        No clubs available
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+                ))}
+                {clubs.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} align="center">
+                      No clubs available
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {renderPagination()}
         </>
-      ) : selectedClub ? (
-        <EditClubForm club={selectedClub} onCancel={() => setShowTable(true)} />
-      ) : (
-        <AddClubForm onCancel={() => setShowTable(true)} />
       )}
 
       {/* Delete Confirmation Modal */}

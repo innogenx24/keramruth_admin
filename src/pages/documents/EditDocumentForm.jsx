@@ -234,7 +234,7 @@ const EditDocumentForm = () => {
 
     try {
       const response = await fetch(
-        `http://88.222.245.236:3002/documents/${document.id}`,
+        `http://localhost:3002/documents/${document.id}`,
         {
           method: "PUT",
           body: formData,

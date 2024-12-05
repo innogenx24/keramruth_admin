@@ -22,6 +22,8 @@ import axios from "axios";
 export default function SalesTargetTable() {
   const [salesData, setSalesData] = useState([]);
   const [expandedRow, setExpandedRow] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -74,6 +76,32 @@ export default function SalesTargetTable() {
     salesData.find((row) => row.product_name === productName)
   );
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const renderPagination = () => (
+    <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "15px", padding: "15px" }}>
+      <Button
+        onClick={() => handlePageChange(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1}
+      </Typography>
+      <Button
+        onClick={() => handlePageChange(page + 1)}
+        disabled={page >= Math.ceil(salesData.length / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+
   return (
     <div style={{ padding: "20px" }}>
       <Typography variant="h6" sx={{ marginBottom: "20px" }}>
@@ -89,8 +117,8 @@ export default function SalesTargetTable() {
           Add Sales Target
         </Button>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer component={Paper} style={{ maxHeight: 480, overflowY: "auto" }}>
+        <Table stickyHeader aria-label="sales targets table">
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
@@ -99,7 +127,7 @@ export default function SalesTargetTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {uniqueProducts.map((product, index) => {
+            {uniqueProducts.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((product, index) => {
               const productTargets = salesData.filter(
                 (item) => item.product_name === product.product_name
               );
@@ -156,6 +184,7 @@ export default function SalesTargetTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      {renderPagination()}
     </div>
   );
 }
