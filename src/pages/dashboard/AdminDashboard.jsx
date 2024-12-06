@@ -228,6 +228,17 @@ export default function AdminDashboard() {
       path: "/dashboard/pending-orders",
       icon: <PendingActionsIcon />,
     },
+    {
+      text: "Announcements",
+      path: "/dashboard/announcement",
+      icon: <NotificationsIcon />,
+    },
+
+    {
+      text: "Documents",
+      path: "/dashboard/documents",
+      icon: <DescriptionIcon />,
+    },
   ]
   const menuItems = [
     {
