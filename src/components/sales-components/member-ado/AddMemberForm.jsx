@@ -217,8 +217,15 @@ const AddMemberForm = () => {
       city: Yup.string().required("Required"),
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
-      club_name: Yup.string().required("Please select a club"),
-      // superior_id: Yup.string().required("Please select aany one  superior_id"),
+      club_name: Yup.string()
+      .test("club-name-required", "Please select a club", function (value) {
+        const { role_id } = this.parent;
+        if (role_id !== "6" && !value) {
+          return false; 
+        }
+        return true; 
+      })
+      .notRequired(),
     }),
     onSubmit: (values, { resetForm }) => {
 
@@ -390,6 +397,9 @@ const AddMemberForm = () => {
                     <MenuItem value="5">Distributors</MenuItem>
                     <MenuItem value="6">Customers</MenuItem>
                   </Select>
+                  {formik.touched.role_id && formik.errors.role_id && (
+          <Typography color="error">{formik.errors.role_id}</Typography>
+        )}
                 </Grid>
                 <Grid item xs={12}>
   <InputLabel>Add Image*</InputLabel>
