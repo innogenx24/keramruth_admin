@@ -174,8 +174,12 @@ export default function AdminDashboard() {
       ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}),
       [text]: !prev[text],
     }));
+  
+    // Determine which menu array to use based on the role
+    const selectedMenu = loginUserRole === "Admin" ? menuItems : menuItemsUsers;
+  
     // Navigate to the default route of the selected item
-    const selectedItem = menuItems.find((item) => item.text === text);
+    const selectedItem = selectedMenu.find((item) => item.text === text);
     if (selectedItem && selectedItem.subItems) {
       const defaultSubItem = selectedItem.subItems.find((sub) => sub.default);
       if (defaultSubItem) {
@@ -185,6 +189,7 @@ export default function AdminDashboard() {
       navigate(selectedItem.path);
     }
   };
+  
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   // Set the selected image to the existing image if present
@@ -213,30 +218,31 @@ export default function AdminDashboard() {
 
   ///
   const menuItemsUsers = [
-    {
-      text: "Products",
-      path: "/dashboard/products",
-      icon: <ProductIcon />,
-    },
+    
     {
       text: "Members",
       path: "/dashboard/members",
       icon: <MembersIcon />,
     },
+    // {
+    //   text: "Pending Orders",
+    //   path: "/dashboard/pending-orders",
+    //   icon: <PendingActionsIcon />,
+    // },
     {
-      text: "Pending Orders",
-      path: "/dashboard/pending-orders",
-      icon: <PendingActionsIcon />,
+      text: "Book Order",
+      path: "/dashboard/book-orders",
+      icon: <NotificationsIcon />,
     },
     {
       text: "Announcements",
-      path: "/dashboard/announcement",
+      path: "/dashboard/announcement-member",
       icon: <NotificationsIcon />,
     },
 
     {
       text: "Documents",
-      path: "/dashboard/documents",
+      path: "/dashboard/documents-member",
       icon: <DescriptionIcon />,
     },
   ]

@@ -16,9 +16,11 @@ import ViewMember from "./pages/member/ViewMember";
 import AdminList from "./pages/admin-page/AdminList";
 import SalesTarget from "./pages/sales-target/SalesTarget";
 import AnnouncementTable from "./pages/announcement/AnnouncementTable";
+
 import AddAnnouncementForm from "./pages/announcement/AddAnnouncementForm";
 import EditAnnouncementForm from "./pages/announcement/EditAnnouncementForm";
 import Documents from "./pages/documents/Documents";
+
 import ClubTable from "./pages/club/ClubTable";
 import CategoryTable from "./pages/category/CategoryTable";
 import AddCategoryForm from "./pages/category/AddCategoryForm";
@@ -56,6 +58,9 @@ import SetOrderLimit from "./pages/club/SetOrderLimit";
 import Sector from "./pages/sector/Sector";
 import AddSector from "./pages/sector/AddSector";
 import PendingOrders from "./pages/pending-orders/PendingOrders";
+import MemberDocumenttable from "./pages/member-pages/documents/MemberDocumenttable";
+import MemberAnnouncementTable from "./pages/member-pages/announcement/MemberAnnouncementTable";
+import BookingOrders from "./pages/member-pages/booking-order/BookingOrders";
 
 const RoutesConfig = () => {
   return (
@@ -86,8 +91,10 @@ const RoutesConfig = () => {
             <Route path="edit-profile" element={<EditUserProfile />} />
             <Route path="members" element={<ViewMember />} />
             <Route path="announcement" element={<AnnouncementTable />} />
-            <Route path="pending-orders" element={<PendingOrders />} />
+            <Route path="announcement-member" element={<MemberAnnouncementTable />} />
 
+            <Route path="pending-orders" element={<PendingOrders />} />
+            
           
             <Route
               path="announcement/add-announcement"
@@ -97,7 +104,11 @@ const RoutesConfig = () => {
               path="announcement/edit-announcement"
               element={<EditAnnouncementForm />}
             />
+            <Route path="book-orders" element={<BookingOrders />} />
+
             <Route path="documents" element={<Documents />} />
+            <Route path="documents-member" element={<MemberDocumenttable />} />
+
             <Route path="documents/add-document" element={<DocumentForm />} />
             <Route
   path="documents/edit-document"

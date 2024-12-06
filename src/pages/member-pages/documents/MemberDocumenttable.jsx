@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 
 const rowsPerPage = 10; // Number of rows per page
 
-const DocumentsTable = () => {
+const MemberDocumenttable = () => {
   const [documents, setDocuments] = useState([]);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
@@ -37,7 +37,7 @@ const DocumentsTable = () => {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
       if (!token) throw new Error("Token not found");
 
-      const response = await axios.get("http://88.222.245.236:3002/documents/admin", {
+      const response = await axios.get("http://88.222.245.236:3002/documents", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -242,4 +242,4 @@ const DocumentsTable = () => {
   );
 };
 
-export default DocumentsTable;
+export default MemberDocumenttable;
