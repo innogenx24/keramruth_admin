@@ -18,6 +18,8 @@
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+    "@mui/styles": "^6.1.10",
+    "@mui/system": "^6.1.10",
     "@mui/x-data-grid": "^7.13.0",
     "@mui/x-date-pickers": "^7.18.0",
     "@react-pdf/renderer": "^4.0.0",

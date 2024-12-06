@@ -61,6 +61,7 @@ import PendingOrders from "./pages/pending-orders/PendingOrders";
 import MemberDocumenttable from "./pages/member-pages/documents/MemberDocumenttable";
 import MemberAnnouncementTable from "./pages/member-pages/announcement/MemberAnnouncementTable";
 import BookingOrders from "./pages/member-pages/booking-order/BookingOrders";
+import OrderDetails from "./pages/member-pages/place-orders/OrderDetails";
 
 const RoutesConfig = () => {
   return (
@@ -104,7 +105,10 @@ const RoutesConfig = () => {
               path="announcement/edit-announcement"
               element={<EditAnnouncementForm />}
             />
+            
             <Route path="book-orders" element={<BookingOrders />} />
+            <Route path="place-orders" element={<OrderDetails />} />
+
 
             <Route path="documents" element={<Documents />} />
             <Route path="documents-member" element={<MemberDocumenttable />} />

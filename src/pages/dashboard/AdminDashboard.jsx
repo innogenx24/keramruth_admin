@@ -235,6 +235,11 @@ export default function AdminDashboard() {
       icon: <NotificationsIcon />,
     },
     {
+      text: "Place Orders",
+      path: "/dashboard/place-orders",
+      icon: <NotificationsIcon />,
+    },
+    {
       text: "Announcements",
       path: "/dashboard/announcement-member",
       icon: <NotificationsIcon />,
