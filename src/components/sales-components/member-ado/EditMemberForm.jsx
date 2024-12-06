@@ -697,7 +697,7 @@ useEffect(() => {
             <Grid container spacing={2}>
          
 
-            {formData.role_id !== "6" && (
+            {formData.role_id !== "6" ||selectedRole !=="6" && (
   <Grid item xs={12}>
     <InputLabel>Club*</InputLabel>
     <Select
