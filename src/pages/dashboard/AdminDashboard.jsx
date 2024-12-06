@@ -203,14 +203,33 @@ export default function AdminDashboard() {
   // const handleProfileClick = (path) => {
   //   navigate("dashboard/profile");
   // };
+  let loginUser = JSON.parse(localStorage.getItem('user'));
+  let loginUserRole = loginUser ? loginUser.role : null; 
+  console.log(loginUserRole, "mmmmmmmmmmmmmmm");
+
+
+  console.log("Login User Role:", loginUserRole);
+
 
   ///
+  const menuItemsUsers = [
+    {
+      text: "Products",
+      path: "/dashboard/products",
+      icon: <ProductIcon />,
+    },
+    {
+      text: "Members",
+      path: "/dashboard/members",
+      icon: <MembersIcon />,
+    },
+    {
+      text: "Pending Orders",
+      path: "/dashboard/pending-orders",
+      icon: <PendingActionsIcon />,
+    },
+  ]
   const menuItems = [
-    // {
-    //   text: "HomePage",
-    //   path: "/dashboard",
-    //   icon: <HomeIcon />,
-    // },
     {
       text: "Products",
       path: "/dashboard/products",
@@ -231,22 +250,6 @@ export default function AdminDashboard() {
       path: "/dashboard/announcement",
       icon: <NotificationsIcon />,
     },
-    
-
-    // {
-    //   text: "Report",
-    //   path: "/dashboard/report",
-    //   icon: <ReportIcon />,
-    //   // subItems: [
-    //   //   {
-    //   //     text: "EX1",
-    //   //     path: "/dashboard/ex1",
-    //   //     default: true,
-    //   //     icon: <AdminPanelSettingsIcon />,
-    //   //   },
-    //   //   { text: "EX2", path: "/dashboard/ex2", icon: <SalesTargetIcon /> },
-    //   // ],
-    // },
 
     {
       text: "Documents",
@@ -255,7 +258,6 @@ export default function AdminDashboard() {
     },
     {
       text: "Requests",
-      // path: '/dashboard/report',
       icon: <FaCodePullRequest />,
       subItems: [
         {
@@ -264,35 +266,17 @@ export default function AdminDashboard() {
           default: true,
           icon: <EditNoteIcon />,
         },
-        // {
-        //   text: "Delete Request",
-        //   path: "/dashboard/delete-request",
-        //   icon: <AnnouncementIcon />,
-        // },
       ],
     },
     {
       text: "Masters",
-      // path: '/dashboard/add-list',
       icon: <AdminPanelSettingsIcon />,
-      subItems: [
-        // {
-        //   text: "Admin",
-        //   path: "/dashboard/add-list",
-        //   default: true,
-        //   icon: <AdminPanelSettingsIcon />,
-        // },
+      subItems: [,
         {
           text: "Sales Target",
           path: "/dashboard/sales-target",
           icon: <TrackChangesIcon />,
         },
-        // {
-        //   text: "Minimum Stock",
-        //   path: "/dashboard/minimum-stock",
-        //   icon: <StockIcon />,
-        // },
-        // { text: "Roles", path: "/dashboard/roles", icon: <RolesIcon /> },
         { text: "Club", path: "/dashboard/club", icon: <GroupsIcon  /> },
         { text: "Category", path: "/dashboard/category", icon: <CategoryIcon /> },
         {
@@ -306,11 +290,6 @@ export default function AdminDashboard() {
           path: "/dashboard/orders_time_set",
           icon: <TimerIcon />,
         },
-        // {
-        //   text: "Document PDF",
-        //   path: "/dashboard/download-pdf",
-        //   icon: <MdAccessTimeFilled />,
-        // },
       ],
     },
   ];
@@ -444,7 +423,7 @@ export default function AdminDashboard() {
             component="div"
             sx={{ flexGrow: 1, color: "#989FA9" }}
           >
-            Admin Dashboard
+           {loginUserRole === "Admin" ? "Admin Dashboard" : "User Dashboard"}
           </Typography>
           {/* <Box sx={{ flexGrow: 2, display: "flex", justifyContent: "center" }}>
         <input
@@ -504,7 +483,8 @@ export default function AdminDashboard() {
           </IconButton>
         </DrawerHeader>
         <List sx={{padding:'15px'}}>
-          {menuItems.map((item) => (
+
+          {/* {menuItems.map((item) => (
             <MenuItem
               key={item.text}
               item={item}
@@ -513,7 +493,34 @@ export default function AdminDashboard() {
               handleItemClick={handleItemClick}
               location={location}
             />
-          ))}
+          ))} */}
+
+{loginUserRole === 'Admin' ? (
+  menuItems.map((item) => (
+    <MenuItem
+      key={item.text}
+      item={item}
+      openExpand={openExpand}
+      handleClick={handleClick}
+      handleItemClick={handleItemClick}
+      location={location}
+    />
+  ))
+) : (
+  menuItemsUsers.map((item) => (
+    <MenuItem
+      key={item.text}
+      item={item}
+      openExpand={openExpand}
+      handleClick={handleClick}
+      handleItemClick={handleItemClick}
+      location={location}
+    />
+  ))
+)}
+
+
+
         </List>
       </Drawer>
       <Box

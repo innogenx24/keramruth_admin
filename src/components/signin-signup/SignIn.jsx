@@ -22,21 +22,23 @@ const SignIn = () => {
   // Formik form setup
   const formik = useFormik({
     initialValues: {
-      email: '',
+      mobile_number: '', // Change from email to mobile_number
       password: ''
     },
     validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Required'),
+      mobile_number: Yup.string().required('Required').matches(/^[0-9]{10}$/, 'Invalid mobile number'), // Adjust validation for mobile number
       password: Yup.string().required('Required')
     }),
     onSubmit: (values) => {
+      console.log(values,"valuvesssss");
+      
       dispatch(signInRequest({ ...values, rememberMe }));
       setOpenSnackbar(true);
-      // Store token in localStorage if "Remember Me" is checked
+      // Store mobile_number in localStorage if "Remember Me" is checked
       if (rememberMe) {
-        localStorage.setItem('email', values.email); // Store email (or token) in localStorage
+        localStorage.setItem('mobile_number', values.mobile_number); // Store mobile_number in localStorage
       } else {
-        sessionStorage.setItem('email', values.email); // Store temporarily in sessionStorage
+        sessionStorage.setItem('mobile_number', values.mobile_number); // Store temporarily in sessionStorage
       }
     }
   });
@@ -48,11 +50,11 @@ const SignIn = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  // Prefill email from storage if available
+  // Prefill mobile_number from storage if available
   useEffect(() => {
-    const storedEmail = localStorage.getItem('email') || sessionStorage.getItem('email');
-    if (storedEmail) {
-      formik.setFieldValue('email', storedEmail);
+    const storedMobileNumber = localStorage.getItem('mobile_number') || sessionStorage.getItem('mobile_number');
+    if (storedMobileNumber) {
+      formik.setFieldValue('mobile_number', storedMobileNumber);
     }
   }, []);
 
@@ -111,17 +113,17 @@ const SignIn = () => {
               Sign In
             </Typography>
             <form onSubmit={formik.handleSubmit}>
-              {/* Email Field */}
+              {/* Mobile Number Field */}
               <TextField
                 fullWidth
-                label="Email"
-                name="email"
-                type="email"
+                label="Mobile Number" // Change label to Mobile Number
+                name="mobile_number" // Change name to mobile_number
+                type="text"
                 variant="outlined"
                 margin="normal"
-                {...formik.getFieldProps('email')}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
+                {...formik.getFieldProps('mobile_number')}
+                error={formik.touched.mobile_number && Boolean(formik.errors.mobile_number)}
+                helperText={formik.touched.mobile_number && formik.errors.mobile_number}
               />
 
               {/* Password Field with Visibility Toggle */}
@@ -174,38 +176,9 @@ const SignIn = () => {
                 LOGIN
               </Button>
 
-              {/* Forgot Password Link */}
-              {/* <Box sx={{ mt: 1, textAlign: 'center' }}>
-                <Typography variant="body2">
-                  Forgot Your Password?{' '}
-                  <Button
-                    variant="text"
-                    onClick={() => navigate('/forgot-password')}
-                    sx={{ textTransform: 'none', fontWeight: 'bold' }}
-                  >
-                    Click Here
-                  </Button>
-                </Typography>
-              </Box> */}
-
-              {/* Sign Up Link */}
-              {/* <Box sx={{ mt: -1, textAlign: 'center' }}>
-                <Typography variant="body2">
-                  Don't have an account?{' '}
-                  <Button
-                    variant="text"
-                    onClick={() => navigate('/signup')}
-                    sx={{ textTransform: 'none', fontWeight: 'bold' }}
-                  >
-                    Click Here
-                  </Button>
-                </Typography>
-              </Box> */}
-
-              {/* Snackbar for Error Display */}
               <Snackbar
                 open={openSnackbar}
-                message={error ? "Invalid Email or Password" : "Successfully login"}
+                message={error ? "Invalid Mobile Number or Password" : "Successfully login"}
                 autoHideDuration={6000}
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -216,7 +189,6 @@ const SignIn = () => {
                     fontWeight: 'bold',
                   },
                 }}
-                
               />
             </form>
           </Box>

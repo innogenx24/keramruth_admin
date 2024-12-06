@@ -1,8 +1,10 @@
 // src/apiConstants.js
 export const ADMIN_API = {
-    SIGNIN: '/api/admin/signin',
+    // SIGNIN: '/api/admin/signin',
+    SIGNIN: '/api/user/signin',
     SIGNUP: '/api/admin/signup',
   };
+
   
   export const PRODUCT_API = {
     LIST: '/api/product/list',
