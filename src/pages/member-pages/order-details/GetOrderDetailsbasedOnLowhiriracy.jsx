@@ -13,6 +13,7 @@ import {
   Box,
 } from '@mui/material';
 import axios from 'axios';
+import { useSelector, useDispatch } from "react-redux";
 
 const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
@@ -23,8 +24,11 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
   const [pendingPage, setPendingPage] = useState(0);
   const [completedPage, setCompletedPage] = useState(0);
   const rowsPerPage = 10;
+  const { users } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+  const userId = users?.id; // Assuming the user ID is stored in the state.users object
 
-  const API_URL = 'http://88.222.245.236:3002/orders/get-order-request/608';
+  const API_URL = `http://88.222.245.236:3002/orders/get-order-request/${userId}`;
 
   const fetchOrders = async () => {
     const token = localStorage.getItem('token');

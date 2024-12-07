@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Box,
-} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Modal, Typography, DialogContent, DialogActions } from "@mui/material";
 import axios from "axios";
+import { useSelector } from "react-redux"; // Import useSelector
+import { useLocation } from "react-router-dom";
 
 const BookingOrders = () => {
   const [products, setProducts] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
-  const user_id = 608; // Example user ID (can be dynamic)
+  const [openPopup, setOpenPopup] = useState(false); // To control popup visibility
+  const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
   const couponCode = "DISCOUNT2024"; // Example coupon code
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const { users } = useSelector((state) => state.users); // Fetch users from Redux store
+  const userId = users?.id; // Get the user ID from the state.users object
+
+  useEffect(() => {
+    if (orderConfirmation) {
+      const timer = setTimeout(() => {
+        setOrderConfirmation(false); // Hide the confirmation message after 1 second
+      }, 2 * 1000); // 1000ms = 1 second
+
+      // Cleanup the timer when the component unmounts or when the message is hidden manually
+      return () => clearTimeout(timer);
+    }
+  }, [orderConfirmation]);
 
   const fetchProducts = async () => {
     const token = localStorage.getItem("token");
@@ -81,7 +87,7 @@ const BookingOrders = () => {
     });
   };
 
-  const createOrder = async () => {
+  const handleConfirmOrder = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Token not found. Please log in.");
@@ -94,7 +100,7 @@ const BookingOrders = () => {
     }
 
     const orderData = {
-      user_id: user_id,
+      user_id: userId, // Ensure you're passing the correct user ID here
       items: orderItems,
       coupon_code: couponCode,
     };
@@ -105,12 +111,21 @@ const BookingOrders = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("Order placed successfully!");
+      setOrderConfirmation(true); // Show confirmation message
       setOrderItems([]); // Clear the selections after placing an order
+      setOpenPopup(false); // Close the Order Summary popup
     } catch (error) {
       console.error("Error creating order:", error);
       alert("Failed to place the order.");
     }
+  };
+
+  const openOrderSummaryPopup = () => {
+    setOpenPopup(true);
+  };
+
+  const closeOrderSummaryPopup = () => {
+    setOpenPopup(false);
   };
 
   return (
@@ -172,6 +187,80 @@ const BookingOrders = () => {
           </Table>
         </TableContainer>
       </div>
+
+{orderConfirmation && (
+  <Box
+    position="fixed"
+    top="20%"
+    left="50%"
+    transform="translateX(-50%)"
+    bgcolor="green"
+    color="white"
+    padding="10px 20px"
+    borderRadius="5px"
+  >
+    Order placed successfully! <br />
+    
+  </Box>
+)}
+
+
+      {/* Order Summary Popup */}
+      <Modal open={openPopup} onClose={closeOrderSummaryPopup}>
+        <Box
+          style={{
+            position: "absolute",
+            top: "20%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor: "white",
+            padding: "20px",
+            boxShadow: "24",
+            width: "400px",
+          }}
+        >
+<DialogContent>
+  <Typography variant="h6" style={{marginBottom:"10px"}}>Order Summary</Typography>
+  {orderItems.map((item) => {
+    const product = products.find((p) => p.id === item.product_id);
+    return (
+      <Box key={item.product_id} display="flex" justifyContent="space-between" marginBottom="10px">
+        <Typography>{product?.name}</Typography>
+        <Typography>{product?.super1}</Typography>
+        <Typography>{item.quantity}</Typography>
+      </Box>
+    );
+  })}
+  <Box mt={2} display="flex" justifyContent="space-between">
+    <Typography variant="h6">Total Quantity:</Typography>
+    <Typography variant="h6">
+      {orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0)}
+    </Typography>
+  </Box>
+  <Box mt={2} display="flex" justifyContent="space-between">
+    <Typography variant="h6">Total Price:</Typography>
+    <Typography variant="h6">
+      Rs. {orderItems.reduce(
+        (total, item) =>
+          total + item.quantity * (products.find((p) => p.id === item.product_id)?.super1 || 0),
+        0
+      ).toFixed(2)}
+    </Typography>
+  </Box>
+</DialogContent>
+
+<DialogActions>
+<Button onClick={closeOrderSummaryPopup} color="secondary">
+  Modify
+</Button>
+
+  <Button onClick={handleConfirmOrder} color="primary">
+    Confirm Order
+  </Button>
+</DialogActions>
+        </Box>
+      </Modal>
+
       <div
         style={{
           position: "fixed",
@@ -186,7 +275,7 @@ const BookingOrders = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={createOrder}
+          onClick={openOrderSummaryPopup}
           style={{ width: "200px" }}
         >
           Book Order

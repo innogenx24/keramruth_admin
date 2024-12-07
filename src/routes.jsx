@@ -64,6 +64,8 @@ import BookingOrders from "./pages/member-pages/booking-order/BookingOrders";
 import OrderDetails from "./pages/member-pages/place-orders/OrderDetails";
 import GetOrderDetailsbasedOnLowhiriracy from "./pages/member-pages/order-details/GetOrderDetailsbasedOnLowhiriracy";
 import MemberProductPage from "./pages/member-pages/member-products/MemberProductPage";
+import FeedbackTable from "./pages/member-pages/feedback-details/FeedbackTable";
+import FeedbackComponent from "./pages/member-pages/feedbackcreate/FeedbackComponent";
 
 const RoutesConfig = () => {
   return (
@@ -110,9 +112,10 @@ const RoutesConfig = () => {
             />
             
             <Route path="book-orders" element={<BookingOrders />} />
+            <Route path="feedback" element={<FeedbackTable />} />
+
             <Route path="place-orders" element={<OrderDetails />} />
-
-
+            <Route path="place-orders/feedback/:orderId" element={<FeedbackComponent />} />
             <Route path="documents" element={<Documents />} />
             <Route path="documents-member" element={<MemberDocumenttable />} />
 

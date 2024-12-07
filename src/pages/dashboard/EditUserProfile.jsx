@@ -47,7 +47,7 @@ const EditUserProfile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3002/api/admin/admin-details", {
+        const response = await axios.get("http://88.222.245.236:3002/api/admin/admin-details", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

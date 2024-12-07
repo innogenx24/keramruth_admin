@@ -1,0 +1,121 @@
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Avatar,
+  Box,
+  Typography,
+  Rating,
+} from "@mui/material";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+
+const FeedbackTable = () => {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
+  const { users } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+  const userId = users?.id; // Assuming the user ID is stored in the state.users object
+
+  // Fetch feedbacks on component mount
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      if (!token) {
+        alert("Token not found. Please log in.");
+        return;
+      }
+
+      
+      try {
+        const response = await axios.get(
+          `http://88.222.245.236:3002/feedback/hierarchy/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setFeedbacks(response.data.feedbacks);
+      } catch (error) {
+        console.error("Error fetching feedback data:", error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, [token, userId]); // Re-run effect when token or userId changes
+
+  return (
+    <Box padding={2}>
+      <Typography variant="h5" gutterBottom>
+        Feedback Details
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>User Details</TableCell>
+              <TableCell>Quantity</TableCell>
+              <TableCell>Booked Date</TableCell>
+              <TableCell>Delivered Date</TableCell>
+              <TableCell>Total Amount</TableCell>
+              <TableCell>Rating</TableCell>
+              <TableCell>Comments</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {feedbacks.map((feedback) => (
+              <TableRow key={feedback.id}>
+                {/* User Details */}
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <Avatar
+                      src={
+                        feedback.user.image
+                          ? `http://88.222.245.236:3002/uploads/${feedback.user.image}`
+                          : undefined
+                      }
+                      alt={feedback.user.full_name}
+                      style={{ marginRight: "10px" }}
+                    />
+                    <Typography>{feedback.user.full_name}</Typography>
+                  </Box>
+                </TableCell>
+
+                {/* Quantity */}
+                <TableCell>{feedback.order.total_order_quantity}</TableCell>
+
+                {/* Booked Date */}
+                <TableCell>
+                  {new Date(feedback.order.createdAt).toLocaleDateString()}
+                </TableCell>
+
+                {/* Delivered Date */}
+                <TableCell>
+                  {new Date(feedback.feedback_date).toLocaleDateString()}
+                </TableCell>
+
+                {/* Total Amount */}
+                <TableCell>₹{feedback.order.final_amount}</TableCell>
+
+                {/* Rating */}
+                <TableCell>
+                  <Rating value={feedback.rating} precision={0.5} readOnly />
+                </TableCell>
+
+                {/* Comments */}
+                <TableCell>{feedback.comments}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+};
+
+export default FeedbackTable;
