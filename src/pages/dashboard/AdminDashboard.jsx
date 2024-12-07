@@ -224,11 +224,11 @@ export default function AdminDashboard() {
       path: "/dashboard/members",
       icon: <MembersIcon />,
     },
-    // {
-    //   text: "Pending Orders",
-    //   path: "/dashboard/pending-orders",
-    //   icon: <PendingActionsIcon />,
-    // },
+    {
+      text: "Pending Orders",
+      path: "/dashboard/pending-orders-member",
+      icon: <PendingActionsIcon />,
+    },
     {
       text: "Book Order",
       path: "/dashboard/book-orders",

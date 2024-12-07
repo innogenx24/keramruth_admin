@@ -62,6 +62,7 @@ import MemberDocumenttable from "./pages/member-pages/documents/MemberDocumentta
 import MemberAnnouncementTable from "./pages/member-pages/announcement/MemberAnnouncementTable";
 import BookingOrders from "./pages/member-pages/booking-order/BookingOrders";
 import OrderDetails from "./pages/member-pages/place-orders/OrderDetails";
+import GetOrderDetailsbasedOnLowhiriracy from "./pages/member-pages/order-details/GetOrderDetailsbasedOnLowhiriracy";
 
 const RoutesConfig = () => {
   return (
@@ -95,8 +96,10 @@ const RoutesConfig = () => {
             <Route path="announcement-member" element={<MemberAnnouncementTable />} />
 
             <Route path="pending-orders" element={<PendingOrders />} />
+            <Route path="pending-orders-member" element={<GetOrderDetailsbasedOnLowhiriracy />} />
+
             
-          
+            
             <Route
               path="announcement/add-announcement"
               element={<AddAnnouncementForm />}
