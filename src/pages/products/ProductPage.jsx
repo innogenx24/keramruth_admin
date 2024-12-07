@@ -112,6 +112,7 @@ const ProductPage = () => {
     { id: 'no', label: 'No.' },
     { id: 'image', label: 'Product Image' },
     { id: 'name', label: 'Product Name' },
+    { id: 'stock_quantity', label: 'Product Stock' },
     { id: 'category_name', label: 'Category Name' },
     { id: 'productVolume', label: 'Product Volume' },
     { id: 'price', label: 'MRP' },
@@ -175,7 +176,6 @@ const ProductPage = () => {
                   style={{
                     width: "60px",
                     height: "60px",
-                    objectFit: "cover",
                   }}
                 />
               ) : (
@@ -183,6 +183,9 @@ const ProductPage = () => {
               )}
             </TableCell>
             <TableCell>{product.name}</TableCell>
+            <TableCell>{product.stock_quantity}</TableCell>
+
+            
             <TableCell>{product.category_name}</TableCell>
             <TableCell>{product.productVolume}</TableCell>
             <TableCell>{product.price}</TableCell>

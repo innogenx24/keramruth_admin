@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Collapse, Box, Typography } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Collapse,
+  Typography,
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const OrderDetails = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { users } = useSelector((state) => state.users);
+  const userId = users?.id; // Assuming the user ID is stored in the state.users object
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -13,16 +28,16 @@ const OrderDetails = () => {
       alert("Token not found. Please log in.");
       return;
     }
-  
+
+    // Fetch orders for the user
     axios
-      .get("http://88.222.245.236:3002/orders/get-order/608", {
+      .get(`http://88.222.245.236:3002/orders/get-order/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        // Sort orders by order_id in descending order
-        const sortedOrders = response.data.orders.sort((a, b) => b.id - a.id);
+        const sortedOrders = response.data.orders.sort((a, b) => b.id - a.id); // Sort orders by ID in descending order
         setOrders(sortedOrders);
         setLoading(false);
       })
@@ -30,20 +45,33 @@ const OrderDetails = () => {
         console.error("Error fetching orders:", error);
         setLoading(false);
       });
-  }, []);
-  
+  }, [userId]);
 
   // Handle row click to toggle product details
   const handleRowClick = (orderId) => {
     setSelectedOrderId(selectedOrderId === orderId ? null : orderId);
   };
 
+  const handleFeedbackClick = (order) => {
+    const firstProduct = order.OrderItems[0]; 
+  
+    navigate(`/dashboard/place-orders/feedback/${order.id}`, {
+      state: {
+        productName: firstProduct.product.name,
+        productImage: firstProduct.product.image,
+        orderId: order.id, 
+        productId: firstProduct.product.id, 
+      },
+    });
+  };
+  
+
   return (
     <div>
       <Typography variant="h4" gutterBottom>
         Order Details
       </Typography>
-      
+
       <TableContainer sx={{ maxHeight: 440, marginBottom: 2 }}>
         <Table stickyHeader aria-label="Order Details Table">
           <TableHead>
@@ -52,44 +80,68 @@ const OrderDetails = () => {
               <TableCell>Total Order Quantity</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Feedback</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={5} align="center">
                   Loading...
                 </TableCell>
               </TableRow>
             ) : (
               orders.map((order) => (
                 <React.Fragment key={order.id}>
-                  <TableRow onClick={() => handleRowClick(order.id)} style={{ cursor: "pointer" }}>
-                  <TableCell>Rs. {parseFloat(order.total_amount).toFixed(2)}</TableCell>
-                  <TableCell>
-                    {order.OrderItems.reduce(
-                      (total, item) => total + item.quantity,
-                      0
-                    ).toLocaleString()}
-                  </TableCell>                    <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell
-                    sx={{
-                      color:
-                        order.status === 'Accepted'
-                          ? 'green'
-                          : order.status === 'Cancelled'
-                          ? 'red'
-                          : order.status === 'Pending'
-                          ? 'orange'
-                          : 'black',
-                    }}
+                  <TableRow
+                    onClick={() => handleRowClick(order.id)}
+                    style={{ cursor: "pointer" }}
                   >
-                    {order.status}
-                  </TableCell>                  </TableRow>
+                    <TableCell>Rs. {parseFloat(order.total_amount).toFixed(2)}</TableCell>
+                    <TableCell>
+                      {order.OrderItems.reduce(
+                        (total, item) => total + item.quantity,
+                        0
+                      ).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(order.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color:
+                          order.status === "Accepted"
+                            ? "green"
+                            : order.status === "Cancelled"
+                            ? "red"
+                            : order.status === "Pending"
+                            ? "orange"
+                            : "black",
+                      }}
+                    >
+                      {order.status}
+                    </TableCell>
+                    <TableCell>
+                      {(order.status === "Accepted" || order.status === "Cancelled") && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleFeedbackClick(order)}
+                        >
+                          Feedback
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
 
                   {/* Product Details Collapse */}
                   <TableRow>
-                    <TableCell colSpan={4} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                    <TableCell colSpan={5} style={{ paddingBottom: 0, paddingTop: 0 }}>
                       <Collapse in={selectedOrderId === order.id} timeout="auto" unmountOnExit>
                         <Table size="small">
                           <TableHead>
@@ -108,12 +160,16 @@ const OrderDetails = () => {
                                   <img
                                     src={`http://88.222.245.236:3002/uploads/${item.product.image}`}
                                     alt={item.product.name}
-                                    style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                    style={{
+                                      width: "50px",
+                                      height: "50px",
+                                      objectFit: "cover",
+                                    }}
                                   />
                                 </TableCell>
                                 <TableCell>{item.product.name}</TableCell>
                                 <TableCell>{item.baseprice}</TableCell>
-                                <TableCell>{item.quantity} </TableCell>
+                                <TableCell>{item.quantity}</TableCell>
                                 <TableCell>{item.final_price}</TableCell>
                               </TableRow>
                             ))}

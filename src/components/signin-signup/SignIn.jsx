@@ -12,7 +12,7 @@ import './style.css';
 const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated, error } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, error } = useSelector((state) => state.auth);  // Assume user contains role info
 
   // Local state for managing password visibility, remember me, and snackbar
   const [showPassword, setShowPassword] = useState(false);
@@ -30,8 +30,8 @@ const SignIn = () => {
       password: Yup.string().required('Required')
     }),
     onSubmit: (values) => {
-      console.log(values,"valuvesssss");
-      
+      console.log(values, "valuvesssss");
+
       dispatch(signInRequest({ ...values, rememberMe }));
       setOpenSnackbar(true);
       // Store mobile_number in localStorage if "Remember Me" is checked
@@ -46,9 +46,17 @@ const SignIn = () => {
   // Handle authentication redirect
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard/products');
+      // Redirect based on the user role
+      if (user?.role === 'Admin') {
+        navigate('/dashboard/products');
+      }else if (user?.role === 'Customer') {
+        navigate('/dashboard/book-orders');
+      }
+      else{
+        navigate('/dashboard/members-products');
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user]);
 
   // Prefill mobile_number from storage if available
   useEffect(() => {

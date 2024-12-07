@@ -129,6 +129,7 @@ export default function AdminDashboard() {
   const { users } = useSelector((state) => state.users);
   // console.log("users", users);
   const [selectedImage, setSelectedImage] = useState(""); // Initialize the selectedImage state
+  const [showProfile, setShowProfile] = useState(false); // Add this line
 
   useEffect(() => {
     dispatch(fetchUsersRequest());
@@ -176,8 +177,12 @@ export default function AdminDashboard() {
     }));
   
     // Determine which menu array to use based on the role
-    const selectedMenu = loginUserRole === "Admin" ? menuItems : menuItemsUsers;
-  
+    const selectedMenu = loginUserRole === "Admin" 
+    ? menuItems 
+    : loginUserRole === "Customer" 
+    ? customermenuItems 
+    : menuItemsUsers;
+    
     // Navigate to the default route of the selected item
     const selectedItem = selectedMenu.find((item) => item.text === text);
     if (selectedItem && selectedItem.subItems) {
@@ -216,8 +221,41 @@ export default function AdminDashboard() {
   console.log("Login User Role:", loginUserRole);
 
 
+
+
+  const customermenuItems = [
+    
+    {
+      text: "Book Order",
+      path: "/dashboard/book-orders",
+      icon: <NotificationsIcon />,
+    },
+    {
+      text: "Place Orders",
+      path: "/dashboard/place-orders",
+      icon: <NotificationsIcon />,
+    },
+    {
+      text: "Announcements",
+      path: "/dashboard/announcement-member",
+      icon: <NotificationsIcon />,
+    },
+
+    {
+      text: "Documents",
+      path: "/dashboard/documents-member",
+      icon: <DescriptionIcon />,
+    },
+  ]
+
+
   ///
   const menuItemsUsers = [
+    {
+      text: "Products",
+      path: "/dashboard/members-products",
+      icon: <ProductIcon />,
+    },
     
     {
       text: "Members",
@@ -237,6 +275,11 @@ export default function AdminDashboard() {
     {
       text: "Place Orders",
       path: "/dashboard/place-orders",
+      icon: <NotificationsIcon />,
+    },
+    {
+      text: "Feedback",
+      path: "/dashboard/feedback",
       icon: <NotificationsIcon />,
     },
     {
@@ -470,7 +513,7 @@ export default function AdminDashboard() {
               variant="body1"
               sx={{ marginLeft: 2, color: "#989FA9" }}
             >
-              {users?.full_name}
+              {users?.id}
               </Typography>
             <Typography
         style={{ cursor: "pointer", marginLeft: 10, color: "#989FA9" }}
@@ -528,6 +571,17 @@ export default function AdminDashboard() {
       location={location}
     />
   ))
+) : loginUserRole === 'Customer' ? (
+  customermenuItems.map((item) => (
+    <MenuItem
+      key={item.text}
+      item={item}
+      openExpand={openExpand}
+      handleClick={handleClick}
+      handleItemClick={handleItemClick}
+      location={location}
+    />
+  ))
 ) : (
   menuItemsUsers.map((item) => (
     <MenuItem
@@ -540,6 +594,7 @@ export default function AdminDashboard() {
     />
   ))
 )}
+
 
 
 
