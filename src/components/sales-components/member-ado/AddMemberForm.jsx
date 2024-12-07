@@ -26,9 +26,11 @@ const AddMemberForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [clubs, setClubs] = useState([]);
-  const { loading, success, error, member } = useSelector((state) => state.memberPost);
+  const { loading, success, error, member } = useSelector(
+    (state) => state.memberPost
+  );
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
   // const [selectClub, setSelectedClub] = useState("500 Litres");
@@ -43,7 +45,6 @@ const AddMemberForm = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
-
   useEffect(() => {
     if (isFormSubmitted) {
       if (error) {
@@ -51,9 +52,9 @@ const AddMemberForm = () => {
         setOpenSnackbar(true);
       }
       if (success) {
-        setErrorMessage('Member added successfully!');
+        setErrorMessage("Member added successfully!");
         setOpenSnackbar(true);
-        navigate('/dashboard/members');
+        navigate("/dashboard/members");
       }
     }
   }, [error, success]);
@@ -62,69 +63,634 @@ const AddMemberForm = () => {
   // State to City mapping
   const stateDistrictMapping = {
     "Andhra Pradesh": [
-      "Anakapalli", "Anantapur", "Bapatla", "Chittoor", "East Godavari", "Eluru",
-      "Guntur", "Kakinada", "Konaseema", "Krishna", "Kurnool", "Nandyal", "Nellore",
-      "Parvathipuram Manyam", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai",
-      "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari",
-      "YSR Kadapa", "Alluri Sitharama Raju", "NTR", "Palnadu"
+      "Anakapalli",
+      "Anantapur",
+      "Bapatla",
+      "Chittoor",
+      "East Godavari",
+      "Eluru",
+      "Guntur",
+      "Kakinada",
+      "Konaseema",
+      "Krishna",
+      "Kurnool",
+      "Nandyal",
+      "Nellore",
+      "Parvathipuram Manyam",
+      "Prakasam",
+      "Sri Potti Sriramulu Nellore",
+      "Sri Sathya Sai",
+      "Srikakulam",
+      "Tirupati",
+      "Visakhapatnam",
+      "Vizianagaram",
+      "West Godavari",
+      "YSR Kadapa",
+      "Alluri Sitharama Raju",
+      "NTR",
+      "Palnadu",
     ],
     "Arunachal Pradesh": [
-      "Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada",
-      "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare",
-      "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"
+      "Anjaw",
+      "Changlang",
+      "Dibang Valley",
+      "East Kameng",
+      "East Siang",
+      "Kamle",
+      "Kra Daadi",
+      "Kurung Kumey",
+      "Lepa Rada",
+      "Lohit",
+      "Longding",
+      "Lower Dibang Valley",
+      "Lower Siang",
+      "Lower Subansiri",
+      "Namsai",
+      "Pakke Kessang",
+      "Papum Pare",
+      "Shi-Yomi",
+      "Siang",
+      "Tawang",
+      "Tirap",
+      "Upper Siang",
+      "Upper Subansiri",
+      "West Kameng",
+      "West Siang",
     ],
-    "Assam": [
-      "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang",
-      "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat",
-      "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong",
-      "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari",
-      "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri",
-      "West Karbi Anglong"
+    Assam: [
+      "Baksa",
+      "Barpeta",
+      "Biswanath",
+      "Bongaigaon",
+      "Cachar",
+      "Charaideo",
+      "Chirang",
+      "Darrang",
+      "Dhemaji",
+      "Dhubri",
+      "Dibrugarh",
+      "Dima Hasao",
+      "Goalpara",
+      "Golaghat",
+      "Hailakandi",
+      "Hojai",
+      "Jorhat",
+      "Kamrup",
+      "Kamrup Metropolitan",
+      "Karbi Anglong",
+      "Karimganj",
+      "Kokrajhar",
+      "Lakhimpur",
+      "Majuli",
+      "Morigaon",
+      "Nagaon",
+      "Nalbari",
+      "Sivasagar",
+      "Sonitpur",
+      "South Salmara-Mankachar",
+      "Tinsukia",
+      "Udalguri",
+      "West Karbi Anglong",
     ],
-    "Bihar": [
-      "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar",
-      "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur",
-      "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger",
-      "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur",
-      "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"
+    Bihar: [
+      "Araria",
+      "Arwal",
+      "Aurangabad",
+      "Banka",
+      "Begusarai",
+      "Bhagalpur",
+      "Bhojpur",
+      "Buxar",
+      "Darbhanga",
+      "East Champaran",
+      "Gaya",
+      "Gopalganj",
+      "Jamui",
+      "Jehanabad",
+      "Kaimur",
+      "Katihar",
+      "Khagaria",
+      "Kishanganj",
+      "Lakhisarai",
+      "Madhepura",
+      "Madhubani",
+      "Munger",
+      "Muzaffarpur",
+      "Nalanda",
+      "Nawada",
+      "Patna",
+      "Purnia",
+      "Rohtas",
+      "Saharsa",
+      "Samastipur",
+      "Saran",
+      "Sheikhpura",
+      "Sheohar",
+      "Sitamarhi",
+      "Siwan",
+      "Supaul",
+      "Vaishali",
+      "West Champaran",
     ],
-    "Chhattisgarh": [
-      "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur",
-      "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa",
-      "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Korea", "Mahasamund", "Mungeli",
-      "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"
+    Chhattisgarh: [
+      "Balod",
+      "Baloda Bazar",
+      "Balrampur",
+      "Bastar",
+      "Bemetara",
+      "Bijapur",
+      "Bilaspur",
+      "Dantewada",
+      "Dhamtari",
+      "Durg",
+      "Gariaband",
+      "Gaurela-Pendra-Marwahi",
+      "Janjgir-Champa",
+      "Jashpur",
+      "Kabirdham",
+      "Kanker",
+      "Kondagaon",
+      "Korba",
+      "Korea",
+      "Mahasamund",
+      "Mungeli",
+      "Narayanpur",
+      "Raigarh",
+      "Raipur",
+      "Rajnandgaon",
+      "Sukma",
+      "Surajpur",
+      "Surguja",
     ],
-    "Goa": ["North Goa", "South Goa", "Panaji", "Vasco da Gama", "Margao"],
-    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Junagadh", "Kheda", "Mehsana", "Patan", "Sabarkantha", "Anand", "Banaskantha", "Dahod", "Narmada", "Porbandar", "Chhota Udepur", "Gir Somnath", "Mahisagar", "Morbi", "Navajo", "Surendranagar", "Tapi", "Valsad"],
-    "Haryana": ["Chandigarh", "Faridabad", "Gurugram", "Ambala", "Hisar", "Karnal", "Panipat", "Rewari", "Sonipat", "Yamunanagar", "Bhiwani", "Rohtak", "Sirsa", "Jhajjar", "Mahendragarh", "Nuh", "Panchkula", "Fatehabad", "Palwal", "Kaithal"],
-    "Himachal Pradesh": ["Shimla", "Manali", "Kullu", "Dharamsala", "Kangra", "Solan", "Mandi", "Bilaspur", "Hamirpur", "Una", "Sirmaur", "Chamba", "Kullu", "Lahaul and Spiti", "Una"],
-    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Hazaribagh", "Bokaro", "Deoghar", "Giridih", "Dumka", "Khunti", "Pakur", "Sahebganj", "Ramgarh", "Godda", "Latehar", "Palamu", "Simdega", "Chatra", "Garhwa", "Koderma", "Saraikela Kharsawan"],
-    "Karnataka": ["Bangalore", "Mysuru", "Mangalore", "Hubli", "Belgaum", "Bidar", "Chikkaballapur", "Chikkamagaluru", "Davanagere", "Hassan", "Hubli", "Kolar", "Koppal", "Mandya", "Raichur", "Ramanagara", "Shivamogga", "Tumkur", "Udupi", "Ballari", "Chitradurga", "Dakshina Kannada", "Gadag", "Haveri", "Kodagu", "Bagalkot", "Yadgir"],
-    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Kottayam", "Alappuzha", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Malappuram", "Palakkad", "Pathanamthitta", "Pernakulam", "Thrissur", "Wayanad"],
-    "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Ujjain", "Jabalpur", "Sagar", "Rewa", "Satna", "Dewas", "Ratlam", "Shivpuri", "Sehore", "Shahdol", "Chhindwara", "Mandla", "Tikamgarh", "Panna", "Khargone", "Burhanpur", "Neemuch", "Mandsaur", "Balaghat", "Betul", "Hoshangabad", "Khandwa", "Alirajpur", "Anuppur", "Ashoknagar", "Chhatarpur", "Dindori", "Harda", "Jhabua", "Katni", "Narsinghpur", "Seoni", "Shivpuri", "Singrauli", "Umaria"],
-    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Thane", "Solapur", "Sangli", "Ratnagiri", "Jalgaon", "Satara", "Kolhapur", "Latur", "Nanded", "Amravati", "Akola", "Yavatmal", "Buldhana", "Hingoli", "Wardha", "Washim", "Chandrapur", "Gadchiroli", "Bhandara", "Sindhudurg", "Palghar"],
-    "Manipur": ["Imphal", "Thoubal", "Kangpokpi", "Bishnupur", "Churachandpur", "Senapati", "Ukhrul", "Tamenglong", "Noney", "Peren"],
-    "Meghalaya": ["East Khasi Hills", "West Khasi Hills", "Ri-Bhoi", "West Jaintia Hills", "East Jaintia Hills", "South Garo Hills", "North Garo Hills", "West Garo Hills"],
-    "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Kolasib", "Mamit", "Serchhip", "Lawngtlai", "Hnahthial", "Siaha"],
-    "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Mon", "Phek", "Tuensang", "Zunheboto"],
-    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Balasore", "Baripada", "Bargarh", "Jagatsinghpur", "Jajpur", "Kendrapara", "Khurda", "Koraput", "Nayagarh", "Puri", "Sambalpur", "Sundargarh", "Angul", "Ganjam", "Kalahandi", "Dhenkanal", "Deogarh", "Nuapada", "Malkangiri", "Rayagada", "Mayurbhanj"],
-    "Punjab": ["Chandigarh", "Amritsar", "Ludhiana", "Jalandhar", "Patiala", "Bathinda", "Firozpur", "Hoshiarpur", "Rupnagar", "Moga", "Faridkot", "Barnala", "Sangrur", "Mansa", "Muktsar", "Kapurthala", "Tarn Taran", "Shaheed Bhagat Singh Nagar", "Fatehgarh Sahib", "Sri Muktsar Sahib"],
-    "Rajasthan": ["Jaipur", "Udaipur", "Jodhpur", "Ajmer", "Kota", "Alwar", "Bikaner", "Bundi", "Churu", "Dausa", "Hanumangarh", "Jhunjhunu", "Jhalawar", "Nagaur", "Pali", "Rajsamand", "Sikar", "Sirohi", "Tonk", "Barmer", "Banswara", "Baran", "Bhilwara", "Dholpur", "Dungarpur", "Karauli", "Pali", "Pratapgarh", "Rajasmand", "Sawai Madhopur", "Shri Ganganagar"],
-    "Sikkim": ["Gangtok", "Namchi", "Pakyong", "Mangan", "Rangpo"],
-    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Trichy", "Salem", "Tirunelveli", "Erode", "Vellore", "Tirupur", "Dharmapuri", "Cuddalore", "Kanchipuram", "Nagapattinam", "Karur", "Pudukkottai", "Thanjavur", "Villupuram", "Dindigul", "Kanyakumari", "Ramanathapuram", "Thoothukudi", "Virudhunagar", "Sivaganga", "Krishnagiri", "Ariyalur", "Perambalur", "Tiruvarur"],
-    "Telangana": ["Hyderabad", "Warangal", "Khammam", "Adilabad", "Nalgonda", "Karimnagar", "Mahabubnagar", "Nizamabad", "Medak", "Khammam", "Rangareddy", "Siddipet", "Jangaon", "Peddapalli", "Suryapet", "Warangal Rural", "Warangal Urban", "Mancherial", "Bhupalpally", "Mulugu", "Jayashankar", "Jogulamba Gadwal"],
-    "Tripura": ["Agartala", "Udaipur", "Belonia", "Kailashahar", "Dharmanagar", "Ambassa", "Sabroom", "Khowai", "Teliamura", "Jolaibari"],
-    "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Allahabad", "Gorakhpur", "Noida", "Meerut", "Mathura", "Firozabad", "Jhansi", "Ghaziabad", "Aligarh", "Bareilly", "Shahjahanpur", "Rampur", "Bijnor", "Moradabad", "Muzaffarnagar", "Saharanpur", "Jaunpur", "Sitapur", "Etawah", "Mau", "Azamgarh", "Ballia"],
-    "Uttarakhand": ["Dehradun", "Haridwar", "Nainital", "Rishikesh", "Almora", "Bageshwar", "Chamoli", "Champawat", "Haldwani", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
-    "West Bengal": ["Kolkata", "Darjeeling", "Siliguri", "Asansol", "Howrah", "Bardhaman", "Malda", "Purulia", "Hooghly", "North 24 Parganas", "South 24 Parganas", "Maldah", "Birbhum", "Jalpaiguri", "Murshidabad", "Nadia", "Bankura", "Cooch Behar", "Purba Medinipur", "Paschim Medinipur"],
+    Goa: ["North Goa", "South Goa", "Panaji", "Vasco da Gama", "Margao"],
+    Gujarat: [
+      "Ahmedabad",
+      "Surat",
+      "Vadodara",
+      "Rajkot",
+      "Bhavnagar",
+      "Junagadh",
+      "Kheda",
+      "Mehsana",
+      "Patan",
+      "Sabarkantha",
+      "Anand",
+      "Banaskantha",
+      "Dahod",
+      "Narmada",
+      "Porbandar",
+      "Chhota Udepur",
+      "Gir Somnath",
+      "Mahisagar",
+      "Morbi",
+      "Navajo",
+      "Surendranagar",
+      "Tapi",
+      "Valsad",
+    ],
+    Haryana: [
+      "Chandigarh",
+      "Faridabad",
+      "Gurugram",
+      "Ambala",
+      "Hisar",
+      "Karnal",
+      "Panipat",
+      "Rewari",
+      "Sonipat",
+      "Yamunanagar",
+      "Bhiwani",
+      "Rohtak",
+      "Sirsa",
+      "Jhajjar",
+      "Mahendragarh",
+      "Nuh",
+      "Panchkula",
+      "Fatehabad",
+      "Palwal",
+      "Kaithal",
+    ],
+    "Himachal Pradesh": [
+      "Shimla",
+      "Manali",
+      "Kullu",
+      "Dharamsala",
+      "Kangra",
+      "Solan",
+      "Mandi",
+      "Bilaspur",
+      "Hamirpur",
+      "Una",
+      "Sirmaur",
+      "Chamba",
+      "Kullu",
+      "Lahaul and Spiti",
+      "Una",
+    ],
+    Jharkhand: [
+      "Ranchi",
+      "Jamshedpur",
+      "Dhanbad",
+      "Hazaribagh",
+      "Bokaro",
+      "Deoghar",
+      "Giridih",
+      "Dumka",
+      "Khunti",
+      "Pakur",
+      "Sahebganj",
+      "Ramgarh",
+      "Godda",
+      "Latehar",
+      "Palamu",
+      "Simdega",
+      "Chatra",
+      "Garhwa",
+      "Koderma",
+      "Saraikela Kharsawan",
+    ],
+    Karnataka: [
+      "Bangalore",
+      "Mysuru",
+      "Mangalore",
+      "Hubli",
+      "Belgaum",
+      "Bidar",
+      "Chikkaballapur",
+      "Chikkamagaluru",
+      "Davanagere",
+      "Hassan",
+      "Hubli",
+      "Kolar",
+      "Koppal",
+      "Mandya",
+      "Raichur",
+      "Ramanagara",
+      "Shivamogga",
+      "Tumkur",
+      "Udupi",
+      "Ballari",
+      "Chitradurga",
+      "Dakshina Kannada",
+      "Gadag",
+      "Haveri",
+      "Kodagu",
+      "Bagalkot",
+      "Yadgir",
+    ],
+    Kerala: [
+      "Thiruvananthapuram",
+      "Kochi",
+      "Kozhikode",
+      "Kottayam",
+      "Alappuzha",
+      "Idukki",
+      "Kannur",
+      "Kasaragod",
+      "Kollam",
+      "Kottayam",
+      "Malappuram",
+      "Palakkad",
+      "Pathanamthitta",
+      "Pernakulam",
+      "Thrissur",
+      "Wayanad",
+    ],
+    "Madhya Pradesh": [
+      "Bhopal",
+      "Indore",
+      "Gwalior",
+      "Ujjain",
+      "Jabalpur",
+      "Sagar",
+      "Rewa",
+      "Satna",
+      "Dewas",
+      "Ratlam",
+      "Shivpuri",
+      "Sehore",
+      "Shahdol",
+      "Chhindwara",
+      "Mandla",
+      "Tikamgarh",
+      "Panna",
+      "Khargone",
+      "Burhanpur",
+      "Neemuch",
+      "Mandsaur",
+      "Balaghat",
+      "Betul",
+      "Hoshangabad",
+      "Khandwa",
+      "Alirajpur",
+      "Anuppur",
+      "Ashoknagar",
+      "Chhatarpur",
+      "Dindori",
+      "Harda",
+      "Jhabua",
+      "Katni",
+      "Narsinghpur",
+      "Seoni",
+      "Shivpuri",
+      "Singrauli",
+      "Umaria",
+    ],
+    Maharashtra: [
+      "Mumbai",
+      "Pune",
+      "Nagpur",
+      "Nashik",
+      "Aurangabad",
+      "Thane",
+      "Solapur",
+      "Sangli",
+      "Ratnagiri",
+      "Jalgaon",
+      "Satara",
+      "Kolhapur",
+      "Latur",
+      "Nanded",
+      "Amravati",
+      "Akola",
+      "Yavatmal",
+      "Buldhana",
+      "Hingoli",
+      "Wardha",
+      "Washim",
+      "Chandrapur",
+      "Gadchiroli",
+      "Bhandara",
+      "Sindhudurg",
+      "Palghar",
+    ],
+    Manipur: [
+      "Imphal",
+      "Thoubal",
+      "Kangpokpi",
+      "Bishnupur",
+      "Churachandpur",
+      "Senapati",
+      "Ukhrul",
+      "Tamenglong",
+      "Noney",
+      "Peren",
+    ],
+    Meghalaya: [
+      "East Khasi Hills",
+      "West Khasi Hills",
+      "Ri-Bhoi",
+      "West Jaintia Hills",
+      "East Jaintia Hills",
+      "South Garo Hills",
+      "North Garo Hills",
+      "West Garo Hills",
+    ],
+    Mizoram: [
+      "Aizawl",
+      "Lunglei",
+      "Champhai",
+      "Kolasib",
+      "Mamit",
+      "Serchhip",
+      "Lawngtlai",
+      "Hnahthial",
+      "Siaha",
+    ],
+    Nagaland: [
+      "Kohima",
+      "Dimapur",
+      "Mokokchung",
+      "Mon",
+      "Phek",
+      "Tuensang",
+      "Zunheboto",
+    ],
+    Odisha: [
+      "Bhubaneswar",
+      "Cuttack",
+      "Rourkela",
+      "Berhampur",
+      "Balasore",
+      "Baripada",
+      "Bargarh",
+      "Jagatsinghpur",
+      "Jajpur",
+      "Kendrapara",
+      "Khurda",
+      "Koraput",
+      "Nayagarh",
+      "Puri",
+      "Sambalpur",
+      "Sundargarh",
+      "Angul",
+      "Ganjam",
+      "Kalahandi",
+      "Dhenkanal",
+      "Deogarh",
+      "Nuapada",
+      "Malkangiri",
+      "Rayagada",
+      "Mayurbhanj",
+    ],
+    Punjab: [
+      "Chandigarh",
+      "Amritsar",
+      "Ludhiana",
+      "Jalandhar",
+      "Patiala",
+      "Bathinda",
+      "Firozpur",
+      "Hoshiarpur",
+      "Rupnagar",
+      "Moga",
+      "Faridkot",
+      "Barnala",
+      "Sangrur",
+      "Mansa",
+      "Muktsar",
+      "Kapurthala",
+      "Tarn Taran",
+      "Shaheed Bhagat Singh Nagar",
+      "Fatehgarh Sahib",
+      "Sri Muktsar Sahib",
+    ],
+    Rajasthan: [
+      "Jaipur",
+      "Udaipur",
+      "Jodhpur",
+      "Ajmer",
+      "Kota",
+      "Alwar",
+      "Bikaner",
+      "Bundi",
+      "Churu",
+      "Dausa",
+      "Hanumangarh",
+      "Jhunjhunu",
+      "Jhalawar",
+      "Nagaur",
+      "Pali",
+      "Rajsamand",
+      "Sikar",
+      "Sirohi",
+      "Tonk",
+      "Barmer",
+      "Banswara",
+      "Baran",
+      "Bhilwara",
+      "Dholpur",
+      "Dungarpur",
+      "Karauli",
+      "Pali",
+      "Pratapgarh",
+      "Rajasmand",
+      "Sawai Madhopur",
+      "Shri Ganganagar",
+    ],
+    Sikkim: ["Gangtok", "Namchi", "Pakyong", "Mangan", "Rangpo"],
+    "Tamil Nadu": [
+      "Chennai",
+      "Coimbatore",
+      "Madurai",
+      "Trichy",
+      "Salem",
+      "Tirunelveli",
+      "Erode",
+      "Vellore",
+      "Tirupur",
+      "Dharmapuri",
+      "Cuddalore",
+      "Kanchipuram",
+      "Nagapattinam",
+      "Karur",
+      "Pudukkottai",
+      "Thanjavur",
+      "Villupuram",
+      "Dindigul",
+      "Kanyakumari",
+      "Ramanathapuram",
+      "Thoothukudi",
+      "Virudhunagar",
+      "Sivaganga",
+      "Krishnagiri",
+      "Ariyalur",
+      "Perambalur",
+      "Tiruvarur",
+    ],
+    Telangana: [
+      "Hyderabad",
+      "Warangal",
+      "Khammam",
+      "Adilabad",
+      "Nalgonda",
+      "Karimnagar",
+      "Mahabubnagar",
+      "Nizamabad",
+      "Medak",
+      "Khammam",
+      "Rangareddy",
+      "Siddipet",
+      "Jangaon",
+      "Peddapalli",
+      "Suryapet",
+      "Warangal Rural",
+      "Warangal Urban",
+      "Mancherial",
+      "Bhupalpally",
+      "Mulugu",
+      "Jayashankar",
+      "Jogulamba Gadwal",
+    ],
+    Tripura: [
+      "Agartala",
+      "Udaipur",
+      "Belonia",
+      "Kailashahar",
+      "Dharmanagar",
+      "Ambassa",
+      "Sabroom",
+      "Khowai",
+      "Teliamura",
+      "Jolaibari",
+    ],
+    "Uttar Pradesh": [
+      "Lucknow",
+      "Kanpur",
+      "Agra",
+      "Varanasi",
+      "Allahabad",
+      "Gorakhpur",
+      "Noida",
+      "Meerut",
+      "Mathura",
+      "Firozabad",
+      "Jhansi",
+      "Ghaziabad",
+      "Aligarh",
+      "Bareilly",
+      "Shahjahanpur",
+      "Rampur",
+      "Bijnor",
+      "Moradabad",
+      "Muzaffarnagar",
+      "Saharanpur",
+      "Jaunpur",
+      "Sitapur",
+      "Etawah",
+      "Mau",
+      "Azamgarh",
+      "Ballia",
+    ],
+    Uttarakhand: [
+      "Dehradun",
+      "Haridwar",
+      "Nainital",
+      "Rishikesh",
+      "Almora",
+      "Bageshwar",
+      "Chamoli",
+      "Champawat",
+      "Haldwani",
+      "Pauri Garhwal",
+      "Pithoragarh",
+      "Rudraprayag",
+      "Tehri Garhwal",
+      "Udham Singh Nagar",
+      "Uttarkashi",
+    ],
+    "West Bengal": [
+      "Kolkata",
+      "Darjeeling",
+      "Siliguri",
+      "Asansol",
+      "Howrah",
+      "Bardhaman",
+      "Malda",
+      "Purulia",
+      "Hooghly",
+      "North 24 Parganas",
+      "South 24 Parganas",
+      "Maldah",
+      "Birbhum",
+      "Jalpaiguri",
+      "Murshidabad",
+      "Nadia",
+      "Bankura",
+      "Cooch Behar",
+      "Purba Medinipur",
+      "Paschim Medinipur",
+    ],
     "Andaman and Nicobar Islands": ["Port Blair"],
-    "Chandigarh": ["Chandigarh"],
+    Chandigarh: ["Chandigarh"],
     "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
-    "Lakshadweep": ["Kavaratti"],
-    "Delhi": ["New Delhi", "Old Delhi", "Dwarka", "Rohini"],
-    "Puducherry": ["Puducherry", "Auroville", "Mahe"],
+    Lakshadweep: ["Kavaratti"],
+    Delhi: ["New Delhi", "Old Delhi", "Dwarka", "Rohini"],
+    Puducherry: ["Puducherry", "Auroville", "Mahe"],
   };
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const role = user?.role;
 
   const fetchClubs = async () => {
     try {
@@ -165,13 +731,13 @@ const AddMemberForm = () => {
         setErrorMessage("Only JPEG, JPG, or PNG images are allowed.");
         return; // Stop further processing if the file type is not allowed
       }
-  
+
       // Check file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         setErrorMessage("File size must be less than 2MB.");
         return; // Stop further processing if the file size exceeds 2MB
       }
-  
+
       // If validation passes, set the selected file and preview
       setSelectedFile(file);
       formik.setFieldValue("image", file); // Set the image in Formik field
@@ -180,7 +746,7 @@ const AddMemberForm = () => {
       setOpenSnackbar(false); // Hide the snackbar error
     }
   };
-  
+
   // Formik setup
   const formik = useFormik({
     initialValues: {
@@ -217,11 +783,10 @@ const AddMemberForm = () => {
       city: Yup.string().required("Required"),
       street_name: Yup.string().required("Required"),
       building_no_name: Yup.string().required("Required"),
-      club_name: Yup.string().required("Please select a club"),
+      club_name: Yup.string(),
       // superior_id: Yup.string().required("Please select aany one  superior_id"),
     }),
     onSubmit: (values, { resetForm }) => {
-
       const formData = new FormData();
       formData.append("role_id", values.role_id);
       formData.append("full_name", values.full_name);
@@ -238,9 +803,9 @@ const AddMemberForm = () => {
       formData.append("club_name", values.club_name);
       formData.append("image", values.image);
       // formData.append("superior_id", values.superior_id);
-      const finalSuperiorId = selectedD || selectedSd || selectedMd || selectedAdo || selectedAdmin;
+      const finalSuperiorId =
+        selectedD || selectedSd || selectedMd || selectedAdo || selectedAdmin;
       formData.append("superior_id", finalSuperiorId);
-     
 
       setIsFormSubmitted(true);
 
@@ -262,13 +827,46 @@ const AddMemberForm = () => {
     setSelectedClub(event.target.value);
   };
 
+  const roleOptions = (() => {
+    switch (role) {
+      case "Admin":
+        return [
+          { label: "Area Development Officer (ADO)", value: "2" },
+          { label: "Master Distributor (MD)", value: "3" },
+          { label: "Super Distributor (SD)", value: "4" },
+          { label: "Distributor (D)", value: "5" },
+          { label: "Customer (C)", value: "6" },
+        ];
+      case "Area Development Officer":
+        return [
+          { label: "Master Distributor (MD)", value: "3" },
+          { label: "Super Distributor (SD)", value: "4" },
+          { label: "Distributor (D)", value: "5" },
+          { label: "Customer (C)", value: "6" },
+        ];
+      case "Master Distributor":
+        return [
+          { label: "Super Distributor (SD)", value: "4" },
+          { label: "Distributor (D)", value: "5" },
+          { label: "Customer (C)", value: "6" },
+        ];
+      case "Super Distributor":
+        return [
+          { label: "Distributor (D)", value: "5" },
+          { label: "Customer (C)", value: "6" },
+        ];
+      case "Distributor":
+        return [{ label: "Customer (C)", value: "6" }];
+      default:
+        return [];
+    }
+  })();
+
   // Handle role change
   const handleRoleChange = (event) => {
     formik.setFieldValue("role_id", event.target.value);
     setSelectedRole(event.target.value);
   };
-
-
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -284,12 +882,12 @@ const AddMemberForm = () => {
   const [selectedSd, setSelectedSd] = useState(null);
   const [selectedD, setSelectedD] = useState(null);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
-
+  // console.log("selectedAdmin", selectedAdmin);
 
   useEffect(() => {
     if (selectedRole) {
       // Reset dependent states when role changes
-      setSelectedAdmin(null)
+      setSelectedAdmin(null);
       setSelectedAdo(null);
       setSelectedMd(null);
       setSelectedSd(null);
@@ -300,7 +898,9 @@ const AddMemberForm = () => {
   useEffect(() => {
     if (selectedAdo && ["3", "4", "5", "6"].includes(selectedRole)) {
       // Fetch MDs based on selected ADO
-      fetch(`http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${selectedAdo}&roleId=3`)
+      fetch(
+        `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${selectedAdo}&roleId=3`
+      )
         .then((res) => res.json())
         .then((data) => setMds(data))
         .catch((err) => console.error("Error fetching MDs:", err));
@@ -310,7 +910,9 @@ const AddMemberForm = () => {
   useEffect(() => {
     if (selectedMd && ["4", "5", "6"].includes(selectedRole)) {
       // Fetch SDs based on selected MD
-      fetch(`http://88.222.245.236:3002/directMembers/users-by-md?mdId=${selectedMd}&roleId=4`)
+      fetch(
+        `http://88.222.245.236:3002/directMembers/users-by-md?mdId=${selectedMd}&roleId=4`
+      )
         .then((res) => res.json())
         .then((data) => setSds(data))
         .catch((err) => console.error("Error fetching SDs:", err));
@@ -320,7 +922,9 @@ const AddMemberForm = () => {
   useEffect(() => {
     if (selectedSd && ["5", "6"].includes(selectedRole)) {
       // Fetch Ds based on selected SD
-      fetch(`http://88.222.245.236:3002/directMembers/users-by-sd?sdId=${selectedSd}&roleId=5`)
+      fetch(
+        `http://88.222.245.236:3002/directMembers/users-by-sd?sdId=${selectedSd}&roleId=5`
+      )
         .then((res) => res.json())
         .then((data) => setDs(data))
         .catch((err) => console.error("Error fetching Ds:", err));
@@ -364,7 +968,6 @@ const AddMemberForm = () => {
     setSelectedD(dId);
   };
 
-
   return (
     <Box p={3}>
       <form onSubmit={formik.handleSubmit}>
@@ -383,49 +986,59 @@ const AddMemberForm = () => {
                     value={selectedRole}
                     onChange={handleRoleChange}
                   >
+                    {/* Default Option */}
                     <MenuItem value="">Select Role</MenuItem>
-                    <MenuItem value="2">Area Development Officer(ADO)</MenuItem>
-                    <MenuItem value="3">Master Distributor(MD)</MenuItem>
-                    <MenuItem value="4">Super Distributor(SD)</MenuItem>
-                    <MenuItem value="5">Distributors</MenuItem>
-                    <MenuItem value="6">Customers</MenuItem>
+
+                    {/* Dynamic Role Options */}
+                    {roleOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </Grid>
                 <Grid item xs={12}>
-  <InputLabel>Add Image*</InputLabel>
-  <IconButton color="primary" component="label">
-    <AddPhotoAlternateIcon />
-    <input
-      type="file"
-      hidden
-      accept="image/*"
-      onChange={handleImageChange}
-    />
-  </IconButton>
-  {selectedFile && (
-    <Typography variant="body2" sx={{ marginTop: "10px" }}>
-      Selected file: {selectedFile.name}
-    </Typography>
-  )}
-  {/* Preview the uploaded image */}
-  {imagePreview && (
-    <Box mt={2}>
-      <img
-        src={imagePreview}
-        alt="Preview"
-        style={{ width: "100%", maxWidth: "300px", height: "auto", borderRadius: "8px" }}
-      />
-    </Box>
-  )}
-  {/* Display error message below image upload */}
-  {errorMessage && (
-    <Typography color="error" variant="body2" sx={{ marginTop: "10px" }}>
-      {errorMessage}
-    </Typography>
-  )}
-</Grid>
-
-
+                  <InputLabel>Add Image*</InputLabel>
+                  <IconButton color="primary" component="label">
+                    <AddPhotoAlternateIcon />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </IconButton>
+                  {selectedFile && (
+                    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+                      Selected file: {selectedFile.name}
+                    </Typography>
+                  )}
+                  {/* Preview the uploaded image */}
+                  {imagePreview && (
+                    <Box mt={2}>
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        style={{
+                          width: "100%",
+                          maxWidth: "300px",
+                          height: "auto",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </Box>
+                  )}
+                  {/* Display error message below image upload */}
+                  {errorMessage && (
+                    <Typography
+                      color="error"
+                      variant="body2"
+                      sx={{ marginTop: "10px" }}
+                    >
+                      {errorMessage}
+                    </Typography>
+                  )}
+                </Grid>
 
                 <Grid item xs={12}>
                   <TextField
@@ -471,7 +1084,7 @@ const AddMemberForm = () => {
                       formik.touched.mobile_number &&
                       formik.errors.mobile_number
                     }
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                   />
                 </Grid>
 
@@ -492,8 +1105,12 @@ const AddMemberForm = () => {
                     label="Password*"
                     type={showPassword ? "text" : "password"} // Toggle type based on state
                     {...formik.getFieldProps("password")}
-                    error={formik.touched.password && Boolean(formik.errors.password)}
-                    helperText={formik.touched.password && formik.errors.password}
+                    error={
+                      formik.touched.password && Boolean(formik.errors.password)
+                    }
+                    helperText={
+                      formik.touched.password && formik.errors.password
+                    }
                     InputProps={{
                       // Add an icon button to toggle visibility
                       endAdornment: (
@@ -542,7 +1159,9 @@ const AddMemberForm = () => {
                       readOnly: true, // Make the field read-only
                     }}
                     {...formik.getFieldProps("country")}
-                    error={formik.touched.country && Boolean(formik.errors.country)}
+                    error={
+                      formik.touched.country && Boolean(formik.errors.country)
+                    }
                     helperText={formik.touched.country && formik.errors.country}
                   />
                 </Grid>
@@ -574,8 +1193,12 @@ const AddMemberForm = () => {
                     select
                     value={formik.values.district}
                     onChange={formik.handleChange}
-                    error={formik.touched.district && Boolean(formik.errors.district)}
-                    helperText={formik.touched.district && formik.errors.district}
+                    error={
+                      formik.touched.district && Boolean(formik.errors.district)
+                    }
+                    helperText={
+                      formik.touched.district && formik.errors.district
+                    }
                   >
                     {districts.map((district) => (
                       <MenuItem key={district} value={district}>
@@ -634,30 +1257,34 @@ const AddMemberForm = () => {
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Club & Superior Distributors</InputLabel>
               <Grid container spacing={2}>
-              {selectedRole !== "6" && (
-                <Grid item xs={12}>
-                  <InputLabel>Club*</InputLabel>
-                  <Select
-                    fullWidth
-                    name="club_name"
-                    value={formik.values.club_name}
-                    onChange={(e) => {
-                      formik.setFieldValue("club_name", e.target.value); // Set club_name directly
-                    }}
-                    error={Boolean(formik.touched.club_name && formik.errors.club_name)}
-                  >
-                    <MenuItem value="">Select Club</MenuItem>
-                    {clubs.map((club) => (
-                      <MenuItem key={club.id} value={club.club_name}>
-                        {club.club_name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {formik.touched.club_name && formik.errors.club_name && (
-                    <Typography color="error">{formik.errors.club_name}</Typography>
-                  )}
-                </Grid>
-              )}
+                {selectedRole !== "6" && (
+                  <Grid item xs={12}>
+                    <InputLabel>Club*</InputLabel>
+                    <Select
+                      fullWidth
+                      name="club_name"
+                      value={formik.values.club_name}
+                      onChange={(e) => {
+                        formik.setFieldValue("club_name", e.target.value); // Set club_name directly
+                      }}
+                      error={Boolean(
+                        formik.touched.club_name && formik.errors.club_name
+                      )}
+                    >
+                      <MenuItem value="">Select Club</MenuItem>
+                      {clubs.map((club) => (
+                        <MenuItem key={club.id} value={club.club_name}>
+                          {club.club_name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {formik.touched.club_name && formik.errors.club_name && (
+                      <Typography color="error">
+                        {formik.errors.club_name}
+                      </Typography>
+                    )}
+                  </Grid>
+                )}
 
                 {selectedRole === "2" ? (
                   <Grid item xs={12}>
@@ -679,7 +1306,10 @@ const AddMemberForm = () => {
                   </Grid>
                 ) : null}
 
-                {selectedRole === "3" || selectedRole === "4" || selectedRole === "5" || selectedRole === "6" ? (
+                {selectedRole === "3" ||
+                selectedRole === "4" ||
+                selectedRole === "5" ||
+                selectedRole === "6" ? (
                   <Grid item xs={12}>
                     <InputLabel>Area Development Officer (ADO)</InputLabel>
                     <Select
@@ -699,8 +1329,9 @@ const AddMemberForm = () => {
                   </Grid>
                 ) : null}
 
-
-                {selectedRole === "4" || selectedRole === "5" || selectedRole === "6" ? (
+                {selectedRole === "4" ||
+                selectedRole === "5" ||
+                selectedRole === "6" ? (
                   <Grid item xs={12}>
                     <InputLabel>Master Distributor (MD)</InputLabel>
                     <Select
@@ -719,7 +1350,6 @@ const AddMemberForm = () => {
                       ) : (
                         <MenuItem disabled>No MDs available</MenuItem>
                       )}
-
                     </Select>
                   </Grid>
                 ) : null}
@@ -769,9 +1399,6 @@ const AddMemberForm = () => {
                     </Select>
                   </Grid>
                 ) : null}
-
-
-
               </Grid>
             </Box>
 
@@ -783,13 +1410,10 @@ const AddMemberForm = () => {
                 size="large"
                 type="submit"
                 fullWidth
-
                 sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
-
               >
                 Save
               </Button>
-
             </Box>
           </Grid>
         </Grid>
@@ -798,12 +1422,16 @@ const AddMemberForm = () => {
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
           onClose={() => setOpenSnackbar(false)}
           severity={error ? "error" : "success"}
-          sx={{ width: "100%", background: error ? 'red' : 'green', color: 'white' }}
+          sx={{
+            width: "100%",
+            background: error ? "red" : "green",
+            color: "white",
+          }}
         >
           {errorMessage || "An error occurred while updating member data."}
         </Alert>
