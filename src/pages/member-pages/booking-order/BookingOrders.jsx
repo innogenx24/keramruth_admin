@@ -129,7 +129,7 @@ const BookingOrders = () => {
               <TableRow>
                 <TableCell>Image</TableCell>
                 <TableCell>Product Name</TableCell>
-                <TableCell>Price (super1)</TableCell>
+                <TableCell>Price</TableCell>
                 <TableCell>Quantity</TableCell>
               </TableRow>
             </TableHead>

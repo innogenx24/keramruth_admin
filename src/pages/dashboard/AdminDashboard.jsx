@@ -129,6 +129,7 @@ export default function AdminDashboard() {
   const { users } = useSelector((state) => state.users);
   // console.log("users", users);
   const [selectedImage, setSelectedImage] = useState(""); // Initialize the selectedImage state
+  const [showProfile, setShowProfile] = useState(false); // Add this line
 
   useEffect(() => {
     dispatch(fetchUsersRequest());
@@ -218,6 +219,11 @@ export default function AdminDashboard() {
 
   ///
   const menuItemsUsers = [
+    {
+      text: "Products",
+      path: "/dashboard/members-products",
+      icon: <ProductIcon />,
+    },
     
     {
       text: "Members",

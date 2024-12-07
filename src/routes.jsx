@@ -63,6 +63,7 @@ import MemberAnnouncementTable from "./pages/member-pages/announcement/MemberAnn
 import BookingOrders from "./pages/member-pages/booking-order/BookingOrders";
 import OrderDetails from "./pages/member-pages/place-orders/OrderDetails";
 import GetOrderDetailsbasedOnLowhiriracy from "./pages/member-pages/order-details/GetOrderDetailsbasedOnLowhiriracy";
+import MemberProductPage from "./pages/member-pages/member-products/MemberProductPage";
 
 const RoutesConfig = () => {
   return (
@@ -86,8 +87,7 @@ const RoutesConfig = () => {
               </PrivateRoute>
             }
           >
-            {/* <Route path="*" element={<SalesPage />} />
-            <Route path="products" element={<ProductPage />} /> */}
+            <Route path="members-products" element={<MemberProductPage />} /> 
             <Route path="products" element={<ProductPage />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditUserProfile />} />
