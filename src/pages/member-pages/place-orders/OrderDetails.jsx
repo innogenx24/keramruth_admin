@@ -15,7 +15,7 @@ const OrderDetails = () => {
     }
   
     axios
-      .get("http://88.222.245.236:3002/orders/get-order/595", {
+      .get("http://88.222.245.236:3002/orders/get-order/608", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
