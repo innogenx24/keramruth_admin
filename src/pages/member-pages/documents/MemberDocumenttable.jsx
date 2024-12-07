@@ -7,16 +7,10 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Typography,
 } from "@mui/material";
-import { Delete, Edit, Add as AddIcon } from "@mui/icons-material";
+import { Add as AddIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -24,8 +18,6 @@ const rowsPerPage = 10; // Number of rows per page
 
 const MemberDocumenttable = () => {
   const [documents, setDocuments] = useState([]);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState(null);
   const [page, setPage] = useState(0); // Pagination state
   const navigate = useNavigate();
 
@@ -57,51 +49,6 @@ const MemberDocumenttable = () => {
 
   const handleAddClick = () => {
     navigate("add-document");
-  };
-
-  const handleEditClick = (document) => {
-    navigate("edit-document", { state: { document } });
-  };
-
-  const handleDeleteOpen = (document) => {
-    setDocumentToDelete(document);
-    setDeleteModalOpen(true);
-  };
-
-  const handleDeleteClose = () => {
-    setDeleteModalOpen(false);
-    setDocumentToDelete(null);
-  };
-
-  const confirmDelete = async () => {
-    if (documentToDelete) {
-      try {
-        await axios.delete(`http://88.222.245.236:3002/documents/${documentToDelete.id}`);
-        setDocuments((prevDocuments) => 
-          prevDocuments.filter((doc) => doc.id !== documentToDelete.id)
-        );
-        handleDeleteClose();
-      } catch (error) {
-        console.error("Error deleting document:", error);
-      }
-    }
-  };
-
-  const handleToggleSwitch = async (document) => {
-    const updatedStatus = !document.activateStatus;
-
-    try {
-      await axios.patch(`http://88.222.245.236:3002/documents/${document.id}`, {
-        activateStatus: updatedStatus,
-      });
-      setDocuments((prevDocuments) =>
-        prevDocuments.map((doc) =>
-          doc.id === document.id ? { ...doc, activateStatus: updatedStatus } : doc
-        )
-      );
-    } catch (error) {
-      console.error("Error updating document status:", error);
-    }
   };
 
   const renderPagination = () => (
@@ -145,7 +92,7 @@ const MemberDocumenttable = () => {
           }}
         >
           <h2 style={{ margin: 0 }}>All Documents</h2>
-          <Button
+          {/* <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleAddClick}
@@ -157,7 +104,7 @@ const MemberDocumenttable = () => {
             }}
           >
             CREATE DOCUMENT
-          </Button>
+          </Button> */}
         </div>
         <Table>
           <TableHead>
@@ -167,7 +114,6 @@ const MemberDocumenttable = () => {
               <TableCell>Heading</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Applying On</TableCell>
-              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -189,55 +135,30 @@ const MemberDocumenttable = () => {
                   )}
                 </TableCell>
                 <TableCell>{document.heading}</TableCell>
-                <TableCell sx={{ 
-     
-     WebkitBoxOrient: 'vertical', 
-     WebkitLineClamp: 2, 
-     wordBreak: 'break-word', 
- }}>
+                <TableCell
+                  sx={{
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 2,
+                    wordBreak: 'break-word',
+                  }}
+                >
                   {document.description}
-                </TableCell>                <TableCell>
-  {Array.isArray(document.receiver) 
-    ? document.receiver.join(", ") 
-    : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
-  }
-</TableCell>
+                </TableCell>
                 <TableCell>
-                  <div style={{ display: "flex" }}>
-                    <IconButton onClick={() => handleEditClick(document)} color="primary">
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDeleteOpen(document)} color="secondary">
-                      <Delete />
-                    </IconButton>
-                  </div>
+                  {Array.isArray(document.receiver)
+                    ? document.receiver.join(", ")
+                    : document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[')
+                    ? JSON.parse(document.receiver).join(", ")
+                    : document.receiver}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{padding:"0px"}}>
-      {renderPagination()}
-
+      <div style={{ padding: "0px" }}>
+        {renderPagination()}
       </div>
-
-      <Dialog open={deleteModalOpen} onClose={handleDeleteClose}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete the document with ID "{documentToDelete?.id}" and heading "{documentToDelete?.heading}"?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={confirmDelete} color="secondary">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };

@@ -8,7 +8,7 @@ function* editAdminUser(action) {
     yield put(userEditRequest());
     const token = localStorage.getItem('token');
     console.log("action", action);
-    const response = yield call(axios.put, `http://88.222.245.236:3002/api/admin/update`, action?.payload, {
+    const response = yield call(axios.put, `http://localhost:3002/api/admin/update`, action?.payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

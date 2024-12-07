@@ -61,6 +61,9 @@ import PendingOrders from "./pages/pending-orders/PendingOrders";
 import MemberDocumenttable from "./pages/member-pages/documents/MemberDocumenttable";
 import MemberAnnouncementTable from "./pages/member-pages/announcement/MemberAnnouncementTable";
 import BookingOrders from "./pages/member-pages/booking-order/BookingOrders";
+import OrderDetails from "./pages/member-pages/place-orders/OrderDetails";
+import GetOrderDetailsbasedOnLowhiriracy from "./pages/member-pages/order-details/GetOrderDetailsbasedOnLowhiriracy";
+import MemberProductPage from "./pages/member-pages/member-products/MemberProductPage";
 
 const RoutesConfig = () => {
   return (
@@ -84,8 +87,7 @@ const RoutesConfig = () => {
               </PrivateRoute>
             }
           >
-            {/* <Route path="*" element={<SalesPage />} />
-            <Route path="products" element={<ProductPage />} /> */}
+            <Route path="members-products" element={<MemberProductPage />} /> 
             <Route path="products" element={<ProductPage />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditUserProfile />} />
@@ -94,8 +96,10 @@ const RoutesConfig = () => {
             <Route path="announcement-member" element={<MemberAnnouncementTable />} />
 
             <Route path="pending-orders" element={<PendingOrders />} />
+            <Route path="pending-orders-member" element={<GetOrderDetailsbasedOnLowhiriracy />} />
+
             
-          
+            
             <Route
               path="announcement/add-announcement"
               element={<AddAnnouncementForm />}
@@ -104,7 +108,10 @@ const RoutesConfig = () => {
               path="announcement/edit-announcement"
               element={<EditAnnouncementForm />}
             />
+            
             <Route path="book-orders" element={<BookingOrders />} />
+            <Route path="place-orders" element={<OrderDetails />} />
+
 
             <Route path="documents" element={<Documents />} />
             <Route path="documents-member" element={<MemberDocumenttable />} />
