@@ -256,6 +256,11 @@ export default function AdminDashboard() {
       path: "/dashboard/documents-member",
       icon: <DescriptionIcon />,
     },
+    {
+      text: "Targets",
+      path: "/dashboard/targets",
+      icon: <DescriptionIcon />,
+    },
   ]
   const menuItems = [
     {

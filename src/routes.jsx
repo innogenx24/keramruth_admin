@@ -64,6 +64,7 @@ import BookingOrders from "./pages/member-pages/booking-order/BookingOrders";
 import OrderDetails from "./pages/member-pages/place-orders/OrderDetails";
 import GetOrderDetailsbasedOnLowhiriracy from "./pages/member-pages/order-details/GetOrderDetailsbasedOnLowhiriracy";
 import MemberProductPage from "./pages/member-pages/member-products/MemberProductPage";
+import TargetPage from "./pages/target/Target";
 
 const RoutesConfig = () => {
   return (
@@ -169,6 +170,7 @@ const RoutesConfig = () => {
             <Route path="sector" element={<Sector/>} />
             <Route path="add-sector" element={<AddSector/>} />
             <Route path="add-sector/:id" element={<AddSector/>} />
+            <Route path="targets" element={<TargetPage />} />
           </Route>
         </Routes>
       </Router>
