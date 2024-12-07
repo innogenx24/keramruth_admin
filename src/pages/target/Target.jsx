@@ -24,6 +24,8 @@ import { useSelector, useDispatch } from "react-redux";
 // import ProductPriceModal from "./ProductPriceModal";
 import { fetchProductsRequest } from "../../redux/slices/product-slice/ProductGetSlice";
 import { deleteProductRequest } from "../../redux/slices/product-slice/ProductDeleteSlice";
+import { Doughnut } from "react-chartjs-2";
+
 
 const TargetPage = () => {
   const dispatch = useDispatch();
@@ -40,6 +42,44 @@ const TargetPage = () => {
 
   const [page, setPage] = useState(0); // Pagination state
   const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
+
+  const targetData = {
+    totalTarget: 5000,
+    done: 2200,
+    pending: 2800,
+    history: [
+      { month: "Last Month", percentage: 100 },
+      { month: "Jun", percentage: 60 },
+      { month: "May", percentage: 30 },
+      { month: "Apr", percentage: 100 },
+      { month: "Mar", percentage: 100 },
+      { month: "Feb", percentage: 100 },
+    ],
+  };
+
+  const doughnutData = {
+    labels: ["Done", "Pending"],
+    datasets: [
+      {
+        data: [targetData.done, targetData.pending],
+        backgroundColor: ["#4CAF50", "#FF7043"],
+        hoverBackgroundColor: ["#388E3C", "#E64A19"],
+      },
+    ],
+  };
+
+  const doughnutOptions = {
+    cutout: "70%",
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            return `${tooltipItem.label}: ${tooltipItem.raw} L`;
+          },
+        },
+      },
+    },
+  };
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
@@ -136,6 +176,83 @@ const TargetPage = () => {
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         All Targets
       </Typography>
+
+      <div className="container my-4">
+      {/* Card Container */}
+      <div className="card shadow-sm p-4">
+        {/* Target Section */}
+        <div
+  className="d-flex justify-content-between align-items-center"
+  style={{ gap: "20px" }} // Add space between elements if needed
+>
+  {/* Left Content */}
+  <div>
+    <h5 className="mb-2">This Month</h5>
+    <h6 className="mb-1">Target Litres</h6>
+    <h4 style={{ color: "#4CAF50" }}>{targetData.totalTarget} Litres</h4>
+    <p className="mb-1 text-success">● Done: {targetData.done} L</p>
+    <p className="mb-1 text-danger">● Pending: {targetData.pending} L</p>
+  </div>
+
+  {/* Donut Chart */}
+  <div
+    style={{
+      flexShrink: 0, // Prevent shrinking of the donut chart
+      width: "150px",
+      height: "150px",
+    }}
+  >
+    <Doughnut data={doughnutData} options={doughnutOptions} />
+  </div>
+</div>
+
+
+        {/* History Section */}
+        <hr />
+        <h6>Target History</h6>
+        <div>
+          {targetData.history.map((item, index) => (
+            <div key={index} className="mb-2">
+              <div className="d-flex justify-content-between">
+                <span>{item.month}</span>
+                <span>{item.percentage}%</span>
+              </div>
+              <div
+                className="progress"
+                style={{ height: "8px", background: "#f5f5f5" }}
+              >
+                <div
+                  className="progress-bar"
+                  role="progressbar"
+                  style={{
+                    width: `${item.percentage}%`,
+                    backgroundColor:
+                      item.percentage >= 75
+                        ? "#4CAF50"
+                        : item.percentage >= 50
+                        ? "#FFC107"
+                        : "#FF7043",
+                  }}
+                  aria-valuenow={item.percentage}
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Legend */}
+        <div className="mt-3">
+          <small>
+            <span className="text-success">● Done 100%</span> &nbsp; 
+            <span className="text-warning">● 75%-50%</span> &nbsp; 
+            <span className="text-danger">● 50%-0%</span>
+          </small>
+        </div>
+      </div>
+    </div>
+
       <div
   style={{
     display: "flex",
