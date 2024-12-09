@@ -297,7 +297,7 @@ export default function AdminDashboard() {
       icon: <DescriptionIcon />,
     },
     {
-      text: "Targets",
+      text: "Sales-Target Report",
       path: "/dashboard/targets",
       icon: <TrackChangesIcon />,
     },

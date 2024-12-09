@@ -22,7 +22,7 @@ const TargetTable = () => {
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   const { users } = useSelector((state) => state.users);
-  const userId = users?.id;  // Get user ID from Redux state
+  const userId = users?.id; // Get user ID from Redux state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +46,7 @@ const TargetTable = () => {
           const achievedData = response.data.result.filter(item => {
             return item.monthlyDetails[0].achievementAmountPercent >= 50;
           });
-          setFilteredData(achievedData);  // Set initially filtered data
+          setFilteredData(achievedData); // Set initially filtered data
         }
       } catch (error) {
         console.error("Error fetching data", error);
@@ -56,7 +56,7 @@ const TargetTable = () => {
     };
 
     fetchData();
-  }, [userId]);  // Re-run when userId changes
+  }, [userId]); // Re-run when userId changes
 
   // Filter data based on achievement and unachievement percentage
   const filterAchieved = () => {
@@ -102,57 +102,62 @@ const TargetTable = () => {
         </Button>
       </div>
 
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer component={Paper} >
+        <Table >
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>User Name</TableCell>
               <TableCell>Role</TableCell>
-              <TableCell>Month</TableCell>
-              <TableCell>Year</TableCell>
+              <TableCell>Month/Year</TableCell>
               <TableCell>Total Monthly Target</TableCell>
               <TableCell>Achievement Amount</TableCell>
               <TableCell>Pending Amount</TableCell>
               <TableCell>Achievement %</TableCell>
               <TableCell>Unachievement %</TableCell>
+              <TableCell>Total Stock Target</TableCell>
+              <TableCell>Total Stock Achievement</TableCell>
+              <TableCell>Pending Stock Target</TableCell>
+              <TableCell>Stock Achievement %</TableCell>
+              <TableCell>Stock Unachievement %</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-  {filteredData.length > 0 ? (
-    filteredData.map((row, index) => (
-      <TableRow key={row.user_id}>
-        <TableCell>{index + 1}</TableCell>
-        <TableCell>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Avatar
-              src={row?.image
-                ? `${imageBaseURL}${row.image}`
-                : "/path/to/default-image.jpg"
-              }
-            />
-            <Typography style={{ marginLeft: "10px" }}>
-              {row.full_name}
-            </Typography>
-          </div>
-        </TableCell>
-        <TableCell>{row.monthlyDetails[0].roleName}</TableCell>
-        <TableCell>{row.monthlyDetails[0].month}</TableCell>
-        <TableCell>{row.monthlyDetails[0].year}</TableCell>
-        <TableCell>{(Number(row.monthlyDetails[0].totalMonthlyTarget) || 0).toFixed(2)} L</TableCell>
-        <TableCell>{(Number(row.monthlyDetails[0].totalAchievementAmount) || 0).toFixed(2)} L</TableCell>
-        <TableCell>{(Number(row.monthlyDetails[0].pendingAmount) || 0).toFixed(2)} L</TableCell>
-        <TableCell>{(Number(row.monthlyDetails[0].achievementAmountPercent) || 0).toFixed(2)}%</TableCell>
-        <TableCell>{(Number(row.monthlyDetails[0].unachievementAmountPercent) || 0).toFixed(2)}%</TableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-      <TableCell colSpan={10} align="center">No Data Available</TableCell>
-    </TableRow>
-  )}
-</TableBody>
-
+            {filteredData.length > 0 ? (
+              filteredData.map((row, index) => (
+                <TableRow key={row.user_id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <Avatar
+                        src={row?.image ? `${imageBaseURL}${row.image}` : "/path/to/default-image.jpg"}
+                        sx={{ width: 40, height: 40 }}
+                      />
+                      <Typography style={{ marginLeft: "10px" }}>
+                        {row.full_name}
+                      </Typography>
+                    </div>
+                  </TableCell>
+                  <TableCell>{row.monthlyDetails[0].roleName}</TableCell>
+                  <TableCell>{row.monthlyDetails[0].month}/{row.monthlyDetails[0].year}</TableCell>
+                  <TableCell>Rs. {(Number(row.monthlyDetails[0].totalMonthlyTarget) || 0).toFixed(2)}</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].totalAchievementAmount) || 0).toFixed(2)}</TableCell>
+                  <TableCell>Rs. {(Number(row.monthlyDetails[0].pendingAmount) || 0).toFixed(2)}</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].achievementAmountPercent) || 0).toFixed(2)}%</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].unachievementAmountPercent) || 0).toFixed(2)}%</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].totalStockTarget) || 0).toFixed(2)}</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].totalStockAchievement) || 0).toFixed(2)}</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].pendingStockTarget) || 0).toFixed(2)}</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].stockAchievementPercent) || 0).toFixed(2)}%</TableCell>
+                  <TableCell>{(Number(row.monthlyDetails[0].stockUnachievementPercent) || 0).toFixed(2)}%</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={15} align="center">No Data Available</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
       </TableContainer>
     </div>

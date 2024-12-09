@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import axios from "axios";
 import { useSelector } from "react-redux"; // Import useSelector
 import { useLocation } from "react-router-dom";
+import AppLogo from "../../../assets/logo/AppLogo";
 
 const BookingOrders = () => {
   const [products, setProducts] = useState([]);
@@ -75,17 +76,23 @@ const BookingOrders = () => {
       return updatedItems;
     });
   };
-
+  
   const decrementQuantity = (productId) => {
     setOrderItems((prevOrderItems) => {
       const updatedItems = [...prevOrderItems];
       const existingItem = updatedItems.find(item => item.product_id === productId);
-      if (existingItem && existingItem.quantity > 1) {
-        existingItem.quantity -= 1;
+      if (existingItem) {
+        if (existingItem.quantity > 1) {
+          existingItem.quantity -= 1;  // Decrease quantity
+        } else {
+          // If quantity is 1, remove the item from the order
+          return updatedItems.filter(item => item.product_id !== productId);
+        }
       }
       return updatedItems;
     });
   };
+  
 
   const handleConfirmOrder = async () => {
     const token = localStorage.getItem("token");
@@ -103,7 +110,7 @@ const BookingOrders = () => {
     const totalAmount = orderItems.reduce((total, item) => {
       const product = products.find((p) => p.id === item.product_id);
       if (product) {
-        total += item.quantity * (product.super1 || 0); // assuming super1 is the price
+        total += item.quantity * (product.super1 ?? product.originalPrice);
       }
       return total;
     }, 0).toFixed(2); // Round to 2 decimal places
@@ -169,7 +176,23 @@ const BookingOrders = () => {
                     />
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.super1}</TableCell>
+                  <TableCell>
+  {product.super1 ? (
+    <>
+      
+      <span style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}>
+        {product.originalPrice} {/* Display original price with line-through */}
+      </span>
+      <span style={{ color: "green", fontWeight: "bold" }}>
+        {product.super1} {/* Display offer price */}
+      </span>
+    </>
+  ) : (
+    <span>{product.originalPrice} {/* Only display original price if no offer price */}</span>
+  )}
+</TableCell>
+
+
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Button
@@ -215,61 +238,136 @@ const BookingOrders = () => {
 )}
 
 
-      {/* Order Summary Popup */}
-      <Modal open={openPopup} onClose={closeOrderSummaryPopup}>
+     {/* Order Summary Popup */}
+<Modal open={openPopup} onClose={closeOrderSummaryPopup}>
+  <Box
+    sx={{
+      position: "absolute",
+      top: "20%",
+      left: "50%",
+      transform: "translate(-50%, -20%)",
+      backgroundColor: "white",
+      boxShadow: 24,
+      borderRadius: "8px",
+      overflow: "hidden",
+      width: "500px",
+      maxWidth: "95%",
+    }}
+  >
+    <DialogContent>
+     
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "15px",
+          borderBottom: "1px solid #ddd",
+        }}
+      >
+         <Typography
+        variant="h6"
+        sx={{ textAlign: "center", marginBottom: "20px", fontWeight: "bold" }}
+      >
+        Order Summary
+      </Typography>
+        <Box sx={{ height: "60px" }}>
+  <AppLogo />
+</Box>
+      </Box>
+      {/* Order Items */}
+      {orderItems.map((item) => {
+        const product = products.find((p) => p.id === item.product_id);
+        return (
+          <Box
+            key={item.product_id}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "10px",
+              paddingBottom: "10px",
+              borderBottom: "1px dashed #ccc",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box
+                component="img"
+                src={`${imageBaseURL}${product.image}`}
+                alt={product?.name}
+                sx={{ height: "50px", width: "50px", marginRight: "10px" }}
+              />
+              <Box>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  {product?.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {product?.description || "Product details"}
+                </Typography>
+              </Box>
+            </Box>
+            <Box>
+  <Typography variant="body2">
+    ₹ {Number(product?.super1 || product?.originalPrice).toFixed(2)}
+  </Typography>
+  <Typography variant="body2" color="text.secondary">Qty: {item.quantity}</Typography>
+</Box>
+
+          </Box>
+        );
+      })}
+      {/* Total Section */}
+      <Box sx={{ marginTop: "20px", borderTop: "1px solid #ddd", paddingTop: "10px" }}>
+        
         <Box
-          style={{
-            position: "absolute",
-            top: "20%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            backgroundColor: "white",
-            padding: "20px",
-            boxShadow: "24",
-            width: "400px",
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "10px",
           }}
         >
-<DialogContent>
-  <Typography variant="h6" style={{marginBottom:"10px"}}>Order Summary</Typography>
-  {orderItems.map((item) => {
-    const product = products.find((p) => p.id === item.product_id);
-    return (
-      <Box key={item.product_id} display="flex" justifyContent="space-between" marginBottom="10px">
-        <Typography>{product?.name}</Typography>
-        <Typography>{product?.super1}</Typography>
-        <Typography>{item.quantity}</Typography>
-      </Box>
-    );
-  })}
-  <Box mt={2} display="flex" justifyContent="space-between">
-    <Typography variant="h6">Total Quantity:</Typography>
-    <Typography variant="h6">
-      {orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0)}
-    </Typography>
-  </Box>
-  <Box mt={2} display="flex" justifyContent="space-between">
-    <Typography variant="h6">Total Price:</Typography>
-    <Typography variant="h6">
-      Rs. {orderItems.reduce(
+           <Typography variant="body1" fontWeight="bold">Total Amount:</Typography>
+           <Box
+  sx={{
+    display: "flex",
+    flexDirection: "column", // Stack items vertically
+    marginBottom: "10px",
+  }}
+>
+  
+
+  <Typography variant="body1">
+    ₹
+    {orderItems
+      .reduce(
         (total, item) =>
-          total + item.quantity * (products.find((p) => p.id === item.product_id)?.super1 || 0),
+          total +
+          item.quantity *
+            (products.find((p) => p.id === item.product_id)?.super1 ||
+              products.find((p) => p.id === item.product_id)?.originalPrice ||
+              0),
         0
-      ).toFixed(2)}
-    </Typography>
-  </Box>
-</DialogContent>
+      )
+      .toFixed(2)}
+  </Typography>
+  <Typography variant="body1" color="text.secondary" >
+    Qty : {orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0)}
+  </Typography>
+</Box>
 
-<DialogActions>
-<Button onClick={closeOrderSummaryPopup} color="secondary">
-  Modify
-</Button>
-
-  <Button onClick={handleConfirmOrder} color="primary">
-    Confirm Order
-  </Button>
-</DialogActions>
         </Box>
-      </Modal>
+      </Box>
+    </DialogContent>
+    <DialogActions sx={{ justifyContent: "space-between", padding: "20px" }}>
+      <Button onClick={closeOrderSummaryPopup} variant="outlined" color="secondary">
+        Modify Order
+      </Button>
+      <Button onClick={handleConfirmOrder} variant="contained" color="primary">
+        Confirm Order
+      </Button>
+    </DialogActions>
+  </Box>
+</Modal>
+
 
       <div
         style={{
