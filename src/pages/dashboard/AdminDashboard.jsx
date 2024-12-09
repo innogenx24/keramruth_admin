@@ -513,7 +513,7 @@ export default function AdminDashboard() {
               variant="body1"
               sx={{ marginLeft: 2, color: "#989FA9" }}
             >
-              {users?.id}
+              {users?.full_name}
               </Typography>
             <Typography
         style={{ cursor: "pointer", marginLeft: 10, color: "#989FA9" }}

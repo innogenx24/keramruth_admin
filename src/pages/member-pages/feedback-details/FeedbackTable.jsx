@@ -47,7 +47,7 @@ const FeedbackTable = () => {
     };
 
     fetchFeedbacks();
-  }, [token, userId]); // Re-run effect when token or userId changes
+  }, [token, userId]); 
 
   return (
     <Box padding={2}>
@@ -70,7 +70,6 @@ const FeedbackTable = () => {
           <TableBody>
             {feedbacks.map((feedback) => (
               <TableRow key={feedback.id}>
-                {/* User Details */}
                 <TableCell>
                   <Box display="flex" alignItems="center">
                     <Avatar
@@ -85,29 +84,19 @@ const FeedbackTable = () => {
                     <Typography>{feedback.user.full_name}</Typography>
                   </Box>
                 </TableCell>
-
-                {/* Quantity */}
-                <TableCell>{feedback.order.total_order_quantity}</TableCell>
-
-                {/* Booked Date */}
+                <TableCell>
+                  {Number(feedback.order.total_order_quantity).toString()}
+                </TableCell>
                 <TableCell>
                   {new Date(feedback.order.createdAt).toLocaleDateString()}
                 </TableCell>
-
-                {/* Delivered Date */}
                 <TableCell>
                   {new Date(feedback.feedback_date).toLocaleDateString()}
                 </TableCell>
-
-                {/* Total Amount */}
                 <TableCell>₹{feedback.order.final_amount}</TableCell>
-
-                {/* Rating */}
                 <TableCell>
                   <Rating value={feedback.rating} precision={0.5} readOnly />
                 </TableCell>
-
-                {/* Comments */}
                 <TableCell>{feedback.comments}</TableCell>
               </TableRow>
             ))}
