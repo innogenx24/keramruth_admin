@@ -187,7 +187,7 @@ const ProductPage = () => {
 
             
             <TableCell>{product.category_name}</TableCell>
-            <TableCell>{product.productVolume}</TableCell>
+            <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
             <TableCell>{product.price}</TableCell>
             <TableCell>
               <Button onClick={() => handleViewClick(product)}>View</Button>
