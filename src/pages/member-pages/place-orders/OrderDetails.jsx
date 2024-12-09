@@ -21,6 +21,7 @@ const OrderDetails = () => {
   const navigate = useNavigate();
   const { users } = useSelector((state) => state.users);
   const userId = users?.id; // Assuming the user ID is stored in the state.users object
+  const roleId = users?.role_id; // Assuming the user's role_id is stored in the users object
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -64,7 +65,6 @@ const OrderDetails = () => {
       },
     });
   };
-  
 
   return (
     <div>
@@ -80,7 +80,7 @@ const OrderDetails = () => {
               <TableCell>Total Order Quantity</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Feedback</TableCell>
+              {roleId === 6 && <TableCell>Feedback</TableCell>} {/* Conditional Rendering */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -125,18 +125,20 @@ const OrderDetails = () => {
                     >
                       {order.status}
                     </TableCell>
-                    <TableCell>
-                      {(order.status === "Accepted" || order.status === "Cancelled") && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          onClick={() => handleFeedbackClick(order)}
-                        >
-                          Feedback
-                        </Button>
-                      )}
-                    </TableCell>
+                    {roleId === 6 && ( // Only show Feedback button if role_id is 6
+                      <TableCell>
+                        {(order.status === "Accepted" || order.status === "Cancelled") && (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            onClick={() => handleFeedbackClick(order)}
+                          >
+                            Feedback
+                          </Button>
+                        )}
+                      </TableCell>
+                    )}
                   </TableRow>
 
                   {/* Product Details Collapse */}

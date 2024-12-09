@@ -38,6 +38,9 @@ import CategoryIcon from '@mui/icons-material/Category'; // Icon for categories
 import BusinessIcon from '@mui/icons-material/Business'; // Business sector
 import TimerIcon from '@mui/icons-material/Timer'; // Specific timer icon
 import { FaUserTie } from 'react-icons/fa';  // FontAwesome Role Icon (Professional Role)
+import { RiFeedbackFill } from "react-icons/ri";
+import { BiBook } from "react-icons/bi";
+import { FaBook } from "react-icons/fa";
 
 // Drawer width
 // const drawerWidth = 240;
@@ -228,12 +231,12 @@ export default function AdminDashboard() {
     {
       text: "Book Order",
       path: "/dashboard/book-orders",
-      icon: <NotificationsIcon />,
+      icon: <BiBook />,
     },
     {
       text: "Place Orders",
       path: "/dashboard/place-orders",
-      icon: <NotificationsIcon />,
+      icon: <FaBook  />,
     },
     {
       text: "Announcements",
@@ -270,17 +273,17 @@ export default function AdminDashboard() {
     {
       text: "Book Order",
       path: "/dashboard/book-orders",
-      icon: <NotificationsIcon />,
+      icon: <BiBook />,
     },
     {
       text: "Place Orders",
       path: "/dashboard/place-orders",
-      icon: <NotificationsIcon />,
+      icon: <FaBook />,
     },
     {
       text: "Feedback",
       path: "/dashboard/feedback",
-      icon: <NotificationsIcon />,
+      icon: <RiFeedbackFill   />,
     },
     {
       text: "Announcements",
@@ -296,7 +299,7 @@ export default function AdminDashboard() {
     {
       text: "Targets",
       path: "/dashboard/targets",
-      icon: <DescriptionIcon />,
+      icon: <TrackChangesIcon />,
     },
   ]
   const menuItems = [

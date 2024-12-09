@@ -70,7 +70,6 @@ const MemberProductPage = () => {
     { id: 'category_name', label: 'Category Name' },
     { id: 'productVolume', label: 'Product Volume' },
     { id: 'price', label: 'MRP' },
-    { id: 'price', label: 'Distributors Prices' },
     { id: 'stock_status', label: 'Stock Status' },
   ];
 
@@ -86,14 +85,7 @@ const MemberProductPage = () => {
           marginBottom: "20px",
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddProductClick}
-          startIcon={<Add />}
-        >
-          Add Product
-        </Button>
+        
       </div>
 
       <TableContainer component={Paper}>
@@ -130,13 +122,10 @@ const MemberProductPage = () => {
                   <TableCell>{product.category_name}</TableCell>
                   <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
                   <TableCell>{product.price}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleViewClick(product)}>View</Button>
-                  </TableCell>
+                  
                   <TableCell>
                     <Switch
                       checked={product.status}
-                      onChange={() => handleToggleStockStatus(product)}
                     />
                   </TableCell>
                 </TableRow>

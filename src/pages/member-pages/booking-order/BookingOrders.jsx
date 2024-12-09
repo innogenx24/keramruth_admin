@@ -93,18 +93,28 @@ const BookingOrders = () => {
       alert("Token not found. Please log in.");
       return;
     }
-
+  
     if (orderItems.length === 0) {
       alert("Please select products and set quantities before placing an order.");
       return;
     }
-
+  
+    // Calculate the total amount based on the order items and product prices
+    const totalAmount = orderItems.reduce((total, item) => {
+      const product = products.find((p) => p.id === item.product_id);
+      if (product) {
+        total += item.quantity * (product.super1 || 0); // assuming super1 is the price
+      }
+      return total;
+    }, 0).toFixed(2); // Round to 2 decimal places
+  
     const orderData = {
       user_id: userId, // Ensure you're passing the correct user ID here
       items: orderItems,
       coupon_code: couponCode,
+      total_amount: totalAmount, // Add the total amount
     };
-
+  
     try {
       await axios.post("http://88.222.245.236:3002/orders/create-order", orderData, {
         headers: {
@@ -119,7 +129,7 @@ const BookingOrders = () => {
       alert("Failed to place the order.");
     }
   };
-
+  
   const openOrderSummaryPopup = () => {
     setOpenPopup(true);
   };

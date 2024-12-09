@@ -67,6 +67,7 @@ import MemberProductPage from "./pages/member-pages/member-products/MemberProduc
 import FeedbackTable from "./pages/member-pages/feedback-details/FeedbackTable";
 import FeedbackComponent from "./pages/member-pages/feedbackcreate/FeedbackComponent";
 import TargetPage from "./pages/target/Target";
+import TargetTable from "./pages/target/TargetTable";
 
 const RoutesConfig = () => {
   return (
@@ -174,6 +175,8 @@ const RoutesConfig = () => {
             <Route path="add-sector" element={<AddSector/>} />
             <Route path="add-sector/:id" element={<AddSector/>} />
             <Route path="targets" element={<TargetPage />} />
+            <Route path="targets/view-member-targets" element={<TargetTable />} />
+
           </Route>
         </Routes>
       </Router>
