@@ -11,7 +11,8 @@ const MemberGetSlice = createSlice({
     fetchMembersRequest: (state, action) => {
       state.loading = true;
       state.error = null;
-      state.roleId = action.payload.roleId; 
+      state.roleId = action.payload.roleId;
+      console.log(action.payload.roleId) 
     },
     fetchMembersSuccess: (state, action) => {
       state.members = action.payload;
@@ -21,10 +22,13 @@ const MemberGetSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    clearMembers: (state) => {
+      state.members = [];
+    },
   },
 });
 
-export const { fetchMembersRequest, fetchMembersSuccess, fetchMembersFailure } =
+export const { fetchMembersRequest, fetchMembersSuccess, fetchMembersFailure, clearMembers } =
   MemberGetSlice.actions;
 
 export default MemberGetSlice.reducer;

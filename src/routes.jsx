@@ -66,6 +66,7 @@ import GetOrderDetailsbasedOnLowhiriracy from "./pages/member-pages/order-detail
 import MemberProductPage from "./pages/member-pages/member-products/MemberProductPage";
 import FeedbackTable from "./pages/member-pages/feedback-details/FeedbackTable";
 import FeedbackComponent from "./pages/member-pages/feedbackcreate/FeedbackComponent";
+import TargetPage from "./pages/target/Target";
 
 const RoutesConfig = () => {
   return (
@@ -172,6 +173,7 @@ const RoutesConfig = () => {
             <Route path="sector" element={<Sector/>} />
             <Route path="add-sector" element={<AddSector/>} />
             <Route path="add-sector/:id" element={<AddSector/>} />
+            <Route path="targets" element={<TargetPage />} />
           </Route>
         </Routes>
       </Router>
