@@ -215,10 +215,10 @@ export default function AdminDashboard() {
   // };
   let loginUser = JSON.parse(localStorage.getItem('user'));
   let loginUserRole = loginUser ? loginUser.role : null; 
-  console.log(loginUserRole, "mmmmmmmmmmmmmmm");
+  // console.log(loginUserRole, "mmmmmmmmmmmmmmm");
 
 
-  console.log("Login User Role:", loginUserRole);
+  // console.log("Login User Role:", loginUserRole);
 
 
 
@@ -291,6 +291,11 @@ export default function AdminDashboard() {
     {
       text: "Documents",
       path: "/dashboard/documents-member",
+      icon: <DescriptionIcon />,
+    },
+    {
+      text: "Targets",
+      path: "/dashboard/targets",
       icon: <DescriptionIcon />,
     },
   ]
