@@ -28,7 +28,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
     adoPrice: '',
     mdPrice: '',
     sdPrice: '',
-    stock_quantity: '',
+    quantity: '',
     quantity_type:'',
   });
 
@@ -45,7 +45,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
     mdPrice: "",
     adoPrice: "",
     category_name: "",
-    stock_quantity: "",
+    stock_quantity: 0, // Set initial stock_quantity as 0 or from the product
     quantity_type: "", 
     fromDate: "",
     toDate: "",
@@ -66,18 +66,10 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const [productDetails, setProductDetails] = useState(initialProductDetails);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(''); 
+
   const currentDateWithTimeISO = new Date().toISOString(); 
   const currentDate = new Date().toISOString().split('T')[0]; // Current date in yyyy-mm-dd format
-  useEffect(() => {
-    const currentDate = new Date().toISOString().split('T')[0];
-    setProductDetails((prevDetails) => ({
-      ...prevDetails,
-      fromDate: currentDate,
-      toDate: currentDate,
-    }));
-  }, []);
-
-
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -115,7 +107,6 @@ const EditProductForm = ({ handleBackToProducts }) => {
     const file = event.target.files[0];
     
     if (file) {
-      // Check the file type (only allow jpeg, jpg, png)
       const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
       if (!validImageTypes.includes(file.type)) {
         setErrors(prevErrors => ({
@@ -128,7 +119,6 @@ const EditProductForm = ({ handleBackToProducts }) => {
         return;
       }
   
-      // Check file size (limit to 2MB)
       if (file.size > 2 * 1024 * 1024) {
         setErrors(prevErrors => ({
           ...prevErrors,
@@ -140,14 +130,12 @@ const EditProductForm = ({ handleBackToProducts }) => {
         return;
       }
   
-      // If valid, update the state with the selected image
-      setErrors(prevErrors => ({ ...prevErrors, image: '' })); // Clear any previous error
+      setErrors(prevErrors => ({ ...prevErrors, image: '' }));
       setSelectedImage(file);
       setImagePreview(URL.createObjectURL(file));
       setImageName(file.name);
     }
   };
-  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -160,6 +148,16 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value); 
   };
+
+  const handleQuantityChange = (e) => {
+    const { value } = e.target;
+    const newQuantity = parseInt(value, 10);
+    setProductDetails((prevDetails) => ({
+      ...prevDetails,
+      stock_quantity: isNaN(newQuantity) ? 0 : newQuantity, // Handle invalid numbers
+    }));
+  };
+
 
   const validateForm = () => {
     let formErrors = {};
@@ -187,11 +185,9 @@ const EditProductForm = ({ handleBackToProducts }) => {
     } else if (isNaN(productDetails.price) || productDetails.price <= 0) {
       formErrors.price = 'Please enter a valid number';
     }
-    if (!productDetails.stock_quantity) {
-      formErrors.stock_quantity = 'Stock Quantity is required';
-    } else if (isNaN(productDetails.stock_quantity) || productDetails.stock_quantity <= 0) {
-      formErrors.stock_quantity = 'Please enter a valid number';
-    }
+   
+    
+    
     if (!productDetails.adoPrice) {
       formErrors.adoPrice = 'Area Development Officer price is required';
     } else if (isNaN(productDetails.adoPrice) || productDetails.adoPrice <= 0) {
@@ -262,6 +258,8 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     
+    const totalStockQuantity = productDetails.stock_quantity + (state?.product?.stock_quantity || 0);
+
     // Validate the form before submitting
     if (!validateForm()) {
       return; // Stop form submission if validation fails
@@ -312,7 +310,7 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
     
     // Append category, stock, quantity, and status
     formData.append("category_name", selectedCategory || "");
-    formData.append("stock_quantity", productDetails.stock_quantity || "0");
+    formData.append("stock_quantity", totalStockQuantity);
     formData.append("quantity_type", productDetails.quantity_type || "Unit");
     formData.append("status", stockStatus ? 0 : 1);
 
@@ -566,17 +564,17 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
               error={Boolean(errors.distributorPrice)}
               helperText={errors.distributorPrice} 
             />
-             <TextField
+            <TextField
         fullWidth
         variant="outlined"
-        name="stock_quantity"
-        value={productDetails.stock_quantity} // Bind stock_quantity value to state
+        name="quantity"
+        value={productDetails.stock_quantity}
         label="Stock Quantity*"
         placeholder="Enter Stock Quantity"
         sx={{ marginBottom: "16px" }}
-        onChange={handleInputChange}
-        error={Boolean(errors.stock_quantity)}
-        helperText={errors.stock_quantity} 
+        onChange={handleQuantityChange}
+        error={Boolean(errors.quantity)}
+        helperText={errors.quantity} 
       />
       <InputLabel>Quantity Type</InputLabel>
       <Select
