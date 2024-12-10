@@ -12,42 +12,42 @@ import {
   Typography,
   TablePagination,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-// import { fetchProductsRequest } from "../../redux/slices/product-slice/ProductGetSlice";
-import { fetchProductsRequest } from "../../../redux/slices/product-slice/ProductGetSlice";
-import ProductPriceModal from "../../products/ProductPriceModal";
+import axios from "axios";
 
 const MemberProductPage = () => {
-  const dispatch = useDispatch();
-  const { products } = useSelector((state) => state.products);
-  const productsList = Array.isArray(products) ? products : [products];
-  const [showAddProduct, setShowAddProduct] = useState(false);
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0); // Pagination state
   const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
-  const navigate = useNavigate();
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isOpen, setIsOpen] = useState(false); // Add this line
+ 
+  // Fetch products from API
+  const fetchProducts = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Token not found. Please log in.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        "http://localhost:3002/products/user_product",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
   useEffect(() => {
-    dispatch(fetchProductsRequest());
-  }, [dispatch]);
-
-  const handleAddProductClick = () => {
-    setShowAddProduct(true);
-    navigate("add-product");
-  };
-
-  const handleViewClick = (product) => {
-    setIsOpen(true);  // This will open the modal
-    setSelectedProduct(product);
-  };
-
-  const handleCloseModal = () => {
-    setIsOpen(false);  // This will close the modal
-  };
+    fetchProducts();
+  }, []);
 
   // Handle page change
   const handleChangePage = (event, newPage) => {
@@ -60,13 +60,12 @@ const MemberProductPage = () => {
     setPage(0); // Reset to the first page when changing rows per page
   };
 
-  const sortedProducts = [...productsList].sort((a, b) => b.id - a.id); // Sort by ID in descending order
+  const sortedProducts = [...products].sort((a, b) => b.id - a.id); // Sort by ID in descending order
 
   const columns = [
     { id: 'no', label: 'No.' },
     { id: 'image', label: 'Product Image' },
     { id: 'name', label: 'Product Name' },
-    { id: 'stock_quantity', label: 'Product Stock' },
     { id: 'category_name', label: 'Category Name' },
     { id: 'productVolume', label: 'Product Volume' },
     { id: 'price', label: 'MRP' },
@@ -118,11 +117,9 @@ const MemberProductPage = () => {
                     )}
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.stock_quantity}</TableCell>
                   <TableCell>{product.category_name}</TableCell>
                   <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  
+                  <TableCell>{product.super1 && product.super1 !== '0.00' ? product.super1 : product.originalPrice}</TableCell>
                   <TableCell>
                     <Switch
                       checked={product.status}
@@ -165,13 +162,6 @@ const MemberProductPage = () => {
           </div>
         )}
       />
-      {isOpen && (
-        <ProductPriceModal
-          product={selectedProduct}
-          isOpen={isOpen}
-          onClose={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

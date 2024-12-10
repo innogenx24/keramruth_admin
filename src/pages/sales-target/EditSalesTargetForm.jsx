@@ -60,15 +60,19 @@ export default function EditSalesTarget() {
     handleChange(productIndex, dataIndex, "target", value);
   };
 
+  const handleStockTargetChange = (productIndex, dataIndex, value) => {
+    handleChange(productIndex, dataIndex, "stock_target", value);
+  };
+
   const validateField = (productIndex, dataIndex, field, value) => {
     const newErrors = { ...errors };
 
     if (field === "target" && (!value || !/^\d+$/.test(value))) {
-      newErrors[`targetError_${productIndex}_${dataIndex}`] =
-        "Target must be a number.";
+      newErrors[`targetError_${productIndex}_${dataIndex}`] = "Target must be a number.";
+    } else if (field === "stock_target" && (!value || !/^\d+$/.test(value))) {
+      newErrors[`stockTargetError_${productIndex}_${dataIndex}`] = "Stock Target must be a number.";
     } else if (field === "duration" && !value) {
-      newErrors[`durationError_${productIndex}_${dataIndex}`] =
-        "Duration is required.";
+      newErrors[`durationError_${productIndex}_${dataIndex}`] = "Duration is required.";
     } else {
       delete newErrors[`${field}Error_${productIndex}_${dataIndex}`];
     }
@@ -82,12 +86,13 @@ export default function EditSalesTarget() {
     targets.forEach((product, productIndex) => {
       product.product_data.forEach((data, dataIndex) => {
         if (!data.target || !/^\d+$/.test(data.target)) {
-          newErrors[`targetError_${productIndex}_${dataIndex}`] =
-            "Target must be a number.";
+          newErrors[`targetError_${productIndex}_${dataIndex}`] = "Target must be a number.";
+        }
+        if (!data.stock_target || !/^\d+$/.test(data.stock_target)) {
+          newErrors[`stockTargetError_${productIndex}_${dataIndex}`] = "Stock Target must be a number.";
         }
         if (!data.duration) {
-          newErrors[`durationError_${productIndex}_${dataIndex}`] =
-            "Duration is required.";
+          newErrors[`durationError_${productIndex}_${dataIndex}`] = "Duration is required.";
         }
       });
     });
@@ -106,6 +111,7 @@ export default function EditSalesTarget() {
         product.product_data.map((data) => ({
           role: data.role,
           target: data.target,
+          stock_target: data.stock_target,
           duration: data.duration,
         }))
       ),
@@ -148,17 +154,19 @@ export default function EditSalesTarget() {
                     {product.product_data.map((data, dataIndex) => (
                       <Grid
                         container
-                        spacing={2}
+                        spacing={4}
                         key={dataIndex}
                         alignItems="center"
                         sx={{ mb: 2 }}
                       >
-                        <Grid item xs={6}>
+                        <Grid item xs={3}>
                           <Typography>{data.role}</Typography>
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={9}>
+                          <Grid container spacing={2}>
+                          <Grid item xs={4}>
                           <TextField
-                            label="Enter Target"
+                            label="Sales Target"
                             fullWidth
                             value={data.target || ""}
                             onChange={(e) =>
@@ -168,15 +176,27 @@ export default function EditSalesTarget() {
                                 e.target.value
                               )
                             }
-                            error={
-                              !!errors[`targetError_${productIndex}_${dataIndex}`]
-                            }
-                            helperText={
-                              errors[`targetError_${productIndex}_${dataIndex}`]
-                            }
+                            error={!!errors[`targetError_${productIndex}_${dataIndex}`]}
+                            helperText={errors[`targetError_${productIndex}_${dataIndex}`]}
                           />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={4}>
+                          <TextField
+                            label="Enter Stock Target"
+                            fullWidth
+                            value={data.stock_target || ""}
+                            onChange={(e) =>
+                              handleStockTargetChange(
+                                productIndex,
+                                dataIndex,
+                                e.target.value
+                              )
+                            }
+                            error={!!errors[`stockTargetError_${productIndex}_${dataIndex}`]}
+                            helperText={errors[`stockTargetError_${productIndex}_${dataIndex}`]}
+                          />
+                        </Grid>
+                        <Grid item xs={4}>
                           <Select
                             fullWidth
                             value={data.duration || ""}
@@ -189,9 +209,7 @@ export default function EditSalesTarget() {
                               )
                             }
                             displayEmpty
-                            error={
-                              !!errors[`durationError_${productIndex}_${dataIndex}`]
-                            }
+                            error={!!errors[`durationError_${productIndex}_${dataIndex}`]}
                           >
                             <MenuItem value="" disabled>
                               <em>Select Duration</em>
@@ -200,14 +218,13 @@ export default function EditSalesTarget() {
                             <MenuItem value="3 months">3 Months</MenuItem>
                             <MenuItem value="6 months">6 Months</MenuItem>
                           </Select>
-                          <Typography
-                            variant="caption"
-                            color="error"
-                          >
-                            {
-                              errors[`durationError_${productIndex}_${dataIndex}`]
-                            }
+                          <Typography variant="caption" color="error">
+                            {errors[`durationError_${productIndex}_${dataIndex}`]}
                           </Typography>
+                        </Grid>
+
+                          </Grid>
+
                         </Grid>
                       </Grid>
                     ))}
@@ -217,22 +234,20 @@ export default function EditSalesTarget() {
             </Card>
           </Grid>
           <Grid item xs={12}>
-             
-
-              <Button
+            <Button
               type="submit"
               variant="contained"
               color="primary"
               onClick={handleSubmit}
-
-              
-              sx={{ marginTop: "24px",    width: "50%",
-                borderRadius: "15px", padding: "8px" }}
+              sx={{
+                marginTop: "24px",
+                width: "50%",
+                borderRadius: "15px",
+                padding: "8px",
+              }}
             >
-                Update Sales Target
-                </Button>
-
-
+              Update Sales Target
+            </Button>
           </Grid>
         </Grid>
       )}

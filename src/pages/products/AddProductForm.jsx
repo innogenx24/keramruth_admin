@@ -78,20 +78,43 @@ const AddProductForm = () => {
           .required("Product name is required")
           .min(3, "Product name must be at least 3 characters long")
           .max(100, "Product name cannot be more than 100 characters long"),
+    
         productVolume: Yup.string()
           .required("Product volume is required")
           .matches(/^\d+(\.\d+)?$/, "Must be a valid number"),
-        price: Yup.number().required("Customer price is required").min(0),
-        distributorPrice: Yup.number().required("Distributor price is required").min(0),
-        sdPrice: Yup.number().required("Super distributor price is required").min(0),
-        mdPrice: Yup.number().required("Master distributor price is required").min(0),
-        adoPrice: Yup.number().required("Area development officer price is required").min(0),
+    
+        price: Yup.number()
+          .required("Customer price is required")
+          .min(0, "Customer price cannot be negative"),
+    
+        distributorPrice: Yup.number()
+          .required("Distributor price is required")
+          .min(0, "Distributor price cannot be negative"),
+    
+        sdPrice: Yup.number()
+          .required("Super distributor price is required")
+          .min(0, "SD price cannot be negative"),
+    
+        mdPrice: Yup.number()
+          .required("Master distributor price is required")
+          .min(0, "MD price cannot be negative"),
+    
+        adoPrice: Yup.number()
+          .required("Area development officer price is required")
+          .min(0, "ADO price cannot be negative"),
+    
         quantity_type: Yup.string().required("Quantity type is required"),
+    
         category_name: Yup.string().required("Category name is required"),
-        stock_quantity: Yup.number().required("Stock quantity is required").min(0),
+    
+        stock_quantity: Yup.number()
+          .required("Stock quantity is required")
+          .min(0, "Stock quantity cannot be negative"),
+    
         fromDate: values.autoUpdate
           ? Yup.date().required("From Date is required")
           : Yup.date(),
+    
         toDate: values.autoUpdate
           ? Yup.date()
               .required("To Date is required")
@@ -104,33 +127,39 @@ const AddProductForm = () => {
                 }
               )
           : Yup.date(),
-          customer_price: values.autoUpdate
+    
+        customer_price: values.autoUpdate
           ? Yup.number()
-              .required("Customer price is required")
               .min(0, "Customer price cannot be negative")
+              .lessThan(Yup.ref('price'), "Customer price must be less than the original customer price")
           : Yup.number().nullable(),
+    
         distributor_price: values.autoUpdate
           ? Yup.number()
-              .required("Distributor price is required")
               .min(0, "Distributor price cannot be negative")
+              .lessThan(Yup.ref('distributorPrice'), "Distributor price must be less than the original distributor price")
           : Yup.number().nullable(),
+    
         SD_price: values.autoUpdate
           ? Yup.number()
-              .required("SD price is required")
               .min(0, "SD price cannot be negative")
+              .lessThan(Yup.ref('sdPrice'), "SD price must be less than the original SD price")
           : Yup.number().nullable(),
+    
         MD_price: values.autoUpdate
           ? Yup.number()
-              .required("MD price is required")
               .min(0, "MD price cannot be negative")
+              .lessThan(Yup.ref('mdPrice'), "MD price must be less than the original MD price")
           : Yup.number().nullable(),
+    
         ADO_price: values.autoUpdate
           ? Yup.number()
-              .required("ADO price is required")
               .min(0, "ADO price cannot be negative")
+              .lessThan(Yup.ref('adoPrice'), "ADO price must be less than the original ADO price")
           : Yup.number().nullable(),
       })
     ),
+    
     onSubmit: async (values, { resetForm }) => {
       const randomProductCode = Math.floor(100000 + Math.random() * 900000);
       const formData = new FormData();

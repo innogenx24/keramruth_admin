@@ -10,7 +10,7 @@ const BookingOrders = () => {
   const [orderItems, setOrderItems] = useState([]);
   const [openPopup, setOpenPopup] = useState(false); // To control popup visibility
   const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
-  const couponCode = "DISCOUNT2024"; // Example coupon code
+  const couponCode = ""; // Example coupon code
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const { users } = useSelector((state) => state.users); // Fetch users from Redux store
   const userId = users?.id; // Get the user ID from the state.users object
@@ -166,57 +166,66 @@ const BookingOrders = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>
-                    <img
-                      src={`${imageBaseURL}${product.image}`}
-                      alt={product.name}
-                      style={{ width: "70px", height: "70px" }}
-                    />
-                  </TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>
-  {product.super1 ? (
-    <>
-      
-      <span style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}>
-        {product.originalPrice} {/* Display original price with line-through */}
-      </span>
-      <span style={{ color: "green", fontWeight: "bold" }}>
-        {product.super1} {/* Display offer price */}
-      </span>
-    </>
-  ) : (
-    <span>{product.originalPrice} {/* Only display original price if no offer price */}</span>
-  )}
-</TableCell>
+  {products.map((product) => (
+    <TableRow key={product.id}>
+      {/* Product Image */}
+      <TableCell>
+        <img
+          src={`${imageBaseURL}${product.image}`}
+          alt={product.name}
+          style={{ width: "70px", height: "70px" }}
+        />
+      </TableCell>
 
+      {/* Product Name */}
+      <TableCell>{product.name}</TableCell>
 
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => decrementQuantity(product.id)}
-                        style={{ marginRight: "10px" }}
-                      >
-                        -
-                      </Button>
-                      <span>{orderItems.find(item => item.product_id === product.id)?.quantity || 0}</span>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => incrementQuantity(product.id)}
-                        style={{ marginLeft: "10px" }}
-                      >
-                        +
-                      </Button>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+      {/* Product Price Display with Offer (super1) */}
+      <TableCell>
+        {product.super1 && product.super1 !== "0.00" ? (
+          <>
+            {/* Original Price with line-through style if offer price is available */}
+            <span style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}>
+              {product.originalPrice} {/* Display original price with line-through */}
+            </span>
+            {/* Offer Price (super1) with green color */}
+            <span style={{ color: "green", fontWeight: "bold" }}>
+              {product.super1} {/* Display offer price */}
+            </span>
+          </>
+        ) : (
+          <span>{product.originalPrice} {/* Display original price if no offer price or offer price is 0.00 */}</span>
+        )}
+      </TableCell>
+
+      {/* Quantity Buttons */}
+      <TableCell>
+        <Box display="flex" alignItems="center">
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => decrementQuantity(product.id)}
+            style={{ marginRight: "10px" }}
+          >
+            -
+          </Button>
+          <span>
+            {orderItems.find(item => item.product_id === product.id)?.quantity || 0}
+          </span>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => incrementQuantity(product.id)}
+            style={{ marginLeft: "10px" }}
+          >
+            +
+          </Button>
+        </Box>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
           </Table>
         </TableContainer>
       </div>

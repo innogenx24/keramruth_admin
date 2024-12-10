@@ -160,7 +160,6 @@ const MemberAdoTable = () => {
   // }, [dispatch, role_Id, selectedRole]);
 
   const sortedMembersList = [...membersList].sort((a, b) => b.id - a.id);
-  console.log("currentMembers", sortedMembersList)
 
   // Function to handle the click of "Add Member" button
   const handleAddMemberClick = () => {

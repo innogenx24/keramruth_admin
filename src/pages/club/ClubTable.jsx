@@ -145,7 +145,7 @@ const ClubTable = () => {
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Club Name</TableCell>
-                  <TableCell>Litre Quantity</TableCell>
+                  <TableCell>Amount</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>

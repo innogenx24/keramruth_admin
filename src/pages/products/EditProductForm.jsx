@@ -52,6 +52,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
     ADO_price: "",
     MD_price: "",
     SD_price: "",
+    status: 1,
+
     distributor_price: "",
     customer_price: ""
   };
@@ -66,7 +68,6 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const [selectedCategory, setSelectedCategory] = useState(''); 
   const currentDateWithTimeISO = new Date().toISOString(); 
   const currentDate = new Date().toISOString().split('T')[0]; // Current date in yyyy-mm-dd format
-
   useEffect(() => {
     const currentDate = new Date().toISOString().split('T')[0];
     setProductDetails((prevDetails) => ({
@@ -178,10 +179,9 @@ const EditProductForm = ({ handleBackToProducts }) => {
       formErrors.productVolume = 'Please enter a valid positive number for product volume';
     }
   
-    
     if (!productDetails.quantity_type) {
       formErrors.quantity_type = 'Quantity type is required';
-    } 
+    }
     if (!productDetails.price) {
       formErrors.price = 'Customer price is required';
     } else if (isNaN(productDetails.price) || productDetails.price <= 0) {
@@ -213,7 +213,6 @@ const EditProductForm = ({ handleBackToProducts }) => {
       formErrors.distributorPrice = 'Please enter a valid number';
     }
   
-   
     if (autoUpdate) {
       // Validate auto-update specific fields
       if (!productDetails.fromDate) {
@@ -222,21 +221,29 @@ const EditProductForm = ({ handleBackToProducts }) => {
       if (!productDetails.toDate) {
         formErrors.toDate = 'To Date is required';
       }
-      if (!productDetails.customer_price || productDetails.customer_price <= 0) {
-        formErrors.customer_price = 'Customer Price is required';
-      }
-      if (!productDetails.distributor_price || productDetails.distributor_price <= 0) {
-        formErrors.distributor_price = 'Distributor Price is required';
-      }
-      if (!productDetails.SD_price || productDetails.SD_price <= 0) {
-        formErrors.SD_price = 'SD Price is required';
-      }
-      if (!productDetails.MD_price || productDetails.MD_price <= 0) {
-        formErrors.MD_price = 'MD Price is required';
-      }
-      if (!productDetails.ADO_price || productDetails.ADO_price <= 0) {
-        formErrors.ADO_price = 'ADO Price is required';
-      }
+  
+      // Validate prices for auto-update
+if (productDetails.customer_price >= productDetails.price) {
+  formErrors.customer_price = 'Customer Price must be less than the original Customer price';
+}
+
+if (productDetails.distributor_price >= productDetails.distributorPrice) {
+  formErrors.distributor_price = 'Distributor Price must be less than the original Distributor price';
+}
+
+if (productDetails.SD_price >= productDetails.sdPrice) {
+  formErrors.SD_price = 'SD Price must be less than the original SD price';
+}
+
+if (productDetails.MD_price >= productDetails.mdPrice) {
+  formErrors.MD_price = 'MD Price must be less than the original MD price';
+}
+
+if (productDetails.ADO_price >= productDetails.adoPrice) {
+  formErrors.ADO_price = 'ADO Price must be less than the original ADO price';
+}
+
+  
       // Validate date order
       const fromDate = new Date(productDetails.fromDate);
       const toDate = new Date(productDetails.toDate);
@@ -277,10 +284,12 @@ const EditProductForm = ({ handleBackToProducts }) => {
     formData.append("sdPrice", productDetails.sdPrice || "0");
     formData.append("mdPrice", productDetails.mdPrice || "0");
     formData.append("adoPrice", productDetails.adoPrice || "0");
+
     
     // Set autoUpdate-related fields (fromDate, toDate, and prices) based on the autoUpdate flag
     formData.append("autoUpdate", autoUpdate ? "true" : "false");
-    
+    formData.append("stockStatus", stockStatus ? "1" : "0");
+
     // If autoUpdate is false, set dates to "1970-01-01" and prices to "0"
     if (!autoUpdate) {
       formData.append("fromDate",currentDateWithTimeISO);
@@ -305,7 +314,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
     formData.append("category_name", selectedCategory || "");
     formData.append("stock_quantity", productDetails.stock_quantity || "0");
     formData.append("quantity_type", productDetails.quantity_type || "Unit");
-    formData.append("status", stockStatus ? 1 : 0);
+    formData.append("status", stockStatus ? 0 : 1);
 
     // If an image was selected, append it to the form data
     if (selectedImage) {
@@ -595,11 +604,13 @@ const EditProductForm = ({ handleBackToProducts }) => {
         />
       </Box>
 
-      {/* Conditional Fields: From Date & To Date */}
-      {autoUpdate && (
-        <Box sx={{ mt: 2 }}>
-          <Grid container spacing={2}>
-          <Grid item xs={6}>
+      
+
+{/* Conditional Fields: From Date & To Date */}
+{autoUpdate ? (
+  <Box sx={{ mt: 2 }}>
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
         <TextField
           fullWidth
           label="From Date"
@@ -627,73 +638,78 @@ const EditProductForm = ({ handleBackToProducts }) => {
           InputProps={{ inputProps: { min: currentDate } }}
         />
       </Grid>
-          </Grid>
-          <Typography variant="h6">Set Price</Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Typography variant="h6">Area Development Officer Price</Typography>
-          <TextField
-            fullWidth
-            label="Enter ADO Price"
-            name="ADO_price"
-            value={productDetails.ADO_price}
-            onChange={handleInputChange}
-            error={Boolean(errors.ADO_price)}
-            helperText={errors.ADO_price}          />
-        </Grid>
-        <Grid item xs={6}>
-          <Typography variant="h6">Master Distributor Price</Typography>
-          <TextField
-            fullWidth
-            label="Enter MD Price"
-            name="MD_price"
-            value={productDetails.MD_price}
-            onChange={handleInputChange}
-            error={Boolean(errors.MD_price)}
-            helperText={errors.MD_price}          />
-        </Grid>
+    </Grid>
+    <Typography variant="h6">Set Price</Typography>
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <Typography variant="h6">Area Development Officer Price</Typography>
+        <TextField
+          fullWidth
+          label="Enter ADO Price"
+          name="ADO_price"
+          value={productDetails.ADO_price}
+          onChange={handleInputChange}
+          error={Boolean(errors.ADO_price)}
+          helperText={errors.ADO_price}
+        />
       </Grid>
+      <Grid item xs={6}>
+        <Typography variant="h6">Master Distributor Price</Typography>
+        <TextField
+          fullWidth
+          label="Enter MD Price"
+          name="MD_price"
+          value={productDetails.MD_price}
+          onChange={handleInputChange}
+          error={Boolean(errors.MD_price)}
+          helperText={errors.MD_price}
+        />
+      </Grid>
+    </Grid>
 
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Typography variant="h6">Super Distributor Price</Typography>
-          <TextField
-            fullWidth
-            label="Enter SD Price"
-            name="SD_price"
-            value={productDetails.SD_price}
-            onChange={handleInputChange}
-            error={Boolean(errors.SD_price)}
-            helperText={errors.SD_price}          />
-        </Grid>
-        <Grid item xs={6}>
-          <Typography variant="h6">Distributor Price</Typography>
-          <TextField
-            fullWidth
-            label="Enter Distributor Price"
-            name="distributor_price"
-            value={productDetails.distributor_price}
-            onChange={handleInputChange}
-            error={Boolean(errors.distributor_price)}
-            helperText={errors.distributor_price}          />
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <Typography variant="h6">Super Distributor Price</Typography>
+        <TextField
+          fullWidth
+          label="Enter SD Price"
+          name="SD_price"
+          value={productDetails.SD_price}
+          onChange={handleInputChange}
+          error={Boolean(errors.SD_price)}
+          helperText={errors.SD_price}
+        />
       </Grid>
+      <Grid item xs={6}>
+        <Typography variant="h6">Distributor Price</Typography>
+        <TextField
+          fullWidth
+          label="Enter Distributor Price"
+          name="distributor_price"
+          value={productDetails.distributor_price}
+          onChange={handleInputChange}
+          error={Boolean(errors.distributor_price)}
+          helperText={errors.distributor_price}
+        />
+      </Grid>
+    </Grid>
 
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Typography variant="h6">Customer Price</Typography>
-          <TextField
-            fullWidth
-            label="Enter Customer Price"
-            name="customer_price"
-            value={productDetails.customer_price}
-            onChange={handleInputChange}
-            error={Boolean(errors.customer_price)}
-            helperText={errors.customer_price}          />
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid item xs={6}>
+        <Typography variant="h6">Customer Price</Typography>
+        <TextField
+          fullWidth
+          label="Enter Customer Price"
+          name="customer_price"
+          value={productDetails.customer_price}
+          onChange={handleInputChange}
+          error={Boolean(errors.customer_price)}
+          helperText={errors.customer_price}
+        />
       </Grid>
-        </Box>
-      )}
+    </Grid>
+  </Box>
+) : null}
 
 
 

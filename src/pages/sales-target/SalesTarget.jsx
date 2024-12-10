@@ -160,7 +160,9 @@ export default function SalesTargetTable() {
                             <TableHead>
                               <TableRow>
                                 <TableCell>Role</TableCell>
-                                <TableCell>Target</TableCell>
+                                <TableCell>Sales Target</TableCell>
+                                <TableCell>Stock Target</TableCell>
+
                                 <TableCell>Duration</TableCell>
                               </TableRow>
                             </TableHead>
@@ -169,6 +171,8 @@ export default function SalesTargetTable() {
                                 <TableRow key={idx}>
                                   <TableCell>{target.product_data[0].role}</TableCell>
                                   <TableCell>{target.product_data[0].target}</TableCell>
+                                  <TableCell>{target.product_data[0].stock_target }</TableCell>
+
                                   <TableCell>{target.product_data[0].duration}</TableCell>
                                 </TableRow>
                               ))}
