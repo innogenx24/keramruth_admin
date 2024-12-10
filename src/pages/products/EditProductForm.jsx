@@ -45,7 +45,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
     mdPrice: "",
     adoPrice: "",
     category_name: "",
-    stock_quantity: 0, // Set initial stock_quantity as 0 or from the product
+    stock_quantity: "", 
     quantity_type: "", 
     fromDate: "",
     toDate: "",
@@ -185,6 +185,15 @@ const EditProductForm = ({ handleBackToProducts }) => {
     } else if (isNaN(productDetails.price) || productDetails.price <= 0) {
       formErrors.price = 'Please enter a valid number';
     }
+
+    // Validate Stock Quantity field
+  if (!productDetails.stock_quantity) {
+    formErrors.quantity = 'Stock quantity is required';
+  } else if (isNaN(productDetails.stock_quantity) || productDetails.stock_quantity <= 0) {
+    formErrors.quantity = 'Please enter a valid number for stock quantity';
+  }
+
+    
    
     
     

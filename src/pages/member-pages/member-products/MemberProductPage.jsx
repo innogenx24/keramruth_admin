@@ -32,7 +32,7 @@ const MemberProductPage = () => {
 
     try {
       const response = await axios.get(
-        "http://localhost:3002/products/user_product",
+        "http://88.222.245.236:3002/products/user_product",
         {
           headers: {
             Authorization: `Bearer ${token}`,
