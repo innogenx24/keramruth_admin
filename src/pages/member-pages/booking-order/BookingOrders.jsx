@@ -155,79 +155,106 @@ const BookingOrders = () => {
           marginBottom: "10px",
         }}
       >
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Image</TableCell>
-                <TableCell>Product Name</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Quantity</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-  {products.map((product) => (
-    <TableRow key={product.id}>
-      {/* Product Image */}
-      <TableCell>
-        <img
-          src={`${imageBaseURL}${product.image}`}
-          alt={product.name}
-          style={{ width: "70px", height: "70px" }}
-        />
-      </TableCell>
+       <TableContainer component={Paper}>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>Image</TableCell>
+        <TableCell>Product Name</TableCell>
+        <TableCell>Price</TableCell>
+        <TableCell>Quantity</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {products.map((product) => {
+        const isOutOfStock = product.stock_quantity === 0; // Check if stock is zero
+        return (
+          <TableRow key={product.id}>
+            {/* Product Image */}
+            <TableCell>
+              <div style={{ position: 'relative' }}>
+                <img
+                  src={`${imageBaseURL}${product.image}`}
+                  alt={product.name}
+                  style={{ width: "75px", height: "70px" }}
+                />
+                {isOutOfStock && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '75px',
+                      height: '70px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                      fontSize: '16px',
+                    }}
+                  >
+                    Not Available
+                  </div>
+                )}
+              </div>
+            </TableCell>
 
-      {/* Product Name */}
-      <TableCell>{product.name}</TableCell>
+            {/* Product Name */}
+            <TableCell>{product.name}</TableCell>
 
-      {/* Product Price Display with Offer (super1) */}
-      <TableCell>
-        {product.super1 && product.super1 !== "0.00" ? (
-          <>
-            {/* Original Price with line-through style if offer price is available */}
-            <span style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}>
-              {product.originalPrice} {/* Display original price with line-through */}
-            </span>
-            {/* Offer Price (super1) with green color */}
-            <span style={{ color: "green", fontWeight: "bold" }}>
-              {product.super1} {/* Display offer price */}
-            </span>
-          </>
-        ) : (
-          <span>{product.originalPrice} {/* Display original price if no offer price or offer price is 0.00 */}</span>
-        )}
-      </TableCell>
+            {/* Product Price Display with Offer (super1) */}
+            <TableCell>
+              {product.super1 && product.super1 !== "0.00" ? (
+                <>
+                  <span
+                    style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}
+                  >
+                    {product.originalPrice}
+                  </span>
+                  <span style={{ color: "green", fontWeight: "bold" }}>
+                    {product.super1}
+                  </span>
+                </>
+              ) : (
+                <span>{product.originalPrice}</span>
+              )}
+            </TableCell>
 
-      {/* Quantity Buttons */}
-      <TableCell>
-        <Box display="flex" alignItems="center">
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => decrementQuantity(product.id)}
-            style={{ marginRight: "10px" }}
-          >
-            -
-          </Button>
-          <span>
-            {orderItems.find(item => item.product_id === product.id)?.quantity || 0}
-          </span>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => incrementQuantity(product.id)}
-            style={{ marginLeft: "10px" }}
-          >
-            +
-          </Button>
-        </Box>
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
+            {/* Quantity Buttons */}
+            <TableCell>
+              <Box display="flex" alignItems="center">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => decrementQuantity(product.id)}
+                  style={{ marginRight: "10px" }}
+                  disabled={isOutOfStock} // Disable decrement button if out of stock
+                >
+                  -
+                </Button>
+                <span>
+                  {orderItems.find((item) => item.product_id === product.id)?.quantity || 0}
+                </span>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => incrementQuantity(product.id)}
+                  style={{ marginLeft: "10px" }}
+                  disabled={isOutOfStock} // Disable increment button if out of stock
+                >
+                  +
+                </Button>
+              </Box>
+            </TableCell>
+          </TableRow>
+        );
+      })}
+    </TableBody>
+  </Table>
+</TableContainer>
 
-          </Table>
-        </TableContainer>
       </div>
 
 {orderConfirmation && (

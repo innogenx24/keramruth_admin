@@ -309,7 +309,7 @@ const MemberAdoTable = () => {
                     <TableCell>{member?.role_name}</TableCell>
                     <TableCell>{member?.email}</TableCell>
 
-                    {/* <TableCell>
+                    <TableCell>
                       <IconButton
                         color="secondary"
                         onClick={() => handleEditMemberClick(member)}
@@ -322,7 +322,7 @@ const MemberAdoTable = () => {
                       >
                         <DeleteIcon />
                       </IconButton>
-                    </TableCell> */}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

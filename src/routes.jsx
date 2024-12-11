@@ -68,6 +68,7 @@ import FeedbackTable from "./pages/member-pages/feedback-details/FeedbackTable";
 import FeedbackComponent from "./pages/member-pages/feedbackcreate/FeedbackComponent";
 import TargetPage from "./pages/target/Target";
 import TargetTable from "./pages/target/TargetTable";
+import SalesTargetTable from "./pages/target/SalesTargetTable";
 
 const RoutesConfig = () => {
   return (
@@ -138,12 +139,14 @@ const RoutesConfig = () => {
             <Route path="add-list/add-user" element={<AddUserForm />} />
             <Route path="add-list/edit-user" element={<EditUserForm />} />
             <Route path="sales-target" element={<SalesTarget />} />
+            <Route path="sales-target-form" element={<SalesTargetTable />} />
+
             <Route
               path="sales-target/add-sales-target"
               element={<AddSalesTargetForm />}
             />
             <Route
-              path="sales-target/edit-sales-target"
+              path="sales-target-form/edit-sales-target"
               element={<EditSalesTargetForm />}
             />
             <Route path="category" element={<CategoryTable />} />

@@ -66,10 +66,10 @@ const MemberProductPage = () => {
     { id: 'no', label: 'No.' },
     { id: 'image', label: 'Product Image' },
     { id: 'name', label: 'Product Name' },
+    { id: 'stock_quantity', label: 'Stock Quantity' },
     { id: 'category_name', label: 'Category Name' },
     { id: 'productVolume', label: 'Product Volume' },
     { id: 'price', label: 'MRP' },
-    { id: 'stock_status', label: 'Stock Status' },
   ];
 
   return (
@@ -117,14 +117,13 @@ const MemberProductPage = () => {
                     )}
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
+                                    <TableCell>{product.stock_quantity}</TableCell>
+
                   <TableCell>{product.category_name}</TableCell>
                   <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
+                  
                   <TableCell>{product.super1 && product.super1 !== '0.00' ? product.super1 : product.originalPrice}</TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={product.status}
-                    />
-                  </TableCell>
+                 
                 </TableRow>
               ))}
           </TableBody>

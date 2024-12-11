@@ -76,6 +76,7 @@ const OrderDetails = () => {
         <Table stickyHeader aria-label="Order Details Table">
           <TableHead>
             <TableRow>
+              <TableCell>No.</TableCell>
               <TableCell>Total Amount</TableCell>
               <TableCell>Total Order Quantity</TableCell>
               <TableCell>Order Date</TableCell>
@@ -91,12 +92,13 @@ const OrderDetails = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              orders.map((order) => (
+              orders.map((order,index) => (
                 <React.Fragment key={order.id}>
                   <TableRow
                     onClick={() => handleRowClick(order.id)}
                     style={{ cursor: "pointer" }}
                   >
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell>Rs. {parseFloat(order.total_amount).toFixed(2)}</TableCell>
                     <TableCell>
                       {order.OrderItems.reduce(
@@ -150,7 +152,7 @@ const OrderDetails = () => {
                             <TableRow>
                               <TableCell>Product Image</TableCell>
                               <TableCell>Product Name</TableCell>
-                              <TableCell>Base Price</TableCell>
+                              <TableCell>Price</TableCell>
                               <TableCell>Quantity</TableCell>
                               <TableCell>Final Price</TableCell>
                             </TableRow>

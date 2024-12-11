@@ -345,9 +345,14 @@ export default function AdminDashboard() {
       text: "Masters",
       icon: <AdminPanelSettingsIcon />,
       subItems: [,
+        // {
+        //   text: "Sales Target",
+        //   path: "/dashboard/sales-target",
+        //   icon: <TrackChangesIcon />,
+        // },
         {
-          text: "Sales Target",
-          path: "/dashboard/sales-target",
+          text: "Sales/Target",
+          path: "/dashboard/sales-target-form",
           icon: <TrackChangesIcon />,
         },
         { text: "Club", path: "/dashboard/club", icon: <GroupsIcon  /> },
