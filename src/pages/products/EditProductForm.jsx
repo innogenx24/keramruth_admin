@@ -88,7 +88,12 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
   useEffect(() => {
     if (state?.product) {
-      setProductDetails(state.product);
+      // setProductDetails(state.product);
+      setProductDetails((prevDetails) => ({
+        ...prevDetails,
+        ...state.product, // Spread other product properties
+        stock_quantity: "", // Ensure stock_quantity starts as empty
+      }));
       const stockValue = state?.product?.status === true ? true : false;
       
       setStockStatus(stockValue);
@@ -187,11 +192,11 @@ const EditProductForm = ({ handleBackToProducts }) => {
     }
 
     // Validate Stock Quantity field
-  if (!productDetails.stock_quantity) {
-    formErrors.quantity = 'Stock quantity is required';
-  } else if (isNaN(productDetails.stock_quantity) || productDetails.stock_quantity <= 0) {
-    formErrors.quantity = 'Please enter a valid number for stock quantity';
-  }
+  // if (!productDetails.stock_quantity) {
+  //   formErrors.quantity = 'Stock quantity is required';
+  // } else if (isNaN(productDetails.stock_quantity) || productDetails.stock_quantity <= 0) {
+  //   formErrors.quantity = 'Please enter a valid number for stock quantity';
+  // }
 
     
    
@@ -573,12 +578,20 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
               error={Boolean(errors.distributorPrice)}
               helperText={errors.distributorPrice} 
             />
+           <Typography>Available Stock</Typography>
+      <TextField
+        fullWidth
+        variant="outlined"
+        value={productDetails.finalStockQuantity}
+        sx={{ marginBottom: "16px" }}
+        disabled
+      />
             <TextField
         fullWidth
         variant="outlined"
         name="quantity"
         value={productDetails.stock_quantity}
-        label="Stock Quantity*"
+        label="Add Quantity"
         placeholder="Enter Stock Quantity"
         sx={{ marginBottom: "16px" }}
         onChange={handleQuantityChange}

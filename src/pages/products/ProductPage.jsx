@@ -88,7 +88,7 @@ const ProductPage = () => {
   const handleToggleStockStatus = async (product) => {
     try {
       const updatedStatus = !product.status; // Toggle the current status
-      const response = await fetch(`http://88.222.245.236:3002/products/${product.id}`, {
+      const response = await fetch(`http://88.222.245.236:3002/products/${product.id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -189,7 +189,7 @@ const ProductPage = () => {
               )}
             </TableCell>
             <TableCell>{product.name}</TableCell>
-            <TableCell>{product.stock_quantity}</TableCell>
+            <TableCell>{product.finalStockQuantity}</TableCell>
             <TableCell>{product.category_name}</TableCell>
             <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
             <TableCell>{product.price}</TableCell>
