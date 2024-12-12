@@ -155,7 +155,7 @@ const BookingOrders = () => {
           marginBottom: "10px",
         }}
       >
-       <TableContainer component={Paper}>
+    <TableContainer component={Paper}>
   <Table>
     <TableHead>
       <TableRow>
@@ -168,6 +168,8 @@ const BookingOrders = () => {
     <TableBody>
       {products.map((product) => {
         const isOutOfStock = product.stock_quantity === 0; // Check if stock is zero
+        const currentQuantity = orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
+        
         return (
           <TableRow key={product.id}>
             {/* Product Image */}
@@ -222,7 +224,7 @@ const BookingOrders = () => {
               )}
             </TableCell>
 
-            {/* Quantity Buttons */}
+            {/* Quantity Buttons and Input Box */}
             <TableCell>
               <Box display="flex" alignItems="center">
                 <Button
@@ -234,9 +236,29 @@ const BookingOrders = () => {
                 >
                   -
                 </Button>
-                <span>
-                  {orderItems.find((item) => item.product_id === product.id)?.quantity || 0}
-                </span>
+
+                {/* Input box for quantity */}
+                <input
+                  type="number"
+                  value={currentQuantity}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    // Remove leading zeros and ensure the value is a valid number
+                    value = value.replace(/^0+/, '') || '0'; // Replace leading zeros, default to '0' if empty
+                    handleQuantityChange(product.id, value);
+                  }}
+                  min="0"
+                  style={{
+                    width: "70px",
+                    textAlign: "center",
+                    margin: "0 10px",
+                    padding: "10px !important",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                  }}
+                  disabled={isOutOfStock} // Disable input if out of stock
+                />
+
                 <Button
                   variant="outlined"
                   size="small"
@@ -254,6 +276,8 @@ const BookingOrders = () => {
     </TableBody>
   </Table>
 </TableContainer>
+
+
 
       </div>
 
@@ -385,9 +409,10 @@ const BookingOrders = () => {
       )
       .toFixed(2)}
   </Typography>
-  <Typography variant="body1" color="text.secondary" >
-    Qty : {orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0)}
-  </Typography>
+  <Typography variant="body1" color="text.secondary">
+  Qty : {parseInt(orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0), 10)}
+</Typography>
+
 </Box>
 
         </Box>

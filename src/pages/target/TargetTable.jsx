@@ -78,6 +78,11 @@ const TargetTable = () => {
     return <CircularProgress />;
   }
 
+  // Function to format numbers with commas
+  const formatNumber = (number) => {
+    return new Intl.NumberFormat("en-IN").format(number); // Indian Number Format
+  };
+
   return (
     <div>
       <Typography variant="h6" sx={{ mb: 3 }}>
@@ -102,8 +107,8 @@ const TargetTable = () => {
         </Button>
       </div>
 
-      <TableContainer component={Paper} >
-        <Table >
+      <TableContainer component={Paper}>
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
@@ -140,14 +145,14 @@ const TargetTable = () => {
                   </TableCell>
                   <TableCell>{row.monthlyDetails[0].roleName}</TableCell>
                   <TableCell>{row.monthlyDetails[0].month}/{row.monthlyDetails[0].year}</TableCell>
-                  <TableCell>Rs. {(Number(row.monthlyDetails[0].totalMonthlyTarget) || 0).toFixed(2)}</TableCell>
-                  <TableCell>{(Number(row.monthlyDetails[0].totalAchievementAmount) || 0).toFixed(2)}</TableCell>
-                  <TableCell>Rs. {(Number(row.monthlyDetails[0].pendingAmount) || 0).toFixed(2)}</TableCell>
+                  <TableCell>Rs. {formatNumber(Number(row.monthlyDetails[0].totalMonthlyTarget) || 0)}</TableCell>
+                  <TableCell>{formatNumber(Number(row.monthlyDetails[0].totalAchievementAmount) || 0)}</TableCell>
+                  <TableCell>Rs. {formatNumber(Number(row.monthlyDetails[0].pendingAmount) || 0)}</TableCell>
                   <TableCell>{(Number(row.monthlyDetails[0].achievementAmountPercent) || 0).toFixed(2)}%</TableCell>
                   <TableCell>{(Number(row.monthlyDetails[0].unachievementAmountPercent) || 0).toFixed(2)}%</TableCell>
-                  <TableCell>{(Number(row.monthlyDetails[0].totalStockTarget) || 0).toFixed(2)}</TableCell>
-                  <TableCell>{(Number(row.monthlyDetails[0].totalStockAchievement) || 0).toFixed(2)}</TableCell>
-                  <TableCell>{(Number(row.monthlyDetails[0].pendingStockTarget) || 0).toFixed(2)}</TableCell>
+                  <TableCell>{formatNumber(Number(row.monthlyDetails[0].totalStockTarget) || 0)}</TableCell>
+                  <TableCell>{formatNumber(Number(row.monthlyDetails[0].totalStockAchievement) || 0)}</TableCell>
+                  <TableCell>{formatNumber(Number(row.monthlyDetails[0].pendingStockTarget) || 0)}</TableCell>
                   <TableCell>{(Number(row.monthlyDetails[0].stockAchievementPercent) || 0).toFixed(2)}%</TableCell>
                   <TableCell>{(Number(row.monthlyDetails[0].stockUnachievementPercent) || 0).toFixed(2)}%</TableCell>
                 </TableRow>

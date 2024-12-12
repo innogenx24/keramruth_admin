@@ -101,7 +101,7 @@ const EditClubForm = () => {
         {error && <Typography color="error">{error}</Typography>}
 
         <TextField
-          label="Litre Quantity"
+          label="Amount"
           value={litreQuantity}
           onChange={(e) => setLitreQuantity(e.target.value)}
           fullWidth

@@ -276,7 +276,7 @@ export default function AdminDashboard() {
       icon: <BiBook />,
     },
     {
-      text: "Place Orders",
+      text: "Order Status",
       path: "/dashboard/place-orders",
       icon: <FaBook />,
     },

@@ -140,7 +140,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
             <TableCell>Total Amount</TableCell>
             <TableCell>Product Details</TableCell>
             <TableCell>Order Date</TableCell>
-            {showStatus && <TableCell>Status</TableCell>}
+            {showStatus && <TableCell>Order Status</TableCell>}
             {isActionable && <TableCell>Action</TableCell>}
           </TableRow>
         </TableHead>

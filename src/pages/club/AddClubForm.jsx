@@ -121,7 +121,7 @@ const handleInputChange = (setter, field) => (e) => {
             {/* Club Name Field */}
             <TextField
               fullWidth
-              label="Club Name*"
+              label="Club Name"
               value={clubName}
               onChange={handleInputChange(setClubName, "clubName")}
               margin="normal"
@@ -135,11 +135,11 @@ const handleInputChange = (setter, field) => (e) => {
             {/* Litre Quantity Field */}
             <TextField
               fullWidth
-              label="Litre Quantity*"
+              label="Amount"
               value={litreQuantity}
               onChange={handleInputChange(setLitreQuantity, "litreQuantity")}
               margin="normal"
-              placeholder="Enter Litre Quantity"
+              placeholder="Enter Amount"
               required
               error={!!errors.litreQuantity}
               helperText={errors.litreQuantity}

@@ -135,17 +135,18 @@ const TargetPage = () => {
                 This Month
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Target Amount
-              </Typography>
-              <Typography variant="h4" sx={{ color: "black" }}>
-                Rs. {(Number(targetData.MonthlyTargetAmount) || 0).toFixed(2)}
-              </Typography>
-              <Typography variant="body1" color="success.main">
-                ● Achieved: Rs. {(Number(targetData.AchievementAmount) || 0).toFixed(2)}
-              </Typography>
-              <Typography variant="body1" color="error.main">
-                ● Pending: Rs. {(Number(targetData.pendingAmount) || 0).toFixed(2)}
-              </Typography>
+  Target Amount
+</Typography>
+<Typography variant="h4" sx={{ color: "black" }}>
+  Rs. {new Intl.NumberFormat().format(Number(targetData.MonthlyTargetAmount) || 0)}
+</Typography>
+<Typography variant="body1" color="success.main">
+  ● Achieved: Rs. {new Intl.NumberFormat().format(Number(targetData.AchievementAmount) || 0)}
+</Typography>
+<Typography variant="body1" color="error.main">
+  ● Pending: Rs. {new Intl.NumberFormat().format(Number(targetData.pendingAmount) || 0)}
+</Typography>
+
                 </Box>
               
 
