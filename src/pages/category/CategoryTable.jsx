@@ -116,6 +116,12 @@ const CategoryTable = () => {
               variant="contained"
               color="primary"
               onClick={handleAddClubClick}
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                fontWeight: "bold",
+                borderRadius: "5px",
+              }}
             >
               + Add Category
             </Button>

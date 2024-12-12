@@ -134,7 +134,16 @@ const ClubTable = () => {
       ) : (
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-            <Button variant="contained" color="primary" onClick={handleAddClubClick}>
+            <Button variant="contained" color="primary" onClick={handleAddClubClick}
+            style={{
+              backgroundColor: "#28a745",
+              color: "white",
+              fontWeight: "bold",
+              borderRadius: "5px",
+            }}
+            
+            
+            >
               + Add Club
             </Button>
           </Box>

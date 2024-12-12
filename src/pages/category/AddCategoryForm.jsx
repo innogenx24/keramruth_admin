@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 const AddCategoryForm = () => {
-  const [sectors, setSectors] = useState([]); // Store sectors with both `id` and `sector_name`
+  const [sectors, setSectors] = useState([]);
   const [serverError, setServerError] = useState(""); // Store server error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -20,7 +20,7 @@ const AddCategoryForm = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setSectors(data); // Store all sector data
+        setSectors(data);
       } catch (error) {
         console.error("Error fetching sectors:", error);
       }
@@ -32,21 +32,26 @@ const AddCategoryForm = () => {
     initialValues: {
       category_name: "",
       parent_category_id: "",
-      sector_name: "", // This will store the sector name, not the id
+      sector_name: "", // This should hold the sector id, not the name
     },
     validationSchema: Yup.object({
       category_name: Yup.string()
         .required("Category name is required")
         .matches(/^[a-zA-Z0-9\s]*$/, "Category name must contain only letters, numbers, and spaces."),
-      sector_name: Yup.string().required("Sector is required"), // Validate the name, not the id
+      sector_name: Yup.string().required("Sector is required"),
     }),
     onSubmit: async (values, { resetForm }) => {
+      // Find sector name based on the selected sector ID
+      const selectedSector = sectors.find(sector => sector.id === parseInt(values.sector_name));
+
       const parsedValues = {
         ...values,
-        parent_category_id: values.parent_category_id ? parseInt(values.parent_category_id, 10) : null, // Ensure `null` if empty
+        sector_name: selectedSector ? selectedSector.sector_name : "", // Add the sector name
+        parent_category_id: parseInt(values.parent_category_id, 10),
       };
 
       try {
+        // Making the API call directly here
         const token = localStorage.getItem('token');
         const response = await axios.post(
           'http://88.222.245.236:3002/category',
@@ -62,16 +67,15 @@ const AddCategoryForm = () => {
         navigate("/dashboard/category");
       } catch (error) {
         console.error("Error posting category:", error.response?.data || error.message);
-        setServerError(error.response?.data?.error || "Category name already exists.");
+        setServerError(error.response?.data?.error || "Category name is already exists.");
         setOpenSnackbar(true);
       }
     },
   });
 
   const handleSectorChange = (event) => {
-    const selectedSectorId = event.target.value;
-    const selectedSector = sectors.find((sector) => sector.id === selectedSectorId);
-    formik.setFieldValue("sector_name", selectedSector?.sector_name || ""); // Set the sector name instead of the id
+    const selectedSector = event.target.value;
+    formik.setFieldValue("sector_name", selectedSector); // Update Formik value
   };
 
   const handleCloseSnackbar = () => {
@@ -115,7 +119,7 @@ const AddCategoryForm = () => {
                   <MenuItem value="" disabled>No Sectors Available</MenuItem>
                 ) : (
                   sectors.map((sector) => (
-                    <MenuItem key={sector.id} value={sector.id}> 
+                    <MenuItem key={sector.id} value={sector.id}> {/* Use sector.id here */}
                       <span style={{ color: "black" }}>{sector.sector_name}</span>
                     </MenuItem>
                   ))
@@ -141,6 +145,17 @@ const AddCategoryForm = () => {
           </Box>
         </Grid>
       </Grid>
+
+      {/* Snackbar for error */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+          {serverError}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

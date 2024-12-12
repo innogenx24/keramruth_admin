@@ -181,6 +181,9 @@ const MemberAdoTable = () => {
                 labelId="role-dropdown-label"
                 value={selectedRole}
                 onChange={(e) => handleChange(e.target.value)}
+                sx={{
+                  borderRadius: "20px", 
+                }}
               >
                 {roleOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -193,7 +196,16 @@ const MemberAdoTable = () => {
           
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
-            <Button variant="contained" color="primary" onClick={handleAddMemberClick}>
+            <Button variant="contained" color="primary" onClick={handleAddMemberClick}
+
+style={{
+  backgroundColor: "#28a745",
+  color: "white",
+  fontWeight: "bold",
+  borderRadius: "5px",
+}}
+            
+            >
               + Add Member
             </Button>
           </Box>

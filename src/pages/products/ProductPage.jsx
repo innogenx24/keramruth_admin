@@ -149,6 +149,12 @@ const ProductPage = () => {
           color="primary"
           onClick={handleAddProductClick}
           startIcon={<Add />}
+          style={{
+            backgroundColor: "#28a745",
+            color: "white",
+            fontWeight: "bold",
+            borderRadius: "5px",
+          }}
         >
           Add Product
         </Button>

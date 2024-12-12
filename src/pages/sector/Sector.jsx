@@ -115,7 +115,14 @@ const SectorTable = () => {
       </Typography>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <Button variant="contained" color="primary" onClick={handleAddSectorClick}>
+        <Button variant="contained" color="primary" onClick={handleAddSectorClick}
+        style={{
+          backgroundColor: "#28a745",
+          color: "white",
+          fontWeight: "bold",
+          borderRadius: "5px",
+        }}
+        >
           + Add Sector
         </Button>
       </Box>
