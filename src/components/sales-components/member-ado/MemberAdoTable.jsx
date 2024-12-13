@@ -1,4 +1,3 @@
-// MemberAdoTable.js
 import { useState, useEffect, useMemo } from "react";
 import {
   Table,
@@ -31,7 +30,9 @@ import { fetchMembersRequest, clearMembers } from "../../../redux/slices/member-
 import { deleteMemberRequest } from "../../../redux/slices/member-slice/MemberDeleteSlice";
 import AddMemberForm from "./AddMemberForm";
 import EditMemberForm from "./EditMemberForm";
-import SearchBox from "../../../search-box/SearchBox"
+import SearchBox from "../../../search-box/SearchBox";
+import axios from 'axios';
+import { HiMiniUserGroup } from "react-icons/hi2";
 
 const MemberAdoTable = () => {
   const dispatch = useDispatch();
@@ -42,20 +43,48 @@ const MemberAdoTable = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(10);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [rowsPerPage] = useState(5);
+  const [selectedRole, setSelectedRole] = useState(""); // Initially set as empty
   const [debouncedRole, setDebouncedRole] = useState("");
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [roleCounts, setRoleCounts] = useState({
+    mdCount: 0,
+    sdCount: 0,
+    distributorCount: 0,
+    customerCount: 0,
+    adoCount: 0,
+  });
+
   const navigate = useNavigate();
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+
+  const { users } = useSelector((state) => state.users);
+  const UserId = users?.id;
 
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role;
 
   useEffect(() => {
+    if (role) {
+      const initialRole = role === "Admin" ? "2" : 
+                          role === "Area Development Officer" ? "3" :
+                          role === "Master Distributor" ? "4" :
+                          role === "Super Distributor" ? "5" :
+                          role === "Distributor" ? "6" : "3"; 
+      setSelectedRole(initialRole);
+      setCurrentPage(1);
+    }
+  }, [role]);
+
+
+
+  useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedRole(selectedRole);
     }, 500);
+
+    setCurrentPage(1);
+
     return () => clearTimeout(timer);
   }, [selectedRole]);
 
@@ -71,6 +100,8 @@ const MemberAdoTable = () => {
         return 6;
       case "Customer":
         return 7;
+      case "Admin":
+        return 2; 
       default:
         return 2;
     }
@@ -126,14 +157,40 @@ const MemberAdoTable = () => {
     }
   }, [dispatch, role_Id, debouncedRole]);
 
+  const [loadingCounts, setLoadingCounts] = useState(true); // Loading state
+
+  const fetchUserCounts = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Token not found");
+
+    try {
+      const response = await axios.get(`http://88.222.245.236:3002/api/user/${UserId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setRoleCounts(response.data);
+    } catch (error) {
+      console.error("Error fetching role counts:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (UserId) {
+      fetchUserCounts();
+    }
+  }, [UserId]);
+
   const handleSearchChange = (query) => {
     setSearchQuery(query);
   };
-
+  
   const filteredMembersList = membersList.filter((member) =>
-    member?.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+    member?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    member?.mobile_number.toLowerCase().includes(searchQuery.toLowerCase())  // Add search for mobile_number
   );
-
+  
   const sortedMembersList = [...filteredMembersList].sort((a, b) => b.id - a.id);
 
   const handleAddMemberClick = () => {
@@ -160,39 +217,80 @@ const MemberAdoTable = () => {
   };
 
   const handleChangePage = (event, newPage) => {
-    setCurrentPage(newPage + 1);
+    setCurrentPage(newPage + 1);  // Fix page index starting from 1
   };
 
   const currentMembers = sortedMembersList.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+  const renderPagination = (totalRows) => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}  // Ensure it doesn't go below 1
+        disabled={currentPage === 1}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {currentPage}
+      </Typography>
+      <Button
+        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(totalRows / rowsPerPage)))}
+        disabled={currentPage >= Math.ceil(totalRows / rowsPerPage)}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+  
 
   return (
     <Box sx={{ width: "100%" }}>
-                <SearchBox value={searchQuery} onSearchChange={handleSearchChange} /> {/* Search box component */}
+     
 
       {showTable ? (
         <>
-          <Box sx={{ display: "flex", justifyContent: "flex-start", p: 2 }}>
-            <FormControl style={{width:"30%"}}>
-              <InputLabel id="role-dropdown-label">Select Role</InputLabel>
-              <Select
-                labelId="role-dropdown-label"
-                value={selectedRole}
-                onChange={(e) => handleChange(e.target.value)}
-                sx={{
-                  borderRadius: "20px", 
-                }}
-              >
-                {roleOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+         <Box sx={{ display: "flex" }}>
+
+         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        {/* Role Dropdown */}
+        <FormControl style={{ width: "30%" }}>
+          <InputLabel id="role-dropdown-label">Select Role</InputLabel>
+          <Select
+            labelId="role-dropdown-label"
+            value={selectedRole}
+            onChange={(e) => handleChange(e.target.value)}
+            sx={{ borderRadius: "20px" }}
+          >
+            {roleOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Role Count */}
+        <Box sx={{ display: "flex", alignItems: "center", mr: 100 }}>
+          <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
+            <HiMiniUserGroup size={30} style={{ marginRight: "8px" }} />
+            {selectedRole === "2" && roleCounts.adoCount}
+            {selectedRole === "3" && roleCounts.mdCount}
+            {selectedRole === "4" && roleCounts.sdCount}
+            {selectedRole === "5" && roleCounts.distributorCount}
+            {selectedRole === "6" && roleCounts.customerCount}
+          </Typography>
+        </Box>
+      </Box>
+      <SearchBox value={searchQuery} onSearchChange={handleSearchChange} /> {/* Search box component */}
+
+        
+        </Box>
+    
+
           
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
@@ -211,48 +309,56 @@ style={{
           </Box>
 
           <TableContainer component={Paper}>
-            <Table stickyHeader aria-label="Member ADO Table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>No.</TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Full Name</TableCell>
-                  <TableCell>Mobile No.</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Email</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {currentMembers.map((member, index) => (
-                  <TableRow key={member.id}>
-                    <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
-                    <TableCell>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Avatar
-                          src={member?.image ? `${imageBaseURL}${member.image}` : "/path/to/default-image.jpg"}
-                        />
-                        <Typography style={{ marginLeft: "10px" }}>
-                          {member?.username}
-                        </Typography>
-                      </div>
-                    </TableCell>
-                    <TableCell>{member?.full_name}</TableCell>
-                    <TableCell>{member?.mobile_number}</TableCell>
-                    <TableCell>{member?.role_name}</TableCell>
-                    <TableCell>{member?.email}</TableCell>
-                    <TableCell>
-                      <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+  <Table stickyHeader aria-label="Member ADO Table">
+    <TableHead>
+      <TableRow>
+        <TableCell>No.</TableCell>
+        <TableCell>Username</TableCell>
+        <TableCell>Full Name</TableCell>
+        <TableCell>Mobile No.</TableCell>
+        <TableCell>Role</TableCell>
+        <TableCell>Email</TableCell>
+        {role === "Admin" && <TableCell>Action</TableCell>} 
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {currentMembers.map((member, index) => (
+        <TableRow key={member.id}>
+      <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
+      <TableCell>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Avatar
+                src={member?.image ? `${imageBaseURL}${member.image}` : "/path/to/default-image.jpg"}
+              />
+              <Typography style={{ marginLeft: "10px" }}>
+                {member?.username}
+              </Typography>
+            </div>
+          </TableCell>
+          <TableCell>{member?.full_name}</TableCell>
+          <TableCell>{member?.mobile_number}</TableCell>
+          <TableCell>{member?.role_name}</TableCell>
+          <TableCell>{member?.email}</TableCell>
+          {role === "Admin" && (  
+            <TableCell>
+              <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
+                <DeleteIcon />
+              </IconButton>
+            </TableCell>
+          )}
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+<div style={{marginTop:"10px"}}>
+{renderPagination(filteredMembersList.length)}
+
+</div>
+
         </>
       ) : editMember ? (
         <EditMemberForm member={editMember} />
@@ -260,7 +366,6 @@ style={{
         <AddMemberForm />
       )}
 
-      {/* Delete Member Confirmation Dialog */}
       <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>

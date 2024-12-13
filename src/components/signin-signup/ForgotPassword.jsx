@@ -10,14 +10,19 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import LoginImage from "../../assets/logo/LoginImage.png";
-import "./style.css";
+import LoginImage from "../../assets/logo/LoginImage.png"; // Ensure this path is correct
+import "./style.css"; // Ensure this file contains the necessary styles
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -33,14 +38,16 @@ const ForgotPassword = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email }), // Use email in the request body
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage("Password reset link sent to your email");
+        setSuccessMessage("Reset link sent to your email.");
+        setOpenSnackbar(true); // Show success message
         setEmail(""); // Clear the email field
+        setErrorMessage(""); // Clear error message
       } else {
         setErrorMessage(data.message || "Error sending reset link");
       }
@@ -50,31 +57,9 @@ const ForgotPassword = () => {
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        display: "flex",
-        height: "100vh",
-        alignItems: "center",
-        padding: { xs: 2, sm: 3, md: 5 }, // Responsive padding
-      }}
-    >
-      <Grid container sx={{ height: "100%" }}>
-        {/* Left section with the image */}
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          sx={{
-            display: { xs: "none", sm: "block" },
-            backgroundImage: `url(${LoginImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            height: "100%",
-          }}
-        />
-
-        {/* Right section with the form */}
+    <Container maxWidth={false}>
+      <Grid container sx={{ height: "100%", width: "100%" }}>
+        {/* Image Section */}
         <Grid
           item
           xs={12}
@@ -83,17 +68,44 @@ const ForgotPassword = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100%",
-            padding: { xs: "16px", sm: "32px" }, // Responsive padding
+            height: {
+              xs: "auto",
+              sm: "100vh",
+            },
           }}
         >
-          <Box sx={{ width: "100%", maxWidth: "400px" }}>
+          <Box>
+            <img
+              src={LoginImage}
+              alt="Login"
+              style={{ maxWidth: "100%", height: "100%", borderRadius: "8px" }}
+            />
+          </Box>
+        </Grid>
+
+        {/* Form Section */}
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: {
+              xs: "auto",
+              sm: "100vh",
+            },
+            padding: "16px",
+          }}
+        >
+          <Box>
             <Typography variant="h4" gutterBottom>
               Forgot Password
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Enter Your Email And We'll Send You Instructions To Reset Your
-              Password
+              Enter your email and we'll send you instructions to reset your
+              password.
             </Typography>
             <form onSubmit={handleSubmit}>
               <TextField
@@ -119,29 +131,21 @@ const ForgotPassword = () => {
               </Button>
             </form>
 
-            {/* Success Snackbar */}
             <Snackbar
-              open={Boolean(successMessage)}
+              open={openSnackbar}
               autoHideDuration={6000}
-              onClose={() => setSuccessMessage("")}
+              onClose={handleCloseSnackbar}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              <Alert onClose={() => setSuccessMessage("")} severity="success">
+              <Alert
+                onClose={handleCloseSnackbar}
+                severity="success"
+                sx={{ width: "100%", backgroundColor: "#4caf50", color: "white" }}
+              >
                 {successMessage}
               </Alert>
             </Snackbar>
 
-            {/* Error Snackbar */}
-            <Snackbar
-              open={Boolean(errorMessage)}
-              autoHideDuration={6000}
-              onClose={() => setErrorMessage("")}
-            >
-              <Alert onClose={() => setErrorMessage("")} severity="error">
-                {errorMessage}
-              </Alert>
-            </Snackbar>
-
-            {/* Back to Login */}
             <Typography
               variant="body2"
               sx={{ mt: 2, textAlign: "center", color: "#777" }}

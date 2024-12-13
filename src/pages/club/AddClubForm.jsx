@@ -12,25 +12,25 @@ const AddClubForm = () => {
   const [submitted, setSubmitted] = useState(false); // Track if form is submitted
 
   // Validate form fields
-const validate = () => {
-  let formErrors = {};
-  const alphanumericRegex = /^[a-zA-Z0-9\s]+$/; // Alphanumeric with spaces allowed
+  const validate = () => {
+    let formErrors = {};
+    const alphanumericRegex = /^[a-zA-Z\s]+$/; // Alphanumeric with spaces only, no numbers
+    
+    if (!clubName.trim()) {
+      formErrors.clubName = "Club name is required.";
+    } else if (!alphanumericRegex.test(clubName)) {
+      formErrors.clubName = "Club name cannot contain numbers or special characters.";
+    }
   
-  if (!clubName.trim()) {
-    formErrors.clubName = "Club name is required.";
-  } else if (!alphanumericRegex.test(clubName)) {
-    formErrors.clubName = "Special characters is not allowed.";
-  }
-
-  if (!litreQuantity.trim()) {
-    formErrors.litreQuantity = "Litre quantity is required.";
-  } else if (!/^\d+$/.test(litreQuantity)) {
-    formErrors.litreQuantity = "Numbers only allowed.";
-  }
-
-  return formErrors;
-};
-
+    if (!litreQuantity.trim()) {
+      formErrors.litreQuantity = "Litre quantity is required.";
+    } else if (!/^\d+$/.test(litreQuantity)) {
+      formErrors.litreQuantity = "Numbers only allowed.";
+    }
+  
+    return formErrors;
+  };
+  
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
