@@ -781,8 +781,6 @@ const AddMemberForm = () => {
       state: Yup.string().required("Required"),
       district: Yup.string().required("Required"),
       city: Yup.string().required("Required"),
-      street_name: Yup.string().required("Required"),
-      building_no_name: Yup.string().required("Required"),
       club_name: Yup.string(),
       // superior_id: Yup.string().required("Please select aany one  superior_id"),
     }),
@@ -1258,34 +1256,33 @@ const AddMemberForm = () => {
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Club & Superior Distributors</InputLabel>
               <Grid container spacing={2}>
-                {selectedRole !== "6" && (
-                  <Grid item xs={12}>
-                    <InputLabel>Club*</InputLabel>
-                    <Select
-                      fullWidth
-                      name="club_name"
-                      value={formik.values.club_name}
-                      onChange={(e) => {
-                        formik.setFieldValue("club_name", e.target.value); // Set club_name directly
-                      }}
-                      error={Boolean(
-                        formik.touched.club_name && formik.errors.club_name
-                      )}
-                    >
-                      <MenuItem value="">Select Club</MenuItem>
-                      {clubs.map((club) => (
-                        <MenuItem key={club.id} value={club.club_name}>
-                          {club.club_name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {formik.touched.club_name && formik.errors.club_name && (
-                      <Typography color="error">
-                        {formik.errors.club_name}
-                      </Typography>
-                    )}
-                  </Grid>
-                )}
+              {!(selectedRole === "6" || selectedRole === "2") && (
+  <Grid item xs={12}>
+    <InputLabel>Club*</InputLabel>
+    <Select
+      fullWidth
+      name="club_name"
+      value={formik.values.club_name}
+      onChange={(e) => {
+        formik.setFieldValue("club_name", e.target.value); // Set club_name directly
+      }}
+      error={Boolean(formik.touched.club_name && formik.errors.club_name)}
+    >
+      <MenuItem value="">Select Club</MenuItem>
+      {clubs.map((club) => (
+        <MenuItem key={club.id} value={club.club_name}>
+          {club.club_name}
+        </MenuItem>
+      ))}
+    </Select>
+    {formik.touched.club_name && formik.errors.club_name && (
+      <Typography color="error">
+        {formik.errors.club_name}
+      </Typography>
+    )}
+  </Grid>
+)}
+
 
                 {selectedRole === "2" ? (
                   <Grid item xs={12}>

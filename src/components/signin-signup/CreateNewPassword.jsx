@@ -9,6 +9,8 @@ import {
   Box,
   IconButton,
   InputAdornment,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LoginImage from "../../assets/logo/LoginImage.png";
@@ -23,6 +25,7 @@ const CreateNewPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
@@ -57,53 +60,71 @@ const CreateNewPassword = () => {
     }
 
     try {
-      const response = await fetch("http://88.222.245.236:3002/reset-password", {
+      const response = await fetch("http://88.222.245.236:3002/forgot-password/reset", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }), // Send both email and password
+        body: JSON.stringify({ email, password }),
       });
-
+    
       const data = await response.json();
+    
+      // Log the response to ensure it's correct
+      console.log("Response from API:", data);
 
       if (response.ok) {
-        setSuccessMessage("Password successfully reset");
-        setEmail(""); // Clear fields after success
+        // Log success response
+        console.log("Password update successful");
+        setSuccessMessage("Password updated successfully and confirmation email sent.");
+        setOpenSnackbar(true); // Show success Snackbar
+        setEmail("");
         setPassword("");
         setConfirmPassword("");
+        // Automatically navigate after 6 seconds (Snackbar duration)
+        setTimeout(() => {
+          navigate("/signin");
+        }, 6000);
       } else {
+        console.error("Error response:", data); // Log the error
         setErrorMessage(data.message || "Error resetting password");
       }
     } catch (error) {
+      console.error("Fetch error:", error); // Log fetch/network errors
       setErrorMessage("Error connecting to server");
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        display: "flex",
-        height: "100vh",
-        alignItems: "center",
-        padding: { xs: 2, sm: 3, md: 5 }, // Responsive padding
-      }}
-    >
-      <Grid container sx={{ height: "100%" }}>
-        {/* Left section with the image */}
+    <Container maxWidth={false}>
+      <Grid container sx={{ height: "100%", width: "100%" }}>
+        {/* Image Section */}
         <Grid
           item
           xs={12}
           sm={6}
           sx={{
-            display: { xs: "none", sm: "block" },
-            backgroundImage: `url(${LoginImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: {
+              xs: "auto",
+              sm: "100vh",
+            },
           }}
-        />
+        >
+          <Box>
+            <img
+              src={LoginImage}
+              alt="Login"
+              style={{ maxWidth: "100%", height: "100%", borderRadius: "8px" }}
+            />
+          </Box>
+        </Grid>
 
         {/* Right section with the form */}
         <Grid
@@ -114,11 +135,14 @@ const CreateNewPassword = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "100%",
-            padding: { xs: "16px", sm: "32px" }, // Responsive padding
+            height: {
+              xs: "auto",
+              sm: "100vh",
+            },
+            padding: "16px",
           }}
         >
-          <Box>
+          <Box sx={{ width: "80%" }}>
             <Typography variant="h4" gutterBottom>
               Reset Your Password
             </Typography>
@@ -148,9 +172,7 @@ const CreateNewPassword = () => {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
+                      <IconButton onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
@@ -172,15 +194,9 @@ const CreateNewPassword = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -189,11 +205,7 @@ const CreateNewPassword = () => {
 
               {/* Error Message */}
               {errorMessage && (
-                <Typography
-                  variant="body2"
-                  color="error"
-                  sx={{ mt: 1, textAlign: "left" }}
-                >
+                <Typography variant="body2" color="error" sx={{ mt: 1, textAlign: "left" }}>
                   {errorMessage}
                 </Typography>
               )}
@@ -214,7 +226,7 @@ const CreateNewPassword = () => {
               </Button>
 
               {/* Back to Login */}
-              <Box sx={{ textAlign: "center", mt: 2 }}>
+              <Box sx={{ textAlign: "right", mt: 2 }}>
                 <Typography variant="body2">
                   Back to Login?{" "}
                   <Button
@@ -231,6 +243,22 @@ const CreateNewPassword = () => {
           </Box>
         </Grid>
       </Grid>
+
+      {/* Snackbar for Success Message */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%", backgroundColor: "#4caf50", color: "white" }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

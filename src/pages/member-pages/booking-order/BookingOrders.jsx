@@ -4,7 +4,7 @@ import axios from "axios";
 import { useSelector } from "react-redux"; // Import useSelector
 import { useLocation } from "react-router-dom";
 import AppLogo from "../../../assets/logo/AppLogo";
-
+import "./style.css"
 const BookingOrders = () => {
   const [products, setProducts] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -67,9 +67,10 @@ const BookingOrders = () => {
   const incrementQuantity = (productId) => {
     setOrderItems((prevOrderItems) => {
       const updatedItems = [...prevOrderItems];
-      const existingItem = updatedItems.find(item => item.product_id === productId);
+      const existingItem = updatedItems.find((item) => item.product_id === productId);
       if (existingItem) {
-        existingItem.quantity += 1;
+        // Ensure quantity is treated as a number
+        existingItem.quantity = parseInt(existingItem.quantity, 10) + 1;
       } else {
         updatedItems.push({ product_id: productId, quantity: 1 });
       }
@@ -155,7 +156,7 @@ const BookingOrders = () => {
           marginBottom: "10px",
         }}
       >
-    <TableContainer component={Paper}>
+   <TableContainer component={Paper}>
   <Table>
     <TableHead>
       <TableRow>
@@ -167,40 +168,17 @@ const BookingOrders = () => {
     </TableHead>
     <TableBody>
       {products.map((product) => {
-        const isOutOfStock = product.stock_quantity === 0; // Check if stock is zero
         const currentQuantity = orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
         
         return (
           <TableRow key={product.id}>
             {/* Product Image */}
             <TableCell>
-              <div style={{ position: 'relative' }}>
-                <img
-                  src={`${imageBaseURL}${product.image}`}
-                  alt={product.name}
-                  style={{ width: "75px", height: "70px" }}
-                />
-                {isOutOfStock && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '75px',
-                      height: '70px',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      color: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 'bold',
-                      fontSize: '16px',
-                    }}
-                  >
-                    Not Available
-                  </div>
-                )}
-              </div>
+              <img
+                src={`${imageBaseURL}${product.image}`}
+                alt={product.name}
+                style={{ width: "75px", height: "70px" }}
+              />
             </TableCell>
 
             {/* Product Name */}
@@ -232,7 +210,6 @@ const BookingOrders = () => {
                   size="small"
                   onClick={() => decrementQuantity(product.id)}
                   style={{ marginRight: "10px" }}
-                  disabled={isOutOfStock} // Disable decrement button if out of stock
                 >
                   -
                 </Button>
@@ -243,8 +220,7 @@ const BookingOrders = () => {
                   value={currentQuantity}
                   onChange={(e) => {
                     let value = e.target.value;
-                    // Remove leading zeros and ensure the value is a valid number
-                    value = value.replace(/^0+/, '') || '0'; // Replace leading zeros, default to '0' if empty
+                    value = value.replace(/^0+/, '') || '0'; // Handle leading zeros
                     handleQuantityChange(product.id, value);
                   }}
                   min="0"
@@ -256,7 +232,6 @@ const BookingOrders = () => {
                     border: "1px solid #ccc",
                     borderRadius: "4px",
                   }}
-                  disabled={isOutOfStock} // Disable input if out of stock
                 />
 
                 <Button
@@ -264,7 +239,6 @@ const BookingOrders = () => {
                   size="small"
                   onClick={() => incrementQuantity(product.id)}
                   style={{ marginLeft: "10px" }}
-                  disabled={isOutOfStock} // Disable increment button if out of stock
                 >
                   +
                 </Button>
@@ -276,7 +250,6 @@ const BookingOrders = () => {
     </TableBody>
   </Table>
 </TableContainer>
-
 
 
       </div>

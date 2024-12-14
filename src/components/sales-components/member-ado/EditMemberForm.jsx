@@ -337,15 +337,7 @@ useEffect(() => {
       validationErrors.password = "Password is required";
       isValid = false;
     }
-    //
-    if (!formData.street_name) {
-      validationErrors.street_name = "Sreet Name is required";
-      isValid = false;
-    }
-    if (!formData.building_no_name) {
-      validationErrors.building_no_name = "Building_no_name is required";
-      isValid = false;
-    }
+    
 
     setErrors(validationErrors);
     return isValid;

@@ -183,6 +183,20 @@ const SignIn = () => {
               >
                 LOGIN
               </Button>
+              <Button
+  variant="text"
+  fullWidth
+  style={{ 
+    marginTop: '16px', 
+    color: 'black', 
+    marginLeft:"100px"
+  }}
+  onClick={() => navigate('/forgot-password')}
+>
+  Forgot your password
+</Button>
+
+              {error && <Typography color="error">{error}</Typography>}
 
               <Snackbar
                 open={openSnackbar}
