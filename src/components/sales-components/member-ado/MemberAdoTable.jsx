@@ -275,7 +275,7 @@ const MemberAdoTable = () => {
 
         {/* Role Count */}
         <Box sx={{ display: "flex", alignItems: "center", mr: 100 }}>
-          <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
+          <Typography variant="h6" sx={{ display: "flex", alignItems: "center", marginLeft:"10px" }}>
             <HiMiniUserGroup size={30} style={{ marginRight: "8px" }} />
             {selectedRole === "2" && roleCounts.adoCount}
             {selectedRole === "3" && roleCounts.mdCount}
@@ -285,7 +285,10 @@ const MemberAdoTable = () => {
           </Typography>
         </Box>
       </Box>
-      <SearchBox value={searchQuery} onSearchChange={handleSearchChange} /> {/* Search box component */}
+      <Box sx={{marginLeft:"-150px"}} >
+      <SearchBox value={searchQuery} onSearchChange={handleSearchChange} /> 
+
+      </Box>
 
         
         </Box>

@@ -26,7 +26,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
   const rowsPerPage = 10;
   const { users } = useSelector((state) => state.users);
   const dispatch = useDispatch();
-  const userId = users?.id; // Assuming the user ID is stored in the state.users object
+  const userId = users?.id; 
 
   const API_URL = `http://88.222.245.236:3002/orders/get-order-request/${userId}`;
 
@@ -36,7 +36,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
       console.error('Token not found');
       return;
     }
-
+  
     try {
       const response = await axios.get(API_URL, {
         headers: {
@@ -44,9 +44,14 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
         },
       });
       const allOrders = response.data.orders || [];
-
-      setPendingOrders(allOrders.filter(order => order.status === 'Pending'));
-
+  
+      // Filter and sort pending orders by updatedAt in descending order
+      const sortedPendingOrders = allOrders
+        .filter(order => order.status === 'Pending')
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      setPendingOrders(sortedPendingOrders);
+  
+      // Sort completed orders (Accepted and Cancelled) by updatedAt in descending order
       const sortedCompletedOrders = allOrders
         .filter(order => order.status === 'Accepted' || order.status === 'Cancelled')
         .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
@@ -55,11 +60,13 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
       console.error('Error fetching orders:', error);
     }
   };
-
+  
   useEffect(() => {
-    fetchOrders();
-  }, []);
-
+    if (userId) {
+      fetchOrders();
+    }
+  }, [userId]);
+  
   const handleAction = async (orderId, action) => {
     const token = localStorage.getItem('token');
     if (!token) {

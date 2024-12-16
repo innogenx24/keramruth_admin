@@ -266,7 +266,7 @@ export default function AdminDashboard() {
       icon: <MembersIcon />,
     },
     {
-      text: "Pending Orders",
+      text: "Orders",
       path: "/dashboard/pending-orders-member",
       icon: <PendingActionsIcon />,
     },
@@ -292,7 +292,7 @@ export default function AdminDashboard() {
     },
 
     {
-      text: "Documents",
+      text: "Downloads",
       path: "/dashboard/documents-member",
       icon: <DescriptionIcon />,
     },
@@ -314,7 +314,7 @@ export default function AdminDashboard() {
       icon: <MembersIcon />,
     },
     {
-      text: "Pending Orders",
+      text: "Orders",
       path: "/dashboard/pending-orders",
       icon: <PendingActionsIcon />,
     },
@@ -325,7 +325,7 @@ export default function AdminDashboard() {
     },
 
     {
-      text: "Documents",
+      text: "Downloads",
       path: "/dashboard/documents",
       icon: <DescriptionIcon />,
     },

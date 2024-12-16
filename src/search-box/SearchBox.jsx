@@ -4,7 +4,7 @@ const SearchBox = ({ value, onSearchChange }) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
       <TextField
-        label="Search name"
+        label="Search name or mobile no"
         variant="outlined"
         value={value}
         onChange={(e) => onSearchChange(e.target.value)}

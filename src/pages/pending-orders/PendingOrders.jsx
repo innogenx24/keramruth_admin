@@ -43,20 +43,22 @@ const OrderManagement = () => {
   
       // Filter and sort pending orders by createdAt in descending order
       const sortedPendingOrders = allOrders
-        .filter(order => order.status === 'Pending')
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      .filter(order => order.status === 'Pending')
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
   
       setPendingOrders(sortedPendingOrders);
   
       // Sort completed orders by updatedAt in descending order
       const sortedCompletedOrders = allOrders
         .filter(order => order.status === 'Accepted' || order.status === 'Cancelled')
-        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)); // Ensure descending order by updatedAt
       setCompletedOrders(sortedCompletedOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
   };
+  
   
 
   useEffect(() => {
@@ -126,6 +128,7 @@ const OrderManagement = () => {
       </Button>
     </div>
   );
+  
 
   const renderTable = (title, orders, page, setPage, showStatus = false, isActionable = false) => (
     <div>
