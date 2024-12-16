@@ -43,7 +43,7 @@ const MemberAdoTable = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(5);
+  const [rowsPerPage] = useState(10);
   const [selectedRole, setSelectedRole] = useState(""); // Initially set as empty
   const [debouncedRole, setDebouncedRole] = useState("");
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
@@ -248,117 +248,114 @@ const MemberAdoTable = () => {
   
 
   return (
-    <Box sx={{ width: "100%" }}>
-     
+    <Box sx={{ width: '100%' }}>
+      <Typography variant="h6" sx={{ marginBottom: '20px', color: '#989FA9' }}>
+        All Members
+      </Typography>
 
       {showTable ? (
         <>
-         <Box sx={{ display: "flex" }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <Box sx={{ width: '100%', marginTop: 2 }}>
+              <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
+            </Box>
 
-         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-        {/* Role Dropdown */}
-        <FormControl style={{ width: "30%" }}>
-          <InputLabel id="role-dropdown-label">Select Role</InputLabel>
-          <Select
-            labelId="role-dropdown-label"
-            value={selectedRole}
-            onChange={(e) => handleChange(e.target.value)}
-            sx={{ borderRadius: "20px" }}
-          >
-            {roleOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              {/* Role Dropdown */}
+              <FormControl style={{ width: '30%' }}>
+                <InputLabel id="role-dropdown-label">Select Role</InputLabel>
+                <Select
+                  labelId="role-dropdown-label"
+                  value={selectedRole}
+                  onChange={(e) => handleChange(e.target.value)}
+                  sx={{ borderRadius: '20px' }}
+                >
+                  {roleOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-        {/* Role Count */}
-        <Box sx={{ display: "flex", alignItems: "center", mr: 100 }}>
-          <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
-            <HiMiniUserGroup size={30} style={{ marginRight: "8px" }} />
-            {selectedRole === "2" && roleCounts.adoCount}
-            {selectedRole === "3" && roleCounts.mdCount}
-            {selectedRole === "4" && roleCounts.sdCount}
-            {selectedRole === "5" && roleCounts.distributorCount}
-            {selectedRole === "6" && roleCounts.customerCount}
-          </Typography>
-        </Box>
-      </Box>
-      <SearchBox value={searchQuery} onSearchChange={handleSearchChange} /> {/* Search box component */}
+              {/* Role Count */}
+              <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
+                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                  <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
+                  {selectedRole === '2' && roleCounts.adoCount}
+                  {selectedRole === '3' && roleCounts.mdCount}
+                  {selectedRole === '4' && roleCounts.sdCount}
+                  {selectedRole === '5' && roleCounts.distributorCount}
+                  {selectedRole === '6' && roleCounts.customerCount}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
 
-        
-        </Box>
-    
-
-          
-
-          <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
-            <Button variant="contained" color="primary" onClick={handleAddMemberClick}
-
-style={{
-  backgroundColor: "#28a745",
-  color: "white",
-  fontWeight: "bold",
-  borderRadius: "5px",
-}}
-            
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddMemberClick}
+              style={{
+                backgroundColor: '#28a745',
+                color: 'white',
+                fontWeight: 'bold',
+                borderRadius: '5px',
+              }}
             >
               + Add Member
             </Button>
           </Box>
 
           <TableContainer component={Paper}>
-  <Table stickyHeader aria-label="Member ADO Table">
-    <TableHead>
-      <TableRow>
-        <TableCell>No.</TableCell>
-        <TableCell>Username</TableCell>
-        <TableCell>Full Name</TableCell>
-        <TableCell>Mobile No.</TableCell>
-        <TableCell>Role</TableCell>
-        <TableCell>Email</TableCell>
-        {role === "Admin" && <TableCell>Action</TableCell>} 
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {currentMembers.map((member, index) => (
-        <TableRow key={member.id}>
-      <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
-      <TableCell>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Avatar
-                src={member?.image ? `${imageBaseURL}${member.image}` : "/path/to/default-image.jpg"}
-              />
-              <Typography style={{ marginLeft: "10px" }}>
-                {member?.username}
-              </Typography>
-            </div>
-          </TableCell>
-          <TableCell>{member?.full_name}</TableCell>
-          <TableCell>{member?.mobile_number}</TableCell>
-          <TableCell>{member?.role_name}</TableCell>
-          <TableCell>{member?.email}</TableCell>
-          {role === "Admin" && (  
-            <TableCell>
-              <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
-                <DeleteIcon />
-              </IconButton>
-            </TableCell>
-          )}
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</TableContainer>
-<div style={{marginTop:"10px"}}>
-{renderPagination(filteredMembersList.length)}
+            <Table stickyHeader aria-label="Member ADO Table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>No.</TableCell>
+                  <TableCell>Username</TableCell>
+                  <TableCell>Full Name</TableCell>
+                  <TableCell>Mobile No.</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Email</TableCell>
+                  {role === 'Admin' && <TableCell>Action</TableCell>}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredMembersList.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map((member, index) => (
+                  <TableRow key={member.id}>
+                    <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
+                    <TableCell>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Avatar
+                          src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
+                        />
+                        <Typography style={{ marginLeft: '10px' }}>{member?.username}</Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>{member?.full_name}</TableCell>
+                    <TableCell>{member?.mobile_number}</TableCell>
+                    <TableCell>{member?.role_name}</TableCell>
+                    <TableCell>{member?.email}</TableCell>
+                    {role === 'Admin' && (
+                      <TableCell>
+                        <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-</div>
-
+          <div style={{ marginTop: '10px' }}>
+            {renderPagination(filteredMembersList.length)}
+          </div>
         </>
       ) : editMember ? (
         <EditMemberForm member={editMember} />
@@ -385,5 +382,4 @@ style={{
     </Box>
   );
 };
-
 export default MemberAdoTable;
