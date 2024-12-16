@@ -54,8 +54,10 @@ const TargetPage = () => {
   };
 
   useEffect(() => {
-    fetchTargetData();
-  }, []);
+    if (userId && roleId) {
+      fetchTargetData();
+    }
+  }, [userId, roleId]);
 
   if (loading) {
     return <CircularProgress />;
@@ -103,6 +105,9 @@ const TargetPage = () => {
         <Button
           variant="contained"
           onClick={handleViewMembersTarget}
+          style={{backgroundColor: "#28a745",
+            color: "white", }}
+          
           
         >
           View Members Target
