@@ -30,7 +30,6 @@ const SignIn = () => {
       password: Yup.string().required('Required')
     }),
     onSubmit: (values) => {
-      console.log(values, "valuvesssss");
 
       dispatch(signInRequest({ ...values, rememberMe }));
       setOpenSnackbar(true);

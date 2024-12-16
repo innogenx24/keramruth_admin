@@ -165,15 +165,16 @@ const OrderManagement = () => {
                   <TableRow>
                     <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Avatar
-                          src={order?.customerImage ? `${imageBaseURL}${order.customerImage}` : '/path/to/default-image.jpg'}
-                        />
-                        <Typography style={{ marginLeft: "10px" }}>
-                          {order?.customerName}
-                        </Typography>
-                      </div>
-                    </TableCell>
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <Avatar
+      src={order?.customer?.image ? `${imageBaseURL}${order.customer.image}` : '/path/to/default-image.jpg'}
+      alt={order?.customer?.name}
+    />
+    <Typography style={{ marginLeft: "10px" }}>
+      {order?.customer?.name || 'Unknown'}
+    </Typography>
+  </div>
+</TableCell>
                     <TableCell>
                       {order.OrderItems.reduce((total, item) => total + item.quantity, 0).toLocaleString()}
                     </TableCell>
@@ -249,16 +250,17 @@ const OrderManagement = () => {
                             <TableRow key={item.itemId}>
                                 <TableCell>{itemIndex + 1}</TableCell>
                               <TableCell>
-                              <div style={{ display: "flex", alignItems: "center" }}>
-                      <Avatar
-                        src={item?.productImage ? `${imageBaseURL}${item.productImage}` : '/path/to/default-image.jpg'} // Fallback image if not available
-                      />
-                      <Typography style={{ marginLeft: "10px" }}>
-                        {item?.productName}
-                      </Typography>
-                    </div>
-
-                              </TableCell>
+  {order.OrderItems.map((item, idx) => (
+    <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+      <Avatar
+        src={item.product?.image ? `${imageBaseURL}${item.product.image}` : '/path/to/default-image.jpg'}
+        alt={item.product?.name}
+        style={{ marginRight: '10px' }}
+      />
+      <Typography>{item.product?.name || 'Unknown Product'}</Typography>
+    </div>
+  ))}
+</TableCell>
                              
                               <TableCell>{item.quantity}</TableCell>
                               <TableCell>Rs. {item.basePrice}</TableCell>
