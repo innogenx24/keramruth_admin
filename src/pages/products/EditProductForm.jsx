@@ -52,7 +52,6 @@ const EditProductForm = ({ handleBackToProducts }) => {
     ADO_price: "",
     MD_price: "",
     SD_price: "",
-    status: 1,
 
     distributor_price: "",
     customer_price: ""
@@ -88,15 +87,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
   useEffect(() => {
     if (state?.product) {
-      // setProductDetails(state.product);
-      setProductDetails((prevDetails) => ({
-        ...prevDetails,
-        ...state.product, // Spread other product properties
-        stock_quantity: "", // Ensure stock_quantity starts as empty
-      }));
-      const stockValue = state?.product?.status === true ? true : false;
+      setProductDetails(state.product);
       
-      setStockStatus(stockValue);
       setAutoUpdate(state.product.autoUpdate);
       setSelectedCategory(state.product.category_name); 
 
@@ -322,11 +314,9 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
       formData.append("ADO_price", productDetails.ADO_price || "0");
     }
     
-    // Append category, stock, quantity, and status
     formData.append("category_name", selectedCategory || "");
     formData.append("stock_quantity", totalStockQuantity);
     formData.append("quantity_type", productDetails.quantity_type || "Unit");
-    // formData.append("status", stockStatus ? 0 : 1);
 
     // If an image was selected, append it to the form data
     if (selectedImage) {

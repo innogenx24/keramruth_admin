@@ -11,6 +11,8 @@ import {
   Button,
   Typography,
   Box,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import axios from 'axios';
 
@@ -23,6 +25,9 @@ const OrderManagement = () => {
   const [pendingPage, setPendingPage] = useState(0);
   const [completedPage, setCompletedPage] = useState(0);
   const rowsPerPage = 10;
+   const [snackbarOpen, setSnackbarOpen] = useState(false);
+   const [snackbarMessage, setSnackbarMessage] = useState('');
+   const [snackbarSeverity, setSnackbarSeverity] = useState('error'); 
 
   const API_URL = 'http://88.222.245.236:3002/orders/get-order-request';
 
@@ -82,7 +87,14 @@ const OrderManagement = () => {
         }
       );
       fetchOrders();
+      setSnackbarMessage('Action completed successfully');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An unexpected error occurred';
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
       console.error(`Error handling ${action}:`, error.response?.data || error.message);
     }
   };
@@ -102,6 +114,10 @@ const OrderManagement = () => {
       newExpandedState[orderId] = true; // Expand the clicked order
       return newExpandedState;
     });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
   
 
@@ -144,7 +160,7 @@ const OrderManagement = () => {
             <TableCell>Product Details</TableCell>
             <TableCell>Order Date</TableCell>
             {showStatus && <TableCell>Order Status</TableCell>}
-            {isActionable && <TableCell>Action</TableCell>}
+            {isActionable && <TableCell>Action a11</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -287,6 +303,16 @@ const OrderManagement = () => {
     <div>
       {renderTable('Pending Orders', pendingOrders, pendingPage, setPendingPage, false, true)}
       {renderTable('Accepted and Cancelled Orders', completedOrders, completedPage, setCompletedPage, true)}
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={handleSnackbarClose}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
     </div>
   );
 };
