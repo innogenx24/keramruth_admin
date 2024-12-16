@@ -87,7 +87,13 @@ const EditProductForm = ({ handleBackToProducts }) => {
 
   useEffect(() => {
     if (state?.product) {
-      setProductDetails(state.product);
+      // setProductDetails(state.product);
+      setProductDetails((prevDetails) => ({
+        ...prevDetails,
+        ...state.product, // Spread other product properties
+        stock_quantity: "", // Ensure stock_quantity starts as empty
+      }));
+      const stockValue = state?.product?.status === true ? true : false;
       
       setAutoUpdate(state.product.autoUpdate);
       setSelectedCategory(state.product.category_name); 
@@ -317,6 +323,7 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
     formData.append("category_name", selectedCategory || "");
     formData.append("stock_quantity", totalStockQuantity);
     formData.append("quantity_type", productDetails.quantity_type || "Unit");
+    // formData.append("status", stockStatus ? 0 : 1);
 
     // If an image was selected, append it to the form data
     if (selectedImage) {
@@ -568,14 +575,14 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
               error={Boolean(errors.distributorPrice)}
               helperText={errors.distributorPrice} 
             />
-           {/* <Typography>Available Stock</Typography>
+           <Typography>Available Stock</Typography>
       <TextField
         fullWidth
         variant="outlined"
         value={productDetails.finalStockQuantity}
         sx={{ marginBottom: "16px" }}
         disabled
-      /> */}
+      />
             <TextField
         fullWidth
         variant="outlined"

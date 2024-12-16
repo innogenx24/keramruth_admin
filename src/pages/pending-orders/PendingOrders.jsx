@@ -160,7 +160,7 @@ const OrderManagement = () => {
             <TableCell>Product Details</TableCell>
             <TableCell>Order Date</TableCell>
             {showStatus && <TableCell>Order Status</TableCell>}
-            {isActionable && <TableCell>Action a11</TableCell>}
+            {isActionable && <TableCell>Action</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
