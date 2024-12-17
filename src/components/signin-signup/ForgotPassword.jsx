@@ -146,19 +146,21 @@ const ForgotPassword = () => {
               </Alert>
             </Snackbar>
 
-            <Typography
-              variant="body2"
-              sx={{ mt: 2, textAlign: "center", color: "#777" }}
-            >
-              Back to Login?{" "}
-              <Button
-                variant="text"
-                sx={{ color: "#007bff" }}
-                onClick={() => navigate("/signin")}
-              >
-                Click Here
-              </Button>
-            </Typography>
+            
+
+            <Box sx={{ textAlign: "right", mt: 2 }}>
+                            <Typography variant="body2">
+                              Back to Login?{" "}
+                              <Button
+                                color="secondary"
+                                variant="text"
+                                onClick={() => navigate("/signin")}
+                                sx={{ textTransform: "none" }}
+                              >
+                                Click Here
+                              </Button>
+                            </Typography>
+                          </Box>
           </Box>
         </Grid>
       </Grid>
