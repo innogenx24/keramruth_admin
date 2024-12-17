@@ -320,7 +320,7 @@ export default function AdminDashboard() {
       icon: <MembersIcon />,
     },
     {
-      text: "Pending Orders",
+      text: "Orders",
       path: "/dashboard/pending-orders",
       icon: <FaShoppingCart />,
     },

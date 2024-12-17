@@ -189,7 +189,7 @@ const ProductPage = () => {
               )}
             </TableCell>
             <TableCell>{product.name}</TableCell>
-            <TableCell>{product.finalStockQuantity}</TableCell>
+            <TableCell>{product.stock_quantity}</TableCell>
             <TableCell>{product.category_name}</TableCell>
             <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
             <TableCell>{product.price}</TableCell>
