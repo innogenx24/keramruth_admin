@@ -70,6 +70,7 @@ import TargetPage from "./pages/target/Target";
 import TargetTable from "./pages/target/TargetTable";
 import SalesTargetTable from "./pages/target/SalesTargetTable";
 import MemberDetailTable from "./components/sales-components/member-ado/member_detail/MemberDetailTable";
+import CustomerSupportPage from "./pages/member-pages/customer-support/CustomerSupportPage";
 
 const RoutesConfig = () => {
   return (
@@ -100,6 +101,7 @@ const RoutesConfig = () => {
             <Route path="members" element={<ViewMember />} />
             <Route path="members/:memberID/:rolesID" element={<MemberDetailTable/>} />
             <Route path="announcement" element={<AnnouncementTable />} />
+            <Route path="customer-support" element={<CustomerSupportPage />} />
             <Route path="announcement-member" element={<MemberAnnouncementTable />} />
 
             <Route path="pending-orders" element={<PendingOrders />} />

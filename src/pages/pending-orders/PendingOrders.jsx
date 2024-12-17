@@ -252,8 +252,8 @@ const OrderManagement = () => {
                           <TableCell>No.</TableCell>
                           <TableCell>Product Name</TableCell>
                           <TableCell>Quantity</TableCell>
-                          <TableCell>Base Price</TableCell>
-                          <TableCell>Final Price</TableCell>
+                          <TableCell>Price</TableCell>
+                          <TableCell>Total Price</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>

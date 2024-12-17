@@ -105,10 +105,7 @@ const TargetPage = () => {
         <Button
           variant="contained"
           onClick={handleViewMembersTarget}
-          style={{backgroundColor: "#28a745",
-            color: "white", }}
-          
-          
+          style={{ backgroundColor: "#28a745", color: "white" }}
         >
           View Members Target
         </Button>
@@ -134,31 +131,63 @@ const TargetPage = () => {
                 padding: "16px",
               }}
             >
-              <Grid style={{display:"flex"}}>
-                <Box>
-                <Typography variant="h5" gutterBottom>
-                This Month
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-  Target Amount
-</Typography>
-<Typography variant="h4" sx={{ color: "black" }}>
-  Rs. {new Intl.NumberFormat().format(Number(targetData.MonthlyTargetAmount) || 0)}
-</Typography>
-<Typography variant="body1" color="success.main">
-  ● Achieved: Rs. {new Intl.NumberFormat().format(Number(targetData.AchievementAmount) || 0)}
-</Typography>
-<Typography variant="body1" color="error.main">
-  ● Pending: Rs. {new Intl.NumberFormat().format(Number(targetData.PendingAmount) || 0)}
-</Typography>
+              <Grid style={{ display: "flex" }}>
+  <Box>
+    <Typography variant="h5" gutterBottom>
+      This Month
+    </Typography>
+    <Typography variant="subtitle1" gutterBottom>
+    Sales Target Amount
+    </Typography>
+    <Typography variant="h4" sx={{ color: "black" }}>
+      Rs. {new Intl.NumberFormat().format(Number(targetData.MonthlyTargetAmount) || 0)}
+    </Typography>
+    <Typography variant="body1" color="success.main">
+      ● Achieved: Rs. {new Intl.NumberFormat().format(Number(targetData.AchievementAmount) || 0)}
+    </Typography>
+    <Typography variant="body1" color="error.main">
+      ● Pending: Rs. {new Intl.NumberFormat().format(Number(targetData.pendingAmount) || 0)}
+    </Typography>
+  </Box>
 
-                </Box>
-              
+  <Box sx={{ width: 150, height: 150, mx: "auto", mt: 2 }}>
+    <Doughnut data={doughnutData} options={doughnutOptions} />
+  </Box>
+</Grid>
 
-              <Box sx={{ width: 150, height: 150, mx: "auto", mt: 2 }}>
-                <Doughnut data={doughnutData} options={doughnutOptions} />
-              </Box>
-              </Grid>
+<Grid style={{ display: "flex", marginTop: 3 }}>
+  <Box>
+    <Typography variant="subtitle1" gutterBottom>
+      Stock Target Amount
+    </Typography>
+    <Typography variant="h4" sx={{ color: "black" }}>
+      {new Intl.NumberFormat().format(Number(targetData.StockTarget) || 0)}
+    </Typography>
+    <Typography variant="body1" color="success.main">
+      ● Stock Achieved: Rs. {new Intl.NumberFormat().format(Number(targetData.StockAchievement) || 0)} 
+    </Typography>
+    <Typography variant="body1" color="error.main">
+      ● Pending Stock: Rs. {new Intl.NumberFormat().format(Number(targetData.PendingStockTarget) || 0)}
+    </Typography>
+  </Box>
+
+  <Box sx={{ width: 150, height: 150, mx: "auto", mt: 2 }}>
+    <Doughnut
+      data={{
+        labels: ["Stock Achieved", "Pending Stock"],
+        datasets: [
+          {
+            data: [targetData.StockAchievement, targetData.PendingStockTarget],
+            backgroundColor: ["#4CAF50", "#FF7043"],
+            hoverBackgroundColor: ["#388E3C", "#E64A19"],
+          },
+        ],
+      }}
+      options={doughnutOptions}
+    />
+  </Box>
+</Grid>
+
 
               {/* Legend */}
               <Box mt={5}>
@@ -186,40 +215,67 @@ const TargetPage = () => {
                 padding: "16px",
               }}
             >
-             <Typography variant="h5" gutterBottom>
-        Target History
-      </Typography>
-      <Box sx={{ mt: 2 }}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={1}
-        >
-          <Typography variant="body2">
-            {targetData.month} {targetData.year}
-          </Typography>
-          <Typography variant="body2">
-            {targetData.AchievementAmountPercent}%
-          </Typography>
-        </Box>
-        <LinearProgress
-          variant="determinate"
-          value={parseFloat(targetData.AchievementAmountPercent)}
-          sx={{
-            height: 8,
-            backgroundColor: "#f5f5f5",
-            "& .MuiLinearProgress-bar": {
-              backgroundColor:
-                parseFloat(targetData.AchievementAmountPercent) >= 75
-                  ? "#4CAF50"
-                  : parseFloat(targetData.AchievementAmountPercent) >= 50
-                  ? "#FFC107"
-                  : "#FF7043",
-            },
-          }}
-        />
-      </Box>
+              <Typography variant="h5" gutterBottom>
+                Target History
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                {/* Target Achievement Progress */}
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                  <Typography variant="body2">
+                    {targetData.month} {targetData.year}
+                  </Typography>
+                  <Typography variant="body2">
+                    {targetData.achievementAmountPercent}%
+                  </Typography>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={parseFloat(targetData.achievementAmountPercent)}
+                  sx={{
+                    height: 8,
+                    backgroundColor: "#f5f5f5",
+                    "& .MuiLinearProgress-bar": {
+                      backgroundColor:
+                        parseFloat(targetData.achievementAmountPercent) >= 75
+                          ? "#4CAF50"
+                          : parseFloat(targetData.achievementAmountPercent) >= 50
+                          ? "#FFC107"
+                          : "#FF7043",
+                    },
+                  }}
+                />
+              </Box>
+
+              {/* Stock Achievement Progress */}
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Stock Achievement
+                </Typography>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                  <Typography variant="body2">
+                    {targetData.month} {targetData.year}
+                  </Typography>
+                  <Typography variant="body2">
+                    {targetData.StockAchievementPercent}%
+                  </Typography>
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={parseFloat(targetData.StockAchievementPercent)}
+                  sx={{
+                    height: 8,
+                    backgroundColor: "#f5f5f5",
+                    "& .MuiLinearProgress-bar": {
+                      backgroundColor:
+                        parseFloat(targetData.StockAchievementPercent) >= 75
+                          ? "#4CAF50"
+                          : parseFloat(targetData.StockAchievementPercent) >= 50
+                          ? "#FFC107"
+                          : "#FF7043",
+                    },
+                  }}
+                />
+              </Box>
             </Box>
           </Box>
         </CardContent>

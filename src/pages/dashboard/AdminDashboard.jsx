@@ -41,6 +41,8 @@ import { FaUserTie } from 'react-icons/fa';  // FontAwesome Role Icon (Professio
 import { RiFeedbackFill } from "react-icons/ri";
 import { BiBook } from "react-icons/bi";
 import { FaBook } from "react-icons/fa";
+import { FaHeadset } from 'react-icons/fa'; 
+import { FaShoppingCart,FaCheckCircle  } from 'react-icons/fa'; // Importing shopping cart icon
 
 // Drawer width
 // const drawerWidth = 240;
@@ -231,12 +233,12 @@ export default function AdminDashboard() {
     {
       text: "Book Order",
       path: "/dashboard/book-orders",
-      icon: <BiBook />,
+      icon: <FaShoppingCart />,
     },
     {
-      text: "Place Orders",
+      text: "My Orders",
       path: "/dashboard/place-orders",
-      icon: <FaBook  />,
+      icon: <FaCheckCircle   />,
     },
     {
       text: "Announcements",
@@ -245,14 +247,18 @@ export default function AdminDashboard() {
     },
 
     {
-      text: "Documents",
+      text: "Downloads",
       path: "/dashboard/documents-member",
       icon: <DescriptionIcon />,
+    },
+    {
+      text: "Customer Support",
+      path: "/dashboard/customer-support",
+      icon: <FaHeadset />,
     },
   ]
 
 
-  ///
   const menuItemsUsers = [
     {
       text: "Products",
@@ -266,19 +272,19 @@ export default function AdminDashboard() {
       icon: <MembersIcon />,
     },
     {
-      text: "Pending Orders",
+      text: "Requested Orders",
       path: "/dashboard/pending-orders-member",
       icon: <PendingActionsIcon />,
     },
     {
       text: "Book Order",
       path: "/dashboard/book-orders",
-      icon: <BiBook />,
+      icon: <FaShoppingCart />,
     },
     {
-      text: "Order Status",
+      text: "My Orders",
       path: "/dashboard/place-orders",
-      icon: <FaBook />,
+      icon: <FaCheckCircle />,
     },
     {
       text: "Feedback",
@@ -316,7 +322,7 @@ export default function AdminDashboard() {
     {
       text: "Pending Orders",
       path: "/dashboard/pending-orders",
-      icon: <PendingActionsIcon />,
+      icon: <FaShoppingCart />,
     },
     {
       text: "Announcements",
