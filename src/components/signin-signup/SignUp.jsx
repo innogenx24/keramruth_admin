@@ -39,7 +39,6 @@ const SignUp = () => {
     }),
 
     onSubmit: async (values) => {
-      console.log("test666",values)
       try {
         const response = await fetch("http://88.222.245.236:3002/api/admin/signup", {
           method: "POST",

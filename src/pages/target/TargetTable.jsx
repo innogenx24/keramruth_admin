@@ -12,22 +12,16 @@ import {
   Typography,
   Avatar,
   Box,
-  Card,
-  CardContent,
-  LinearProgress,
   CircularProgress,
 } from "@mui/material";
-import { Doughnut } from "react-chartjs-2";
-import SearchBox from "../../search-box/SearchUser";
 import { useSelector } from "react-redux";
+import SearchBox from "../../search-box/SearchUser";
 
 const TargetTable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMember, setSelectedMember] = useState(null); // State for the selected member's data
-  const [targetData, setTargetData] = useState({}); // State for Sales-Target Report
 
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const { users } = useSelector((state) => state.users);
@@ -45,7 +39,9 @@ const TargetTable = () => {
         );
         if (response.data.success) {
           setData(response.data.result);
-          setFilteredData(response.data.result);
+          // Filter the data initially to show only Target Achieved (50% & Above)
+          const filtered = response.data.result.filter(item => item.monthlyDetails[0].achievementAmountPercent >= 50);
+          setFilteredData(filtered);
         }
       } catch (error) {
         console.error("Error fetching data", error);
@@ -67,43 +63,17 @@ const TargetTable = () => {
     );
   };
 
-  const handleRowClick = (member) => {
-    setSelectedMember(member);
-
-    // Set targetData based on selected member's data
-    setTargetData({
-      MonthlyTargetAmount: member.monthlyDetails[0]?.totalMonthlyTarget || 0,
-      AchievementAmount: member.monthlyDetails[0]?.totalAchievementAmount || 0,
-      PendingAmount: member.monthlyDetails[0]?.pendingAmount || 0,
-      month: member.monthlyDetails[0]?.month,
-      year: member.monthlyDetails[0]?.year,
-      AchievementAmountPercent:
-        member.monthlyDetails[0]?.achievementAmountPercent || 0,
-    });
-  };
-  const doughnutData = {
-    labels: ['Achieved', 'Pending'],
-    datasets: [
-      {
-        data: [targetData.AchievementAmount || 0, targetData.PendingAmount || 0],
-        backgroundColor: ['#4CAF50', '#FF7043'],
-      },
-    ],
+  // Filter data based on achievement and unachievement percentage
+  const filterAchieved = () => {
+    const filtered = data.filter(item => item.monthlyDetails[0].achievementAmountPercent >= 50);
+    setFilteredData(filtered);
   };
 
-  const doughnutOptions = {
-    cutout: "70%",
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function (tooltipItem) {
-            return `${tooltipItem.label}: ${tooltipItem.raw} L`;
-          },
-        },
-      },
-    },
+  const filterNotAchieved = () => {
+    const filtered = data.filter(item => item.monthlyDetails[0].unachievementAmountPercent >= 50);
+    setFilteredData(filtered);
   };
-  
+
   const formatNumber = (number) => {
     return new Intl.NumberFormat("en-IN").format(number);
   };
@@ -112,104 +82,6 @@ const TargetTable = () => {
 
   return (
     <Box>
-
-{selectedMember && (
-  <Box sx={{ mt: 4 }}>
-    <Typography variant="h5" sx={{ mb: 2, color: "#989FA9" }}>
-      Sales-Target Report for {selectedMember.full_name}
-    </Typography>
-
-    {/* Main Card */}
-    <Card elevation={3} >
-      <CardContent>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            gap: 3,
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          {/* Left Side: This Month */}
-          <Box sx={{ flex: 1, borderRadius: "8px", padding: "10px" }}>
-            <Typography variant="h5" gutterBottom>
-              This Month
-            </Typography>
-            <Typography variant="subtitle1">Target Amount</Typography>
-            <Typography variant="h4" sx={{ color: "black" }}>
-              Rs. {new Intl.NumberFormat().format(Number(targetData.MonthlyTargetAmount) || 0)}
-            </Typography>
-            <Typography variant="body1" color="success.main">
-              ● Achieved: Rs. {new Intl.NumberFormat().format(Number(targetData.AchievementAmount) || 0)}
-            </Typography>
-            <Typography variant="body1" color="error.main">
-              ● Pending: Rs. {new Intl.NumberFormat().format(Number(targetData.PendingAmount) || 0)}
-            </Typography>
-
-            {/* Doughnut Chart */}
-            <Box sx={{ width: 150, height: 150, mx: "auto", mt: 2 }}>
-              <Doughnut data={doughnutData} options={doughnutOptions} />
-            </Box>
-
-            {/* Legend */}
-            <Box mt={5}>
-              <Typography variant="caption">
-                <Box component="span" color="success.main">
-                  ● Done 100%
-                </Box>{" "}
-                &nbsp;
-                <Box component="span" color="warning.main">
-                  ● 75%-50%
-                </Box>{" "}
-                &nbsp;
-                <Box component="span" color="error.main">
-                  ● 50%-0%
-                </Box>
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Right Side: Target History */}
-          <Box sx={{ flex: 1, borderRadius: "8px", padding: "10px" }}>
-            <Typography variant="h5" gutterBottom>
-              Target History
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                <Typography variant="body2">
-                  {targetData.month} {targetData.year}
-                </Typography>
-                <Typography variant="body2">
-                  {targetData.AchievementAmountPercent}%
-                </Typography>
-              </Box>
-              <LinearProgress
-                variant="determinate"
-                value={parseFloat(targetData.AchievementAmountPercent)}
-                sx={{
-                  height: 8,
-                  backgroundColor: "#f5f5f5",
-                  "& .MuiLinearProgress-bar": {
-                    backgroundColor:
-                      parseFloat(targetData.AchievementAmountPercent) >= 75
-                        ? "#4CAF50"
-                        : parseFloat(targetData.AchievementAmountPercent) >= 50
-                        ? "#FFC107"
-                        : "#FF7043",
-                  },
-                }}
-              />
-            </Box>
-          </Box>
-        </Box>
-      </CardContent>
-    </Card>
-  </Box>
-)}
-
-
-
       {/* Search Box */}
       <Box sx={{ width: "100%", marginBottom: 2 }}>
         <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
@@ -219,6 +91,25 @@ const TargetTable = () => {
       <Typography variant="h6" sx={{ mb: 2 }}>
         Sales Target Data
       </Typography>
+
+      <div style={{ marginBottom: "20px" }}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={filterAchieved}
+          sx={{ marginRight: "10px" }}
+        >
+          Target Achieved (50% & Above)
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={filterNotAchieved}
+        >
+          Target Not Achieved (50% & Below)
+        </Button>
+      </div>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -236,11 +127,7 @@ const TargetTable = () => {
           <TableBody>
             {filteredData.length > 0 ? (
               filteredData.map((row, index) => (
-                <TableRow
-                  key={row.user_id}
-                  onClick={() => handleRowClick(row)} // Handle row click
-                  style={{ cursor: "pointer" }}
-                >
+                <TableRow key={row.user_id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <div style={{ display: "flex", alignItems: "center" }}>
@@ -275,8 +162,6 @@ const TargetTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
-     
     </Box>
   );
 };

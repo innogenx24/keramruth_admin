@@ -69,6 +69,7 @@ import FeedbackComponent from "./pages/member-pages/feedbackcreate/FeedbackCompo
 import TargetPage from "./pages/target/Target";
 import TargetTable from "./pages/target/TargetTable";
 import SalesTargetTable from "./pages/target/SalesTargetTable";
+import CustomerSupportPage from "./pages/member-pages/customer-support/CustomerSupportPage";
 
 const RoutesConfig = () => {
   return (
@@ -98,6 +99,7 @@ const RoutesConfig = () => {
             <Route path="edit-profile" element={<EditUserProfile />} />
             <Route path="members" element={<ViewMember />} />
             <Route path="announcement" element={<AnnouncementTable />} />
+            <Route path="customer-support" element={<CustomerSupportPage />} />
             <Route path="announcement-member" element={<MemberAnnouncementTable />} />
 
             <Route path="pending-orders" element={<PendingOrders />} />
