@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation  } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -18,6 +18,10 @@ import "./style.css";
 
 const CreateNewPassword = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,7 +34,7 @@ const CreateNewPassword = () => {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -65,32 +69,24 @@ const CreateNewPassword = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, token }),
       });
     
       const data = await response.json();
     
-      // Log the response to ensure it's correct
-      console.log("Response from API:", data);
-
       if (response.ok) {
-        // Log success response
-        console.log("Password update successful");
         setSuccessMessage("Password updated successfully and confirmation email sent.");
-        setOpenSnackbar(true); // Show success Snackbar
+        setOpenSnackbar(true);
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-        // Automatically navigate after 6 seconds (Snackbar duration)
         setTimeout(() => {
           navigate("/signin");
         }, 6000);
       } else {
-        console.error("Error response:", data); // Log the error
         setErrorMessage(data.message || "Error resetting password");
       }
     } catch (error) {
-      console.error("Fetch error:", error); // Log fetch/network errors
       setErrorMessage("Error connecting to server");
     }
   };
