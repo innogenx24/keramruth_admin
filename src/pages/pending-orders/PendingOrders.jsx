@@ -245,47 +245,54 @@ const OrderManagement = () => {
                   </TableRow>
                   {expandedOrders[order.orderId] && (
                   <TableRow>
-                    <TableCell colSpan={6}>
-                      <Table>
-                        <TableHead sx={{backgroundColor: "#D3D3D3" }}>
-                          <TableRow>
-                            <TableCell>No.</TableCell>
-
-                            <TableCell>Product Name</TableCell>
-                            <TableCell>Quantity</TableCell>
-                            <TableCell>Base Price</TableCell>
-                            <TableCell>Final Price</TableCell>
-
+                  <TableCell colSpan={6}>
+                    <Table>
+                      <TableHead sx={{ backgroundColor: "#D3D3D3" }}>
+                        <TableRow>
+                          <TableCell>No.</TableCell>
+                          <TableCell>Product Name</TableCell>
+                          <TableCell>Quantity</TableCell>
+                          <TableCell>Base Price</TableCell>
+                          <TableCell>Final Price</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {order.OrderItems.map((item, itemIndex) => (
+                          <TableRow key={item.itemId}>
+                            {/* Serial No */}
+                            <TableCell>{itemIndex + 1}</TableCell>
+                
+                            {/* Product Name with Image */}
+                            <TableCell>
+                              <div style={{ display: "flex", alignItems: "center" }}>
+                                <Avatar
+                                  src={
+                                    item.product?.image
+                                      ? `${imageBaseURL}${item.product.image}`
+                                      : "/path/to/default-image.jpg"
+                                  }
+                                  alt={item.product?.name || "Unknown Product"}
+                                  style={{ marginRight: "10px" }}
+                                />
+                                <Typography>{item.product?.name || "Unknown Product"}</Typography>
+                              </div>
+                            </TableCell>
+                
+                            {/* Quantity */}
+                            <TableCell>{item.quantity}</TableCell>
+                
+                            {/* Base Price */}
+                            <TableCell>Rs. {parseFloat(item.basePrice).toFixed(2)}</TableCell>
+                
+                            {/* Final Price */}
+                            <TableCell>Rs. {parseFloat(item.finalPrice).toFixed(2)}</TableCell>
                           </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {order.OrderItems.map((item, itemIndex) => (
-                            <TableRow key={item.itemId}>
-                                <TableCell>{itemIndex + 1}</TableCell>
-                              <TableCell>
-  {order.OrderItems.map((item, idx) => (
-    <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-      <Avatar
-        src={item.product?.image ? `${imageBaseURL}${item.product.image}` : '/path/to/default-image.jpg'}
-        alt={item.product?.name}
-        style={{ marginRight: '10px' }}
-      />
-      <Typography>{item.product?.name || 'Unknown Product'}</Typography>
-    </div>
-  ))}
-</TableCell>
-                             
-                              <TableCell>{item.quantity}</TableCell>
-                              <TableCell>Rs. {item.basePrice}</TableCell>
-
-                              <TableCell>Rs. {parseFloat(item.finalPrice).toFixed(2)}</TableCell>
-                             
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableCell>
-                  </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableCell>
+                </TableRow>
+                
                 )}
                 </React.Fragment>
               ))

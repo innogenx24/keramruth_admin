@@ -182,18 +182,20 @@ const SignIn = () => {
               >
                 LOGIN
               </Button>
-              <Button
-  variant="text"
-  fullWidth
-  style={{ 
-    marginTop: '16px', 
-    color: 'black', 
-    marginLeft:"100px"
-  }}
-  onClick={() => navigate('/forgot-password')}
->
-  Forgot your password
-</Button>
+              
+
+<Box sx={{ textAlign: "right", mt: 2 }}>
+                <Typography variant="body2">
+                  <Button
+                    color="secondary"
+                    variant="text"
+                    onClick={() => navigate('/forgot-password')}
+                    sx={{ textTransform: "none" }}
+                  >
+                   Forgot your password
+                  </Button>
+                </Typography>
+              </Box>
 
               {error && <Typography color="error">{error}</Typography>}
 

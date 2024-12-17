@@ -71,7 +71,7 @@ const TargetPage = () => {
     labels: ["Done", "Pending"],
     datasets: [
       {
-        data: [targetData.AchievementAmount, targetData.pendingAmount],
+        data: [targetData.AchievementAmount, targetData.PendingAmount],
         backgroundColor: ["#4CAF50", "#FF7043"],
         hoverBackgroundColor: ["#388E3C", "#E64A19"],
       },
@@ -149,7 +149,7 @@ const TargetPage = () => {
   ● Achieved: Rs. {new Intl.NumberFormat().format(Number(targetData.AchievementAmount) || 0)}
 </Typography>
 <Typography variant="body1" color="error.main">
-  ● Pending: Rs. {new Intl.NumberFormat().format(Number(targetData.pendingAmount) || 0)}
+  ● Pending: Rs. {new Intl.NumberFormat().format(Number(targetData.PendingAmount) || 0)}
 </Typography>
 
                 </Box>
@@ -186,38 +186,40 @@ const TargetPage = () => {
                 padding: "16px",
               }}
             >
-              <Typography variant="h5" gutterBottom>
-                Target History
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  mb={1}
-                >
-                  <Typography variant="body2">Last Month</Typography>
-                  <Typography variant="body2">
-                    {targetData.achievementAmountPercent}%
-                  </Typography>
-                </Box>
-                <LinearProgress
-                  variant="determinate"
-                  value={targetData.achievementAmountPercent}
-                  sx={{
-                    height: 8,
-                    backgroundColor: "#f5f5f5",
-                    "& .MuiLinearProgress-bar": {
-                      backgroundColor:
-                        targetData.achievementAmountPercent >= 75
-                          ? "#4CAF50"
-                          : targetData.achievementAmountPercent >= 50
-                          ? "#FFC107"
-                          : "#FF7043",
-                    },
-                  }}
-                />
-              </Box>
+             <Typography variant="h5" gutterBottom>
+        Target History
+      </Typography>
+      <Box sx={{ mt: 2 }}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={1}
+        >
+          <Typography variant="body2">
+            {targetData.month} {targetData.year}
+          </Typography>
+          <Typography variant="body2">
+            {targetData.AchievementAmountPercent}%
+          </Typography>
+        </Box>
+        <LinearProgress
+          variant="determinate"
+          value={parseFloat(targetData.AchievementAmountPercent)}
+          sx={{
+            height: 8,
+            backgroundColor: "#f5f5f5",
+            "& .MuiLinearProgress-bar": {
+              backgroundColor:
+                parseFloat(targetData.AchievementAmountPercent) >= 75
+                  ? "#4CAF50"
+                  : parseFloat(targetData.AchievementAmountPercent) >= 50
+                  ? "#FFC107"
+                  : "#FF7043",
+            },
+          }}
+        />
+      </Box>
             </Box>
           </Box>
         </CardContent>
