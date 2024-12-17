@@ -20,8 +20,10 @@ import RoleGetSlice from "./slices/master-slice/role-slice/RoleGetSlice";
 import UserGetSlice from "./slices/user-profile-slice/UserGetSlice";
 import userEditSlice from "./slices/user-profile-slice/UserEditSlice";
 import rolePostSlice from "./slices/master-slice/role-slice/RolePostSlice";
-import GetAllClubSlices from "./slices/club-slice/GetAllClubSlices"
+import GetAllClubSlices from "./slices/club-slice/GetAllClubSlices";
+import MembersMemberGetSlice from "./slices/member-slice/lowhierarchy_member_list_slice/MemberProfileGetSlice"
 const sagaMiddleware = createSagaMiddleware();
+
 
 const store = configureStore({
   reducer: {
@@ -44,6 +46,7 @@ const store = configureStore({
     userEdit: userEditSlice,
     rolePost: rolePostSlice,
     allclubs: GetAllClubSlices, 
+    membersMemberLists: MembersMemberGetSlice,
 
   },
   middleware: (getDefaultMiddleware) =>
@@ -53,3 +56,5 @@ const store = configureStore({
 sagaMiddleware.run(rootSaga);
 
 export default store;
+
+// *** After : name is random & sepreate ***//

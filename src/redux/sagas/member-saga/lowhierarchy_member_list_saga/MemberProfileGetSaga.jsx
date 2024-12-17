@@ -1,14 +1,10 @@
 import { call, put, takeEvery } from "redux-saga/effects";
 import axios from "axios";
-import {
-  fetchMembersRequest,
-  fetchMembersSuccess,
-  fetchMembersFailure,
-} from "../../slices/member-slice/MemberGetSlice"; 
+import { fetchMembersMemberFailure, fetchMembersMemberRequest, fetchMembersMemberSuccess } from "../../../slices/member-slice/lowhierarchy_member_list_slice/MemberProfileGetSlice";
 
 
 /** Worker saga to fetch products**/
-function* fetchMembers(action) {
+function* fetchMembersMember(action) {
   const { roleId } = action.payload;
   console.log("roleId", roleId);
   const user = JSON.parse(localStorage.getItem('user'));
@@ -47,17 +43,17 @@ const API_URL = (() => {
     });
 
     /** Dispatch success action with the fetched data **/
-    yield put(fetchMembersSuccess(response.data));
+    yield put(fetchMembersMemberSuccess(response.data));
     // console.log("Fetched Products:", response.data);
   } catch (error) {
     /** Dispatch failure action with the error message **/
-    yield put(fetchMembersFailure(error.message));
+    yield put(fetchMembersMemberFailure(error.message));
   }
 }
 
 /** Watcher saga to trigger fetchProducts on fetchProductsRequest action **/
-function* watchFetchMembers() {
-  yield takeEvery(fetchMembersRequest.type, fetchMembers);
+function* watchFetchMembersMember() {
+  yield takeEvery(fetchMembersMemberRequest.type, fetchMembersMember);
 }
 
-export default watchFetchMembers;
+export default watchFetchMembersMember;

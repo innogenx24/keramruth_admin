@@ -1,35 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const MemberGetSlice = createSlice({
-  name: "members",
+const MembersMemberGetSlice = createSlice({
+  name: "membersMemberLists",
   initialState: {
     members: [],
     loading: false,
     error: null,
   },
   reducers: {
-    fetchMembersRequest: (state, action) => {
+    fetchMembersMemberRequest: (state, action) => {
       state.loading = true;
       state.error = null;
       state.roleId = action.payload.roleId;
       console.log(action.payload.roleId) 
     },
-    fetchMembersSuccess: (state, action) => {
+    fetchMembersMemberSuccess: (state, action) => {
       state.members = action.payload;
       state.loading = false;
     },
-    fetchMembersFailure: (state, action) => {
+    fetchMembersMemberFailure: (state, action) => {
       state.error = action.payload;
       state.loading = false;
     },
-    clearMembers: (state) => {
+    clearMembersMember: (state) => {
       state.members = [];
     },
   },
 });
 
-export const { fetchMembersRequest, fetchMembersSuccess, fetchMembersFailure, clearMembers } =
-  MemberGetSlice.actions;
+export const { fetchMembersMemberRequest, fetchMembersMemberSuccess, fetchMembersMemberFailure, clearMembersMember } =
+MembersMemberGetSlice.actions;
 
-export default MemberGetSlice.reducer;
-
+export default MembersMemberGetSlice.reducer;
