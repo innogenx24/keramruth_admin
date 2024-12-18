@@ -5,6 +5,7 @@ import { useSelector } from "react-redux"; // Import useSelector
 import { useLocation } from "react-router-dom";
 import AppLogo from "../../../assets/logo/AppLogo";
 import "./style.css"
+import SearchProducts from "./SearchProducts"
 const BookingOrders = () => {
   const [products, setProducts] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -14,6 +15,7 @@ const BookingOrders = () => {
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const { users } = useSelector((state) => state.users); // Fetch users from Redux store
   const userId = users?.id; // Get the user ID from the state.users object
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (orderConfirmation) {
@@ -77,7 +79,7 @@ const BookingOrders = () => {
       return updatedItems;
     });
   };
-  
+
   const decrementQuantity = (productId) => {
     setOrderItems((prevOrderItems) => {
       const updatedItems = [...prevOrderItems];
@@ -93,7 +95,7 @@ const BookingOrders = () => {
       return updatedItems;
     });
   };
-  
+
 
   const handleConfirmOrder = async () => {
     const token = localStorage.getItem("token");
@@ -101,12 +103,12 @@ const BookingOrders = () => {
       alert("Token not found. Please log in.");
       return;
     }
-  
+
     if (orderItems.length === 0) {
       alert("Please select products and set quantities before placing an order.");
       return;
     }
-  
+
     // Calculate the total amount based on the order items and product prices
     const totalAmount = orderItems.reduce((total, item) => {
       const product = products.find((p) => p.id === item.product_id);
@@ -115,14 +117,14 @@ const BookingOrders = () => {
       }
       return total;
     }, 0).toFixed(2); // Round to 2 decimal places
-  
+
     const orderData = {
       user_id: userId, // Ensure you're passing the correct user ID here
       items: orderItems,
       coupon_code: couponCode,
       total_amount: totalAmount, // Add the total amount
     };
-  
+
     try {
       await axios.post("http://88.222.245.236:3002/orders/create-order", orderData, {
         headers: {
@@ -137,7 +139,7 @@ const BookingOrders = () => {
       alert("Failed to place the order.");
     }
   };
-  
+
   const openOrderSummaryPopup = () => {
     setOpenPopup(true);
   };
@@ -146,261 +148,291 @@ const BookingOrders = () => {
     setOpenPopup(false);
   };
 
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
   return (
     <div style={{ position: "relative", height: "100vh" }}>
       <h1>Product List</h1>
+      <Box sx={{ width: "100%", marginBottom: 2 }}>
+        <SearchProducts value={searchQuery} onSearchChange={setSearchQuery} />
+      </Box>
       <div
         style={{
           overflowY: "scroll",
-          height: "calc(100vh - 150px)", // Adjust height to accommodate header and button
+          height: "calc(100vh - 150px)",
           marginBottom: "10px",
         }}
       >
-   <TableContainer component={Paper}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell>Image</TableCell>
-        <TableCell>Product Name</TableCell>
-        <TableCell>Price</TableCell>
-        <TableCell>Quantity</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {products.map((product) => {
-        const currentQuantity = orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
-        
-        return (
-          <TableRow key={product.id}>
-            {/* Product Image */}
-            <TableCell>
-              <img
-                src={`${imageBaseURL}${product.image}`}
-                alt={product.name}
-                style={{ width: "75px", height: "70px" }}
-              />
-            </TableCell>
 
-            {/* Product Name */}
-            <TableCell>{product.name}</TableCell>
 
-            {/* Product Price Display with Offer (super1) */}
-            <TableCell>
-              {product.super1 && product.super1 !== "0.00" ? (
-                <>
-                  <span
-                    style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}
-                  >
-                    {product.originalPrice}
-                  </span>
-                  <span style={{ color: "green", fontWeight: "bold" }}>
-                    {product.super1}
-                  </span>
-                </>
-              ) : (
-                <span>{product.originalPrice}</span>
-              )}
-            </TableCell>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Image</TableCell>
+                <TableCell>Product Name</TableCell>
+                <TableCell>Price</TableCell>
+                <TableCell>Quantity</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredProducts.map((product) => {
+                const currentQuantity = orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
 
-            {/* Quantity Buttons and Input Box */}
-            <TableCell>
-              <Box display="flex" alignItems="center">
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => decrementQuantity(product.id)}
-                  style={{ marginRight: "10px" }}
-                >
-                  -
-                </Button>
+                return (
+                  <TableRow key={product.id}>
+                    {/* Product Image */}
+                    <TableCell>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <img
+                          src={product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'}
+                          alt={product.name || "Product Image"}
+                          style={{
+                            width: "100px",
+                            height: "auto",
+                            objectFit: "contain",
+                            border: "1px solid #ccc",
+                            boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                            borderRadius: "10px",
+                          }}
+                        />
 
-                {/* Input box for quantity */}
-                <input
-                  type="number"
-                  value={currentQuantity}
-                  onChange={(e) => {
-                    let value = e.target.value;
-                    value = value.replace(/^0+/, '') || '0'; // Handle leading zeros
-                    handleQuantityChange(product.id, value);
-                  }}
-                  min="0"
-                  style={{
-                    width: "70px",
-                    textAlign: "center",
-                    margin: "0 10px",
-                    padding: "10px !important",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                  }}
-                />
+                      </div>
+                    </TableCell>
 
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => incrementQuantity(product.id)}
-                  style={{ marginLeft: "10px" }}
-                >
-                  +
-                </Button>
-              </Box>
-            </TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
-  </Table>
-</TableContainer>
+
+                    {/* Product Name */}
+                    <TableCell>{product.name}</TableCell>
+
+                    {/* Product Price Display with Offer (super1) */}
+                    <TableCell>
+                      {product.super1 && product.super1 !== "0.00" ? (
+                        <>
+                          <span
+                            style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}
+                          >
+                            {product.originalPrice}
+                          </span>
+                          <span style={{ color: "green", fontWeight: "bold" }}>
+                            {product.super1}
+                          </span>
+                        </>
+                      ) : (
+                        <span>{product.originalPrice}</span>
+                      )}
+                    </TableCell>
+
+                    {/* Quantity Buttons and Input Box */}
+                    <TableCell>
+                      <Box display="flex" alignItems="center">
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => decrementQuantity(product.id)}
+                          style={{ marginRight: "10px" }}
+                        >
+                          -
+                        </Button>
+
+                        {/* Input box for quantity */}
+                        <input
+                          type="number"
+                          value={currentQuantity}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            value = value.replace(/^0+/, '') || '0'; // Handle leading zeros
+                            handleQuantityChange(product.id, value);
+                          }}
+                          min="0"
+                          style={{
+                            width: "70px",
+                            textAlign: "center",
+                            margin: "0 10px",
+                            padding: "10px !important",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                          }}
+                        />
+
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => incrementQuantity(product.id)}
+                          style={{ marginLeft: "10px" }}
+                        >
+                          +
+                        </Button>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
 
       </div>
 
-{orderConfirmation && (
-  <Box
-    position="fixed"
-    top="20%"
-    left="50%"
-    transform="translateX(-50%)"
-    bgcolor="green"
-    color="white"
-    padding="10px 20px"
-    borderRadius="5px"
-  >
-    Order placed successfully! <br />
-    
-  </Box>
-)}
-
-
-     {/* Order Summary Popup */}
-<Modal open={openPopup} onClose={closeOrderSummaryPopup}>
-  <Box
-    sx={{
-      position: "absolute",
-      top: "20%",
-      left: "50%",
-      transform: "translate(-50%, -20%)",
-      backgroundColor: "white",
-      boxShadow: 24,
-      borderRadius: "8px",
-      overflow: "hidden",
-      width: "500px",
-      maxWidth: "95%",
-    }}
-  >
-    <DialogContent>
-     
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "15px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-         <Typography
-        variant="h6"
-        sx={{ textAlign: "center", marginBottom: "20px", fontWeight: "bold" }}
-      >
-        Order Summary
-      </Typography>
-        <Box sx={{ height: "60px" }}>
-  <AppLogo />
-</Box>
-      </Box>
-      {/* Order Items */}
-      {orderItems.map((item) => {
-        const product = products.find((p) => p.id === item.product_id);
-        return (
-          <Box
-            key={item.product_id}
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "10px",
-              paddingBottom: "10px",
-              borderBottom: "1px dashed #ccc",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Box
-                component="img"
-                src={`${imageBaseURL}${product.image}`}
-                alt={product?.name}
-                sx={{ height: "50px", width: "50px", marginRight: "10px" }}
-              />
-              <Box>
-                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                  {product?.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {product?.description || "Product details"}
-                </Typography>
-              </Box>
-            </Box>
-            <Box>
-  <Typography variant="body2">
-    ₹ {Number(product?.super1 || product?.originalPrice).toFixed(2)}
-  </Typography>
-  <Typography variant="body2" color="text.secondary">Qty: {item.quantity}</Typography>
-</Box>
-
-          </Box>
-        );
-      })}
-      {/* Total Section */}
-      <Box sx={{ marginTop: "20px", borderTop: "1px solid #ddd", paddingTop: "10px" }}>
-        
+      {orderConfirmation && (
         <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "10px",
-          }}
+          position="fixed"
+          top="20%"
+          left="50%"
+          transform="translateX(-50%)"
+          bgcolor="green"
+          color="white"
+          padding="10px 20px"
+          borderRadius="5px"
         >
-           <Typography variant="body1" fontWeight="bold">Total Amount:</Typography>
-           <Box
-  sx={{
-    display: "flex",
-    flexDirection: "column", // Stack items vertically
-    marginBottom: "10px",
-  }}
->
-  
-
-  <Typography variant="body1">
-    ₹
-    {orderItems
-      .reduce(
-        (total, item) =>
-          total +
-          item.quantity *
-            (products.find((p) => p.id === item.product_id)?.super1 ||
-              products.find((p) => p.id === item.product_id)?.originalPrice ||
-              0),
-        0
-      )
-      .toFixed(2)}
-  </Typography>
-  <Typography variant="body1" color="text.secondary">
-  Qty : {parseInt(orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0), 10)}
-</Typography>
-
-</Box>
+          Order placed successfully! <br />
 
         </Box>
-      </Box>
-    </DialogContent>
-    <DialogActions sx={{ justifyContent: "space-between", padding: "20px" }}>
-      <Button onClick={closeOrderSummaryPopup} variant="outlined" color="secondary">
-        Modify Order
-      </Button>
-      <Button onClick={handleConfirmOrder} variant="contained" color="primary">
-        Confirm Order
-      </Button>
-    </DialogActions>
-  </Box>
-</Modal>
+      )}
+
+
+      {/* Order Summary Popup */}
+      <Modal open={openPopup} onClose={closeOrderSummaryPopup}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "20%",
+            left: "50%",
+            transform: "translate(-50%, -20%)",
+            backgroundColor: "white",
+            boxShadow: 24,
+            borderRadius: "8px",
+            overflow: "hidden",
+            width: "500px",
+            maxWidth: "95%",
+          }}
+        >
+          <DialogContent sx={{ maxHeight: "500px", overflowY: "auto" }}>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "15px",
+                borderBottom: "1px solid #ddd",
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ textAlign: "center", marginBottom: "20px", fontWeight: "bold" }}
+              >
+                Order Summary
+              </Typography>
+              <Box sx={{ height: "60px" }}>
+                <AppLogo />
+              </Box>
+            </Box>
+            {/* Order Items */}
+            {orderItems.map((item) => {
+              const product = products.find((p) => p.id === item.product_id);
+              return (
+                <Box
+                  key={item.product_id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                    paddingBottom: "10px",
+                    borderBottom: "1px dashed #ccc",
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      component="img"
+                      src={product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'}
+                      alt={product?.name || "Product Image"}
+                      sx={{
+                        height: "60px",
+                        width: "60px",
+                        marginRight: "10px",
+                        objectFit: "cover",
+                        border: "1px solid #ccc",
+                        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                        borderRadius: "10px",
+                      }}
+                    />
+                    <Box>
+                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                        {product?.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {product?.description || "Product details"}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Typography variant="body2">
+                      ₹ {Number(product?.super1 || product?.originalPrice).toFixed(2)}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">Qty: {item.quantity}</Typography>
+                  </Box>
+
+                </Box>
+              );
+            })}
+            {/* Total Section */}
+            <Box sx={{ marginTop: "20px", borderTop: "1px solid #ddd", paddingTop: "10px" }}>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="body1" fontWeight="bold">Total Amount:</Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column", // Stack items vertically
+                    marginBottom: "10px",
+                  }}
+                >
+
+
+                  <Typography variant="body1">
+                    ₹
+                    {orderItems
+                      .reduce(
+                        (total, item) =>
+                          total +
+                          item.quantity *
+                          (products.find((p) => p.id === item.product_id)?.super1 ||
+                            products.find((p) => p.id === item.product_id)?.originalPrice ||
+                            0),
+                        0
+                      )
+                      .toFixed(2)}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    Qty : {parseInt(orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0), 10)}
+                  </Typography>
+
+                </Box>
+
+              </Box>
+            </Box>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: "space-between", padding: "20px" }}>
+            <Button onClick={closeOrderSummaryPopup} variant="outlined" color="secondary">
+              Modify Order
+            </Button>
+            <Button onClick={handleConfirmOrder} variant="contained" color="primary">
+              Confirm Order
+            </Button>
+          </DialogActions>
+        </Box>
+      </Modal>
 
 
       <div
@@ -418,9 +450,11 @@ const BookingOrders = () => {
           variant="contained"
           color="primary"
           onClick={openOrderSummaryPopup}
-          style={{ width: "200px",backgroundColor: "#28a745",
-            color: "white", }}
-          
+          style={{
+            width: "200px", backgroundColor: "#28a745",
+            color: "white",
+          }}
+
         >
           Book Order
         </Button>

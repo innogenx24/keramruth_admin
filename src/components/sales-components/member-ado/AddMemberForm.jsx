@@ -32,7 +32,7 @@ const AddMemberForm = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-
+  const [imageError, setImageError] = useState("");
   // const [selectClub, setSelectedClub] = useState("500 Litres");
   // const fileInputRef = useRef(null); // Ref to reset file input
   const [states, setStates] = useState([]); // Define states
@@ -691,6 +691,10 @@ const AddMemberForm = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role;
+  const UserId = user?.id;
+
+
+
 
   const fetchClubs = async () => {
     try {
@@ -728,24 +732,28 @@ const AddMemberForm = () => {
       // Check file type (JPEG, JPG, PNG)
       const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
       if (!allowedTypes.includes(file.type)) {
-        setErrorMessage("Only JPEG, JPG, or PNG images are allowed.");
+        setImageError("Only JPEG, JPG, or PNG images are allowed.");
         return; // Stop further processing if the file type is not allowed
       }
-
+  
       // Check file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        setErrorMessage("File size must be less than 2MB.");
+        setImageError("File size must be less than 2MB.");
         return; // Stop further processing if the file size exceeds 2MB
       }
-
+  
       // If validation passes, set the selected file and preview
       setSelectedFile(file);
       formik.setFieldValue("image", file); // Set the image in Formik field
       setImagePreview(URL.createObjectURL(file)); // Create a preview URL
-      setErrorMessage(""); // Clear any previous error message
+      setImageError(""); // Clear any previous error message
       setOpenSnackbar(false); // Hide the snackbar error
+    } else {
+      // Clear any existing error message when no file is selected
+      setImageError("");
     }
   };
+  
 
   // Formik setup
   const formik = useFormik({
@@ -802,9 +810,9 @@ const AddMemberForm = () => {
       formData.append("image", values.image);
       // formData.append("superior_id", values.superior_id);
       const finalSuperiorId =
-        selectedD || selectedSd || selectedMd || selectedAdo || selectedAdmin;
+        selectedD || selectedSd || selectedMd || selectedAdo || selectedAdmin || UserId;
       formData.append("superior_id", finalSuperiorId);
-      
+
 
       setIsFormSubmitted(true);
 
@@ -997,47 +1005,48 @@ const AddMemberForm = () => {
                   </Select>
                 </Grid>
                 <Grid item xs={12}>
-                  <InputLabel>Add Image*</InputLabel>
-                  <IconButton color="primary" component="label">
-                    <AddPhotoAlternateIcon />
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </IconButton>
-                  {selectedFile && (
-                    <Typography variant="body2" sx={{ marginTop: "10px" }}>
-                      Selected file: {selectedFile.name}
-                    </Typography>
-                  )}
-                  {/* Preview the uploaded image */}
-                  {imagePreview && (
-                    <Box mt={2}>
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        style={{
-                          width: "100%",
-                          maxWidth: "300px",
-                          height: "auto",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    </Box>
-                  )}
-                  {/* Display error message below image upload */}
-                  {errorMessage && (
-                    <Typography
-                      color="error"
-                      variant="body2"
-                      sx={{ marginTop: "10px" }}
-                    >
-                      {errorMessage}
-                    </Typography>
-                  )}
-                </Grid>
+  <InputLabel>Add Image*</InputLabel>
+  <IconButton color="primary" component="label">
+    <AddPhotoAlternateIcon />
+    <input
+      type="file"
+      hidden
+      accept="image/*"
+      onChange={handleImageChange}
+    />
+  </IconButton>
+  {selectedFile && (
+    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+      Selected file: {selectedFile.name}
+    </Typography>
+  )}
+  {/* Preview the uploaded image */}
+  {imagePreview && (
+    <Box mt={2}>
+      <img
+        src={imagePreview}
+        alt="Preview"
+        style={{
+          width: "100%",
+          maxWidth: "300px",
+          height: "auto",
+          borderRadius: "8px",
+        }}
+      />
+    </Box>
+  )}
+  {/* Display error message below image upload */}
+  {imageError && (
+    <Typography
+      color="error"
+      variant="body2"
+      sx={{ marginTop: "10px" }}
+    >
+      {imageError}
+    </Typography>
+  )}
+</Grid>
+
 
                 <Grid item xs={12}>
                   <TextField
@@ -1256,32 +1265,32 @@ const AddMemberForm = () => {
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
               <InputLabel>Club & Superior Distributors</InputLabel>
               <Grid container spacing={2}>
-              {!(selectedRole === "6" || selectedRole === "2") && (
-  <Grid item xs={12}>
-    <InputLabel>Club*</InputLabel>
-    <Select
-      fullWidth
-      name="club_name"
-      value={formik.values.club_name}
-      onChange={(e) => {
-        formik.setFieldValue("club_name", e.target.value); // Set club_name directly
-      }}
-      error={Boolean(formik.touched.club_name && formik.errors.club_name)}
-    >
-      <MenuItem value="">Select Club</MenuItem>
-      {clubs.map((club) => (
-        <MenuItem key={club.id} value={club.club_name}>
-          {club.club_name}
-        </MenuItem>
-      ))}
-    </Select>
-    {formik.touched.club_name && formik.errors.club_name && (
-      <Typography color="error">
-        {formik.errors.club_name}
-      </Typography>
-    )}
-  </Grid>
-)}
+                {!(selectedRole === "6" || selectedRole === "2") && (
+                  <Grid item xs={12}>
+                    <InputLabel>Club*</InputLabel>
+                    <Select
+                      fullWidth
+                      name="club_name"
+                      value={formik.values.club_name}
+                      onChange={(e) => {
+                        formik.setFieldValue("club_name", e.target.value); // Set club_name directly
+                      }}
+                      error={Boolean(formik.touched.club_name && formik.errors.club_name)}
+                    >
+                      <MenuItem value="">Select Club</MenuItem>
+                      {clubs.map((club) => (
+                        <MenuItem key={club.id} value={club.club_name}>
+                          {club.club_name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {formik.touched.club_name && formik.errors.club_name && (
+                      <Typography color="error">
+                        {formik.errors.club_name}
+                      </Typography>
+                    )}
+                  </Grid>
+                )}
 
 
                 {selectedRole === "2" ? (
@@ -1292,7 +1301,6 @@ const AddMemberForm = () => {
                       name="superior_id"
                       value={selectedAdmin || ""} // Show previous ADO for reference
                       onChange={(e) => handleAdminChange(e.target.value)}
-                      error={Boolean(!selectedAdmin)}
                     >
                       <MenuItem value="">Select Admin</MenuItem>
                       {allmembers?.Admins?.map((item) => (
@@ -1305,9 +1313,9 @@ const AddMemberForm = () => {
                 ) : null}
 
                 {selectedRole === "3" ||
-                selectedRole === "4" ||
-                selectedRole === "5" ||
-                selectedRole === "6" ? (
+                  selectedRole === "4" ||
+                  selectedRole === "5" ||
+                  selectedRole === "6" ? (
                   <Grid item xs={12}>
                     <InputLabel>Area Development Officer (ADO)</InputLabel>
                     <Select
@@ -1328,8 +1336,8 @@ const AddMemberForm = () => {
                 ) : null}
 
                 {selectedRole === "4" ||
-                selectedRole === "5" ||
-                selectedRole === "6" ? (
+                  selectedRole === "5" ||
+                  selectedRole === "6" ? (
                   <Grid item xs={12}>
                     <InputLabel>Master Distributor (MD)</InputLabel>
                     <Select

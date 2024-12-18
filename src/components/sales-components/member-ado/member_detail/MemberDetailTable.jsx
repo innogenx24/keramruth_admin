@@ -272,7 +272,7 @@ const MemberDetailTable = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h6" sx={{ color: '#989FA9' }}>
-        All Members TEST
+        All Members
       </Typography>
 {/* /////// */}
 <Box sx={{ padding: 3 }} >

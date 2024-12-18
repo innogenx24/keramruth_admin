@@ -224,27 +224,7 @@ const MemberAdoTable = () => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-  const renderPagination = (totalRows) => (
-    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
-      <Button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}  // Ensure it doesn't go below 1
-        disabled={currentPage === 1}
-        variant="outlined"
-      >
-        Previous
-      </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
-        Page {currentPage}
-      </Typography>
-      <Button
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(totalRows / rowsPerPage)))}
-        disabled={currentPage >= Math.ceil(totalRows / rowsPerPage)}
-        variant="outlined"
-      >
-        Next
-      </Button>
-    </div>
-  );
+  
   ///////
   const handleRowClick = (memberId,roleId) => {
     const nextRoleId = roleId + 1;
@@ -255,7 +235,7 @@ const MemberAdoTable = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h6" sx={{ marginBottom: '20px', color: '#989FA9' }}>
-        All Members TEST
+        All Members
       </Typography>
 
       {showTable ? (
@@ -327,7 +307,7 @@ const MemberAdoTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredMembersList.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map((member, index) => (
+                {filteredMembersList.map((member, index) => (
                   <TableRow 
                   key={member.id}
                   onClick={() => handleRowClick(member.id,member.role_id)}
@@ -361,9 +341,7 @@ const MemberAdoTable = () => {
             </Table>
           </TableContainer>
 
-          <div style={{ marginTop: '10px' }}>
-            {renderPagination(filteredMembersList.length)}
-          </div>
+          
         </>
       ) : editMember ? (
         <EditMemberForm member={editMember} />

@@ -21,6 +21,8 @@ const FeedbackTable = () => {
   const { users } = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const userId = users?.id; // Assuming the user ID is stored in the state.users object
+  const userRole= users?.role_name;
+  
 
   // Fetch feedbacks on component mount
   useEffect(() => {
@@ -30,16 +32,18 @@ const FeedbackTable = () => {
         return;
       }
 
-      
       try {
-        const response = await axios.get(
-          `http://88.222.245.236:3002/feedback/hierarchy/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        // Determine API endpoint based on user role
+        const apiEndpoint =
+          userRole === "Admin"
+            ? "http://88.222.245.236:3002/feedback/hierarchy"
+            : `http://88.222.245.236:3002/feedback/hierarchy/${userId}`;
+
+        const response = await axios.get(apiEndpoint, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setFeedbacks(response.data.feedbacks);
       } catch (error) {
         console.error("Error fetching feedback data:", error);
@@ -47,7 +51,8 @@ const FeedbackTable = () => {
     };
 
     fetchFeedbacks();
-  }, [token, userId]); 
+  }, [token, userId, userRole]);
+
 
   return (
     <Box padding={2}>

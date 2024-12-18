@@ -113,9 +113,12 @@ const AnnouncementTable = () => {
                       src={getImageURL(announcement.image)}
                       alt="Announcement"
                       style={{
-                        width: "60px",
-                        height: "60px",
-                        objectFit: "cover",
+                        width: "80px",
+                        height: "auto",
+                        objectFit: "contain",
+                        border: "1px solid #ccc",
+                        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                        borderRadius: "10px",
                       }}
                     />
                   ) : (

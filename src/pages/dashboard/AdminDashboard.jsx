@@ -298,7 +298,7 @@ export default function AdminDashboard() {
     },
 
     {
-      text: "Documents",
+      text: "Downloads",
       path: "/dashboard/documents-member",
       icon: <DescriptionIcon />,
     },
@@ -325,13 +325,18 @@ export default function AdminDashboard() {
       icon: <FaShoppingCart />,
     },
     {
+      text: "Feedback",
+      path: "/dashboard/feedback",
+      icon: <RiFeedbackFill   />,
+    },
+    {
       text: "Announcements",
       path: "/dashboard/announcement",
       icon: <NotificationsIcon />,
     },
 
     {
-      text: "Documents",
+      text: "Downloads",
       path: "/dashboard/documents",
       icon: <DescriptionIcon />,
     },
