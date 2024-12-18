@@ -247,6 +247,9 @@ const MemberAdoTable = () => {
   );
   ///////
   const handleRowClick = (memberId,roleId) => {
+    if (roleId >= 6) {
+      return;
+    }
     const nextRoleId = roleId + 1;
     navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
   };

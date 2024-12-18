@@ -5,29 +5,36 @@ import { fetchMembersMemberFailure, fetchMembersMemberRequest, fetchMembersMembe
 
 /** Worker saga to fetch products**/
 function* fetchMembersMember(action) {
-  const { roleId } = action.payload;
+  const { roleId, memberId } = action.payload;
   console.log("roleId", roleId);
-  const user = JSON.parse(localStorage.getItem('user'));
-  const role = user?.role;
-  const id = user?.id;
+  // const user = JSON.parse(localStorage.getItem('user'));
+  // const role = user?.role;
+  // const id = user?.id;
+  const id = memberId;
+  
 
 // console.log("6666", role);
 const API_URL = (() => {
-  switch (role) {
-    case "Admin":
-      return `http://88.222.245.236:3002/api/user/role-user?role_id=${roleId}`;
-    case "Area Development Officer":
-      return `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${id}&roleId=${roleId}`;
-    case "Master Distributor":
+  if (!id || !roleId) {
+    console.error("Invalid id or roleId provided");
+    return null;
+  }
+
+  switch (roleId) {
+    case 3:
+      return `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${roleId}&roleId=${roleId}`;
+    case 4:
       return `http://88.222.245.236:3002/directMembers/users-by-md?mdId=${id}&roleId=${roleId}`;
-    case "Super Distributor":
+    case 5:
       return `http://88.222.245.236:3002/directMembers/users-by-sd?sdId=${id}&roleId=${roleId}`;
-    case "Distributor":
+    case 6:
       return `http://88.222.245.236:3002/members/cs?distributorId=${id}`;
     default:
+      console.error(`Unsupported roleId: ${roleId}`);
       return null;
   }
 })();
+
   // const API_URL = `http://88.222.245.236:3002/api/user/role-user?role_id=${roleId}`;
   console.log("API_URL", API_URL);
   try {
