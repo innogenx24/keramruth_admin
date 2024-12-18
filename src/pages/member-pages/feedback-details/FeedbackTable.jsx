@@ -64,6 +64,7 @@ const FeedbackTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>User Details</TableCell>
+              <TableCell>Order ID</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Booked Date</TableCell>
               <TableCell>Delivered Date</TableCell>
@@ -89,6 +90,10 @@ const FeedbackTable = () => {
                     <Typography>{feedback.user.full_name}</Typography>
                   </Box>
                 </TableCell>
+                <TableCell>
+                {feedback.id}
+                </TableCell>
+
                 <TableCell>
                   {Number(feedback.order.total_order_quantity).toString()}
                 </TableCell>

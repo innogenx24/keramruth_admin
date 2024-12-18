@@ -155,7 +155,7 @@ const TargetPage = () => {
                 </Box>
               </Grid>
 
-              <Grid style={{ display: "flex", marginTop: 3 }}>
+              {/* <Grid style={{ display: "flex", marginTop: 3 }}>
                 <Box>
                   <Typography variant="subtitle1" gutterBottom>
                     Stock Target
@@ -164,10 +164,10 @@ const TargetPage = () => {
                     Total Qty. {new Intl.NumberFormat('en-IN').format(Number(targetData.StockTarget) || 0)}
                   </Typography>
                   <Typography variant="body1" color="success.main">
-                    ● Stock Achieved: Rs. {new Intl.NumberFormat('en-IN').format(Number(targetData.StockAchievement) || 0)}
+                    ● Stock Achieved QTY: {new Intl.NumberFormat('en-IN').format(Number(targetData.StockAchievement) || 0)}
                   </Typography>
                   <Typography variant="body1" color="error.main">
-                    ● Pending Stock: Rs. {new Intl.NumberFormat('en-IN').format(Number(targetData.PendingStockTarget) || 0)}
+                    ● Pending Stock QTY: {new Intl.NumberFormat('en-IN').format(Number(targetData.PendingStockTarget) || 0)}
                   </Typography>
                 </Box>
 
@@ -186,7 +186,7 @@ const TargetPage = () => {
                     options={doughnutOptions}
                   />
                 </Box>
-              </Grid>
+              </Grid> */}
 
 
               {/* Legend */}
@@ -246,8 +246,7 @@ const TargetPage = () => {
                 />
               </Box>
 
-              {/* Stock Achievement Progress */}
-              <Box sx={{ mt: 3 }}>
+              {/* <Box sx={{ mt: 3 }}>
                 <Typography variant="h6" gutterBottom>
                   Stock Target Achievement
                 </Typography>
@@ -275,7 +274,7 @@ const TargetPage = () => {
                     },
                   }}
                 />
-              </Box>
+              </Box> */}
             </Box>
           </Box>
         </CardContent>
