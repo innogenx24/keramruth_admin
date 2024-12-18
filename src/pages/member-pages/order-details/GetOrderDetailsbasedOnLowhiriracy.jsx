@@ -260,17 +260,26 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
                           {order.OrderItems.map((item, itemIndex) => (
                             <TableRow key={item.itemId}>
                                 <TableCell>{itemIndex + 1}</TableCell>
-                              <TableCell>
-                              <div style={{ display: "flex", alignItems: "center" }}>
-                      <Avatar
-                        src={item?.productImage ? `${imageBaseURL}${item.productImage}` : '/path/to/default-image.jpg'} // Fallback image if not available
-                      />
-                      <Typography style={{ marginLeft: "10px" }}>
-                        {item?.productName}
-                      </Typography>
-                    </div>
+                                <TableCell>
+  <div style={{ display: "flex", alignItems: "center" }}>
+    <img
+      src={item?.productImage ? `${imageBaseURL}${item.productImage}` : '/path/to/default-image.jpg'}
+      alt={item?.productName || "Product Image"}
+      style={{
+        width: "80px",
+        height: "auto",
+        objectFit: "contain",
+        border: "1px solid #ccc",
+        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+        borderRadius: "10px",
+      }}
+    />
+    <Typography style={{ marginLeft: "10px" }}>
+      {item?.productName || "No Name Available"}
+    </Typography>
+  </div>
+</TableCell>
 
-                              </TableCell>
                              
                               <TableCell>{item.quantity}</TableCell>
                               <TableCell>Rs. {item.basePrice}</TableCell>

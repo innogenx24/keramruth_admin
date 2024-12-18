@@ -341,8 +341,8 @@ const AddProductForm = () => {
                 fullWidth
                 variant="outlined"
                 name="productVolume"
-                label="Product Volume*"
-                placeholder="Enter Product Volume (200ml, 500ml, 1L)"
+                label="Product Volume(100ml, 500ml, 1L)*"
+                placeholder="Enter Product Volume (100ml, 500ml, 1L)"
                 sx={{ marginBottom: "16px" }}
                 {...formik.getFieldProps("productVolume")}
                 error={formik.touched.productVolume && Boolean(formik.errors.productVolume)}

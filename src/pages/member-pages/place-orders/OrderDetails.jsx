@@ -54,14 +54,14 @@ const OrderDetails = () => {
   };
 
   const handleFeedbackClick = (order) => {
-    const firstProduct = order.OrderItems[0]; 
-  
+    const firstProduct = order.OrderItems[0];
+
     navigate(`/dashboard/place-orders/feedback/${order.id}`, {
       state: {
         productName: firstProduct.product.name,
         productImage: firstProduct.product.image,
-        orderId: order.id, 
-        productId: firstProduct.product.id, 
+        orderId: order.id,
+        productId: firstProduct.product.id,
       },
     });
   };
@@ -92,7 +92,7 @@ const OrderDetails = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              orders.map((order,index) => (
+              orders.map((order, index) => (
                 <React.Fragment key={order.id}>
                   <TableRow
                     onClick={() => handleRowClick(order.id)}
@@ -119,10 +119,10 @@ const OrderDetails = () => {
                           order.status === "Accepted"
                             ? "green"
                             : order.status === "Cancelled"
-                            ? "red"
-                            : order.status === "Pending"
-                            ? "orange"
-                            : "black",
+                              ? "red"
+                              : order.status === "Pending"
+                                ? "orange"
+                                : "black",
                       }}
                     >
                       {order.status}
@@ -165,9 +165,12 @@ const OrderDetails = () => {
                                     src={`http://88.222.245.236:3002/uploads/${item.product.image}`}
                                     alt={item.product.name}
                                     style={{
-                                      width: "50px",
-                                      height: "50px",
-                                      objectFit: "cover",
+                                      width: "80px",
+                                      height: "auto",
+                                      objectFit: "contain",
+                                      border: "1px solid #ccc",
+                                      boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                                      borderRadius: "10px",
                                     }}
                                   />
                                 </TableCell>

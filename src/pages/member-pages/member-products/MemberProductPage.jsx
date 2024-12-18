@@ -11,9 +11,11 @@ import {
   Switch,
   Typography,
   TablePagination,
+  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import SearchProducts from "../booking-order/SearchProducts";
 
 const MemberProductPage = () => {
   const navigate = useNavigate();
@@ -21,7 +23,8 @@ const MemberProductPage = () => {
   const [page, setPage] = useState(0); // Pagination state
   const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
- 
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Fetch products from API
   const fetchProducts = async () => {
     const token = localStorage.getItem("token");
@@ -72,11 +75,21 @@ const MemberProductPage = () => {
     { id: 'price', label: 'MRP' },
   ];
 
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
+
   return (
     <div>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         All Products
       </Typography>
+      <Box sx={{ width: "100%", marginBottom: 2 }}>
+        <SearchProducts value={searchQuery} onSearchChange={setSearchQuery} />
+      </Box>
       <div
         style={{
           display: "flex",
@@ -84,7 +97,7 @@ const MemberProductPage = () => {
           marginBottom: "20px",
         }}
       >
-        
+
       </div>
 
       <TableContainer component={Paper}>
@@ -97,8 +110,7 @@ const MemberProductPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedProducts
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Slice data for pagination
+            {filteredProducts
               .map((product, index) => (
                 <TableRow key={product.id}>
                   <TableCell>{index + 1}</TableCell>
@@ -107,60 +119,34 @@ const MemberProductPage = () => {
                       <img
                         src={`${imageBaseURL}${product.image}`}
                         style={{
-                          width: "60px",
-                          height: "60px",
-                          objectFit: "cover",
+                          width: "100px",
+                          height: "auto",
+                          objectFit: "contain",
+                          border: "1px solid #ccc",
+                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                          borderRadius: "10px",
                         }}
                       />
                     ) : (
                       <span>No Image Available</span>
                     )}
                   </TableCell>
+
                   <TableCell>{product.name}</TableCell>
-                                    <TableCell>{product.stock_quantity}</TableCell>
+                  <TableCell>{product.stock_quantity}</TableCell>
 
                   <TableCell>{product.category_name}</TableCell>
                   <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
-                  
+
                   <TableCell>{product.super1 && product.super1 !== '0.00' ? product.super1 : product.originalPrice}</TableCell>
-                 
+
                 </TableRow>
               ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      <TablePagination
-        rowsPerPageOptions={[]} // Disable the rows per page dropdown
-        component="div"
-        count={sortedProducts.length} // Total number of products
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelDisplayedRows={() => ""} // Remove default range text
-        ActionsComponent={({ count, page, rowsPerPage, onPageChange }) => (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" }}>
-            <Button
-              onClick={(event) => onPageChange(event, page - 1)}
-              disabled={page === 0}
-              variant="outlined"
-            >
-              Previous
-            </Button>
-            <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
-              Page {page + 1}
-            </Typography>
-            <Button
-              onClick={(event) => onPageChange(event, page + 1)}
-              disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-              variant="outlined"
-            >
-              Next
-            </Button>
-          </div>
-        )}
-      />
+
     </div>
   );
 };

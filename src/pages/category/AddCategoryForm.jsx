@@ -146,16 +146,7 @@ const AddCategoryForm = () => {
         </Grid>
       </Grid>
 
-      {/* Snackbar for error */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          {serverError}
-        </Alert>
-      </Snackbar>
+      
     </Box>
   );
 };

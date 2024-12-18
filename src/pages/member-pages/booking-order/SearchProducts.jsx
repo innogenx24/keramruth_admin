@@ -1,10 +1,10 @@
 import { TextField, Box } from "@mui/material";
 
-const SearchBox = ({ value, onSearchChange }) => {
+const SearchProducts = ({ value, onSearchChange }) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
       <TextField
-        label="Search Name or Mobile no"
+        label="Search Product Name"
         variant="outlined"
         value={value}
         onChange={(e) => onSearchChange(e.target.value)}
@@ -19,4 +19,4 @@ const SearchBox = ({ value, onSearchChange }) => {
   );
 };
 
-export default SearchBox;
+export default SearchProducts;
