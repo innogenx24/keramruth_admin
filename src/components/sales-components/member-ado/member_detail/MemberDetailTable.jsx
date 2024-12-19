@@ -296,6 +296,7 @@ const MemberDetailTable = () => {
     }
     const nextRoleId = roleId + 1;
     setNewRoleID(nextRoleId)
+    setNewMemberId(memberId)
     navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
   };
 
@@ -386,6 +387,66 @@ const MemberDetailTable = () => {
   } = userProfile;
 
 
+  /////********* Low Member achivement API ************///////////
+  const [memberAchievement, setMemberAchievement] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newMemberId, setNewMemberId] = useState(null);
+
+  const newMemberID = memberID || newMemberId
+
+  useEffect(() => {
+    if (!newMemberID) {
+      console.warn("No memberID provided, skipping fetch.");
+      return;
+    }
+
+    const fetchMemberAchievement = async () => {
+      setLoading(true); // Start loading
+      try {
+        const response = await axios.get(
+          `http://localhost:3002/user_sales_detail/getLowHierarchySalesDetailsId/${newMemberID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setMemberAchievement(response.data);
+        setLoading(false); // Stop loading
+      } catch (error) {
+        setError("Error fetching achievement data.");
+        setLoading(false); // Stop loading
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchMemberAchievement();
+  }, [newMemberID, token]); // only run when memberID or token changes
+
+  // Show loading state
+  if (loading) {
+    return <Typography>Loading profile...</Typography>;
+  }
+
+  // Handle error state
+  if (error) {
+    return <Typography color="error">{error}</Typography>;
+  }
+
+  // Destructure data safely
+  const monthlyDetails = memberAchievement.monthlyDetails;
+  const {
+    totalMonthlyTarget,
+    totalAchievementAmount,
+    pendingAmount,
+    achievementAmountPercent,
+    totalStockTarget,
+    totalStockAchievement,
+    pendingStockTarget,
+    stockAchievementPercent,
+  } = monthlyDetails;
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h6" sx={{ color: '#989FA9' }}>
@@ -436,106 +497,102 @@ const MemberDetailTable = () => {
                 <Box display="flex" flexDirection="column" gap={3} >
                   {/* Target Section */}
                   <Box display="flex" alignItems="center" justifyContent="space-between">
-                    {/* Circular Graph */}
-                    <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" sx={{ backgroundColor: '#F1F3FF' }}>
-                      {/* First Graph with Content (Left Aligned) */}
-                      <Box display="flex" alignItems="center" flex="1" justifyContent="flex-start">
-                        {/* Circular Progress (Background Circle) */}
-                        <Box position="relative" display="inline-flex">
-                          <CircularProgress
-                            variant="determinate"
-                            value={100}
-                            size={120}
-                            thickness={5}
-                            style={{ color: "#e0e0e0" }}
-                          />
-                          {/* Active Circular Progress */}
-                          <CircularProgress
-                            variant="determinate"
-                            value={percentage}
-                            size={120}
-                            thickness={5}
-                            color="primary"
-                            style={{ position: "absolute" }}
-                          />
-                          {/* Percentage in Center */}
-                          <Box
-                            position="absolute"
-                            top="50%"
-                            left="50%"
-                            sx={{
-                              transform: "translate(-50%, -50%)",
-                            }}
-                          >
-                            <Typography variant="h5" color="primary" fontWeight="bold">
-                              {percentage}%
-                            </Typography>
-                          </Box>
-                        </Box>
 
-                        {/* Content on Right Side of First Graph */}
-                        <Box ml={2}>
-                          <Typography variant="h6" fontWeight="bold" mb={0.5}>
-                            Target
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary" mb={0.5}>
-                            {targetVolume} Litres
-                          </Typography>
-                          <Typography variant="body2" color="error" fontWeight="bold">
-                            Pending: {pending} L
-                          </Typography>
-                        </Box>
-                      </Box>
+                  <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      width="100%"
+      sx={{ backgroundColor: "#F1F3FF", padding: 2, borderRadius: 2 }}
+    >
+      {/* First Graph: Target Amount */}
+      <Box display="flex" alignItems="center" flex="1" justifyContent="flex-start">
+        <Box position="relative" display="inline-flex">
+          <CircularProgress
+            variant="determinate"
+            value={100}
+            size={120}
+            thickness={5}
+            style={{ color: "#e0e0e0" }}
+          />
+          <CircularProgress
+            variant="determinate"
+            value={parseFloat(achievementAmountPercent)}
+            size={120}
+            thickness={5}
+            color="primary"
+            style={{ position: "absolute" }}
+          />
+          <Box
+            position="absolute"
+            top="50%"
+            left="50%"
+            sx={{
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <Typography variant="h5" color="primary" fontWeight="bold">
+              {achievementAmountPercent}%
+            </Typography>
+          </Box>
+        </Box>
+        <Box ml={2}>
+          <Typography variant="h6" fontWeight="bold" mb={0.5}>
+            Target Amount
+          </Typography>
+          <Typography variant="body2" color="text.secondary" mb={0.5}>
+            {totalMonthlyTarget} Rs
+          </Typography>
+          <Typography variant="body2" color="error" fontWeight="bold">
+            Pending Amount: {pendingAmount} Rs
+          </Typography>
+        </Box>
+      </Box>
 
-                      {/* Second Graph with Content (Right Aligned) */}
-                      <Box display="flex" alignItems="center" flex="1" justifyContent="flex-end">
-                        {/* Circular Progress (Background Circle) */}
-                        <Box position="relative" display="inline-flex">
-                          <CircularProgress
-                            variant="determinate"
-                            value={100}
-                            size={120}
-                            thickness={5}
-                            style={{ color: "#e0e0e0" }}
-                          />
-                          {/* Active Circular Progress */}
-                          <CircularProgress
-                            variant="determinate"
-                            value={percentage}
-                            size={120}
-                            thickness={5}
-                            color="primary"
-                            style={{ position: "absolute" }}
-                          />
-                          {/* Percentage in Center */}
-                          <Box
-                            position="absolute"
-                            top="50%"
-                            left="50%"
-                            sx={{
-                              transform: "translate(-50%, -50%)",
-                            }}
-                          >
-                            <Typography variant="h5" color="primary" fontWeight="bold">
-                              {percentage}%
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* Content on Left Side of Second Graph */}
-                        <Box ml={2}>
-                          <Typography variant="h6" fontWeight="bold" mb={0.5}>
-                            Target
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary" mb={0.5}>
-                            {targetVolume} Litres
-                          </Typography>
-                          <Typography variant="body2" color="error" fontWeight="bold">
-                            Pending: {pending} L
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Box>
+      {/* Second Graph: Target Stock */}
+      <Box display="flex" alignItems="center" flex="1" justifyContent="flex-end">
+        <Box position="relative" display="inline-flex">
+          <CircularProgress
+            variant="determinate"
+            value={100}
+            size={120}
+            thickness={5}
+            style={{ color: "#e0e0e0" }}
+          />
+          <CircularProgress
+            variant="determinate"
+            value={parseFloat(stockAchievementPercent)}
+            size={120}
+            thickness={5}
+            color="primary"
+            style={{ position: "absolute" }}
+          />
+          <Box
+            position="absolute"
+            top="50%"
+            left="50%"
+            sx={{
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <Typography variant="h5" color="primary" fontWeight="bold">
+              {stockAchievementPercent}%
+            </Typography>
+          </Box>
+        </Box>
+        <Box ml={2}>
+          <Typography variant="h6" fontWeight="bold" mb={0.5}>
+            Target Stock
+          </Typography>
+          <Typography variant="body2" color="text.secondary" mb={0.5}>
+            {totalStockTarget} Q.ty
+          </Typography>
+          <Typography variant="body2" color="error" fontWeight="bold">
+            Pending Stock: {pendingStockTarget} Q.ty
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
 
 
                   </Box>
