@@ -208,7 +208,7 @@ const MemberDetailTable = () => {
     if (!token) throw new Error("Token not found");
 
     try {
-      const response = await axios.get(`http://88.222.245.236:3002/api/user/${UserId}`, {
+      const response = await axios.get(`http://88.222.245.236:3002/api/user/${memberID}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -221,10 +221,10 @@ const MemberDetailTable = () => {
   };
 
   useEffect(() => {
-    if (UserId) {
+    if (memberID) {
       fetchUserCounts();
     }
-  }, [UserId]);
+  }, [memberID]);
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
@@ -577,7 +577,7 @@ const MemberDetailTable = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               {/* Role Dropdown */}
-              <FormControl style={{ width: '30%' }}>
+              <FormControl style={{ width: '100%' }}>
                 <InputLabel id="role-dropdown-label">Select Role</InputLabel>
                 <Select
                   labelId="role-dropdown-label"
@@ -596,7 +596,7 @@ const MemberDetailTable = () => {
               
 
            
-              {/* <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
                 <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
                   <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
                   {selectedRole === '3' && roleCounts.mdCount}
@@ -604,7 +604,7 @@ const MemberDetailTable = () => {
                   {selectedRole === '5' && roleCounts.distributorCount}
                   {selectedRole === '6' && roleCounts.customerCount}
                 </Typography>
-              </Box> */}
+              </Box>
               
 
 

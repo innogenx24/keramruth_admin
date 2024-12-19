@@ -41,7 +41,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
       console.error('Token not found');
       return;
     }
-
+  
     try {
       const response = await axios.get(API_URL, {
         headers: {
@@ -49,9 +49,14 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
         },
       });
       const allOrders = response.data.orders || [];
-
-      setPendingOrders(allOrders.filter(order => order.status === 'Pending'));
-
+  
+      // Filter and sort pending orders in descending order by `createdAt`
+      const sortedPendingOrders = allOrders
+        .filter(order => order.status === 'Pending')
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setPendingOrders(sortedPendingOrders);
+  
+      // Filter and sort completed orders
       const sortedCompletedOrders = allOrders
         .filter(order => order.status === 'Accepted' || order.status === 'Cancelled')
         .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
@@ -60,6 +65,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
       console.error('Error fetching orders:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchOrders();

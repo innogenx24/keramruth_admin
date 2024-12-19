@@ -238,14 +238,17 @@ const BookingOrders = () => {
                           -
                         </Button>
 
-                        {/* Input box for quantity */}
                         <input
-                          type="number"
+                          type="text"
                           value={currentQuantity}
                           onChange={(e) => {
                             let value = e.target.value;
-                            value = value.replace(/^0+/, '') || '0'; // Handle leading zeros
-                            handleQuantityChange(product.id, value);
+                            value = value.replace(/^0+/, '') || '0';  // Remove leading zeros and set to '0' if empty
+
+                            // Convert the value to a number and ensure the quantity change is handled as a number
+                            const numericValue = parseInt(value, 10) || 0;  // Default to 0 if the value is not a valid number
+
+                            handleQuantityChange(product.id, numericValue);  // Pass numeric value
                           }}
                           min="0"
                           style={{
@@ -257,6 +260,8 @@ const BookingOrders = () => {
                             borderRadius: "4px",
                           }}
                         />
+
+
 
                         <Button
                           variant="outlined"
