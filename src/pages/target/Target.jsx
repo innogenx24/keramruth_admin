@@ -67,25 +67,43 @@ const TargetPage = () => {
     return <Typography>No data available</Typography>;
   }
 
-  // Calculate the achievement percentage and set colors based on this value
-  const achievementPercentage = parseFloat(targetData.achievementAmountPercent);
+// Calculate the achievement percentage
+const achievementPercentage = parseFloat(targetData.achievementAmountPercent);
 
-  const doughnutData = {
-    labels: ["Done", "Pending"],
-    datasets: [
-      {
-        data: [targetData.AchievementAmount, targetData.PendingAmount],
-        backgroundColor: [
-          achievementPercentage >= 75 ? "#4CAF50" : achievementPercentage >= 50 ? "#FFC107" : "#FF7043",
-          "#FF7043", // For pending stock
-        ],
-        hoverBackgroundColor: [
-          achievementPercentage >= 75 ? "#388E3C" : achievementPercentage >= 50 ? "#FFB300" : "#E64A19",
-          "#E64A19", // For pending stock hover
-        ],
-      },
-    ],
-  };
+// Calculate the total (AchievementAmountPercent + UnachievementAmountPercent should be 100%)
+const achievementAmountPercent = targetData.achievementAmountPercent;
+const unachievementAmountPercent = targetData.unachievementAmountPercent;
+
+const doughnutData = {
+  labels: ["Achieved Amount", "Pending Amount"],
+  datasets: [
+    {
+      data: [achievementAmountPercent, unachievementAmountPercent],  // Use percentages for the chart
+      backgroundColor: [
+        // Set color based on achievement percentage
+        achievementPercentage >= 75
+          ? "#4CAF50" // Green if >= 75%
+          : achievementPercentage >= 50
+          ? "#FFC107" // Amber if between 50% and 74%
+          : "#FF7043", // Red if < 50%
+
+        // Set pending color as light grey
+        "#E0E0E0",  // Light grey for pending stock
+      ],
+      hoverBackgroundColor: [
+        // Set hover color for achievement portion
+        achievementPercentage >= 75
+          ? "#388E3C" // Darker green for hover
+          : achievementPercentage >= 50
+          ? "#FFB300" // Darker amber for hover
+          : "#E64A19", // Darker red for hover
+
+        // Set hover color for pending portion (always light grey hover)
+        "#BDBDBD",  // Darker grey for hover
+      ],
+    },
+  ],
+};
 
   const doughnutOptions = {
     cutout: "70%",
@@ -227,3 +245,5 @@ const TargetPage = () => {
 };
 
 export default TargetPage;
+
+//
