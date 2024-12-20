@@ -48,6 +48,12 @@ const MemberDetailTable = () => {
   // const { members } = useSelector((state) => state.members);
   // const membersList = Array.isArray(members) ? members : [members];
   const [membersList, setMembersList] = useState([]);
+  const [salesData, setSalesData] = useState([]);
+  const [roleToUse, setRoleToUse] = useState(null); // Initialize roleToUse state
+  const { userId } = useMemo(() => JSON.parse(localStorage.getItem("user")) || {}, []);
+  const [loading, setLoading] = useState(false);
+  const [newMemberId, setNewMemberId] = useState(null);  // Add this line
+
   const [showTable, setShowTable] = useState(true);
   const [editMember, setEditMember] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -80,18 +86,17 @@ const MemberDetailTable = () => {
 
 
   useEffect(() => {
-    if (rolesID) {
-      setSelectedRole(rolesID);
-      setCurrentPage(1);
-    } else if (role) {
-      const initialRole = role === "Area Development Officer" ? "3" :
-        role === "Master Distributor" ? "4" :
-          role === "Super Distributor" ? "5" :
-            role === "Distributor" ? "6" : "3";
-      setSelectedRole(initialRole);
-      setCurrentPage(1);
+    if (role) {
+      const calculatedRoleToUse =
+        role === "Area Development Officer" ? 3 :
+          role === "Master Distributor" ? 4 :
+            role === "Super Distributor" ? 5 :
+              role === "Distributor" ? 6 :
+                role === "Customer" ? 7 : null;
+
+      setRoleToUse(calculatedRoleToUse); // Set roleToUse here
     }
-  }, [rolesID, role]);
+  }, [role]); // Ensure this effect runs on role change
 
 
 
@@ -128,7 +133,6 @@ const MemberDetailTable = () => {
     switch (role) {
       case "Admin":
         return [
-          //   { label: "Area Development Officer (ADO)", value: "2" },
           { label: "Master Distributor (MD)", value: "3" },
           { label: "Super Distributor (SD)", value: "4" },
           { label: "Distributor (D)", value: "5" },
@@ -159,9 +163,30 @@ const MemberDetailTable = () => {
     }
   })();
 
+  const [filteredRoleOptions, setFilteredRoleOptions] = useState([]);
+
+  useEffect(() => {
+    setFilteredRoleOptions(roleOptions.filter(option => {
+      if (newRoleID === 4) {
+        return option.value !== "3"; // Hide MD
+      }
+      if (newRoleID === 5) {
+        return option.value !== "3" && option.value !== "4"; // Hide MD and SD
+      }
+      if (newRoleID === 6) {
+        return option.value !== "3" && option.value !== "4" && option.value !== "5"; // Hide MD, SD, and D
+      }
+      if (role === "Master Distributor") {
+        return option.value !== "3" && option.value !== "4"; // Hide MD and SD for MD
+      }
+      return true; // Show all for other cases
+    }));
+  }, [newRoleID, roleOptions]);
+
   const handleChange = (value) => {
     setSelectedRole(value);
-    setNewRoleID(value)
+    setRoleToUse(value);
+
   };
 
   useEffect(() => {
@@ -171,48 +196,51 @@ const MemberDetailTable = () => {
 
 
   useEffect(() => {
-    // const roleToUse = rolesID || debouncedRole || role_Id;
-    const roleToUse = newRoleID || debouncedRole || role_Id;
+    // Check that both roleToUse and memberID are defined before making the API call
+    if (!roleToUse || !memberID) return;
+
+    const fetchMembers = async () => {
+      try {
+        const response = await axios.get(
+          `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`
+        );
+        setMembersList(response.data || []);
+      } catch (error) {
+        console.error("Failed to fetch members:", error);
+        setMembersList([]);
+      }
+    };
+
+    fetchMembers();
+  }, [roleToUse, memberID]);
 
 
-    if (roleToUse) {
-      const fetchMembers = async () => {
-        try {
-          // Replace API call here
-          const response = await axios.get(
-            `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`
-          );
 
-          if (response.data) {
-            setMembersList(response.data);
-          } else {
-            setMembersList([]);
-          }
-        } catch (error) {
-          console.error("Failed to fetch members:", error);
-          setMembersList([]); // Clear the list on error
-        }
-      };
+  useEffect(() => {
+    const fetchSalesAchievement = async () => {
+      try {
+        const response = await axios.get(
+          `http://88.222.245.236:3002/user_sales_detail/sales_achievement/${roleToUse}/${memberID}`
+        );
+        const { monthlyDetails } = response.data;
+        setSalesData(monthlyDetails || []);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch sales data:", error);
+        setLoading(false);
+      }
+    };
 
-      fetchMembers();
-    }
-  }, [role_Id, debouncedRole, memberID]);
-  
+    fetchSalesAchievement();
+  }, [roleToUse, memberID]);
 
 
 
 
 
   const fetchUserCounts = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Token not found");
-
     try {
-      const response = await axios.get(`http://88.222.245.236:3002/api/user/${UserId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`http://88.222.245.236:3002/api/user/${memberID}`);
 
       setRoleCounts(response.data);
     } catch (error) {
@@ -220,11 +248,12 @@ const MemberDetailTable = () => {
     }
   };
 
+
   useEffect(() => {
-    if (UserId) {
+    if (memberID) {
       fetchUserCounts();
     }
-  }, [UserId]);
+  }, [memberID]);
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
@@ -246,7 +275,7 @@ const MemberDetailTable = () => {
   const handleEditMemberClick = (member) => {
     setEditMember(member);
     setShowTable(false);
-    navigate(`edit-members/${member?.id}`);
+    navigate(`/dashboard/members/edit-members/${member?.id}`);
   };
 
   const handleDeleteOpen = (member) => {
@@ -268,27 +297,7 @@ const MemberDetailTable = () => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-  const renderPagination = (totalRows) => (
-    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
-      <Button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}  // Ensure it doesn't go below 1
-        disabled={currentPage === 1}
-        variant="outlined"
-      >
-        Previous
-      </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
-        Page {currentPage}
-      </Typography>
-      <Button
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(totalRows / rowsPerPage)))}
-        disabled={currentPage >= Math.ceil(totalRows / rowsPerPage)}
-        variant="outlined"
-      >
-        Next
-      </Button>
-    </div>
-  );
+
   ///////
   const handleRowClick = (memberId, roleId) => {
     if (roleId >= 6) {
@@ -300,42 +309,13 @@ const MemberDetailTable = () => {
   };
 
 
-  //////filter role option ///////////
-  // const filteredRoleOptions = useMemo(() => {
-  //   return roleOptions.filter(option => {
-  //     if (newRoleID === 4) {
-  //       return option.value !== "3"; // Hide Master Distributor (MD)
-  //     }
-  //     if (newRoleID === 5) {
-  //       return option.value !== "3" && option.value !== "4"; // Hide MD and SD
-  //     }
-  //     if (newRoleID === 6) {
-  //       return option.value !== "3" && option.value !== "4" && option.value !== "5"; // Hide MD, SD, and D
-  //     }
-  //     return true; // Show all for other cases
-  //   });
-  // }, [newRoleID, roleOptions]);
-  const [filteredRoleOptions, setFilteredRoleOptions] = useState([]);
-  useEffect(() => {
-    setFilteredRoleOptions(roleOptions.filter(option => {
-      if (newRoleID === 4) {
-        return option.value !== "3"; // Hide MD
-      }
-      if (newRoleID === 5) {
-        return option.value !== "3" && option.value !== "4"; // Hide MD and SD
-      }
-      if (newRoleID === 6) {
-        return option.value !== "3" && option.value !== "4" && option.value !== "5"; // Hide MD, SD, and D
-      }
-      return true; // Show all for other cases
-    }));
-  }, [newRoleID, roleOptions]);
+
 
   ///**fetch memeber profile data */
   const [userProfile, setUserProfile] = useState(null);
   // const userId = 606; // Replace with the dynamic userId if needed
   const token = localStorage.getItem("token");
-  
+
 
   useEffect(() => {
 
@@ -383,7 +363,18 @@ const MemberDetailTable = () => {
     country,
     image,
     building_no_name,
+    createdAt,
+    club_name,
   } = userProfile;
+
+
+
+  const newMemberID = memberID || newMemberId
+
+  const { StockAchievementPercent, MonthlyTargetAmount, AchievementAmount, pendingAmount, achievementAmountPercent, StockTarget, StockAchievement, PendingStockTarget } = salesData[0];
+
+
+
 
 
   return (
@@ -392,192 +383,206 @@ const MemberDetailTable = () => {
         All Members
       </Typography>
       {/* /////// */}
-      <Box sx={{ padding: 3 }} >
-
-
+      <Box sx={{ padding: 3 }}>
         <Card variant="outlined">
           <CardContent>
-            <Grid container spacing={3} alignItems="center">
-
-            <Grid item xs={12} md={6}>
-      <Box display="flex" alignItems="center" sx={{ backgroundColor: "#F1F3FF", p: 2, borderRadius: 2 }}>
-        <Avatar
-          src={image ? `http://88.222.245.236:3002/images/${image}` : undefined} // Replace with the profile picture URL
-          alt={full_name || "hu"}
-          sx={{ width: 80, height: 80, mr: 2 }}
-        />
-        <Box>
-          <Typography variant="h6" fontWeight="bold">
-            {full_name || "N/A"}
-          </Typography>
-          <Typography color="primary">{`ID: ${memberID}`}</Typography>
-          <Typography variant="subtitle2" color="text.secondary">
-            {role_name || "N/A"}
-          </Typography>
-          <Box display="flex" mt={1}>
-            <Typography variant="body2">
-              {`${building_no_name || ""}, ${street_name || ""}, ${city || ""}, ${state || ""}, ${country || ""}`}
-            </Typography>
-          </Box>
-          <Box display="flex" mt={0.5}>
-            <Typography variant="body2">
-              {mobile_number ? `+91 ${mobile_number || "dd"}` : "N/A"}
-            </Typography>
-          </Box>
-          <Box display="flex" mt={0.5}>
-            <Typography variant="body2">{email || "N/A"}</Typography>
-          </Box>
-        </Box>
-      </Box>
-    </Grid>
-
-              {/* Stats Section */}
+            <Grid container spacing={3}>
+              {/* Profile Section */}
               <Grid item xs={12} md={6}>
-                <Box display="flex" flexDirection="column" gap={3} >
-                  {/* Target Section */}
-                  <Box display="flex" alignItems="center" justifyContent="space-between">
-                    {/* Circular Graph */}
-                    <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" sx={{ backgroundColor: '#F1F3FF' }}>
-                      {/* First Graph with Content (Left Aligned) */}
-                      <Box display="flex" alignItems="center" flex="1" justifyContent="flex-start">
-                        {/* Circular Progress (Background Circle) */}
-                        <Box position="relative" display="inline-flex">
-                          <CircularProgress
-                            variant="determinate"
-                            value={100}
-                            size={120}
-                            thickness={5}
-                            style={{ color: "#e0e0e0" }}
-                          />
-                          {/* Active Circular Progress */}
-                          <CircularProgress
-                            variant="determinate"
-                            value={percentage}
-                            size={120}
-                            thickness={5}
-                            color="primary"
-                            style={{ position: "absolute" }}
-                          />
-                          {/* Percentage in Center */}
-                          <Box
-                            position="absolute"
-                            top="50%"
-                            left="50%"
-                            sx={{
-                              transform: "translate(-50%, -50%)",
-                            }}
-                          >
-                            <Typography variant="h5" color="primary" fontWeight="bold">
-                              {percentage}%
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* Content on Right Side of First Graph */}
-                        <Box ml={2}>
-                          <Typography variant="h6" fontWeight="bold" mb={0.5}>
-                            Target
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary" mb={0.5}>
-                            {targetVolume} Litres
-                          </Typography>
-                          <Typography variant="body2" color="error" fontWeight="bold">
-                            Pending: {pending} L
-                          </Typography>
-                        </Box>
-                      </Box>
-
-                      {/* Second Graph with Content (Right Aligned) */}
-                      <Box display="flex" alignItems="center" flex="1" justifyContent="flex-end">
-                        {/* Circular Progress (Background Circle) */}
-                        <Box position="relative" display="inline-flex">
-                          <CircularProgress
-                            variant="determinate"
-                            value={100}
-                            size={120}
-                            thickness={5}
-                            style={{ color: "#e0e0e0" }}
-                          />
-                          {/* Active Circular Progress */}
-                          <CircularProgress
-                            variant="determinate"
-                            value={percentage}
-                            size={120}
-                            thickness={5}
-                            color="primary"
-                            style={{ position: "absolute" }}
-                          />
-                          {/* Percentage in Center */}
-                          <Box
-                            position="absolute"
-                            top="50%"
-                            left="50%"
-                            sx={{
-                              transform: "translate(-50%, -50%)",
-                            }}
-                          >
-                            <Typography variant="h5" color="primary" fontWeight="bold">
-                              {percentage}%
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* Content on Left Side of Second Graph */}
-                        <Box ml={2}>
-                          <Typography variant="h6" fontWeight="bold" mb={0.5}>
-                            Target
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary" mb={0.5}>
-                            {targetVolume} Litres
-                          </Typography>
-                          <Typography variant="body2" color="error" fontWeight="bold">
-                            Pending: {pending} L
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Box>
-
-
-                  </Box>
-
-                  {/* Club Section */}
-                  <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" sx={{ backgroundColor: '#F1F3FF' }}>
-                    <Typography>
-                      Club:{" "}
-                      <span style={{ color: "#1976D2", fontWeight: "bold" }}>
-                        1000 Litres
-                      </span>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  sx={{ backgroundColor: "#F1F3FF", p: 2, borderRadius: 2, height: "100%" }}
+                >
+                  <Avatar
+                    src={
+                      image
+                        ? `http://88.222.245.236:3002/uploads/${image}`
+                        : undefined
+                    }
+                    alt={full_name || "N/A"}
+                    sx={{ width: 80, height: 80, mr: 2 }}
+                  />
+                  <Box>
+                    <Typography variant="h6" fontWeight="bold">
+                      {full_name || "N/A"}
                     </Typography>
-                    <Typography color="text.secondary">15-Mar-24 Joined</Typography>
+                    <Typography color="primary">{`ID: ${memberID}`}</Typography>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      {role_name || "N/A"}
+                    </Typography>
+                    <Typography variant="body2" mt={1}>
+                      {`${building_no_name || ""}, ${street_name || ""}, ${city || ""
+                        }, ${state || ""}, ${country || ""}`}
+                    </Typography>
+                    <Typography variant="body2" mt={0.5}>
+                      {mobile_number ? `+91 ${mobile_number}` : "N/A"}
+                    </Typography>
+                    <Typography variant="body2" mt={0.5}>
+                      {email || "N/A"}
+                    </Typography>
                   </Box>
                 </Box>
               </Grid>
 
+              {/* Sales Section */}
+              <Grid item xs={12} md={6}>
+                <Box display="flex" flexDirection="column" gap={3} height="100%">
+                  <Box display="flex" justifyContent="space-between" gap={2}>
+                    {/* Target Amount Section */}
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      sx={{
+                        backgroundColor: "#F1F3FF",
+                        p: 2,
+                        borderRadius: 2,
+                        flex: 1,
+                      }}
+                    >
+                      <Box position="relative" display="inline-flex" mr={2}>
+                        <CircularProgress
+                          variant="determinate"
+                          value={100}
+                          size={80}
+                          thickness={5}
+                          style={{ color: "#e0e0e0" }}
+                        />
+                        <CircularProgress
+                          variant="determinate"
+                          value={(AchievementAmount / MonthlyTargetAmount) * 100}
+                          size={80}
+                          thickness={5}
+                          color="primary"
+                          style={{ position: "absolute" }}
+                        />
+                        <Box
+                          position="absolute"
+                          top="50%"
+                          left="50%"
+                          sx={{ transform: "translate(-50%, -50%)" }}
+                        >
+                          <Typography variant="h6" color="primary" fontWeight="bold">
+                            {achievementAmountPercent}%
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box>
+                        <Typography variant="h6" fontWeight="bold" mb={0.5}>
+                          Target Amount
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Rs.{MonthlyTargetAmount}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "green", fontWeight: "bold" }}
+                        >
+                          Achieved: Rs. {AchievementAmount}
+                        </Typography>
+                        <Typography variant="body2" color="error" fontWeight="bold">
+                          Pending: Rs.{pendingAmount}
+                        </Typography>
+                      </Box>
+                    </Box>
 
+                    {/* Target Stock Section */}
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      sx={{
+                        backgroundColor: "#F1F3FF",
+                        p: 2,
+                        borderRadius: 2,
+                        flex: 1,
+                      }}
+                    >
+                      <Box position="relative" display="inline-flex" mr={2}>
+                        <CircularProgress
+                          variant="determinate"
+                          value={100}
+                          size={80}
+                          thickness={5}
+                          style={{ color: "#e0e0e0" }}
+                        />
+                        <CircularProgress
+                          variant="determinate"
+                          value={(StockAchievement / StockTarget) * 100}
+                          size={80}
+                          thickness={5}
+                          color="primary"
+                          style={{ position: "absolute" }}
+                        />
+                        <Box
+                          position="absolute"
+                          top="50%"
+                          left="50%"
+                          sx={{ transform: "translate(-50%, -50%)" }}
+                        >
+                          <Typography variant="h6" color="primary" fontWeight="bold">
+                            {StockAchievementPercent}%
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box>
+                        <Typography variant="h6" fontWeight="bold" mb={0.5}>
+                          Sales Stock
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Rs.{StockTarget}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "green", fontWeight: "bold" }}
+                        >
+                          Achieved: Rs. {StockAchievement}
+                        </Typography>
+                        <Typography variant="body2" color="error" fontWeight="bold">
+                          Pending: Rs.{PendingStockTarget}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                  {/* Club Section */}
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ p: 2, borderRadius: 2 }}
+                  >
+                    <Typography>
+                      Club:{" "}
+                      <span style={{ color: "#1976D2", fontWeight: "bold" }}>
+                        {club_name}
+                      </span>
+                    </Typography>
+                    <Typography color="text.secondary">
+                      {new Date(createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "2-digit",
+                      })}{" "}
+                      Joined
+                    </Typography>
+                  </Box>
+                </Box>
+              </Grid>
             </Grid>
           </CardContent>
         </Card>
-
-
-        {/* <Box textAlign="center" mt={3}>
-          <Button variant="outlined" color="success">
-            VIEW RECENT BOOKING
-          </Button>
-        </Box> */}
-
-
       </Box>
+
 
       {showTable ? (
         <>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <Box sx={{ width: '100%', marginTop: 2 }}>
-
+              <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               {/* Role Dropdown */}
-              <FormControl style={{ width: '30%' }}>
+              <FormControl sx={{ width: '30%' }}>
                 <InputLabel id="role-dropdown-label">Select Role</InputLabel>
                 <Select
                   labelId="role-dropdown-label"
@@ -585,7 +590,6 @@ const MemberDetailTable = () => {
                   onChange={(e) => handleChange(e.target.value)}
                   sx={{ borderRadius: '20px' }}
                 >
-                  {/* {roleOptions.map((option) => ( */}
                   {filteredRoleOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                       {option.label}
@@ -593,40 +597,23 @@ const MemberDetailTable = () => {
                   ))}
                 </Select>
               </FormControl>
-              
 
-           
-              {/* <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
+
+              {/* Role Count */}
+              <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
                 <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
                   <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
+                  {selectedRole === '2' && roleCounts.adoCount}
                   {selectedRole === '3' && roleCounts.mdCount}
                   {selectedRole === '4' && roleCounts.sdCount}
                   {selectedRole === '5' && roleCounts.distributorCount}
                   {selectedRole === '6' && roleCounts.customerCount}
                 </Typography>
-              </Box> */}
-              
-
-
-
+              </Box>
             </Box>
           </Box>
 
-          {/* <Box sx={{ display: 'flex', justifyContent: 'flex-centre', p: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddMemberClick}
-              style={{
-                backgroundColor: '#28a745',
-                color: 'white',
-                fontWeight: 'bold',
-                borderRadius: '5px',
-              }}
-            >
-              + Add Member
-            </Button>
-          </Box> */}
+
 
           <TableContainer component={Paper}>
             <Table stickyHeader aria-label="Member ADO Table">
@@ -642,43 +629,64 @@ const MemberDetailTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredMembersList.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage).map((member, index) => (
-                  <TableRow
-                    key={member.id}
-                    onClick={() => handleRowClick(member.id, member.role_id)}
-                  >
-                    <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
-                    <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar
-                          src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
-                        />
-                        <Typography style={{ marginLeft: '10px' }}>{member?.username}</Typography>
-                      </div>
-                    </TableCell>
-                    <TableCell>{member?.full_name}</TableCell>
-                    <TableCell>{member?.mobile_number}</TableCell>
-                    <TableCell>{member?.role_name}</TableCell>
-                    <TableCell>{member?.email}</TableCell>
-                    {role === 'Admin' && (
+                {filteredMembersList
+                  .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+                  .map((member, index) => (
+                    <TableRow
+                      key={member.id}
+                      onClick={() => handleRowClick(member.id, member.role_id)}
+                      style={{ cursor: "pointer" }} // Optional: indicates clickable rows
+                    >
                       <TableCell>
-                        <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
-                          <DeleteIcon />
-                        </IconButton>
+                        {(currentPage - 1) * rowsPerPage + index + 1}
                       </TableCell>
-                    )}
-                  </TableRow>
-                ))}
+                      <TableCell>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <Avatar
+                            src={
+                              member?.image
+                                ? `${imageBaseURL}${member.image}`
+                                : "/path/to/default-image.jpg"
+                            }
+                          />
+                          <Typography style={{ marginLeft: "10px" }}>
+                            {member?.username}
+                          </Typography>
+                        </div>
+                      </TableCell>
+                      <TableCell>{member?.full_name}</TableCell>
+                      <TableCell>{member?.mobile_number}</TableCell>
+                      <TableCell>{member?.role_name}</TableCell>
+                      <TableCell>{member?.email}</TableCell>
+                      {role === "Admin" && (
+                        <TableCell>
+                          <IconButton
+                            color="secondary"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleEditMemberClick(member);
+                            }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeleteOpen(member);
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
 
-          <div style={{ marginTop: '10px' }}>
-            {renderPagination(filteredMembersList.length)}
-          </div>
+
         </>
       ) : editMember ? (
         <EditMemberForm member={editMember} />

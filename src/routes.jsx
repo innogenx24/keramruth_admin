@@ -94,12 +94,12 @@ const RoutesConfig = () => {
               </PrivateRoute>
             }
           >
-            <Route path="members-products" element={<MemberProductPage />} /> 
+            <Route path="members-products" element={<MemberProductPage />} />
             <Route path="products" element={<ProductPage />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditUserProfile />} />
             <Route path="members" element={<ViewMember />} />
-            <Route path="members/:memberID/:rolesID" element={<MemberDetailTable/>} />
+            <Route path="members/:memberID/:rolesID" element={<MemberDetailTable />} />
             <Route path="announcement" element={<AnnouncementTable />} />
             <Route path="customer-support" element={<CustomerSupportPage />} />
             <Route path="announcement-member" element={<MemberAnnouncementTable />} />
@@ -107,8 +107,8 @@ const RoutesConfig = () => {
             <Route path="pending-orders" element={<PendingOrders />} />
             <Route path="pending-orders-member" element={<GetOrderDetailsbasedOnLowhiriracy />} />
 
-            
-            
+
+
             <Route
               path="announcement/add-announcement"
               element={<AddAnnouncementForm />}
@@ -117,7 +117,7 @@ const RoutesConfig = () => {
               path="announcement/edit-announcement"
               element={<EditAnnouncementForm />}
             />
-            
+
             <Route path="book-orders" element={<BookingOrders />} />
             <Route path="feedback" element={<FeedbackTable />} />
 
@@ -128,9 +128,9 @@ const RoutesConfig = () => {
 
             <Route path="documents/add-document" element={<DocumentForm />} />
             <Route
-  path="documents/edit-document"
-  element={<EditDocumentForm />}
-/>
+              path="documents/edit-document"
+              element={<EditDocumentForm />}
+            />
 
             <Route path="orders_time_set" element={<OrderLimitTable />} />
             <Route path="orders_time_set/add-time" element={<SetOrderLimit />} />
@@ -177,10 +177,10 @@ const RoutesConfig = () => {
             <Route path="delete-request" element={<DeleteRequestTable />} />
             <Route path="products/edit-product" element={<EditProductForm />} />
             <Route path="products/add-product" element={<AddProductForm />} />
-             {/* Sector */}
-            <Route path="sector" element={<Sector/>} />
-            <Route path="add-sector" element={<AddSector/>} />
-            <Route path="add-sector/:id" element={<AddSector/>} />
+            {/* Sector */}
+            <Route path="sector" element={<Sector />} />
+            <Route path="add-sector" element={<AddSector />} />
+            <Route path="add-sector/:id" element={<AddSector />} />
             <Route path="targets" element={<TargetPage />} />
             <Route path="targets/view-member-targets" element={<TargetTable />} />
 
