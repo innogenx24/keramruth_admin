@@ -33,6 +33,7 @@ import EditMemberForm from "./EditMemberForm";
 import SearchBox from "../../../search-box/SearchBox";
 import axios from 'axios';
 import { HiMiniUserGroup } from "react-icons/hi2";
+import React, { useRef } from 'react';
 
 const MemberAdoTable = () => {
   const dispatch = useDispatch();
@@ -235,6 +236,22 @@ const MemberAdoTable = () => {
   };
   
 
+  const isScrolling = useRef(false); // Flag to track scrolling
+
+  const handleMouseDown = () => {
+    isScrolling.current = false;
+  };
+
+  const handleMouseMove = () => {
+    isScrolling.current = true; // Set to true during scrolling
+  };
+
+  const handleMouseUp = () => {
+    setTimeout(() => {
+      isScrolling.current = false; // Reset after mouse interaction ends
+    }, 150);
+  };
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h6" sx={{ marginBottom: '20px', color: '#989FA9' }}>
@@ -296,54 +313,75 @@ const MemberAdoTable = () => {
             </Button>
           </Box>
 
-          <TableContainer component={Paper}>
-            <Table stickyHeader aria-label="Member ADO Table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>No.</TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Full Name</TableCell>
-                  <TableCell>Mobile No.</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Email</TableCell>
-                  {role === 'Admin' && <TableCell>Action</TableCell>}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredMembersList.map((member, index) => (
-                  <TableRow 
-                  key={member.id}
-                  onClick={() => handleRowClick(member.id,member.role_id)}
+          <TableContainer
+      component={Paper}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+    >
+      <Table stickyHeader aria-label="Member ADO Table">
+        <TableHead>
+          <TableRow>
+            <TableCell>No.</TableCell>
+            <TableCell>Username</TableCell>
+            <TableCell>Full Name</TableCell>
+            <TableCell>Mobile No.</TableCell>
+            <TableCell>Role</TableCell>
+            <TableCell>Email</TableCell>
+            {role === 'Admin' && <TableCell>Action</TableCell>}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {filteredMembersList.map((member, index) => (
+            <TableRow
+              key={member.id}
+              onClick={(e) => {
+                if (!isScrolling.current) {
+                  handleRowClick(member.id, member.role_id);
+                }
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
+              <TableCell>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar
+                    src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
+                  />
+                  <Typography style={{ marginLeft: '10px' }}>{member?.username}</Typography>
+                </div>
+              </TableCell>
+              <TableCell>{member?.full_name}</TableCell>
+              <TableCell>{member?.mobile_number}</TableCell>
+              <TableCell>{member?.role_name}</TableCell>
+              <TableCell>{member?.email}</TableCell>
+              {role === 'Admin' && (
+                <TableCell>
+                  <IconButton
+                    color="secondary"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent row click
+                      handleEditMemberClick(member);
+                    }}
                   >
-                    <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
-                    <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar
-                          src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
-                        />
-                        <Typography style={{ marginLeft: '10px' }}>{member?.username}</Typography>
-                      </div>
-                    </TableCell>
-                    <TableCell>{member?.full_name}</TableCell>
-                    <TableCell>{member?.mobile_number}</TableCell>
-                    <TableCell>{member?.role_name}</TableCell>
-                    <TableCell>{member?.email}</TableCell>
-                    {role === 'Admin' && (
-                      <TableCell>
-                        <IconButton color="secondary" onClick={() => handleEditMemberClick(member)}>
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton color="error" onClick={() => handleDeleteOpen(member)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent row click
+                      handleDeleteOpen(member);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
           
         </>
       ) : editMember ? (
