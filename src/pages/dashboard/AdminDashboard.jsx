@@ -22,7 +22,7 @@ import "./AdminDashboard.scss";
 import ProductIcon from "@mui/icons-material/Store";
 import MembersIcon from "@mui/icons-material/Group";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import { Avatar } from "@mui/material";
+import { Avatar, Badge } from "@mui/material";
 import { signOut } from "../../redux/slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
@@ -224,6 +224,13 @@ export default function AdminDashboard() {
 
 
   // console.log("Login User Role:", loginUserRole);
+
+  const [notifications, setNotifications] = useState("2" || 0);
+
+  const handleNotificationClick = () => {
+       navigate('/dashboard/notification')
+  };
+
 
 
 
@@ -514,38 +521,69 @@ export default function AdminDashboard() {
           >
            {loginUserRole === "Admin" ? "Admin Dashboard" : "User Dashboard"}
           </Typography>
-          {/* <Box sx={{ flexGrow: 2, display: "flex", justifyContent: "center" }}>
-        <input
-          type="text"
-          placeholder="Search..."
-          style={{
-            padding: "4px 10px",
-            borderRadius: "2px",
-            border: "1px solid #001",
-            width: "300px",
-          }}
-        />
-      </Box> */}
-          <div style={{ display: "flex", alignItems: "center" }}>
-           <Avatar
-              alt="Profile Picture"
-              src={selectedImage}  // Use the selectedImage state
-              onClick={handleAvatarClick}
-              style={{ cursor: "pointer" }}
-            />
-            <Typography
-              variant="body1"
-              sx={{ marginLeft: 2, color: "#989FA9" }}
-            >
-              {users?.full_name}
-              </Typography>
-            <Typography
-        style={{ cursor: "pointer", marginLeft: 10, color: "#989FA9" }}
-        onClick={handleLogout}
-      >
-        Logout
-      </Typography>
-          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+  {/* Avatar */}
+  <Avatar
+    alt="Profile Picture"
+    src={selectedImage}
+    onClick={handleAvatarClick}
+    style={{
+      cursor: "pointer",
+      width: 40,
+      height: 40, // Consistent size
+    }}
+  />
+
+  {/* User Name */}
+  <Typography
+    variant="body1"
+    sx={{
+      color: "#989FA9",
+      fontWeight: 500,
+      fontSize: "1rem", // Adjusted font size for better visibility
+    }}
+  >
+    {users?.full_name}
+  </Typography>
+
+  {/* Notifications Icon */}
+  <IconButton
+    onClick={handleNotificationClick}
+  >
+    <Badge
+      badgeContent={notifications}
+      color="primary"
+      sx={{
+        "& .MuiBadge-badge": {
+          fontSize: "0.8rem", // Smaller badge size
+          backgroundColor: "#d32f2f", // Red badge
+          color: "white", // White text in the badge
+        },
+      }}
+    >
+      <NotificationsIcon />
+    </Badge>
+  </IconButton>
+
+  {/* Logout */}
+  <Typography
+    variant="body2"
+    onClick={handleLogout}
+    sx={{
+      cursor: "pointer",
+      color: "#d32f2f", // Red color for logout
+      fontWeight: 500,
+      "&:hover": {
+        textDecoration: "underline", // Hover effect for better UX
+      },
+    }}
+  >
+    Logout
+  </Typography>
+</div>
+
+
         </Toolbar>
       </AppBar>
 

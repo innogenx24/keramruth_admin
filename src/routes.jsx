@@ -71,6 +71,7 @@ import TargetTable from "./pages/target/TargetTable";
 import SalesTargetTable from "./pages/target/SalesTargetTable";
 import MemberDetailTable from "./components/sales-components/member-ado/member_detail/MemberDetailTable";
 import CustomerSupportPage from "./pages/member-pages/customer-support/CustomerSupportPage";
+import NotificationPage from "./pages/notification/admin_notification/NotificationPage";
 
 const RoutesConfig = () => {
   return (
@@ -183,6 +184,8 @@ const RoutesConfig = () => {
             <Route path="add-sector/:id" element={<AddSector />} />
             <Route path="targets" element={<TargetPage />} />
             <Route path="targets/view-member-targets" element={<TargetTable />} />
+            {/* Notification */}
+            <Route path="notification" element={<NotificationPage />} />
 
           </Route>
         </Routes>
