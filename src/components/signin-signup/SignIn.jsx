@@ -47,7 +47,7 @@ const SignIn = () => {
     if (isAuthenticated) {
       // Redirect based on the user role
       if (user?.role === 'Admin') {
-        navigate('/dashboard/products');
+        navigate('/dashboard');
       }else if (user?.role === 'Customer') {
         navigate('/dashboard/book-orders');
       }
