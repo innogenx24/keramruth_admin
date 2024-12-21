@@ -77,6 +77,7 @@ const OrderDetails = () => {
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
+              <TableCell>Order ID</TableCell>
               <TableCell>Total Amount</TableCell>
               <TableCell>Total Order Quantity</TableCell>
               <TableCell>Order Date</TableCell>
@@ -99,6 +100,8 @@ const OrderDetails = () => {
                     style={{ cursor: "pointer" }}
                   >
                     <TableCell>{index + 1}</TableCell>
+                    <TableCell>{order.order_id}</TableCell>
+
                     <TableCell>Rs. {parseFloat(order.total_amount).toFixed(2)}</TableCell>
                     <TableCell>
                       {order.OrderItems.reduce(

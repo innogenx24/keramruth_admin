@@ -91,7 +91,7 @@ const FeedbackTable = () => {
                   </Box>
                 </TableCell>
                 <TableCell>
-                {feedback.id}
+                {feedback.order.order_id}
                 </TableCell>
 
                 <TableCell>
@@ -103,7 +103,7 @@ const FeedbackTable = () => {
                 <TableCell>
                   {new Date(feedback.feedback_date).toLocaleDateString()}
                 </TableCell>
-                <TableCell>₹{feedback.order.final_amount}</TableCell>
+                <TableCell>₹{feedback.order.total_amount}</TableCell>
                 <TableCell>
                   <Rating value={feedback.rating} precision={0.5} readOnly />
                 </TableCell>

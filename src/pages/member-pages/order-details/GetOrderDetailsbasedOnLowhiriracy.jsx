@@ -160,6 +160,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
           <TableRow>
             <TableCell>No.</TableCell>
             <TableCell>Customer Name</TableCell>
+            <TableCell>Order ID</TableCell>
             <TableCell>Total Order QTY</TableCell>
             <TableCell>Total Amount</TableCell>
             <TableCell>Product Details</TableCell>
@@ -192,6 +193,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
                         </Typography>
                       </div>
                     </TableCell>
+                    <TableCell>{order.orderUniqueId}</TableCell>
                     <TableCell>
                       {order.OrderItems.reduce((total, item) => total + item.quantity, 0).toLocaleString()}
                     </TableCell>
