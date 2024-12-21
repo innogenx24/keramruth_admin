@@ -42,6 +42,8 @@ import { RiFeedbackFill } from "react-icons/ri";
 import { BiBook } from "react-icons/bi";
 import { FaBook } from "react-icons/fa";
 import { FaHeadset } from 'react-icons/fa'; 
+// import HomeIcon from "@mui/icons-material/Home";
+import { Home as HomeIcon } from '@mui/icons-material'; // Import the HomeIcon from MUI
 import { FaShoppingCart,FaCheckCircle  } from 'react-icons/fa'; // Importing shopping cart icon
 
 // Drawer width
@@ -344,6 +346,11 @@ export default function AdminDashboard() {
     },
   ]
   const menuItems = [
+    {
+      text: "HomePage",
+      path: "/dashboard",
+      icon: <HomeIcon />,
+    },
     {
       text: "Products",
       path: "/dashboard/products",

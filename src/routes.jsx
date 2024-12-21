@@ -95,6 +95,7 @@ const RoutesConfig = () => {
               </PrivateRoute>
             }
           >
+                  <Route path="*" element={<SalesPage/>} />
             <Route path="members-products" element={<MemberProductPage />} />
             <Route path="products" element={<ProductPage />} />
             <Route path="profile" element={<UserProfile />} />
