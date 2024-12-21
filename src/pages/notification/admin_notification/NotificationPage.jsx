@@ -10,6 +10,7 @@ import {
   Avatar,
   Divider,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 
@@ -45,6 +46,33 @@ const NotificationPage = () => {
       fetchNotifications();
     }
   }, [loginUserRole]);
+
+  // Mark notification as read
+  const markAsRead = async (notificationId) => {
+    const userId = loginUserRole;
+    try {
+      const response = await fetch(
+        `http://88.222.245.236:3002/month_notifications/notifications/read/${userId}/${notificationId}`,
+        {
+          method: "PUT",
+        }
+      );
+      if (response.ok) {
+        // Update the notification state to reflect the read status
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notification) =>
+            notification.id === notificationId
+              ? { ...notification, is_read: true }
+              : notification
+          )
+        );
+      } else {
+        console.error("Failed to mark notification as read");
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -95,17 +123,28 @@ const NotificationPage = () => {
                 sx={{
                   alignItems: "flex-start",
                   p: 2,
-                  borderRadius: 2,
-                  backgroundColor: notification.is_read ? "#f4f4f4" : "#fff",
-                  "&:hover": { backgroundColor: "#f4f4f4" },
+                  borderRadius: 3,
+                  boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                  backgroundColor: notification.is_read ? "#fff" : "#e3f9f9",
+                  "&:hover": {
+                    backgroundColor: notification.is_read ? "#f4f4f4" : "#e3f9f9",
+                    boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)",
+                  },
+                  mb: 2, // Add some space between the items
+                }}
+                onClick={() => {
+                  if (!notification.is_read) {
+                    markAsRead(notification.id); // Mark as read on click
+                  }
                 }}
               >
                 <ListItemAvatar>
                   <Avatar
                     sx={{
                       color: "#fff",
+                      backgroundColor: "#00796b",
                     }}
-                    src={`http://88.222.245.236:3002/images/${notification.photo}`} // Assuming image URL
+                    src={`http://88.222.245.236:3002/uploads/notifiation-images/${notification.photo}`}
                     alt={notification.detail.user_name}
                   >
                     <NotificationsIcon />
