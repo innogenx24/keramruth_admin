@@ -223,13 +223,41 @@ export default function AdminDashboard() {
   // console.log(loginUserRole, "mmmmmmmmmmmmmmm");
 
 
-  // console.log("Login User Role:", loginUserRole);
 
-  const [notifications, setNotifications] = useState("2" || 0);
+
+  /////**********Notification count Logics***********/////
+  const [unreadCount, setUnreadCount] = useState(0);
+  const loginUserID = loginUser ? loginUser.id : null;
 
   const handleNotificationClick = () => {
        navigate('/dashboard/notification')
   };
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch(
+          `http://88.222.245.236:3002/month_notifications/notifications/${loginUserID}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          // Filter notifications where is_read is false
+          const unreadNotifications = data.notifications.filter(
+            (notification) => !notification.is_read
+          );
+          setUnreadCount(unreadNotifications.length);
+        } else {
+          console.error("Failed to fetch notifications");
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    if (loginUserID) {
+      fetchNotifications();
+    }
+  }, [loginUserID]);
 
 
 
@@ -552,7 +580,7 @@ export default function AdminDashboard() {
     onClick={handleNotificationClick}
   >
     <Badge
-      badgeContent={notifications}
+     badgeContent={unreadCount > 0 ? unreadCount : null}
       color="primary"
       sx={{
         "& .MuiBadge-badge": {
