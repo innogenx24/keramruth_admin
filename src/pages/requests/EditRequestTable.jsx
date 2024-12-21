@@ -36,11 +36,11 @@ const MemberTable = () => {
   // const imageBaseURL = "http://88.222.245.236:3002/uploads/";
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
-// Sort data by updated_at in descending order (initial sort)
-useEffect(() => {
-  const sortedRequests = [...editRequests].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-  setSortedEditRequests(sortedRequests);
-}, [editRequests]);
+  // Sort data by updated_at in descending order (initial sort)
+  useEffect(() => {
+    const sortedRequests = [...editRequests].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    setSortedEditRequests(sortedRequests);
+  }, [editRequests]);
 
   useEffect(() => {
     dispatch(fetchAllMembersRequest());
@@ -85,12 +85,12 @@ useEffect(() => {
 
   const handleApprove = async (memberId) => {
     const requestToApprove = editRequests.find((request) => request.user_id === memberId);
-  
+
     if (!requestToApprove) {
       console.error("Request not found:", memberId);
       return;
     }
-  
+
     const updatedData = {
       mobile_number: requestToApprove.new_mobile_number,
       email: requestToApprove.new_email_id,
@@ -99,22 +99,22 @@ useEffect(() => {
       street_name: requestToApprove.new_address.street,
       pincode: requestToApprove.new_address.zip,
     };
-  
+
     try {
       const response = await fetch(`http://88.222.245.236:3002/api/member-update/update/${memberId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         if (data.success) {
           setSuccessMessage("Update successful!");
           setSnackbarOpen(true);
           fetchEditRequests();
-          
+
           // Reload the page after success
           window.location.reload();
         } else {
@@ -127,7 +127,7 @@ useEffect(() => {
       console.error("Error approving request:", error);
     }
   };
-  
+
   const handleReject = async (requestId) => {
     try {
       const response = await fetch(`http://88.222.245.236:3002/edit-requests/reject/${requestId}`, {
@@ -143,8 +143,8 @@ useEffect(() => {
       console.error("Error rejecting request:", error);
     }
   };
-  
-  
+
+
   const handleImageClick = (imageUrl) => {
     setImageModal({ open: true, imageUrl });
   };
@@ -165,15 +165,14 @@ useEffect(() => {
   return (
     <>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-      Current Details 
+        Current Details
       </Typography>
       <TableContainer component={Paper}>
-        
   <Table>
     <TableHead>
       <TableRow>
         <TableCell>ID Proof</TableCell>
-        <TableCell>Memebr Name</TableCell>
+        <TableCell>Member Name</TableCell>
         <TableCell>Role</TableCell>
         <TableCell>Date Of Joining</TableCell>
         <TableCell>Mobile No</TableCell>
@@ -186,8 +185,8 @@ useEffect(() => {
     </TableHead>
     <TableBody>
       {sortedEditRequests.map((request) => {
-        // Skip rows with status 'Rejected'
-        if (request.status === 'Rejected') return null;
+        // Skip rows if the status is not "Pending"
+        if (request.status !== "Pending") return null;
 
         // Find the corresponding member from combinedMembers
         const member = combinedMembers.find((member) => member.id === request.user_id);
@@ -224,23 +223,35 @@ useEffect(() => {
               <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>{member.mobile_number}</TableCell>
               <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
-              <TableCell sx={{ 
-     
-     WebkitBoxOrient: 'vertical', 
-     WebkitLineClamp: 2, 
-     wordBreak: 'break-word', 
- }}>
-              {isEmailSame ? "-" : request.new_email_id}
-</TableCell>
-
+              <TableCell
+                sx={{
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  wordBreak: "break-word",
+                }}
+              >
+                {isEmailSame ? "-" : request.new_email_id}
+              </TableCell>
               <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
               <TableCell>{request.request_reason}</TableCell>
               <TableCell>
-                <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
-                  <IconButton style={{ color: "red" }} onClick={() => handleReject(request.id)}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconButton
+                    style={{ color: "red" }}
+                    onClick={() => handleReject(request.id)}
+                  >
                     <ClearIcon />
                   </IconButton>
-                  <IconButton style={{ color: "green" }} onClick={() => handleApprove(member.id)}>
+                  <IconButton
+                    style={{ color: "green" }}
+                    onClick={() => handleApprove(member.id)}
+                  >
                     <CheckIcon />
                   </IconButton>
                 </div>
@@ -253,6 +264,7 @@ useEffect(() => {
     </TableBody>
   </Table>
 </TableContainer>
+
 
 
       {/* Spacer */}
@@ -304,27 +316,27 @@ useEffect(() => {
                     <TableCell>{member.role_name}</TableCell>
                     <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell>{request.new_mobile_number}</TableCell>
-                    
 
-                    <TableCell sx={{ 
-     
-    WebkitBoxOrient: 'vertical', 
-    WebkitLineClamp: 2, 
-    wordBreak: 'break-word', 
-}}>
-  {request.new_email_id}
-</TableCell>
-           <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+
+                    <TableCell sx={{
+
+                      WebkitBoxOrient: 'vertical',
+                      WebkitLineClamp: 2,
+                      wordBreak: 'break-word',
+                    }}>
+                      {request.new_email_id}
+                    </TableCell>
+                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
                     <TableCell>{request.request_reason}</TableCell>
                     <TableCell>
-  <Typography
-    sx={{
-      color: request.status === "Completed" ? "green" : request.status === "Rejected" ? "red" : "black",
-    }}
-  >
-    {request.status}
-  </Typography>
-</TableCell>
+                      <Typography
+                        sx={{
+                          color: request.status === "Completed" ? "green" : request.status === "Rejected" ? "red" : "black",
+                        }}
+                      >
+                        {request.status}
+                      </Typography>
+                    </TableCell>
                   </TableRow>
                 );
               }

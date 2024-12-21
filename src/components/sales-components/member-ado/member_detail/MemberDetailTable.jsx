@@ -112,8 +112,7 @@ const MemberDetailTable = () => {
 
   const role_Id = useMemo(() => {
     switch (role) {
-      case "Area Development Officer":
-        return 3;
+
       case "Master Distributor":
         return 4;
       case "Super Distributor":
@@ -122,66 +121,42 @@ const MemberDetailTable = () => {
         return 6;
       case "Customer":
         return 7;
-      case "Admin":
-        return 2;
-      default:
-        return 2;
+
     }
   }, [role]);
 
-  const roleOptions = (() => {
-    switch (role) {
-      case "Admin":
-        return [
-          { label: "Master Distributor (MD)", value: "3" },
-          { label: "Super Distributor (SD)", value: "4" },
-          { label: "Distributor (D)", value: "5" },
-          { label: "Customer (C)", value: "6" },
-        ];
-      case "Area Development Officer":
-        return [
-          { label: "Master Distributor (MD)", value: "3" },
-          { label: "Super Distributor (SD)", value: "4" },
-          { label: "Distributor (D)", value: "5" },
-          { label: "Customer (C)", value: "6" },
-        ];
-      case "Master Distributor":
-        return [
-          { label: "Super Distributor (SD)", value: "4" },
-          { label: "Distributor (D)", value: "5" },
-          { label: "Customer (C)", value: "6" },
-        ];
-      case "Super Distributor":
-        return [
-          { label: "Distributor (D)", value: "5" },
-          { label: "Customer (C)", value: "6" },
-        ];
-      case "Distributor":
-        return [{ label: "Customer (C)", value: "6" }];
-      default:
-        return [];
-    }
-  })();
+  const roleOptions = [
+    { label: "Master Distributor (MD)", value: "3" },
+    { label: "Super Distributor (SD)", value: "4" },
+    { label: "Distributor (D)", value: "5" },
+    { label: "Customer (C)", value: "6" },
+  ];
 
   const [filteredRoleOptions, setFilteredRoleOptions] = useState([]);
 
   useEffect(() => {
-    setFilteredRoleOptions(roleOptions.filter(option => {
-      if (newRoleID === 4) {
-        return option.value !== "3"; // Hide MD
+    const filteredRoles = roleOptions.filter((option) => {
+      // Hide roles based on the selected rolesID
+      if (rolesID === "4") {
+        return option.value !== "3"; // Hide MD when SD is selected (rolesID === 4)
       }
-      if (newRoleID === 5) {
-        return option.value !== "3" && option.value !== "4"; // Hide MD and SD
+      if (rolesID === "5") {
+        return option.value !== "3" && option.value !== "4"; // Hide MD and SD for Distributor
       }
-      if (newRoleID === 6) {
-        return option.value !== "3" && option.value !== "4" && option.value !== "5"; // Hide MD, SD, and D
+      if (rolesID === "6") {
+        return option.value !== "3" && option.value !== "4" && option.value !== "5"; // Hide MD, SD, and Distributor for Customer
       }
-      if (role === "Master Distributor") {
-        return option.value !== "3" && option.value !== "4"; // Hide MD and SD for MD
+      if (rolesID === "7") {
+        return option.value === "7"; // Only show role 7 (Customer) when it's selected
       }
-      return true; // Show all for other cases
-    }));
-  }, [newRoleID, roleOptions]);
+
+      return true; // Default: show all roles
+    });
+
+    setFilteredRoleOptions(filteredRoles);
+  }, [rolesID]); // Re-run the effect whenever rolesID changes
+  
+
 
   const handleChange = (value) => {
     setSelectedRole(value);
@@ -196,24 +171,35 @@ const MemberDetailTable = () => {
 
 
   useEffect(() => {
-    // Check that both roleToUse and memberID are defined before making the API call
     if (!roleToUse || !memberID) return;
-
+  
+    // Set members list to an empty array or null when changing roles
+    setMembersList([]);
+    setLoading(true); // Set loading to true to indicate fetching state
+  
     const fetchMembers = async () => {
       try {
-        const response = await axios.get(
-          `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`
-        );
-        setMembersList(response.data || []);
+        const response = await axios.get(`http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`);
+        setMembersList(response.data || []); // Set new members list
       } catch (error) {
         console.error("Failed to fetch members:", error);
-        setMembersList([]);
+        setMembersList([]); // Reset the list in case of error
+      } finally {
+        setLoading(false); // Reset loading state
       }
     };
-
+  
     fetchMembers();
   }, [roleToUse, memberID]);
+  
 
+  // Set roleToUse based on URL roleID or user role
+  useEffect(() => {
+    if (rolesID) {
+      setSelectedRole(rolesID); // Set selected role from URL
+      setRoleToUse(rolesID); // Set roleToUse for fetching members
+    }
+  }, [rolesID]);
 
 
   useEffect(() => {
@@ -241,7 +227,6 @@ const MemberDetailTable = () => {
   const fetchUserCounts = async () => {
     try {
       const response = await axios.get(`http://88.222.245.236:3002/api/user/${memberID}`);
-
       setRoleCounts(response.data);
     } catch (error) {
       console.error("Error fetching role counts:", error);
@@ -371,10 +356,7 @@ const MemberDetailTable = () => {
 
   const newMemberID = memberID || newMemberId
 
-  const { StockAchievementPercent, MonthlyTargetAmount, AchievementAmount, pendingAmount, achievementAmountPercent, StockTarget, StockAchievement, PendingStockTarget } = salesData[0];
-
-
-
+  const { StockAchievementPercent, achievementAmountPercent, MonthlyTargetAmount, AchievementAmount, pendingAmount, StockTarget, StockAchievement, PendingStockTarget } = salesData[0];
 
 
   return (
@@ -430,6 +412,7 @@ const MemberDetailTable = () => {
                 <Box display="flex" flexDirection="column" gap={3} height="100%">
                   <Box display="flex" justifyContent="space-between" gap={2}>
                     {/* Target Amount Section */}
+                    {/* Target Amount Section */}
                     <Box
                       display="flex"
                       alignItems="center"
@@ -450,11 +433,18 @@ const MemberDetailTable = () => {
                         />
                         <CircularProgress
                           variant="determinate"
-                          value={(AchievementAmount / MonthlyTargetAmount) * 100}
+                          value={achievementAmountPercent}
                           size={80}
                           thickness={5}
-                          color="primary"
-                          style={{ position: "absolute" }}
+                          style={{
+                            position: "absolute",
+                            color:
+                              achievementAmountPercent < 50
+                                ? "red"
+                                : achievementAmountPercent < 80
+                                  ? "orange"
+                                  : "green",
+                          }}
                         />
                         <Box
                           position="absolute"
@@ -462,8 +452,8 @@ const MemberDetailTable = () => {
                           left="50%"
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
-                          <Typography variant="h6" color="primary" fontWeight="bold">
-                            {achievementAmountPercent}%
+                          <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
+                            {Math.round(achievementAmountPercent)}%
                           </Typography>
                         </Box>
                       </Box>
@@ -472,7 +462,7 @@ const MemberDetailTable = () => {
                           Target Amount
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Rs.{MonthlyTargetAmount}
+                          Rs. {MonthlyTargetAmount}
                         </Typography>
                         <Typography
                           variant="body2"
@@ -481,12 +471,13 @@ const MemberDetailTable = () => {
                           Achieved: Rs. {AchievementAmount}
                         </Typography>
                         <Typography variant="body2" color="error" fontWeight="bold">
-                          Pending: Rs.{pendingAmount}
+                          Pending: Rs. {pendingAmount}
                         </Typography>
                       </Box>
                     </Box>
 
-                    {/* Target Stock Section */}
+
+                    {/* Sales Target Section */}
                     <Box
                       display="flex"
                       alignItems="center"
@@ -507,11 +498,18 @@ const MemberDetailTable = () => {
                         />
                         <CircularProgress
                           variant="determinate"
-                          value={(StockAchievement / StockTarget) * 100}
+                          value={Math.max(parseFloat(StockAchievementPercent), 1)}
                           size={80}
                           thickness={5}
-                          color="primary"
-                          style={{ position: "absolute" }}
+                          style={{
+                            position: "absolute",
+                            color:
+                              StockAchievementPercent < 50
+                                ? "red"
+                                : StockAchievementPercent < 80
+                                  ? "orange"
+                                  : "green",
+                          }}
                         />
                         <Box
                           position="absolute"
@@ -519,7 +517,7 @@ const MemberDetailTable = () => {
                           left="50%"
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
-                          <Typography variant="h6" color="primary" fontWeight="bold">
+                          <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
                             {StockAchievementPercent}%
                           </Typography>
                         </Box>
@@ -529,7 +527,7 @@ const MemberDetailTable = () => {
                           Sales Stock
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Rs.{StockTarget}
+                          Rs. {StockTarget}
                         </Typography>
                         <Typography
                           variant="body2"
@@ -538,11 +536,13 @@ const MemberDetailTable = () => {
                           Achieved: Rs. {StockAchievement}
                         </Typography>
                         <Typography variant="body2" color="error" fontWeight="bold">
-                          Pending: Rs.{PendingStockTarget}
+                          Pending: Rs. {PendingStockTarget}
                         </Typography>
                       </Box>
                     </Box>
                   </Box>
+
+
                   {/* Club Section */}
                   <Box
                     display="flex"
@@ -582,28 +582,26 @@ const MemberDetailTable = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               {/* Role Dropdown */}
-              <FormControl sx={{ width: '30%' }}>
-                <InputLabel id="role-dropdown-label">Select Role</InputLabel>
-                <Select
-                  labelId="role-dropdown-label"
-                  value={selectedRole}
-                  onChange={(e) => handleChange(e.target.value)}
-                  sx={{ borderRadius: '20px' }}
-                >
-                  {filteredRoleOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
+              <FormControl sx={{ width: '100%' }}>
+  <InputLabel id="role-dropdown-label">Select Role</InputLabel>
+  <Select
+    labelId="role-dropdown-label"
+    value={selectedRole}
+    onChange={(e) => handleChange(e.target.value)}
+    sx={{ borderRadius: '20px' }}
+  >
+    {filteredRoleOptions.map((option) => (
+      <MenuItem key={option.value} value={option.value}>
+        {option.label}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
 
               {/* Role Count */}
-              <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
                 <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
                   <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
-                  {selectedRole === '2' && roleCounts.adoCount}
                   {selectedRole === '3' && roleCounts.mdCount}
                   {selectedRole === '4' && roleCounts.sdCount}
                   {selectedRole === '5' && roleCounts.distributorCount}
@@ -616,75 +614,84 @@ const MemberDetailTable = () => {
 
 
           <TableContainer component={Paper}>
-            <Table stickyHeader aria-label="Member ADO Table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>No.</TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Full Name</TableCell>
-                  <TableCell>Mobile No.</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Email</TableCell>
-                  {role === 'Admin' && <TableCell>Action</TableCell>}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredMembersList
-                  .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
-                  .map((member, index) => (
-                    <TableRow
-                      key={member.id}
-                      onClick={() => handleRowClick(member.id, member.role_id)}
-                      style={{ cursor: "pointer" }} // Optional: indicates clickable rows
-                    >
-                      <TableCell>
-                        {(currentPage - 1) * rowsPerPage + index + 1}
-                      </TableCell>
-                      <TableCell>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <Avatar
-                            src={
-                              member?.image
-                                ? `${imageBaseURL}${member.image}`
-                                : "/path/to/default-image.jpg"
-                            }
-                          />
-                          <Typography style={{ marginLeft: "10px" }}>
-                            {member?.username}
-                          </Typography>
-                        </div>
-                      </TableCell>
-                      <TableCell>{member?.full_name}</TableCell>
-                      <TableCell>{member?.mobile_number}</TableCell>
-                      <TableCell>{member?.role_name}</TableCell>
-                      <TableCell>{member?.email}</TableCell>
-                      {role === "Admin" && (
-                        <TableCell>
-                          <IconButton
-                            color="secondary"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleEditMemberClick(member);
-                            }}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            color="error"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              handleDeleteOpen(member);
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+  <Table stickyHeader aria-label="Member ADO Table">
+    <TableHead>
+      <TableRow>
+        <TableCell>No.</TableCell>
+        <TableCell>Username</TableCell>
+        <TableCell>Full Name</TableCell>
+        <TableCell>Mobile No.</TableCell>
+        <TableCell>Role</TableCell>
+        <TableCell>Email</TableCell>
+        {role === 'Admin' && <TableCell>Action</TableCell>}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {loading ? (
+        <TableRow>
+          <TableCell colSpan={7} align="center">Loading...</TableCell>
+        </TableRow>
+      ) : membersList.length === 0 ? (
+        <TableRow>
+          <TableCell colSpan={7} align="center">No Data Available</TableCell>
+        </TableRow>
+      ) : (
+        filteredMembersList
+          .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+          .map((member, index) => (
+            <TableRow
+              key={member.id}
+              onClick={() => handleRowClick(member.id, member.role_id)}
+              style={{ cursor: "pointer" }} // Optional: indicates clickable rows
+            >
+              <TableCell>
+                {(currentPage - 1) * rowsPerPage + index + 1}
+              </TableCell>
+              <TableCell>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Avatar
+                    src={member?.image
+                      ? `${imageBaseURL}${member.image}`
+                      : "/path/to/default-image.jpg"
+                    }
+                  />
+                  <Typography style={{ marginLeft: "10px" }}>
+                    {member?.username}
+                  </Typography>
+                </div>
+              </TableCell>
+              <TableCell>{member?.full_name}</TableCell>
+              <TableCell>{member?.mobile_number}</TableCell>
+              <TableCell>{member?.role_name}</TableCell>
+              <TableCell>{member?.email}</TableCell>
+              {role === "Admin" && (
+                <TableCell>
+                  <IconButton
+                    color="secondary"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleEditMemberClick(member);
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDeleteOpen(member);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              )}
+            </TableRow>
+          ))
+      )}
+    </TableBody>
+  </Table>
+</TableContainer>
 
 
         </>
