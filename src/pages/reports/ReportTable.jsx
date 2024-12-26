@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -9,93 +9,154 @@ import {
   Paper,
   Select,
   MenuItem,
-  TextField,
   Box,
+  Avatar,
   IconButton,
+  Typography,
 } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-// import { DateRangePicker } from "@mui/x-date-pickers-pro";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"; // Icon for dropdown
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useSelector } from "react-redux";
 
-const roles = [
-  "All",
-  "Area Development Officer (ADO)",
-  "Master Distributors (MD)",
-  "Super Distributors",
-  "Distributors",
-  "Customers",
-];
-const clubs = ["1000L", "2000L", "3000L"];
 const areas = ["Bannerghatta", "Koramangala", "Indiranagar"];
 
-const initialRows = Array.from({ length: 10 }).map((_, index) => ({
-  id: `AD528${index + 1}`,
-  name: "Kabir",
-  role: "Area Development Officer (ADO)",
-  club: "1000L",
-  area: "Bannerghatta",
-  target: "2500/5000",
-  stock: "2500/5000",
-}));
-
 export default function ReportTable() {
-  const [rows, setRows] = useState(initialRows);
-  const [roleFilter, setRoleFilter] = useState("");
-  const [clubFilter, setClubFilter] = useState("");
+  const [rows, setRows] = useState([]);
+  const [salesData, setSalesData] = useState([]);
+  const [roleFilter, setRoleFilter] = useState(""); // Role filter state
+  const [availableRoles, setAvailableRoles] = useState([]); // Dynamically filtered roles
   const [areaFilter, setAreaFilter] = useState("");
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [showDatePicker, setShowDatePicker] = useState(false); // Toggle date picker visibility
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const { users } = useSelector((state) => state.users);
+  const userId = users?.id;
+  const userRole = users?.role_name;
+
+  useEffect(() => {
+    if (userRole) {
+      // Set available roles based on the current user's role
+      switch (userRole) {
+        case "Admin":
+          setAvailableRoles([
+            "Area Development Officer (ADO)",
+            "Master Distributor (MD)",
+            "Super Distributor (SD)",
+            "Distributor (D)",
+            "Customer (C)",
+          ]);
+          break;
+        case "Area Development Officer":
+          setAvailableRoles([
+            "Master Distributor (MD)",
+            "Super Distributor (SD)",
+            "Distributor (D)",
+            "Customer (C)",
+          ]);
+          break;
+        case "Master Distributor":
+          setAvailableRoles([
+            "Super Distributor (SD)",
+            "Distributor (D)",
+            "Customer (C)",
+          ]);
+          break;
+        case "Super Distributor":
+          setAvailableRoles([
+            "Distributor (D)",
+            "Customer (C)",
+          ]);
+          break;
+        case "Distributor":
+          setAvailableRoles(["Customer (C)"]);
+          break;
+        default:
+          setAvailableRoles([]);
+          break;
+      }
+      setRoleFilter(userRole); // Default role filter is the user's role
+    }
+  }, [userRole]);
+
+  const fetchUserCounts = async () => {
+    try {
+      const response = await fetch(`http://localhost:3002/api/user/${userId}`);
+      const data = await response.json();
+      const users = [
+        ...data.mdUsers,
+        ...data.sdUsers,
+        ...data.distributorUsers,
+        ...data.adoUsers,
+      ];
+      setRows(users);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const fetchSalesAchievement = async (roleId, userId) => {
+    try {
+      const response = await fetch(
+        `http://88.222.245.236:3002/user_sales_detail/sales_achievement/${roleId}/${userId}`
+      );
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching sales achievement data:", error);
+      return null;
+    }
+  };
+
+  const fetchSalesDataForUsers = async () => {
+    const updatedRows = [];
+
+    for (const user of rows) {
+      const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
+      updatedRows.push({
+        ...user,
+        salesAchievement: salesAchievement ? salesAchievement : null,
+      });
+    }
+    setSalesData(updatedRows);
+  };
+
+  useEffect(() => {
+    fetchUserCounts();
+  }, []);
+
+  useEffect(() => {
+    if (rows.length > 0) {
+      fetchSalesDataForUsers();
+    }
+  }, [rows]);
 
   const handleFilterChange = () => {
-    console.log(
-      "Filter applied with:",
-      roleFilter,
-      clubFilter,
-      areaFilter,
-      dateRange
-    );
+    console.log("Filters applied with:", roleFilter, areaFilter);
   };
 
   return (
     <Box p={3}>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        All Reports
+      </Typography>
       <Box display="flex" gap="20px" mb={3}>
-        {/* Role Filter */}
         <Select
-          value={roleFilter}
+          value={availableRoles.includes(roleFilter) ? roleFilter : ""}
           onChange={(e) => setRoleFilter(e.target.value)}
           displayEmpty
           sx={{ borderColor: "white" }} // Set border color to white
         >
-          <MenuItem value="">Role</MenuItem>
-          {roles.map((role) => (
-            <MenuItem key={role} value={role}>
+          <MenuItem value="">Select Role</MenuItem>
+          {availableRoles.map((role, index) => (
+            <MenuItem key={index} value={role}>
               {role}
             </MenuItem>
           ))}
         </Select>
 
-        {/* Club Filter */}
-        <Select
-          value={clubFilter}
-          onChange={(e) => setClubFilter(e.target.value)}
-          displayEmpty
-          sx={{ borderColor: "white" }} // Set border color to white
-        >
-          <MenuItem value="">Club</MenuItem>
-          {clubs.map((club) => (
-            <MenuItem key={club} value={club}>
-              {club}
-            </MenuItem>
-          ))}
-        </Select>
-
-        {/* Area Filter */}
         <Select
           value={areaFilter}
           onChange={(e) => setAreaFilter(e.target.value)}
           displayEmpty
-          sx={{ borderColor: "white" }} // Set border color to white
+          sx={{ minWidth: 150 }}
         >
           <MenuItem value="">Area</MenuItem>
           {areas.map((area) => (
@@ -105,7 +166,6 @@ export default function ReportTable() {
           ))}
         </Select>
 
-        {/* Sort by Date with Expand Arrow */}
         <Box display="flex" alignItems="center">
           <Box
             display="flex"
@@ -121,53 +181,48 @@ export default function ReportTable() {
         </Box>
       </Box>
 
-      {/* Show Date Range Picker based on arrow click */}
-      {showDatePicker && (
-        <Box mb={3} display="flex" justifyContent="flex-start">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateRangePicker
-              startText="From"
-              endText="To"
-              value={dateRange}
-              onChange={(newValue) => {
-                setDateRange(newValue);
-                handleFilterChange(); // Apply filter when date range changes
-              }}
-              renderInput={(startProps, endProps) => (
-                <>
-                  <TextField {...startProps} label="From" />
-                  <Box sx={{ mx: 2 }}>to</Box>
-                  <TextField {...endProps} label="To" />
-                </>
-              )}
-            />
-          </LocalizationProvider>
-        </Box>
-      )}
-
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID No.</TableCell>
+              <TableCell>No.</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Role</TableCell>
-              <TableCell>Club</TableCell>
-              <TableCell>Area</TableCell>
-              <TableCell>Target</TableCell>
-              <TableCell>Stock</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell>Target Amount</TableCell>
+              <TableCell>Stock QTY</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {salesData.map((row, index) => (
               <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.role}</TableCell>
-                <TableCell>{row.club}</TableCell>
-                <TableCell>{row.area}</TableCell>
-                <TableCell>{row.target}</TableCell>
-                <TableCell>{row.stock}</TableCell>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <Avatar
+                      alt={row.full_name}
+                      src={`http://88.222.245.236:3002/uploads/${row.image}`}
+                      sx={{ width: 40, height: 40, marginRight: 2 }}
+                    />
+                    {row.full_name}
+                  </Box>
+                </TableCell>
+                <TableCell>{row.role_name}</TableCell>
+                <TableCell>{row.city}</TableCell>
+                <TableCell>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {row.salesAchievement?.monthlyDetails?.[0]?.MonthlyTargetAmount || 0}
+                    <span style={{ fontSize: "1.5em", margin: "0 3px" }}>/</span>
+                    {row.salesAchievement?.monthlyDetails?.[0]?.AchievementAmount || 0}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {row.salesAchievement?.monthlyDetails?.[0]?.StockTarget || 0}
+                    <span style={{ fontSize: "1.5em", margin: "0 3px" }}>/</span>
+                    {row.salesAchievement?.monthlyDetails?.[0]?.StockAchievement || 0}
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

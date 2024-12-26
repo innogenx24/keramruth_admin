@@ -45,6 +45,7 @@ import { FaHeadset } from 'react-icons/fa';
 // import HomeIcon from "@mui/icons-material/Home";
 import { Home as HomeIcon } from '@mui/icons-material'; // Import the HomeIcon from MUI
 import { FaShoppingCart,FaCheckCircle  } from 'react-icons/fa'; // Importing shopping cart icon
+import ReportIcon from "@mui/icons-material/Assessment";
 
 // Drawer width
 // const drawerWidth = 240;
@@ -340,7 +341,13 @@ export default function AdminDashboard() {
       icon: <DescriptionIcon />,
     },
     {
-      text: "Sales-Target Report",
+      text: "Member Reports",
+      path: "/dashboard/report",
+      icon: <ReportIcon />,
+     
+    },
+    {
+      text: "My Report",
       path: "/dashboard/targets",
       icon: <TrackChangesIcon />,
     },
@@ -381,6 +388,12 @@ export default function AdminDashboard() {
       text: "Downloads",
       path: "/dashboard/documents",
       icon: <DescriptionIcon />,
+    },
+    {
+      text: "Member Reports",
+      path: "/dashboard/report",
+      icon: <ReportIcon />,
+     
     },
     {
       text: "Requests",
