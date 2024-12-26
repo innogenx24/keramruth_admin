@@ -298,6 +298,11 @@ export default function AdminDashboard() {
 
   const menuItemsUsers = [
     {
+      text: "HomePage",
+      path: "/dashboard",
+      icon: <HomeIcon />,
+    },
+    {
       text: "Products",
       path: "/dashboard/members-products",
       icon: <ProductIcon />,

@@ -52,7 +52,7 @@ const SignIn = () => {
         navigate('/dashboard/book-orders');
       }
       else{
-        navigate('/dashboard/members-products');
+        navigate('/dashboard');
       }
     }
   }, [isAuthenticated, navigate, user]);

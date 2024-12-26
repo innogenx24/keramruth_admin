@@ -17,7 +17,7 @@
 
 .chart-content {
     position: absolute;
-    top: 45%;
+    top: 25%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: #333;
@@ -26,3 +26,16 @@
     font-size: 18px;
     color:#232428;
 }
+
+
+.no-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 18px;
+    color: #777;
+    text-align: center;
+    padding-top: 215px;
+  }
+  
