@@ -140,6 +140,29 @@ const ProductPage = () => {
   );
 
 
+const renderPagination = (page, setPage, totalRows) => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setPage(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1} of {Math.ceil(totalRows / rowsPerPage)}
+      </Typography>
+      <Button
+        onClick={() => setPage(page + 1)}
+        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+
+
   return (
     <div>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -181,60 +204,67 @@ const ProductPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredProducts
-              .map((product, index) => (
-                <TableRow key={product.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>
-                    {product.image ? (
-                      <img
-                        src={`${imageBaseURL}${product.image}`}
-                        style={{
-                          width: "80px",
-                          height: "auto",
-                          objectFit: "contain",
-                          border: "1px solid #ccc",
-                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                          borderRadius: "10px",
-                        }}
-                      />
-                    ) : (
-                      <span>No Image Available</span>
-                    )}
-                  </TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.stock_quantity}</TableCell>
-                  <TableCell>{product.category_name}</TableCell>
-                  <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleViewClick(product)}>View</Button>
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={product.status}
-                      onChange={() => handleToggleStockStatus(product)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEditProductClick(product)}
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      color="secondary"
-                      onClick={() => handleDeleteProductClick(product)}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
+  {filteredProducts
+    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Apply pagination
+    .map((product, index) => (
+      <TableRow key={product.id}>
+        <TableCell>{page * rowsPerPage + index + 1}</TableCell> {/* Adjust row number */}
+        <TableCell>
+          {product.image ? (
+            <img
+              src={`${imageBaseURL}${product.image}`}
+              style={{
+                width: "80px",
+                height: "auto",
+                objectFit: "contain",
+                border: "1px solid #ccc",
+                boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                borderRadius: "10px",
+              }}
+            />
+          ) : (
+            <span>No Image Available</span>
+          )}
+        </TableCell>
+        <TableCell>{product.name}</TableCell>
+        <TableCell>{product.stock_quantity}</TableCell>
+        <TableCell>{product.category_name}</TableCell>
+        <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
+        <TableCell>{product.price}</TableCell>
+        <TableCell>
+          <Button onClick={() => handleViewClick(product)}>View</Button>
+        </TableCell>
+        <TableCell>
+          <Switch
+            checked={product.status}
+            onChange={() => handleToggleStockStatus(product)}
+          />
+        </TableCell>
+        <TableCell>
+          <IconButton
+            color="primary"
+            onClick={() => handleEditProductClick(product)}
+          >
+            <Edit />
+          </IconButton>
+          <IconButton
+            color="secondary"
+            onClick={() => handleDeleteProductClick(product)}
+          >
+            <Delete />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+    ))}
+</TableBody>
+
         </Table>
       </TableContainer>
+
+      <div style={{ marginTop: "10px" }}>
+  {renderPagination(page, setPage, filteredProducts.length)}
+</div>
+
 
 
 

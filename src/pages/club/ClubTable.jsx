@@ -135,14 +135,14 @@ const ClubTable = () => {
         <>
           <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
             <Button variant="contained" color="primary" onClick={handleAddClubClick}
-            style={{
-              backgroundColor: "#28a745",
-              color: "white",
-              fontWeight: "bold",
-              borderRadius: "5px",
-            }}
-            
-            
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                fontWeight: "bold",
+                borderRadius: "5px",
+              }}
+
+
             >
               + Add Club
             </Button>
@@ -161,7 +161,7 @@ const ClubTable = () => {
               <TableBody>
                 {clubs.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((club, index) => (
                   <TableRow key={club.id}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>
                       <Typography>{club.club_name}</Typography>
                     </TableCell>

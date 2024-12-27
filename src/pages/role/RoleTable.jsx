@@ -80,7 +80,7 @@ const RoleTable = () => {
           <TableBody>
             {sortedRolesList.map((row, index) => (
               <TableRow key={row?.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                 <TableCell>{row?.role_name}</TableCell>
               </TableRow>
             ))}

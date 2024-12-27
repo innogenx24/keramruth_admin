@@ -28,13 +28,13 @@ const BookingOrders = () => {
     }
   }, [orderConfirmation]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async () => { 
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Token not found. Please log in.");
       return;
     }
-
+  
     try {
       const response = await axios.get(
         "http://88.222.245.236:3002/products/user_product",
@@ -44,12 +44,15 @@ const BookingOrders = () => {
           },
         }
       );
-      setProducts(response.data);
+  
+      // Sort products in descending order based on 'id' or any desired field
+      const sortedProducts = response.data.sort((a, b) => b.id - a.id);
+      setProducts(sortedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
-
+  
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -243,12 +246,11 @@ const BookingOrders = () => {
                           value={currentQuantity}
                           onChange={(e) => {
                             let value = e.target.value;
-                            value = value.replace(/^0+/, '') || '0';  // Remove leading zeros and set to '0' if empty
+                            value = value.replace(/^0+/, '') || '0';  
 
-                            // Convert the value to a number and ensure the quantity change is handled as a number
-                            const numericValue = parseInt(value, 10) || 0;  // Default to 0 if the value is not a valid number
+                            const numericValue = parseInt(value, 10) || 0;  
 
-                            handleQuantityChange(product.id, numericValue);  // Pass numeric value
+                            handleQuantityChange(product.id, numericValue); 
                           }}
                           min="0"
                           style={{
