@@ -11,86 +11,117 @@ import {
   MenuItem,
   Box,
   Avatar,
-  IconButton,
   Typography,
+  IconButton,
+  Button,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useSelector } from "react-redux";
-
-const areas = ["Bannerghatta", "Koramangala", "Indiranagar"];
+import DatePicker from "react-datepicker";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+const areas = [];
 
 export default function ReportTable() {
   const [rows, setRows] = useState([]);
   const [salesData, setSalesData] = useState([]);
-  const [roleFilter, setRoleFilter] = useState(""); // Role filter state
+  const [roleFilter, setRoleFilter] = useState(""); // Role filter state initially empty to show all data
   const [availableRoles, setAvailableRoles] = useState([]); // Dynamically filtered roles
   const [areaFilter, setAreaFilter] = useState("");
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const [areas, setAreas] = useState([]); // State to hold areas dynamically
   const { users } = useSelector((state) => state.users);
   const userId = users?.id;
   const userRole = users?.role_name;
+  const [page, setPage] = useState(0); // Current page
+  const [rowsPerPage] = useState(10); // Rows per page
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+
+
+  const toggleDatePicker = () => {
+    setShowDatePicker((prev) => !prev); // Toggle the date picker state
+  };
+
+  useEffect(() => {
+    // Fetch areas dynamically from API based on user data
+    const fetchAreas = async () => {
+      try {
+        const response = await fetch(`http://88.222.245.236:3002/api/user/${userId}`);
+        const data = await response.json();
+        // Assuming the API response contains a list of cities or areas
+        const userAreas = [
+          ...(data.mdUsers || []).map(user => user.city),
+          ...(data.sdUsers || []).map(user => user.city),
+          ...(data.distributorUsers || []).map(user => user.city),
+          ...(data.adoUsers || []).map(user => user.city),
+        ];
+        setAreas([...new Set(userAreas)]); // Remove duplicates
+      } catch (error) {
+        console.error("Error fetching area data:", error);
+      }
+    };
+
+    if (userId) {
+      fetchAreas();
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (userRole) {
-      // Set available roles based on the current user's role
       switch (userRole) {
         case "Admin":
           setAvailableRoles([
-            "Area Development Officer (ADO)",
-            "Master Distributor (MD)",
-            "Super Distributor (SD)",
-            "Distributor (D)",
-            "Customer (C)",
+            "Area Development Officer",
+            "Master Distributor",
+            "Super Distributor",
+            "Distributor",
           ]);
           break;
         case "Area Development Officer":
           setAvailableRoles([
-            "Master Distributor (MD)",
-            "Super Distributor (SD)",
-            "Distributor (D)",
-            "Customer (C)",
+            "Master Distributor",
+            "Super Distributor",
+            "Distributor",
           ]);
           break;
         case "Master Distributor":
-          setAvailableRoles([
-            "Super Distributor (SD)",
-            "Distributor (D)",
-            "Customer (C)",
-          ]);
+          setAvailableRoles(["Super Distributor", "Distributor"]);
           break;
         case "Super Distributor":
-          setAvailableRoles([
-            "Distributor (D)",
-            "Customer (C)",
-          ]);
-          break;
-        case "Distributor":
-          setAvailableRoles(["Customer (C)"]);
+          setAvailableRoles(["Distributor"]);
           break;
         default:
           setAvailableRoles([]);
           break;
       }
-      setRoleFilter(userRole); // Default role filter is the user's role
+      setRoleFilter(""); // Default to empty string to show all data initially
     }
   }, [userRole]);
 
   const fetchUserCounts = async () => {
     try {
-      const response = await fetch(`http://localhost:3002/api/user/${userId}`);
+      const response = await fetch(`http://88.222.245.236:3002/api/user/${userId}`);
       const data = await response.json();
+
       const users = [
-        ...data.mdUsers,
-        ...data.sdUsers,
-        ...data.distributorUsers,
-        ...data.adoUsers,
+        ...(data.mdUsers || []),
+        ...(data.sdUsers || []),
+        ...(data.distributorUsers || []),
+        ...(data.adoUsers || []),
       ];
+
       setRows(users);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserCounts(); // Only call when userId is defined
+    }
+  }, [userId]);
 
   const fetchSalesAchievement = async (roleId, userId) => {
     try {
@@ -105,79 +136,148 @@ export default function ReportTable() {
     }
   };
 
-  const fetchSalesDataForUsers = async () => {
-    const updatedRows = [];
-
-    for (const user of rows) {
-      const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
-      updatedRows.push({
-        ...user,
-        salesAchievement: salesAchievement ? salesAchievement : null,
-      });
-    }
-    setSalesData(updatedRows);
-  };
-
   useEffect(() => {
     fetchUserCounts();
   }, []);
 
   useEffect(() => {
-    if (rows.length > 0) {
-      fetchSalesDataForUsers();
-    }
-  }, [rows]);
+    const fetchSalesDataForFilteredRoleAndArea = async () => {
+      const updatedRows = [];
+
+      for (const user of rows) {
+        if (
+          (roleFilter === "" || user.role_name === roleFilter) &&
+          (areaFilter === "" || user.city === areaFilter)
+        ) {
+          const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
+          updatedRows.push({
+            ...user,
+            salesAchievement: salesAchievement || null,
+          });
+        }
+      }
+      setSalesData(updatedRows);
+    };
+
+    fetchSalesDataForFilteredRoleAndArea();
+  }, [roleFilter, areaFilter, rows]);
 
   const handleFilterChange = () => {
     console.log("Filters applied with:", roleFilter, areaFilter);
   };
+
+
+  const renderPagination = (page, setPage, totalRows) => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setPage(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1} of {Math.ceil(totalRows / rowsPerPage)}
+      </Typography>
+      <Button
+        onClick={() => setPage(page + 1)}
+        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+
+  const paginatedData = salesData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+
 
   return (
     <Box p={3}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         All Reports
       </Typography>
-      <Box display="flex" gap="20px" mb={3}>
-        <Select
-          value={availableRoles.includes(roleFilter) ? roleFilter : ""}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          displayEmpty
-          sx={{ borderColor: "white" }} // Set border color to white
-        >
-          <MenuItem value="">Select Role</MenuItem>
-          {availableRoles.map((role, index) => (
-            <MenuItem key={index} value={role}>
-              {role}
-            </MenuItem>
-          ))}
-        </Select>
-
-        <Select
-          value={areaFilter}
-          onChange={(e) => setAreaFilter(e.target.value)}
-          displayEmpty
-          sx={{ minWidth: 150 }}
-        >
-          <MenuItem value="">Area</MenuItem>
-          {areas.map((area) => (
-            <MenuItem key={area} value={area}>
-              {area}
-            </MenuItem>
-          ))}
-        </Select>
-
-        <Box display="flex" alignItems="center">
-          <Box
-            display="flex"
-            alignItems="center"
-            sx={{ cursor: "pointer" }}
-            onClick={() => setShowDatePicker(!showDatePicker)}
+      <Box display="flex" flexDirection="column" gap="20px" mb={3}>
+        <Box display="flex" gap="20px" position="relative">
+          <Select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            displayEmpty
+            sx={{ borderColor: "white" }}
           >
-            <span>Sort by Date</span>
-            <IconButton size="small">
-              <ExpandMoreIcon />
-            </IconButton>
-          </Box>
+            <MenuItem value="">Select Role</MenuItem>
+            {availableRoles.map((role, index) => (
+              <MenuItem key={index} value={role}>
+                {role}
+              </MenuItem>
+            ))}
+          </Select>
+
+          <Select
+            value={areaFilter}
+            onChange={(e) => setAreaFilter(e.target.value)}
+            displayEmpty
+            sx={{ minWidth: 150 }}
+          >
+            <MenuItem value="">Area</MenuItem>
+            {areas.map((area) => (
+              <MenuItem key={area} value={area}>
+                {area}
+              </MenuItem>
+            ))}
+          </Select>
+
+
+          {/* <Box display="flex" alignItems="center" position="relative">
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{ cursor: "pointer" }}
+              onClick={toggleDatePicker}
+            >
+              <IconButton size="small">
+              </IconButton>
+              <span>Sort by Date</span>
+              {showDatePicker ? <ArrowLeftIcon /> : <ArrowRightIcon />}
+            </Box>
+            {showDatePicker && (
+              <Box
+                display="flex"
+                gap="20px"
+                position="absolute"
+                left="100%"
+                padding="10px"
+              >
+                <Box>
+                  <span>From:</span>
+                  <DatePicker
+                    selected={fromDate}
+                    onChange={(date) => setFromDate(date)}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Enter From Date"
+                    className="date-picker"
+                  />
+                </Box>
+
+                <Box>
+                  <span>To:</span>
+                  <DatePicker
+                    selected={toDate}
+                    onChange={(date) => setToDate(date)}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Enter To Date"
+                    className="date-picker"
+                  />
+                </Box>
+              </Box>
+            )}
+          </Box> */}
+
+
         </Box>
       </Box>
 
@@ -196,7 +296,7 @@ export default function ReportTable() {
           <TableBody>
             {salesData.map((row, index) => (
               <TableRow key={row.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center">
                     <Avatar
@@ -228,6 +328,12 @@ export default function ReportTable() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <div style={{ marginTop: "10px" }}>
+        {/* {renderPagination(page, setPage, salesData.length)} */}
+      </div>
+
+
     </Box>
   );
 }

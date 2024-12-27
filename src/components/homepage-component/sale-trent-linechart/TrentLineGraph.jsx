@@ -34,7 +34,7 @@ const TrendLineGraph = () => {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3002/overall_sales/sales_over_time",
+        "http://88.222.245.236:3002/overall_sales/sales_over_time",
         {
           startMonth: `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, "0")}`,
           endMonth: `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, "0")}`,

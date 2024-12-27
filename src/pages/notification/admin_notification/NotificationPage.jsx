@@ -144,7 +144,7 @@ const NotificationPage = () => {
                       color: "#fff",
                       backgroundColor: "#00796b",
                     }}
-                    src={`http://88.222.245.236:3002/uploads/notifiation-images/${notification.photo}`}
+                    src={`http://88.222.245.236:3002/uploads/notification-images/${notification.photo}`}
                     alt={notification.detail.user_name}
                   >
                     <NotificationsIcon />

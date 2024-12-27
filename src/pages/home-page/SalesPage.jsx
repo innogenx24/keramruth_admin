@@ -19,7 +19,7 @@ const SalesPage = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/overall_sales/rolebased_sales', {
+        const response = await axios.get('http://88.222.245.236:3002/overall_sales/rolebased_sales', {
           headers: {
             Authorization: `Bearer ${token}`, // Pass token for authentication
           },

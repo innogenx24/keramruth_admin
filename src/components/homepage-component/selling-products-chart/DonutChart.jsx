@@ -50,7 +50,7 @@ const DonutChart = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/overall_sales/mostl_selled_product', {
+        const response = await axios.get('http://88.222.245.236:3002/overall_sales/mostl_selled_product', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
