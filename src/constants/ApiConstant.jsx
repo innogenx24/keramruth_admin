@@ -1,7 +1,7 @@
 // src/apiConstants.js
 export const ADMIN_API = {
     // SIGNIN: '/api/admin/signin',
-    SIGNIN: '/api/user/signin',
+    SIGNIN: '/api/user/signin_web',
     SIGNUP: '/api/admin/signup',
   };
 
