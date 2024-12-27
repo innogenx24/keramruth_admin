@@ -76,13 +76,15 @@ const DocumentForm = () => {
       formData.append("activateStatus", values.activateStatus);
       
       // Check if autoUpdate is false, set From Date and To Date to null
-      if (values.autoUpdate) {
-        if (values.fromDate) formData.append("fromDate", values.fromDate);
-        if (values.toDate) formData.append("toDate", values.toDate);
-      } else {
-        formData.append("fromDate", null);
-        formData.append("toDate", null);
-      }
+if (values.autoUpdate) {
+  if (values.fromDate) formData.append("fromDate", values.fromDate);
+  if (values.toDate) formData.append("toDate", values.toDate);
+} else {
+  // Do not append fromDate and toDate when they should be null
+  formData.delete("fromDate");
+  formData.delete("toDate");
+}
+
       
       if (selectedFile) {
         formData.append("image", selectedFile);

@@ -382,7 +382,7 @@ const handleCloseCustomerModal = () => {
 
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '104%' }}>
       <Typography variant="h6" sx={{ color: '#989FA9' }}>
         All Members
       </Typography>
@@ -549,16 +549,16 @@ const handleCloseCustomerModal = () => {
                           Sales Stock
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Rs. {StockTarget}
+                          Stock : {StockTarget}
                         </Typography>
                         <Typography
                           variant="body2"
                           sx={{ color: "green", fontWeight: "bold" }}
                         >
-                          Achieved: Rs. {StockAchievement}
+                          Stock Achieved: {StockAchievement}
                         </Typography>
                         <Typography variant="body2" color="error" fontWeight="bold">
-                          Pending: Rs. {PendingStockTarget}
+                        Stock Pending: {PendingStockTarget}
                         </Typography>
                       </Box>
                     </Box>

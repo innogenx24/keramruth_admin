@@ -140,7 +140,7 @@ export function StockSaleBarGraph() {
     // Fetch data from API
     const fetchStockDetails = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/overall_sales/stock_over_detail', {
+        const response = await axios.get('http://88.222.245.236:3002/overall_sales/stock_over_detail', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

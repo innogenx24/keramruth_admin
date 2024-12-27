@@ -179,8 +179,8 @@ const AddProductForm = () => {
 
       if (!values.autoUpdate) {
 
-        formData.append("fromDate", currentDateWithTimeISO);
-        formData.append("toDate", currentDateWithTimeISO);
+        formData.delete("fromDate");
+        formData.delete("toDate");
         formData.append("customer_price", "0");
         formData.append("distributor_price", "0");
         formData.append("SD_price", "0");
