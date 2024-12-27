@@ -22,6 +22,7 @@ import adminUserEditSaga from "./user-profile-saga/UserEditSaga";
 import rolePostSaga from "./master-saga/role-saga/RolePostSaga";
 import watchFetchAllClubs from './club-saga/GetAllClubSaga';
 import watchFetchMembersMember from './member-saga/lowhierarchy_member_list_saga/MemberProfileGetSaga';
+import  notificationsSaga  from './notification-saga/notificationsSaga';
 
 export default function* rootSaga() {
   yield all([
@@ -47,6 +48,6 @@ export default function* rootSaga() {
     rolePostSaga(),
     watchFetchAllClubs(),
     watchFetchMembersMember(),
-
+    notificationsSaga(),
   ]);
 }

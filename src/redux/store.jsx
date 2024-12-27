@@ -22,6 +22,7 @@ import userEditSlice from "./slices/user-profile-slice/UserEditSlice";
 import rolePostSlice from "./slices/master-slice/role-slice/RolePostSlice";
 import GetAllClubSlices from "./slices/club-slice/GetAllClubSlices";
 import MembersMemberGetSlice from "./slices/member-slice/lowhierarchy_member_list_slice/MemberProfileGetSlice"
+import notificationsSlice from "./slices/notification-slice/notificationsSlice"
 const sagaMiddleware = createSagaMiddleware();
 
 
@@ -47,6 +48,7 @@ const store = configureStore({
     rolePost: rolePostSlice,
     allclubs: GetAllClubSlices, 
     membersMemberLists: MembersMemberGetSlice,
+    notifications: notificationsSlice,
 
   },
   middleware: (getDefaultMiddleware) =>

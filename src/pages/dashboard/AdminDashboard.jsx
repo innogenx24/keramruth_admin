@@ -41,11 +41,12 @@ import { FaUserTie } from 'react-icons/fa';  // FontAwesome Role Icon (Professio
 import { RiFeedbackFill } from "react-icons/ri";
 import { BiBook } from "react-icons/bi";
 import { FaBook } from "react-icons/fa";
-import { FaHeadset } from 'react-icons/fa'; 
+import { FaHeadset } from 'react-icons/fa';
 // import HomeIcon from "@mui/icons-material/Home";
 import { Home as HomeIcon } from '@mui/icons-material'; // Import the HomeIcon from MUI
-import { FaShoppingCart,FaCheckCircle  } from 'react-icons/fa'; // Importing shopping cart icon
+import { FaShoppingCart, FaCheckCircle } from 'react-icons/fa'; // Importing shopping cart icon
 import ReportIcon from "@mui/icons-material/Assessment";
+import { fetchNotificationsStart } from "../../redux/slices/notification-slice/notificationsSlice";
 
 // Drawer width
 // const drawerWidth = 240;
@@ -183,14 +184,14 @@ export default function AdminDashboard() {
       ...Object.keys(prev).reduce((acc, key) => ({ ...acc, [key]: false }), {}),
       [text]: !prev[text],
     }));
-  
+
     // Determine which menu array to use based on the role
-    const selectedMenu = loginUserRole === "Admin" 
-    ? menuItems 
-    : loginUserRole === "Customer" 
-    ? customermenuItems 
-    : menuItemsUsers;
-    
+    const selectedMenu = loginUserRole === "Admin"
+      ? menuItems
+      : loginUserRole === "Customer"
+        ? customermenuItems
+        : menuItemsUsers;
+
     // Navigate to the default route of the selected item
     const selectedItem = selectedMenu.find((item) => item.text === text);
     if (selectedItem && selectedItem.subItems) {
@@ -202,7 +203,7 @@ export default function AdminDashboard() {
       navigate(selectedItem.path);
     }
   };
-  
+
   const imageBaseURL = "http://88.222.245.236:3002/uploads/";
 
   // Set the selected image to the existing image if present
@@ -218,56 +219,42 @@ export default function AdminDashboard() {
     navigate(path);
   };
 
-  // const handleProfileClick = (path) => {
-  //   navigate("dashboard/profile");
-  // };
   let loginUser = JSON.parse(localStorage.getItem('user'));
-  let loginUserRole = loginUser ? loginUser.role : null; 
-  // console.log(loginUserRole, "mmmmmmmmmmmmmmm");
+  let loginUserRole = loginUser ? loginUser.role : null;
 
 
 
 
   /////**********Notification count Logics***********/////
-  const [unreadCount, setUnreadCount] = useState(0);
+
   const loginUserID = loginUser ? loginUser.id : null;
 
   const handleNotificationClick = () => {
-       navigate('/dashboard/notification')
+    navigate('/dashboard/notification')
   };
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await fetch(
-          `http://88.222.245.236:3002/month_notifications/notifications/${loginUserID}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          // Filter notifications where is_read is false
-          const unreadNotifications = data.notifications.filter(
-            (notification) => !notification.is_read
-          );
-          setUnreadCount(unreadNotifications.length);
-        } else {
-          console.error("Failed to fetch notifications");
-        }
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    };
 
-    if (loginUserID) {
-      fetchNotifications();
+  // Fetch notifications using Redux
+  const { notifications, loading, error } = useSelector(
+    (state) => state.notifications
+  );
+
+
+  useEffect(() => {
+    if (loginUserRole) {
+      dispatch(fetchNotificationsStart(loginUserID));
     }
-  }, [loginUserID]);
+  }, [loginUserRole, dispatch]);
+
+  // Calculate unread notifications count
+  const unreadCount = notifications.filter((notification) => !notification.is_read).length;
 
 
 
 
 
   const customermenuItems = [
-    
+
     {
       text: "Book Order",
       path: "/dashboard/book-orders",
@@ -276,7 +263,7 @@ export default function AdminDashboard() {
     {
       text: "My Orders",
       path: "/dashboard/place-orders",
-      icon: <FaCheckCircle   />,
+      icon: <FaCheckCircle />,
     },
     {
       text: "Announcements",
@@ -308,7 +295,7 @@ export default function AdminDashboard() {
       path: "/dashboard/members-products",
       icon: <ProductIcon />,
     },
-    
+
     {
       text: "Members",
       path: "/dashboard/members",
@@ -332,7 +319,7 @@ export default function AdminDashboard() {
     {
       text: "Feedback",
       path: "/dashboard/feedback",
-      icon: <RiFeedbackFill   />,
+      icon: <RiFeedbackFill />,
     },
     {
       text: "Announcements",
@@ -349,7 +336,7 @@ export default function AdminDashboard() {
       text: "Member Reports",
       path: "/dashboard/report",
       icon: <ReportIcon />,
-     
+
     },
     {
       text: "My Report",
@@ -381,7 +368,7 @@ export default function AdminDashboard() {
     {
       text: "Feedback",
       path: "/dashboard/feedback",
-      icon: <RiFeedbackFill   />,
+      icon: <RiFeedbackFill />,
     },
     {
       text: "Announcements",
@@ -398,7 +385,7 @@ export default function AdminDashboard() {
       text: "Member Reports",
       path: "/dashboard/report",
       icon: <ReportIcon />,
-     
+
     },
     {
       text: "Requests",
@@ -426,14 +413,14 @@ export default function AdminDashboard() {
           path: "/dashboard/sales-target-form",
           icon: <TrackChangesIcon />,
         },
-        { text: "Club", path: "/dashboard/club", icon: <GroupsIcon  /> },
+        { text: "Club", path: "/dashboard/club", icon: <GroupsIcon /> },
         { text: "Category", path: "/dashboard/category", icon: <CategoryIcon /> },
         {
           text: "Sector",
           path: "/dashboard/sector",
           icon: <BusinessIcon />,
         },
-        { text: "Roles", path: "/dashboard/role", icon: <FaUserTie  /> },
+        { text: "Roles", path: "/dashboard/role", icon: <FaUserTie /> },
         {
           text: "Set Time",
           path: "/dashboard/orders_time_set",
@@ -458,10 +445,10 @@ export default function AdminDashboard() {
           "&:hover": { backgroundColor: "transparent" },
           ...(openExpand[item.text]
             ? {
-                background: "linear-gradient(90deg, #01C572 0%, #187E53 100%)",
-                color: "#000",
-                borderRadius: "4px 4px 0 0",
-              }
+              background: "linear-gradient(90deg, #01C572 0%, #187E53 100%)",
+              color: "#000",
+              borderRadius: "4px 4px 0 0",
+            }
             : {}),
         }}
       >
@@ -572,69 +559,69 @@ export default function AdminDashboard() {
             component="div"
             sx={{ flexGrow: 1, color: "#989FA9" }}
           >
-           {loginUserRole === "Admin" ? "Admin Dashboard" : "User Dashboard"}
+            {loginUserRole === "Admin" ? "Admin Dashboard" : "User Dashboard"}
           </Typography>
 
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-  {/* Avatar */}
-  <Avatar
-    alt="Profile Picture"
-    src={selectedImage}
-    onClick={handleAvatarClick}
-    style={{
-      cursor: "pointer",
-      width: 40,
-      height: 40, // Consistent size
-    }}
-  />
+            {/* Avatar */}
+            <Avatar
+              alt="Profile Picture"
+              src={selectedImage}
+              onClick={handleAvatarClick}
+              style={{
+                cursor: "pointer",
+                width: 40,
+                height: 40, // Consistent size
+              }}
+            />
 
-  {/* User Name */}
-  <Typography
-    variant="body1"
-    sx={{
-      color: "#989FA9",
-      fontWeight: 500,
-      fontSize: "1rem", // Adjusted font size for better visibility
-    }}
-  >
-    {users?.full_name}
-  </Typography>
+            {/* User Name */}
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#989FA9",
+                fontWeight: 500,
+                fontSize: "1rem", // Adjusted font size for better visibility
+              }}
+            >
+              {users?.full_name}
+            </Typography>
 
-  {/* Notifications Icon */}
-  <IconButton
-    onClick={handleNotificationClick}
-  >
-    <Badge
-     badgeContent={unreadCount > 0 ? unreadCount : null}
-      color="primary"
-      sx={{
-        "& .MuiBadge-badge": {
-          fontSize: "0.8rem", // Smaller badge size
-          backgroundColor: "#d32f2f", // Red badge
-          color: "white", // White text in the badge
-        },
-      }}
-    >
-      <NotificationsIcon />
-    </Badge>
-  </IconButton>
+            {/* Notifications Icon */}
+            <IconButton
+              onClick={handleNotificationClick}
+            >
+              <Badge
+                badgeContent={unreadCount > 0 ? unreadCount : null}
+                color="primary"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    fontSize: "0.8rem", // Smaller badge size
+                    backgroundColor: "#d32f2f", // Red badge
+                    color: "white", // White text in the badge
+                  },
+                }}
+              >
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
 
-  {/* Logout */}
-  <Typography
-    variant="body2"
-    onClick={handleLogout}
-    sx={{
-      cursor: "pointer",
-      color: "#d32f2f", // Red color for logout
-      fontWeight: 500,
-      "&:hover": {
-        textDecoration: "underline", // Hover effect for better UX
-      },
-    }}
-  >
-    Logout
-  </Typography>
-</div>
+            {/* Logout */}
+            <Typography
+              variant="body2"
+              onClick={handleLogout}
+              sx={{
+                cursor: "pointer",
+                color: "#d32f2f", // Red color for logout
+                fontWeight: 500,
+                "&:hover": {
+                  textDecoration: "underline", // Hover effect for better UX
+                },
+              }}
+            >
+              Logout
+            </Typography>
+          </div>
 
 
         </Toolbar>
@@ -652,7 +639,7 @@ export default function AdminDashboard() {
             }}
           >
             {/* <AppLogo /> */}
-            <AppLogo2/>
+            <AppLogo2 />
           </Box>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
@@ -662,7 +649,7 @@ export default function AdminDashboard() {
             )}
           </IconButton>
         </DrawerHeader>
-        <List sx={{padding:'15px'}}>
+        <List sx={{ padding: '15px' }}>
 
           {/* {menuItems.map((item) => (
             <MenuItem
@@ -675,40 +662,40 @@ export default function AdminDashboard() {
             />
           ))} */}
 
-{loginUserRole === 'Admin' ? (
-  menuItems.map((item) => (
-    <MenuItem
-      key={item.text}
-      item={item}
-      openExpand={openExpand}
-      handleClick={handleClick}
-      handleItemClick={handleItemClick}
-      location={location}
-    />
-  ))
-) : loginUserRole === 'Customer' ? (
-  customermenuItems.map((item) => (
-    <MenuItem
-      key={item.text}
-      item={item}
-      openExpand={openExpand}
-      handleClick={handleClick}
-      handleItemClick={handleItemClick}
-      location={location}
-    />
-  ))
-) : (
-  menuItemsUsers.map((item) => (
-    <MenuItem
-      key={item.text}
-      item={item}
-      openExpand={openExpand}
-      handleClick={handleClick}
-      handleItemClick={handleItemClick}
-      location={location}
-    />
-  ))
-)}
+          {loginUserRole === 'Admin' ? (
+            menuItems.map((item) => (
+              <MenuItem
+                key={item.text}
+                item={item}
+                openExpand={openExpand}
+                handleClick={handleClick}
+                handleItemClick={handleItemClick}
+                location={location}
+              />
+            ))
+          ) : loginUserRole === 'Customer' ? (
+            customermenuItems.map((item) => (
+              <MenuItem
+                key={item.text}
+                item={item}
+                openExpand={openExpand}
+                handleClick={handleClick}
+                handleItemClick={handleItemClick}
+                location={location}
+              />
+            ))
+          ) : (
+            menuItemsUsers.map((item) => (
+              <MenuItem
+                key={item.text}
+                item={item}
+                openExpand={openExpand}
+                handleClick={handleClick}
+                handleItemClick={handleItemClick}
+                location={location}
+              />
+            ))
+          )}
 
 
 
