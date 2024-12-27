@@ -129,8 +129,8 @@ const CategoryTable = () => {
           <h2>Category</h2>
           <TableContainer component={Paper} >
             <Table aria-label="Category Table">
-            <TableHead >
-            <TableRow>
+              <TableHead >
+                <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Category Name</TableCell>
                   <TableCell>Sector Name</TableCell>
@@ -140,7 +140,7 @@ const CategoryTable = () => {
               <TableBody>
                 {sortedCategoryList.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((row, index) => (
                   <TableRow key={row?.id}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>
                       <Typography sx={{ marginLeft: "10px" }}>{row?.category_name}</Typography>
                     </TableCell>

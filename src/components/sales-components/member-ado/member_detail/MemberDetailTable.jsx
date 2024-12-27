@@ -41,9 +41,7 @@ import { clearMembers, fetchMembersRequest } from "../../../../redux/slices/memb
 import SearchBox from "../../../../search-box/SearchBox";
 
 const MemberDetailTable = () => {
-  const percentage = 87; // Percentage to display
-  const pending = 2800; // Pending in Litres
-  const targetVolume = 5000; // Total target in Litres
+ 
   const dispatch = useDispatch();
   // const { members } = useSelector((state) => state.members);
   // const membersList = Array.isArray(members) ? members : [members];
@@ -155,7 +153,7 @@ const MemberDetailTable = () => {
 
     setFilteredRoleOptions(filteredRoles);
   }, [rolesID]); // Re-run the effect whenever rolesID changes
-  
+
 
 
   const handleChange = (value) => {
@@ -172,11 +170,11 @@ const MemberDetailTable = () => {
 
   useEffect(() => {
     if (!roleToUse || !memberID) return;
-  
+
     // Set members list to an empty array or null when changing roles
     setMembersList([]);
     setLoading(true); // Set loading to true to indicate fetching state
-  
+
     const fetchMembers = async () => {
       try {
         const response = await axios.get(`http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`);
@@ -188,10 +186,10 @@ const MemberDetailTable = () => {
         setLoading(false); // Reset loading state
       }
     };
-  
+
     fetchMembers();
   }, [roleToUse, memberID]);
-  
+
 
   // Set roleToUse based on URL roleID or user role
   useEffect(() => {
@@ -293,7 +291,7 @@ const MemberDetailTable = () => {
     if (roleId >= 7) {
       return;
     }
-    
+
     if (roleId === 6) {
       setSelectedCustomer(customerData);
       setCustomerModalOpen(true);
@@ -307,13 +305,13 @@ const MemberDetailTable = () => {
 
   ///***** For Model *****////// 
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
-const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-// Function to handle closing the modal
-const handleCloseCustomerModal = () => {
-  setCustomerModalOpen(false);
-  setSelectedCustomer(null);
-};
+  // Function to handle closing the modal
+  const handleCloseCustomerModal = () => {
+    setCustomerModalOpen(false);
+    setSelectedCustomer(null);
+  };
 
 
 
@@ -379,6 +377,41 @@ const handleCloseCustomerModal = () => {
   const newMemberID = memberID || newMemberId
 
   const { StockAchievementPercent, achievementAmountPercent, MonthlyTargetAmount, AchievementAmount, pendingAmount, StockTarget, StockAchievement, PendingStockTarget } = salesData[0];
+
+
+  const renderPagination = (page, setPage, totalRows) => {
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "15px",
+          padding: "10px",
+        }}
+      >
+        <Button
+          onClick={() => setPage(page - 1)}
+          disabled={page <= 1}
+          variant="outlined"
+        >
+          Previous
+        </Button>
+        <Typography variant="body1">
+          Page {page} of {totalPages}
+        </Typography>
+        <Button
+          onClick={() => setPage(page + 1)}
+          disabled={page >= totalPages}
+          variant="outlined"
+        >
+          Next
+        </Button>
+      </Box>
+    );
+  };
 
 
   return (
@@ -558,7 +591,7 @@ const handleCloseCustomerModal = () => {
                           Stock Achieved: {StockAchievement}
                         </Typography>
                         <Typography variant="body2" color="error" fontWeight="bold">
-                        Stock Pending: {PendingStockTarget}
+                          Stock Pending: {PendingStockTarget}
                         </Typography>
                       </Box>
                     </Box>
@@ -605,20 +638,20 @@ const handleCloseCustomerModal = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               {/* Role Dropdown */}
               <FormControl sx={{ width: '100%' }}>
-  <InputLabel id="role-dropdown-label">Select Role</InputLabel>
-  <Select
-    labelId="role-dropdown-label"
-    value={selectedRole}
-    onChange={(e) => handleChange(e.target.value)}
-    sx={{ borderRadius: '20px' }}
-  >
-    {filteredRoleOptions.map((option) => (
-      <MenuItem key={option.value} value={option.value}>
-        {option.label}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+                <InputLabel id="role-dropdown-label">Select Role</InputLabel>
+                <Select
+                  labelId="role-dropdown-label"
+                  value={selectedRole}
+                  onChange={(e) => handleChange(e.target.value)}
+                  sx={{ borderRadius: '20px' }}
+                >
+                  {filteredRoleOptions.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
               {/* Role Count */}
               <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
@@ -636,84 +669,88 @@ const handleCloseCustomerModal = () => {
 
 
           <TableContainer component={Paper}>
-  <Table stickyHeader aria-label="Member ADO Table">
-    <TableHead>
-      <TableRow>
-        <TableCell>No.</TableCell>
-        <TableCell>Username</TableCell>
-        <TableCell>Full Name</TableCell>
-        <TableCell>Mobile No.</TableCell>
-        <TableCell>Role</TableCell>
-        <TableCell>Email</TableCell>
-        {role === 'Admin' && <TableCell>Action</TableCell>}
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {loading ? (
-        <TableRow>
-          <TableCell colSpan={7} align="center">Loading...</TableCell>
-        </TableRow>
-      ) : membersList.length === 0 ? (
-        <TableRow>
-          <TableCell colSpan={7} align="center">No Data Available</TableCell>
-        </TableRow>
-      ) : (
-        filteredMembersList
-          .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
-          .map((member, index) => (
-            <TableRow
-              key={member.id}
-              onClick={() => handleRowClick(member.id, member.role_id, member)}
-              style={{ cursor: "pointer" }} // Optional: indicates clickable rows
-            >
-              <TableCell>
-                {(currentPage - 1) * rowsPerPage + index + 1}
-              </TableCell>
-              <TableCell>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Avatar
-                    src={member?.image
-                      ? `${imageBaseURL}${member.image}`
-                      : "/path/to/default-image.jpg"
-                    }
-                  />
-                  <Typography style={{ marginLeft: "10px" }}>
-                    {member?.username}
-                  </Typography>
-                </div>
-              </TableCell>
-              <TableCell>{member?.full_name}</TableCell>
-              <TableCell>{member?.mobile_number}</TableCell>
-              <TableCell>{member?.role_name}</TableCell>
-              <TableCell>{member?.email}</TableCell>
-              {role === "Admin" && (
-                <TableCell>
-                  <IconButton
-                    color="secondary"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleEditMemberClick(member);
-                    }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleDeleteOpen(member);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              )}
-            </TableRow>
-          ))
-      )}
-    </TableBody>
-  </Table>
-</TableContainer>
+            <Table stickyHeader aria-label="Member ADO Table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>No.</TableCell>
+                  <TableCell>Username</TableCell>
+                  <TableCell>Full Name</TableCell>
+                  <TableCell>Mobile No.</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Email</TableCell>
+                  {role === 'Admin' && <TableCell>Action</TableCell>}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">Loading...</TableCell>
+                  </TableRow>
+                ) : membersList.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">No Data Available</TableCell>
+                  </TableRow>
+                ) : (
+                  filteredMembersList
+                    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+                    .map((member, index) => (
+                      <TableRow
+                        key={member.id}
+                        onClick={() => handleRowClick(member.id, member.role_id, member)}
+                        style={{ cursor: "pointer" }} // Optional: indicates clickable rows
+                      >
+                        <TableCell>
+                          {(currentPage - 1) * rowsPerPage + index + 1}
+                        </TableCell>
+                        <TableCell>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <Avatar
+                              src={member?.image
+                                ? `${imageBaseURL}${member.image}`
+                                : "/path/to/default-image.jpg"
+                              }
+                            />
+                            <Typography style={{ marginLeft: "10px" }}>
+                              {member?.username}
+                            </Typography>
+                          </div>
+                        </TableCell>
+                        <TableCell>{member?.full_name}</TableCell>
+                        <TableCell>{member?.mobile_number}</TableCell>
+                        <TableCell>{member?.role_name}</TableCell>
+                        <TableCell>{member?.email}</TableCell>
+                        {role === "Admin" && (
+                          <TableCell>
+                            <IconButton
+                              color="secondary"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleEditMemberClick(member);
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              color="error"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleDeleteOpen(member);
+                              }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <div style={{ marginTop: "10px" }}>
+          {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
+          </div>
 
 
         </>
@@ -741,130 +778,130 @@ const handleCloseCustomerModal = () => {
       </Dialog>
       {/*  */}
       <Dialog
-  open={customerModalOpen}
-  onClose={handleCloseCustomerModal}
-  maxWidth="lg" // Set a larger size for the modal
-  fullWidth
->
-  <DialogTitle>
-    <Typography variant="h6" color="primary">Customer Details</Typography>
-  </DialogTitle>
-  <DialogContent dividers>
-    {selectedCustomer ? (
-      <Box p={3}> {/* Increase padding for better spacing */}
-        <Grid container spacing={3}>
+        open={customerModalOpen}
+        onClose={handleCloseCustomerModal}
+        maxWidth="lg" // Set a larger size for the modal
+        fullWidth
+      >
+        <DialogTitle>
+          <Typography variant="h6" color="primary">Customer Details</Typography>
+        </DialogTitle>
+        <DialogContent dividers>
+          {selectedCustomer ? (
+            <Box p={3}> {/* Increase padding for better spacing */}
+              <Grid container spacing={3}>
 
-          {/* Profile Image */}
-          <Grid item xs={12} sm={4} md={3}>
-            <Typography variant="body1" color="textSecondary" gutterBottom>
-              <strong>Customer Profile:</strong>
-            </Typography>
-            <Avatar
-              src={selectedCustomer?.image
-                ? `${imageBaseURL}${selectedCustomer?.image}`
-                : "/path/to/default-image.jpg"
-              }
-              sx={{ width: 120, height: 120, marginTop: 2 }} // Increased size and margin
-            />
-          </Grid>
-
-          {/* Customer Details */}
-          <Grid item xs={12} sm={8} md={9}>
-            <Grid container spacing={2} direction="column">
-
-              {/* Full Name */}
-              <Grid item container spacing={1} alignItems="center">
-                <Grid item xs={3}>
-                  <Typography variant="body1" color="textSecondary"><strong>Full Name:</strong></Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1" color="textSecondary">{selectedCustomer?.full_name}</Typography>
-                </Grid>
-              </Grid>
-
-              {/* Email */}
-              <Grid item container spacing={1} alignItems="center">
-                <Grid item xs={3}>
-                  <Typography variant="body1" color="textSecondary"><strong>Email:</strong></Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1" color="textSecondary">{selectedCustomer?.email}</Typography>
-                </Grid>
-              </Grid>
-
-              {/* Phone Number */}
-              <Grid item container spacing={1} alignItems="center">
-                <Grid item xs={3}>
-                  <Typography variant="body1" color="textSecondary"><strong>Phone:</strong></Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1" color="textSecondary">{selectedCustomer?.mobile_number}</Typography>
-                </Grid>
-              </Grid>
-
-              {/* Username */}
-              <Grid item container spacing={1} alignItems="center">
-                <Grid item xs={3}>
-                  <Typography variant="body1" color="textSecondary"><strong>User Name:</strong></Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1" color="textSecondary">{selectedCustomer?.username}</Typography>
-                </Grid>
-              </Grid>
-
-              {/* Role */}
-              <Grid item container spacing={1} alignItems="center">
-                <Grid item xs={3}>
-                  <Typography variant="body1" color="textSecondary"><strong>Role:</strong></Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1" color="textSecondary">{selectedCustomer?.role_name}</Typography>
-                </Grid>
-              </Grid>
-
-              {/* Address */}
-              <Grid item container spacing={1} alignItems="center">
-                <Grid item xs={3}>
-                  <Typography variant="body1" color="textSecondary"><strong>Address:</strong></Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1" color="textSecondary">
-                    {`${selectedCustomer?.building_no_name}, ${selectedCustomer?.street_name}, ${selectedCustomer?.city}, ${selectedCustomer?.district}, ${selectedCustomer?.state}, ${selectedCustomer?.pincode}`}
+                {/* Profile Image */}
+                <Grid item xs={12} sm={4} md={3}>
+                  <Typography variant="body1" color="textSecondary" gutterBottom>
+                    <strong>Customer Profile:</strong>
                   </Typography>
+                  <Avatar
+                    src={selectedCustomer?.image
+                      ? `${imageBaseURL}${selectedCustomer?.image}`
+                      : "/path/to/default-image.jpg"
+                    }
+                    sx={{ width: 120, height: 120, marginTop: 2 }} // Increased size and margin
+                  />
                 </Grid>
+
+                {/* Customer Details */}
+                <Grid item xs={12} sm={8} md={9}>
+                  <Grid container spacing={2} direction="column">
+
+                    {/* Full Name */}
+                    <Grid item container spacing={1} alignItems="center">
+                      <Grid item xs={3}>
+                        <Typography variant="body1" color="textSecondary"><strong>Full Name:</strong></Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.full_name}</Typography>
+                      </Grid>
+                    </Grid>
+
+                    {/* Email */}
+                    <Grid item container spacing={1} alignItems="center">
+                      <Grid item xs={3}>
+                        <Typography variant="body1" color="textSecondary"><strong>Email:</strong></Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.email}</Typography>
+                      </Grid>
+                    </Grid>
+
+                    {/* Phone Number */}
+                    <Grid item container spacing={1} alignItems="center">
+                      <Grid item xs={3}>
+                        <Typography variant="body1" color="textSecondary"><strong>Phone:</strong></Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.mobile_number}</Typography>
+                      </Grid>
+                    </Grid>
+
+                    {/* Username */}
+                    <Grid item container spacing={1} alignItems="center">
+                      <Grid item xs={3}>
+                        <Typography variant="body1" color="textSecondary"><strong>User Name:</strong></Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.username}</Typography>
+                      </Grid>
+                    </Grid>
+
+                    {/* Role */}
+                    <Grid item container spacing={1} alignItems="center">
+                      <Grid item xs={3}>
+                        <Typography variant="body1" color="textSecondary"><strong>Role:</strong></Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.role_name}</Typography>
+                      </Grid>
+                    </Grid>
+
+                    {/* Address */}
+                    <Grid item container spacing={1} alignItems="center">
+                      <Grid item xs={3}>
+                        <Typography variant="body1" color="textSecondary"><strong>Address:</strong></Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="body1" color="textSecondary">
+                          {`${selectedCustomer?.building_no_name}, ${selectedCustomer?.street_name}, ${selectedCustomer?.city}, ${selectedCustomer?.district}, ${selectedCustomer?.state}, ${selectedCustomer?.pincode}`}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+
+                    {/* Registered On */}
+                    <Grid item container spacing={1} alignItems="center">
+                      <Grid item xs={3}>
+                        <Typography variant="body1" color="textSecondary"><strong>Registered On:</strong></Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="body1" color="textSecondary">
+                          {new Date(selectedCustomer?.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+
+                  </Grid>
+                </Grid>
+
               </Grid>
-
-              {/* Registered On */}
-              <Grid item container spacing={1} alignItems="center">
-                <Grid item xs={3}>
-                  <Typography variant="body1" color="textSecondary"><strong>Registered On:</strong></Typography>
-                </Grid>
-                <Grid item xs={9}>
-                  <Typography variant="body1" color="textSecondary">
-                    {new Date(selectedCustomer?.createdAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </Typography>
-                </Grid>
-              </Grid>
-
-            </Grid>
-          </Grid>
-
-        </Grid>
-      </Box>
-    ) : (
-      <Typography variant="body2" color="textSecondary">No details available</Typography>
-    )}
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseCustomerModal} color="primary" variant="outlined">
-      Close
-    </Button>
-  </DialogActions>
-</Dialog>
+            </Box>
+          ) : (
+            <Typography variant="body2" color="textSecondary">No details available</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCustomerModal} color="primary" variant="outlined">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
 
 
     </Box>

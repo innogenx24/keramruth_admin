@@ -67,11 +67,11 @@ const MemberAdoTable = () => {
 
   useEffect(() => {
     if (role) {
-      const initialRole = role === "Admin" ? "2" : 
-                          role === "Area Development Officer" ? "3" :
-                          role === "Master Distributor" ? "4" :
-                          role === "Super Distributor" ? "5" :
-                          role === "Distributor" ? "6" : "3"; 
+      const initialRole = role === "Admin" ? "2" :
+        role === "Area Development Officer" ? "3" :
+          role === "Master Distributor" ? "4" :
+            role === "Super Distributor" ? "5" :
+              role === "Distributor" ? "6" : "3";
       setSelectedRole(initialRole);
       setCurrentPage(1);
     }
@@ -102,7 +102,7 @@ const MemberAdoTable = () => {
       case "Customer":
         return 7;
       case "Admin":
-        return 2; 
+        return 2;
       default:
         return 2;
     }
@@ -186,12 +186,12 @@ const MemberAdoTable = () => {
   const handleSearchChange = (query) => {
     setSearchQuery(query);
   };
-  
+
   const filteredMembersList = membersList.filter((member) =>
     member?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     member?.mobile_number.toLowerCase().includes(searchQuery.toLowerCase())  // Add search for mobile_number
   );
-  
+
   const sortedMembersList = [...filteredMembersList].sort((a, b) => b.id - a.id);
 
   const handleAddMemberClick = () => {
@@ -225,16 +225,19 @@ const MemberAdoTable = () => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-  
+
   ///////
-  const handleRowClick = (memberId,roleId) => {
+  const handleRowClick = (memberId, roleId) => {
     if (roleId >= 6) {
       return;
     }
+
     const nextRoleId = roleId + 1;
     navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
+    window.location.reload();
   };
-  
+
+
 
   const isScrolling = useRef(false); // Flag to track scrolling
 
@@ -251,6 +254,45 @@ const MemberAdoTable = () => {
       isScrolling.current = false; // Reset after mouse interaction ends
     }, 150);
   };
+
+
+
+
+  const renderPagination = (page, setPage, totalRows) => {
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+  
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "15px",
+          padding: "10px",
+        }}
+      >
+        <Button
+          onClick={() => setPage(page - 1)}
+          disabled={page <= 1}
+          variant="outlined"
+        >
+          Previous
+        </Button>
+        <Typography variant="body1">
+          Page {page} of {totalPages}
+        </Typography>
+        <Button
+          onClick={() => setPage(page + 1)}
+          disabled={page >= totalPages}
+          variant="outlined"
+        >
+          Next
+        </Button>
+      </Box>
+    );
+  };
+  
+
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -314,75 +356,80 @@ const MemberAdoTable = () => {
           </Box>
 
           <TableContainer
-      component={Paper}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
-      <Table stickyHeader aria-label="Member ADO Table">
-        <TableHead>
-          <TableRow>
-            <TableCell>No.</TableCell>
-            <TableCell>Username</TableCell>
-            <TableCell>Full Name</TableCell>
-            <TableCell>Mobile No.</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Email</TableCell>
-            {role === 'Admin' && <TableCell>Action</TableCell>}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredMembersList.map((member, index) => (
-            <TableRow
-              key={member.id}
-              onClick={(e) => {
-                if (!isScrolling.current) {
-                  handleRowClick(member.id, member.role_id);
-                }
-              }}
-              style={{ cursor: 'pointer' }}
-            >
-              <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
-              <TableCell>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar
-                    src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
-                  />
-                  <Typography style={{ marginLeft: '10px' }}>{member?.username}</Typography>
-                </div>
-              </TableCell>
-              <TableCell>{member?.full_name}</TableCell>
-              <TableCell>{member?.mobile_number}</TableCell>
-              <TableCell>{member?.role_name}</TableCell>
-              <TableCell>{member?.email}</TableCell>
-              {role === 'Admin' && (
-                <TableCell>
-                  <IconButton
-                    color="secondary"
+            component={Paper}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+          >
+            <Table stickyHeader aria-label="Member ADO Table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>No.</TableCell>
+                  <TableCell>Username</TableCell>
+                  <TableCell>Full Name</TableCell>
+                  <TableCell>Mobile No.</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Email</TableCell>
+                  {role === 'Admin' && <TableCell>Action</TableCell>}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {currentMembers.map((member, index) => (
+                  <TableRow
+                    key={member.id}
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click
-                      handleEditMemberClick(member);
+                      if (!isScrolling.current) {
+                        handleRowClick(member.id, member.role_id);
+                      }
                     }}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click
-                      handleDeleteOpen(member);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              )}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-          
+                    <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
+                    <TableCell>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Avatar
+                          src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
+                        />
+                        <Typography style={{ marginLeft: '10px' }}>{member?.username}</Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell>{member?.full_name}</TableCell>
+                    <TableCell>{member?.mobile_number}</TableCell>
+                    <TableCell>{member?.role_name}</TableCell>
+                    <TableCell>{member?.email}</TableCell>
+                    {role === 'Admin' && (
+                      <TableCell>
+                        <IconButton
+                          color="secondary"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent row click
+                            handleEditMemberClick(member);
+                          }}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent row click
+                            handleDeleteOpen(member);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <div style={{ marginTop: "10px" }}>
+          {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
+          </div>
+
+
         </>
       ) : editMember ? (
         <EditMemberForm member={editMember} />
