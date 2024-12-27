@@ -181,7 +181,8 @@ const NotificationPage = () => {
                           color: "#666",
                         }}
                       >
-                        Order ID: {notification.detail?.order_id} | User: {notification.detail?.user_name}
+                        {/* Order ID: {notification.detail?.order_id} | User: {notification.detail?.user_name} */}
+                         User: {notification.detail?.user_name}
                       </Typography>
                       <Typography
                         variant="caption"
