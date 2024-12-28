@@ -22,7 +22,8 @@ const OrderDetails = () => {
   const { users } = useSelector((state) => state.users);
   const userId = users?.id; // Assuming the user ID is stored in the state.users object
   const roleId = users?.role_id; // Assuming the user's role_id is stored in the users object
-
+  const [page, setPage] = useState(0); // Current page state
+  const [rowsPerPage] = useState(10);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -66,6 +67,31 @@ const OrderDetails = () => {
     });
   };
 
+  const renderPagination = (page, setPage, totalRows) => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setPage(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1} of {Math.ceil(totalRows / rowsPerPage)}
+      </Typography>
+      <Button
+        onClick={() => setPage(page + 1)}
+        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+
+
+  const paginatedOrders = orders.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+
   return (
     <div>
       <Typography variant="h4" gutterBottom>
@@ -93,13 +119,13 @@ const OrderDetails = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              orders.map((order, index) => (
+              paginatedOrders.map((order, index) => (
                 <React.Fragment key={order.id}>
                   <TableRow
                     onClick={() => handleRowClick(order.id)}
                     style={{ cursor: "pointer" }}
                   >
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>{order.order_id}</TableCell>
 
                     <TableCell>Rs. {parseFloat(order.total_amount).toFixed(2)}</TableCell>
@@ -194,6 +220,10 @@ const OrderDetails = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <div style={{ marginTop: "10px" }}>
+        {renderPagination(page, setPage, orders.length)}
+      </div>
     </div>
   );
 };

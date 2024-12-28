@@ -293,8 +293,8 @@ const MemberDetailTable = () => {
     }
 
     if (roleId === 6) {
-      setSelectedCustomer(customerData);
-      setCustomerModalOpen(true);
+      navigate(`/dashboard/customer_details/${memberId}/${roleId}`);
+
       return;
     }
 
@@ -776,133 +776,8 @@ const MemberDetailTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      {/*  */}
-      <Dialog
-        open={customerModalOpen}
-        onClose={handleCloseCustomerModal}
-        maxWidth="lg" // Set a larger size for the modal
-        fullWidth
-      >
-        <DialogTitle>
-          <Typography variant="h6" color="primary">Customer Details</Typography>
-        </DialogTitle>
-        <DialogContent dividers>
-          {selectedCustomer ? (
-            <Box p={3}> {/* Increase padding for better spacing */}
-              <Grid container spacing={3}>
-
-                {/* Profile Image */}
-                <Grid item xs={12} sm={4} md={3}>
-                  <Typography variant="body1" color="textSecondary" gutterBottom>
-                    <strong>Customer Profile:</strong>
-                  </Typography>
-                  <Avatar
-                    src={selectedCustomer?.image
-                      ? `${imageBaseURL}${selectedCustomer?.image}`
-                      : "/path/to/default-image.jpg"
-                    }
-                    sx={{ width: 120, height: 120, marginTop: 2 }} // Increased size and margin
-                  />
-                </Grid>
-
-                {/* Customer Details */}
-                <Grid item xs={12} sm={8} md={9}>
-                  <Grid container spacing={2} direction="column">
-
-                    {/* Full Name */}
-                    <Grid item container spacing={1} alignItems="center">
-                      <Grid item xs={3}>
-                        <Typography variant="body1" color="textSecondary"><strong>Full Name:</strong></Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.full_name}</Typography>
-                      </Grid>
-                    </Grid>
-
-                    {/* Email */}
-                    <Grid item container spacing={1} alignItems="center">
-                      <Grid item xs={3}>
-                        <Typography variant="body1" color="textSecondary"><strong>Email:</strong></Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.email}</Typography>
-                      </Grid>
-                    </Grid>
-
-                    {/* Phone Number */}
-                    <Grid item container spacing={1} alignItems="center">
-                      <Grid item xs={3}>
-                        <Typography variant="body1" color="textSecondary"><strong>Phone:</strong></Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.mobile_number}</Typography>
-                      </Grid>
-                    </Grid>
-
-                    {/* Username */}
-                    <Grid item container spacing={1} alignItems="center">
-                      <Grid item xs={3}>
-                        <Typography variant="body1" color="textSecondary"><strong>User Name:</strong></Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.username}</Typography>
-                      </Grid>
-                    </Grid>
-
-                    {/* Role */}
-                    <Grid item container spacing={1} alignItems="center">
-                      <Grid item xs={3}>
-                        <Typography variant="body1" color="textSecondary"><strong>Role:</strong></Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body1" color="textSecondary">{selectedCustomer?.role_name}</Typography>
-                      </Grid>
-                    </Grid>
-
-                    {/* Address */}
-                    <Grid item container spacing={1} alignItems="center">
-                      <Grid item xs={3}>
-                        <Typography variant="body1" color="textSecondary"><strong>Address:</strong></Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body1" color="textSecondary">
-                          {`${selectedCustomer?.building_no_name}, ${selectedCustomer?.street_name}, ${selectedCustomer?.city}, ${selectedCustomer?.district}, ${selectedCustomer?.state}, ${selectedCustomer?.pincode}`}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-
-                    {/* Registered On */}
-                    <Grid item container spacing={1} alignItems="center">
-                      <Grid item xs={3}>
-                        <Typography variant="body1" color="textSecondary"><strong>Registered On:</strong></Typography>
-                      </Grid>
-                      <Grid item xs={9}>
-                        <Typography variant="body1" color="textSecondary">
-                          {new Date(selectedCustomer?.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-
-                  </Grid>
-                </Grid>
-
-              </Grid>
-            </Box>
-          ) : (
-            <Typography variant="body2" color="textSecondary">No details available</Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCustomerModal} color="primary" variant="outlined">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-
+    
+      
 
     </Box>
   );
