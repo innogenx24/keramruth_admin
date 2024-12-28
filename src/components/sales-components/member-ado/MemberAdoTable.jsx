@@ -228,14 +228,25 @@ const MemberAdoTable = () => {
 
   ///////
   const handleRowClick = (memberId, roleId) => {
+  
+    // If the current roleId is greater than or equal to 6, navigate to the customer details page
     if (roleId >= 6) {
+      navigate(`/dashboard/customer_details/${memberId}/${roleId}`);
+      window.location.reload();
       return;
     }
-
+  
+    // Increment roleId and check if the nextRoleId is 7
     const nextRoleId = roleId + 1;
-    navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
+    if (nextRoleId === 7) {
+      navigate(`/dashboard/customer_details/${memberId}/${roleId}`);
+    } else {
+      navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
+    }
+  
     window.location.reload();
   };
+  
 
 
 

@@ -83,6 +83,27 @@ const MemberProductPage = () => {
   );
 
 
+  const renderPagination = (page, setPage, totalRows) => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setPage(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1} of {Math.ceil(totalRows / rowsPerPage)}
+      </Typography>
+      <Button
+        onClick={() => setPage(page + 1)}
+        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
 
   return (
     <div>
@@ -113,9 +134,10 @@ const MemberProductPage = () => {
           </TableHead>
           <TableBody>
             {filteredProducts
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) 
               .map((product, index) => (
                 <TableRow key={product.id}>
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{page * rowsPerPage + index + 1}</TableCell> 
                   <TableCell>
                     {product.image ? (
                       <img
@@ -147,7 +169,9 @@ const MemberProductPage = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
+      <div style={{ marginTop: "10px" }}>
+        {renderPagination(page, setPage, filteredProducts.length)}
+      </div>
 
     </div>
   );

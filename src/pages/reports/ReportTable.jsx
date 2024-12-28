@@ -294,7 +294,9 @@ export default function ReportTable() {
             </TableRow>
           </TableHead>
           <TableBody>
+            {/* {paginatedData.map((row, index) => ( */}
             {salesData.map((row, index) => (
+
               <TableRow key={row.id}>
                 <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
                 <TableCell>
