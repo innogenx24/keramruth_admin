@@ -23,26 +23,95 @@ $growth-negative-bg: #FF4C4C;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    width: 100%;
 
     .title {
       color: #7e84a3;
       font-family: 'Inter', sans-serif;
-      font-size: 87.5%;
-      white-space: nowrap;
+      font-size: 1rem;
       overflow: hidden;
       text-overflow: ellipsis;
+      cursor: pointer;
+    // .title {
+    //   color: #7e84a3;
+    //   font-family: 'Inter', sans-serif;
+    //   font-size: 1rem;
+    //   overflow: hidden;             
+    //   text-overflow: ellipsis;      
+    //   // white-space: nowrap;       
+    //   width: 100%;              
+    //   display: block;              
+    //   max-width: 100%;             
+    //   cursor: pointer;
+    //   .title:hover {
+    //     overflow: visible;        
+    //     white-space: normal;       
+    //     background-color: #fff;    
+    //     z-index: 1;
+    //   }  
+    
+
+      @media (max-width: 1200px) {
+        font-size: 0.95rem; // Smaller font for medium screens
+      }
+
+      @media (max-width: 992px) {
+        font-size: 0.9rem; // Even smaller font for tablets
+      }
+
+      @media (max-width: 768px) {
+        font-size: 0.85rem; // Smaller font for mobile landscape
+      }
+
+      @media (max-width: 480px) {
+        font-size: 0.75rem; // Smallest font size for mobile portrait
+      }
     }
 
     .sales {
       font-family: 'Inter', sans-serif;
-      font-size: 95%;
+      font-size: 1rem; // Base font size
       display: flex;
       align-items: baseline;
+      text-overflow: ellipsis;
+
+      @media (max-width: 1200px) {
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 992px) {
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 0.75rem;
+      }
 
       .sales-target {
         color: #7e84a3;
-        font-size: 100%;
+        font-size: 1rem; // Same as sales base font size
         margin-left: 1%;
+        text-overflow: ellipsis;
+
+        @media (max-width: 1200px) {
+          font-size: 0.95rem;
+        }
+
+        @media (max-width: 992px) {
+          font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+          font-size: 0.85rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 0.75rem;
+        }
       }
     }
   }
@@ -70,13 +139,45 @@ $growth-negative-bg: #FF4C4C;
 
       .growth {
         font-family: 'Inter', sans-serif;
-        font-size: 87.5%;
+        font-size: 0.875rem; // Base font size for growth
         margin-right: 1%;
+
+        @media (max-width: 1200px) {
+          font-size: 0.85rem;
+        }
+
+        @media (max-width: 992px) {
+          font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+          font-size: 0.75rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 0.7rem;
+        }
       }
 
       .growth-arrow {
         color: #7e84a3;
-        font-size: 80%;
+        font-size: 0.8rem;
+
+        @media (max-width: 1200px) {
+          font-size: 0.75rem;
+        }
+
+        @media (max-width: 992px) {
+          font-size: 0.7rem;
+        }
+
+        @media (max-width: 768px) {
+          font-size: 0.65rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 0.6rem;
+        }
       }
     }
   }

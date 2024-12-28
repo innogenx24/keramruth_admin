@@ -52,7 +52,7 @@ const SalesPage = () => {
     <div>
       <Grid container spacing={3}>
         {/* Left Side: Sales Cards */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12} lg={6}>
           <Grid container spacing={3}>
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
@@ -68,7 +68,7 @@ const SalesPage = () => {
         </Grid>
 
         {/* Right Side: Stock Sale Graph */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12} lg={6}>
           <StockSaleBarGraph />
         </Grid>
       </Grid>
