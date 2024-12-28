@@ -14,13 +14,16 @@ import {
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { fetchNotificationsStart } from "../../../redux/slices/notification-slice/notificationsSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const NotificationPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Get logged-in user's ID from localStorage
   const loginUser = JSON.parse(localStorage.getItem("user"));
   const loginUserRole = loginUser?.id || null;
+
 
   // Redux state
   const { notifications, loading, error } = useSelector((state) => state.notifications);
@@ -48,6 +51,39 @@ const NotificationPage = () => {
       dispatch(fetchNotificationsStart(loginUserRole));
     } catch (error) {
       console.error("Error marking notification as read:", error);
+    }
+  };
+
+  // Navigate based on type
+  const handleNavigation = (type) => {
+    switch (type) {
+      case "announcement":
+        navigate("/dashboard/announcement");
+        break;
+      case "order_request":
+        const loginUser = JSON.parse(localStorage.getItem("user"));
+        if (loginUser?.role === "Admin") {
+          navigate("/dashboard/pending-orders");
+        } else {
+          navigate("/dashboard/pending-orders-member");
+        }
+        break;
+      case "order_acceptReject":
+        navigate("/dashboard/place-orders");
+        break;
+      case "document":
+        navigate("/dashboard/documents-member");
+        break;
+      case "profile_edite_request":
+        navigate("/dashboard/edit-request");
+        break;
+      case "profile_edit_request_approved":
+      case "profile_edit_request_rejected":
+        navigate("/dashboard/profile");
+        break;
+      default:
+        console.warn("Unknown notification type:", type);
+        break;
     }
   };
 
@@ -132,7 +168,10 @@ const NotificationPage = () => {
             <React.Fragment key={notification.id}>
               <ListItem
                 sx={styles.listItem(notification.is_read)}
-                onClick={() => !notification.is_read && markAsRead(notification.id)}
+                onClick={() => {
+                  if (!notification.is_read) markAsRead(notification.id);
+                  handleNavigation(notification.detail?.type);
+                }}
               >
                 <ListItemAvatar>
                   <Avatar
@@ -157,18 +196,25 @@ const NotificationPage = () => {
                   }
                   secondary={
                     <>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                      >
-                        {notification.detail?.role} | Status: {notification.detail?.status}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                      >
-                        User: {notification.detail?.user_name}
-                      </Typography>
+                      {notification.detail?.type !== "announcement" &&
+                        notification.detail?.type !== "document" &&
+                        notification.detail?.type !== "profile_edit_request_approved" &&
+                        notification.detail?.type !== "profile_edit_request_rejected" && (
+                          <>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              {notification.detail?.role} | Status: {notification.detail?.status}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              User: {notification.detail?.user_name}
+                            </Typography>
+                          </>
+                        )}
                       <Typography
                         variant="caption"
                         sx={{
@@ -183,6 +229,7 @@ const NotificationPage = () => {
                     </>
                   }
                 />
+
               </ListItem>
               <Divider variant="inset" component="li" />
             </React.Fragment>
