@@ -18,7 +18,8 @@ const EditProductForm = ({ handleBackToProducts }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
   const [serverError, setServerError] = useState("");
 
   const [errors, setErrors] = useState({
@@ -72,7 +73,7 @@ const EditProductForm = ({ handleBackToProducts }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://88.222.245.236:3002/category");
+        const response = await fetch(`${API_END_POINT}/category`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -332,7 +333,7 @@ if (productDetails.ADO_price >= productDetails.adoPrice) {
 
     try {
       // Send the PUT request to update the product
-      const response = await fetch(`http://88.222.245.236:3002/products/${productDetails.id}`, {
+      const response = await fetch(`${API_END_POINT}/products/${productDetails.id}`, {
         method: "PUT",
         body: formData,
       });

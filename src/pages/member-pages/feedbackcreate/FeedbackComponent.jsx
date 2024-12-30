@@ -12,6 +12,7 @@ const FeedbackComponent = () => {
   const [errorMessage, setErrorMessage] = useState(""); // To store error messages
   const { users } = useSelector((state) => state.users);
   const userId = users?.id; // Assuming the user ID is stored in the state.users object
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   
   const handleSubmit = () => {
     const token = localStorage.getItem("token");
@@ -30,7 +31,7 @@ const FeedbackComponent = () => {
 
     
     axios
-      .post("http://88.222.245.236:3002/feedback/create", feedbackData, {
+      .post(`${API_END_POINT}/feedback/create`, feedbackData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +66,7 @@ const FeedbackComponent = () => {
           <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
             <Avatar
               alt={productName || "Product Image"}
-              src={`http://88.222.245.236:3002/uploads/${productImage}`}
+              src={`${API_END_POINT}/uploads/${productImage}`}
               sx={{ width: 64, height: 64, marginRight: 2 }}
             />
             <Typography variant="body1" fontWeight="bold">

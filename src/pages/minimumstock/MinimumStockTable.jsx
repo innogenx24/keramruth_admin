@@ -28,6 +28,7 @@ export default function MinimumStockTable() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     fetchMinimumStocks(); // Updated function name
@@ -35,7 +36,7 @@ export default function MinimumStockTable() {
 
   const fetchMinimumStocks = async () => {
     try {
-      const response = await axios.get("http://88.222.245.236:3002/minimumstock"); // Adjusted endpoint
+      const response = await axios.get(`API_END_POINT/minimumstock`); // Adjusted endpoint
       setStockData(response.data.data);
     } catch (error) {
       console.error("Error fetching minimum stocks:", error);
@@ -57,7 +58,7 @@ export default function MinimumStockTable() {
 
   const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`http://88.222.245.236:3002/minimumstock/${deleteId}`); // Updated endpoint
+      await axios.delete(`${API_END_POINT}/minimumstock/${deleteId}`); // Updated endpoint
       setStockData(stockData.filter((item) => item.id !== deleteId));
       setOpenDeleteModal(false);
       setDeleteId(null);

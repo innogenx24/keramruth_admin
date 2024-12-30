@@ -15,6 +15,7 @@ const TrendLineGraph = () => {
   const [endDate, setEndDate] = useState(new Date("2024-12-01")); // Default end date
   const [totalQuantity, setTotalQuantity] = useState(0);
   const token = localStorage.getItem("token");
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   // Utility function to generate month labels dynamically
   const generateMonthLabels = (start, end) => {
@@ -34,7 +35,7 @@ const TrendLineGraph = () => {
   const fetchData = async () => {
     try {
       const response = await axios.post(
-        "http://88.222.245.236:3002/overall_sales/sales_over_time",
+        `${API_END_POINT}/overall_sales/sales_over_time`,
         {
           startMonth: `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, "0")}`,
           endMonth: `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, "0")}`,

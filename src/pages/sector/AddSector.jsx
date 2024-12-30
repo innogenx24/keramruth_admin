@@ -11,6 +11,7 @@ const AddOrEditSector = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [sector, setSector] = useState(null);
   const [error, setError] = useState(""); // State to hold the error message
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     if (location.state && location.state.sector) {
@@ -32,8 +33,8 @@ const AddOrEditSector = () => {
     onSubmit: async (values) => {
       try {
         const url = isEditMode
-          ? `http://88.222.245.236:3002/sectors/${sector.id}`
-          : "http://88.222.245.236:3002/sectors";
+          ? `${API_END_POINT}/sectors/${sector.id}`
+          : `${API_END_POINT}/sectors`;
         const method = isEditMode ? "PUT" : "POST";
 
         const response = await fetch(url, {

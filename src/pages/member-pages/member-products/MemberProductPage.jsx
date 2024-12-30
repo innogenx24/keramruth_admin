@@ -22,7 +22,8 @@ const MemberProductPage = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0); // Pagination state
   const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch products from API
@@ -35,7 +36,7 @@ const MemberProductPage = () => {
 
     try {
       const response = await axios.get(
-        "http://88.222.245.236:3002/products/user_product",
+        `${API_END_POINT}/products/user_product`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

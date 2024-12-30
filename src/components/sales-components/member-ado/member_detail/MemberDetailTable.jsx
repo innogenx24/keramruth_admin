@@ -68,9 +68,10 @@ const MemberDetailTable = () => {
     customerCount: 0,
     adoCount: 0,
   });
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const navigate = useNavigate();
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   const { users } = useSelector((state) => state.users);
   const UserId = users?.id;
@@ -177,7 +178,7 @@ const MemberDetailTable = () => {
 
     const fetchMembers = async () => {
       try {
-        const response = await axios.get(`http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`);
+        const response = await axios.get(`${API_END_POINT}/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`);
         setMembersList(response.data || []); // Set new members list
       } catch (error) {
         console.error("Failed to fetch members:", error);
@@ -204,7 +205,7 @@ const MemberDetailTable = () => {
     const fetchSalesAchievement = async () => {
       try {
         const response = await axios.get(
-          `http://88.222.245.236:3002/user_sales_detail/sales_achievement/${roleToUse}/${memberID}`
+          `${API_END_POINT}/user_sales_detail/sales_achievement/${roleToUse}/${memberID}`
         );
         const { monthlyDetails } = response.data;
         setSalesData(monthlyDetails || []);
@@ -224,7 +225,7 @@ const MemberDetailTable = () => {
 
   const fetchUserCounts = async () => {
     try {
-      const response = await axios.get(`http://88.222.245.236:3002/api/user/${memberID}`);
+      const response = await axios.get(`${API_END_POINT}/api/user/${memberID}`);
       setRoleCounts(response.data);
     } catch (error) {
       console.error("Error fetching role counts:", error);
@@ -332,7 +333,7 @@ const MemberDetailTable = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          `http://88.222.245.236:3002/directMembers/profile-hirarchy?userId=${memberID}`,
+          `${API_END_POINT}/directMembers/profile-hirarchy?userId=${memberID}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -434,7 +435,7 @@ const MemberDetailTable = () => {
                   <Avatar
                     src={
                       image
-                        ? `http://88.222.245.236:3002/uploads/${image}`
+                        ? `${API_END_POINT}/uploads/${image}`
                         : undefined
                     }
                     alt={full_name || "N/A"}

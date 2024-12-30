@@ -30,6 +30,7 @@ const DocumentForm = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const roles = ["Area Development Officer", "Master Distributor", "Super Distributor", "Distributor", "Customer"];
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const [imageError, setImageError] = useState("");
 
   const today = new Date().toISOString().split("T")[0]; // Get current date in 'yyyy-MM-dd' format
@@ -91,7 +92,7 @@ if (values.autoUpdate) {
         formData.append("imageName", selectedFile.name);
       }
     
-      fetch("http://88.222.245.236:3002/documents/create", {
+      fetch(`${API_END_POINT}/documents/create`, {
         method: "POST",
         body: formData,
       })

@@ -21,6 +21,7 @@ const OrderLimitsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     const fetchOrderLimits = async () => {
@@ -29,7 +30,7 @@ const OrderLimitsTable = () => {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token not found");
 
-        const response = await axios.get("http://88.222.245.236:3002/api/order-limits", {
+        const response = await axios.get(`${API_END_POINT}/api/order-limits`, {
           headers: {
             Authorization: `Bearer ${token}`, 
           },

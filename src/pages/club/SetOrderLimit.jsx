@@ -15,6 +15,7 @@ const SetOrderLimit = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const handleChangeHours = (e) => {
     setHours(e.target.value);
@@ -44,7 +45,7 @@ const SetOrderLimit = () => {
     const orderLimitData = { hours: parseInt(hours, 10), role: selectedRole };
 
     try {
-        const response = await axios.post('http://88.222.245.236:3002/api/order-limits/create', orderLimitData);
+        const response = await axios.post(`${API_END_POINT}/api/order-limits/create`, orderLimitData);
         console.log('Success:', response.data);
         setSnackbarMessage('Order limit set successfully!');
         setSnackbarSeverity('success');

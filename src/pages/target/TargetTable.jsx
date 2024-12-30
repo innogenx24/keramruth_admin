@@ -22,8 +22,9 @@ const TargetTable = () => {
   const [loading, setLoading] = useState(true);
   const [filteredData, setFilteredData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
   const { users } = useSelector((state) => state.users);
   const userId = users?.id;
 
@@ -34,7 +35,7 @@ const TargetTable = () => {
 
       try {
         const response = await axios.get(
-          `http://88.222.245.236:3002/user_sales_detail/getLowHierarchySalesDetails/${userId}`,
+          `${API_END_POINT}/user_sales_detail/getLowHierarchySalesDetails/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (response.data.success) {

@@ -37,7 +37,8 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
   const [searchQuery, setSearchQuery] = useState("");
 
   const [page, setPage] = useState(0); // Pagination state
@@ -90,7 +91,7 @@ const ProductPage = () => {
   const handleToggleStockStatus = async (product) => {
     try {
       const updatedStatus = !product.status; // Toggle the current status
-      const response = await fetch(`http://88.222.245.236:3002/products/${product.id}/status`, {
+      const response = await fetch(`${API_END_POINT}/products/${product.id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

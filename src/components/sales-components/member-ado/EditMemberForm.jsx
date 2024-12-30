@@ -28,7 +28,8 @@ const EditMemberForm = () => {
   const { allmembers } = useSelector((state) => state.allmembers);
   const [image, setImage] = useState(null); // Store the selected image
   const [imageName, setImageName] = useState(""); // Store image file name for display
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
   const [showPassword, setShowPassword] = useState(false);
   const [imageError, setImageError] = useState(""); // Store image error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -174,7 +175,7 @@ useEffect(() => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
   
-      const response = await fetch("http://88.222.245.236:3002/club", {
+      const response = await fetch(`${API_END_POINT}/club`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -198,7 +199,7 @@ useEffect(() => {
     const token = localStorage.getItem("token");
     if (memberId && token) {
       axios
-        .get(`http://88.222.245.236:3002/directMembers/profileby-admin/${memberId}`, {
+        .get(`${API_END_POINT}/directMembers/profileby-admin/${memberId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -373,7 +374,7 @@ useEffect(() => {
     }
   
     axios
-      .put(`http://88.222.245.236:3002/api/user/update/${memberId}`, data, config)
+      .put(`${API_END_POINT}/api/user/update/${memberId}`, data, config)
       .then(() => {
         navigate(`/dashboard/members`);
       })

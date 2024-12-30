@@ -11,6 +11,7 @@ const SalesPage = () => {
   const [salesData, setSalesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user'));
@@ -19,7 +20,7 @@ const SalesPage = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get('http://88.222.245.236:3002/overall_sales/rolebased_sales', {
+        const response = await axios.get(`${API_END_POINT}/overall_sales/rolebased_sales`, {
           headers: {
             Authorization: `Bearer ${token}`, // Pass token for authentication
           },

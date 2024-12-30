@@ -10,6 +10,7 @@ const AddClubForm = () => {
   const [error, setError] = useState(""); // State for API errors
   const [errors, setErrors] = useState({}); // State for input field errors
   const [submitted, setSubmitted] = useState(false); // Track if form is submitted
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   // Validate form fields
   const validate = () => {
@@ -52,7 +53,7 @@ const AddClubForm = () => {
     };
 
     try {
-      const response = await fetch("http://88.222.245.236:3002/club/create", {
+      const response = await fetch(`${API_END_POINT}/club/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

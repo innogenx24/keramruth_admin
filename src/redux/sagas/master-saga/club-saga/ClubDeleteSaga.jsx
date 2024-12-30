@@ -8,9 +8,11 @@ import {
 import { fetchClubsRequest } from "../../../slices/master-slice/club-slice/ClubGetSlice";
 
 function deleteClubApi(clubId, token) {
-//   console.log("clubId", clubId);
+
+const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
   return axios.delete(
-    `http://88.222.245.236:3002/api/club/delete/${clubId}`,
+    `${API_END_POINT}/api/club/delete/${clubId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

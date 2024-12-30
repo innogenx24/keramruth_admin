@@ -7,6 +7,7 @@ export default function EditSalesTarget() {
   const location = useLocation();
   const navigate = useNavigate();
   const selectedRow = location.state?.selectedRow || {}; // Get selected row from the location state
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const [targetData, setTargetData] = useState({
     role_name: selectedRow.role_name || '',
@@ -29,7 +30,7 @@ export default function EditSalesTarget() {
       const { role_name, target, stock_target, duration } = targetData;
   
       // Send PUT request to update the sales target in the backend
-      const response = await axios.put(`http://88.222.245.236:3002/salestarget/${role_name}`, {
+      const response = await axios.put(`${API_END_POINT}/salestarget/${role_name}`, {
         target,
         stock_target,
         duration,
@@ -188,7 +189,7 @@ export default function EditSalesTarget() {
 //   const fetchSalesTargets = async () => {
 //     try {
 //       const response = await axios.get(
-//         `http://88.222.245.236:3002/salestarget/${encodeURIComponent(selectedProduct)}`
+//         `http://--/salestarget/${encodeURIComponent(selectedProduct)}`
 //       );
 //       setTargets(response.data.data || []);
 //       setLoading(false);
@@ -272,7 +273,7 @@ export default function EditSalesTarget() {
 
 //     try {
 //       const response = await axios.put(
-//         `http://88.222.245.236:3002/salestarget/${encodeURIComponent(selectedProduct)}`,
+//         `http:-----/salestarget/${encodeURIComponent(selectedProduct)}`,
 //         requestData
 //       );
 

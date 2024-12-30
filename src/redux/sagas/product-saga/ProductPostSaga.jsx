@@ -6,7 +6,9 @@ function* postProduct(action) {
   try {
     yield put(productPostRequest());
     const token = localStorage.getItem('token');
-    const response = yield call(axios.post, 'http://88.222.245.236:3002/products', action.payload, {
+    const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+    const response = yield call(axios.post, `${API_END_POINT}/products`, action.payload, {
 
       headers: {
         Authorization: `Bearer ${token}`,

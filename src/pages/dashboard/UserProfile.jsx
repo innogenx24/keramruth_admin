@@ -21,7 +21,8 @@ function UserProfile() {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
   const [selectedImage, setSelectedImage] = useState(""); // State for selected image
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   // Set the selected image to the existing image if present
   useEffect(() => {

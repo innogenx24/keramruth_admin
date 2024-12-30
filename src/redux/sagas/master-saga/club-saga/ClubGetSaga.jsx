@@ -7,7 +7,9 @@ import {
 } from "../../../slices/master-slice/club-slice/ClubGetSlice";
 
 function* fetchClubs() {
-  const API_URL = `http://88.222.245.236:3002/api/user`;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+  const API_URL = `${API_END_POINT}/api/user`;
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");

@@ -19,6 +19,7 @@ import axios from "axios";
 const SalesTargetTable = () => {
   const [tableData, setTableData] = useState([]);
   const navigate = useNavigate(); // Initialize navigation
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   // Fetch sales targets from API
   const fetchSalesTargets = async () => {
@@ -26,7 +27,7 @@ const SalesTargetTable = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
 
-      const response = await axios.get("http://88.222.245.236:3002/salestarget", {
+      const response = await axios.get(`${API_END_POINT}/salestarget`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

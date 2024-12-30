@@ -55,9 +55,10 @@ const MemberAdoTable = () => {
     customerCount: 0,
     adoCount: 0,
   });
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const navigate = useNavigate();
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   const { users } = useSelector((state) => state.users);
   const UserId = users?.id;
@@ -165,7 +166,7 @@ const MemberAdoTable = () => {
     if (!token) throw new Error("Token not found");
 
     try {
-      const response = await axios.get(`http://88.222.245.236:3002/api/user/${UserId}`, {
+      const response = await axios.get(`${API_END_POINT}/api/user/${UserId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

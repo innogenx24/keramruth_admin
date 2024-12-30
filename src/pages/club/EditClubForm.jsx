@@ -16,6 +16,7 @@ const EditClubForm = () => {
     clubName: "",
     litreQuantity: "",
   });
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const validateFields = () => {
     const alphanumericRegex = /^[a-zA-Z0-9\s]+$/; // Alphanumeric with spaces allowed
@@ -58,7 +59,7 @@ const EditClubForm = () => {
     };
 
     try {
-      const response = await fetch(`http://88.222.245.236:3002/club/${club?.id}`, {
+      const response = await fetch(`${API_END_POINT}/club/${club?.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

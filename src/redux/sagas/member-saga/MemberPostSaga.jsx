@@ -7,8 +7,9 @@ function* postMember(action) {
     yield put(memberPostRequest());
     const token = localStorage.getItem('token');
     const { role_id } = action.payload;
+    const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   
-      const response = yield call(axios.post, 'http://88.222.245.236:3002/api/user/signup', action.payload, {
+      const response = yield call(axios.post, `${API_END_POINT}/api/user/signup`, action.payload, {
 
       headers: {
         Authorization: `Bearer ${token}`,

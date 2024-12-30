@@ -7,7 +7,9 @@ import { fetchNotificationsFailure, fetchNotificationsStart, fetchNotificationsS
 
 // API call function
 const fetchNotificationsApi = (userRole) => {
-  return axios.get(`http://88.222.245.236:3002/month_notifications/notifications/${userRole}`);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+  return axios.get(`${API_END_POINT}/month_notifications/notifications/${userRole}`);
 };
 
 // Worker Saga: Handles the API call and state updates

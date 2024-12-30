@@ -27,12 +27,13 @@ const EditCategoryForm = ({ onCancel }) => {
 
   const [errors, setErrors] = useState({}); // State to track field errors
   const [serverError, setServerError] = useState(""); // State to track server error
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   // Fetch sectors
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const response = await fetch("http://88.222.245.236:3002/sectors");
+        const response = await fetch(`${API_END_POINT}/sectors`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -51,7 +52,7 @@ const EditCategoryForm = ({ onCancel }) => {
       const fetchCategoryDetails = async () => {
         try {
           const response = await axios.get(
-            `http://88.222.245.236:3002/category/${club.id}`
+            `${API_END_POINT}/category/${club.id}`
           );
           setCategory(response.data); // Set fetched category data
         } catch (error) {
@@ -108,7 +109,7 @@ const EditCategoryForm = ({ onCancel }) => {
 
     try {
       const response = await axios.put(
-        `http://88.222.245.236:3002/category/${category.id}`,
+        `${API_END_POINT}/category/${category.id}`,
         category,
         {
           headers: {

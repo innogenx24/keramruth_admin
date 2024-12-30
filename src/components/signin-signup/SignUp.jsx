@@ -24,6 +24,7 @@ const SignUp = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const formik = useFormik({
     initialValues: {
@@ -40,7 +41,7 @@ const SignUp = () => {
 
     onSubmit: async (values) => {
       try {
-        const response = await fetch("http://88.222.245.236:3002/api/admin/signup", {
+        const response = await fetch(`${API_END_POINT}/api/admin/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

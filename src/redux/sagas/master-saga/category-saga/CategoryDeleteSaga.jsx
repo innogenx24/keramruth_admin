@@ -8,9 +8,11 @@ import {
 import { fetchCategorysRequest } from "../../../slices/master-slice/categort-slice/CategortGetSlice";
 
 function deleteCategoryApi(categoryId, token) {
-  console.log("categoryId", categoryId);
+
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
   return axios.delete(
-    `http://88.222.245.236:3002/category/${categoryId}`,
+    `${API_END_POINT}/category/${categoryId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -22,6 +22,7 @@ const DonutChart = () => {
   });
   const [isDataAvailable, setIsDataAvailable] = useState(true); // To track if data is available
   const [message, setMessage] = useState(''); // To store error/success message
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const options = {
     responsive: true,
@@ -50,7 +51,7 @@ const DonutChart = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get('http://88.222.245.236:3002/overall_sales/mostl_selled_product', {
+        const response = await axios.get(`${API_END_POINT}/overall_sales/mostl_selled_product`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

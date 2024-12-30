@@ -29,6 +29,7 @@ const ClubTable = () => {
   const [selectedClub, setSelectedClub] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const fetchClubs = async () => {
     setLoading(true);
@@ -36,7 +37,7 @@ const ClubTable = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
 
-      const response = await fetch("http://88.222.245.236:3002/club", {
+      const response = await fetch(`${API_END_POINT}/club`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -76,7 +77,7 @@ const ClubTable = () => {
   const handleConfirmDelete = async () => {
     if (selectedClub) {
       try {
-        await fetch(`http://88.222.245.236:3002/club/${selectedClub.id}`, {
+        await fetch(`${API_END_POINT}/club/${selectedClub.id}`, {
           method: "DELETE",
         });
         setClubs((prevClubs) =>

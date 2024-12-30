@@ -14,26 +14,26 @@ function* fetchMembers(action) {
   const user = JSON.parse(localStorage.getItem('user'));
   const role = user?.role;
   const id = user?.id;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
 // console.log("6666", role);
 const API_URL = (() => {
   switch (role) {
     case "Admin":
-      return `http://88.222.245.236:3002/api/user/role-user?role_id=${roleId}`;
+      return `${API_END_POINT}/api/user/role-user?role_id=${roleId}`;
     case "Area Development Officer":
-      return `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${id}&roleId=${roleId}`;
+      return `${API_END_POINT}/directMembers/users-by-ado?adoId=${id}&roleId=${roleId}`;
     case "Master Distributor":
-      return `http://88.222.245.236:3002/directMembers/users-by-md?mdId=${id}&roleId=${roleId}`;
+      return `${API_END_POINT}/directMembers/users-by-md?mdId=${id}&roleId=${roleId}`;
     case "Super Distributor":
-      return `http://88.222.245.236:3002/directMembers/users-by-sd?sdId=${id}&roleId=${roleId}`;
+      return `${API_END_POINT}/directMembers/users-by-sd?sdId=${id}&roleId=${roleId}`;
     case "Distributor":
-      return `http://88.222.245.236:3002/members/cs?distributorId=${id}`;
+      return `${API_END_POINT}/members/cs?distributorId=${id}`;
     default:
       return null;
   }
 })();
-  // const API_URL = `http://88.222.245.236:3002/api/user/role-user?role_id=${roleId}`;
-  console.log("API_URL", API_URL);
+
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");

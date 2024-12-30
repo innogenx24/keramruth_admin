@@ -19,6 +19,7 @@ const ForgotPassword = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -33,7 +34,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await fetch("http://88.222.245.236:3002/forgot-password", {
+      const response = await fetch(`${API_END_POINT}/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

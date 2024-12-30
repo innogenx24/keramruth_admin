@@ -9,6 +9,7 @@ const AddRoleForm = () => {
   const [showErrors, setShowErrors] = useState(false); // Track whether errors should be shown
   const [error, setError] = useState(""); // To store backend error message
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const formik = useFormik({
     initialValues: {
@@ -26,7 +27,7 @@ const AddRoleForm = () => {
         const token = localStorage.getItem("token"); // Get the token from localStorage
 
         const response = await axios.post(
-          "http://88.222.245.236:3002/roles/create", // API URL
+          `${API_END_POINT}/roles/create`, // API URL
           parsedValues, // The role data to be sent
           {
             headers: {

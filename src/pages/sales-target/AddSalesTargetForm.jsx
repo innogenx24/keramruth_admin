@@ -31,6 +31,7 @@ export default function AddSalesTargetForm() {
   const [errors, setErrors] = useState({}); // For tracking validation errors
   const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     // Fetch products from the API
@@ -43,7 +44,7 @@ export default function AddSalesTargetForm() {
         }
 
         const response = await fetch(
-          "http://88.222.245.236:3002/products/admin_product",
+          `${API_END_POINT}/products/admin_product`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -157,7 +158,7 @@ export default function AddSalesTargetForm() {
 
     try {
       const response = await fetch(
-        "http://88.222.245.236:3002/salestarget/create",
+        `${API_END_POINT}/salestarget/create`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

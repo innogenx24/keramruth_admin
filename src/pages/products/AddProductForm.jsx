@@ -26,6 +26,7 @@ const AddProductForm = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [imageError, setImageError] = useState("");
   const [serverError, setServerError] = useState("");
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const currentDate = new Date().toISOString().split("T")[0]; // Current date in yyyy-mm-dd format
   const currentDateWithTimeISO = new Date().toISOString(); // Full ISO date with time
@@ -33,7 +34,7 @@ const AddProductForm = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://88.222.245.236:3002/category");
+        const response = await fetch(`${API_END_POINT}/category`);
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setCategories(data);
@@ -200,7 +201,7 @@ const AddProductForm = () => {
 
       try {
         const token = localStorage.getItem("token");
-        await axios.post("http://88.222.245.236:3002/products", formData, {
+        await axios.post(`${API_END_POINT}/products`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

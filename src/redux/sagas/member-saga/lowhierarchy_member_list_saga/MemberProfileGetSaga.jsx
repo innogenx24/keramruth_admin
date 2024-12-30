@@ -11,6 +11,7 @@ function* fetchMembersMember(action) {
   // const role = user?.role;
   // const id = user?.id;
   const id = memberId;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   
 
 // console.log("6666", role);
@@ -22,21 +23,19 @@ const API_URL = (() => {
 
   switch (roleId) {
     case 3:
-      return `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${roleId}&roleId=${roleId}`;
+      return `${API_END_POINT}/directMembers/users-by-ado?adoId=${roleId}&roleId=${roleId}`;
     case 4:
-      return `http://88.222.245.236:3002/directMembers/users-by-md?mdId=${id}&roleId=${roleId}`;
+      return `${API_END_POINT}/directMembers/users-by-md?mdId=${id}&roleId=${roleId}`;
     case 5:
-      return `http://88.222.245.236:3002/directMembers/users-by-sd?sdId=${id}&roleId=${roleId}`;
+      return `${API_END_POINT}/directMembers/users-by-sd?sdId=${id}&roleId=${roleId}`;
     case 6:
-      return `http://88.222.245.236:3002/members/cs?distributorId=${id}`;
+      return `${API_END_POINT}/members/cs?distributorId=${id}`;
     default:
       console.error(`Unsupported roleId: ${roleId}`);
       return null;
   }
 })();
 
-  // const API_URL = `http://88.222.245.236:3002/api/user/role-user?role_id=${roleId}`;
-  console.log("API_URL", API_URL);
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");

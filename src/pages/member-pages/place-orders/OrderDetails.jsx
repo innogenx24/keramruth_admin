@@ -24,6 +24,7 @@ const OrderDetails = () => {
   const roleId = users?.role_id; // Assuming the user's role_id is stored in the users object
   const [page, setPage] = useState(0); // Current page state
   const [rowsPerPage] = useState(10);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -33,7 +34,7 @@ const OrderDetails = () => {
 
     // Fetch orders for the user
     axios
-      .get(`http://88.222.245.236:3002/orders/get-order/${userId}`, {
+      .get(`${API_END_POINT}/orders/get-order/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -191,7 +192,7 @@ const OrderDetails = () => {
                               <TableRow key={item.id}>
                                 <TableCell>
                                   <img
-                                    src={`http://88.222.245.236:3002/uploads/${item.product.image}`}
+                                    src={`${API_END_POINT}/uploads/${item.product.image}`}
                                     alt={item.product.name}
                                     style={{
                                       width: "80px",

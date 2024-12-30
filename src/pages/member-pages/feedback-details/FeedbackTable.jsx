@@ -22,6 +22,7 @@ const FeedbackTable = () => {
   const dispatch = useDispatch();
   const userId = users?.id; // Assuming the user ID is stored in the state.users object
   const userRole= users?.role_name;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   
 
   // Fetch feedbacks on component mount
@@ -36,8 +37,8 @@ const FeedbackTable = () => {
         // Determine API endpoint based on user role
         const apiEndpoint =
           userRole === "Admin"
-            ? "http://88.222.245.236:3002/feedback/hierarchy"
-            : `http://88.222.245.236:3002/feedback/hierarchy/${userId}`;
+            ? `${API_END_POINT}/feedback/hierarchy`
+            : `${API_END_POINT}/feedback/hierarchy/${userId}`;
 
         const response = await axios.get(apiEndpoint, {
           headers: {
@@ -81,7 +82,7 @@ const FeedbackTable = () => {
                     <Avatar
                       src={
                         feedback.user.image
-                          ? `http://88.222.245.236:3002/uploads/${feedback.user.image}`
+                          ? `${API_END_POINT}/uploads/${feedback.user.image}`
                           : undefined
                       }
                       alt={feedback.user.full_name}

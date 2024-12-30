@@ -19,14 +19,15 @@ const AnnouncementTable = () => {
   const [page, setPage] = useState(0); // Current page number
   const [rowsPerPage] = useState(10); // Rows per page
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   const fetchAnnouncements = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
-      const response = await axios.get("http://88.222.245.236:3002/announcements", {
+      const response = await axios.get(`${API_END_POINT}/announcements`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

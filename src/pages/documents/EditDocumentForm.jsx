@@ -20,8 +20,9 @@ const EditDocumentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const document = location.state?.document || {};
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
   const roles = [
     { label: "Area Development Officer", value: "Area Development Officer" },
     { label: "Master Distributor", value: "Master Distributor" },
@@ -234,7 +235,7 @@ const EditDocumentForm = () => {
 
     try {
       const response = await fetch(
-        `http://88.222.245.236:3002/documents/${document.id}`,
+        `${API_END_POINT}/documents/${document.id}`,
         {
           method: "PUT",
           body: formData,

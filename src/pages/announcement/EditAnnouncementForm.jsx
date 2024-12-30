@@ -21,7 +21,8 @@ const EditAnnouncementForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const announcement = location.state?.announcement || {};
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   const [documentID, setDocumentID] = useState("");
   const [heading, setHeading] = useState("");
@@ -198,7 +199,7 @@ const EditAnnouncementForm = () => {
     }
 
     try {
-      const response = await fetch(`http://88.222.245.236:3002/announcements/${announcement.id}`, {
+      const response = await fetch(`${API_END_POINT}/announcements/${announcement.id}`, {
         method: "PUT",
         body: formData,
       });

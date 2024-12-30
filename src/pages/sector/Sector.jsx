@@ -27,11 +27,12 @@ const SectorTable = () => {
   const [page, setPage] = useState(0); // Page state
   const rowsPerPage = 10; // Rows per page
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const response = await fetch("http://88.222.245.236:3002/sectors");
+        const response = await fetch(`${API_END_POINT}/sectors`);
         const data = await response.json();
 
         // Sort sectors by ID in descending order
@@ -59,14 +60,14 @@ const SectorTable = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await fetch(`http://88.222.245.236:3002/sectors/${selectedSector?.id}`, {
+      await fetch(`${API_END_POINT}/sectors/${selectedSector?.id}`, {
         method: "DELETE",
       });
       setOpenDeleteModal(false);
       setSelectedSector(null);
 
       // Fetch updated sectors list after deletion
-      const response = await fetch("http://88.222.245.236:3002/sectors");
+      const response = await fetch(`${API_END_POINT}/sectors`);
       const data = await response.json();
 
       // Sort sectors by ID in descending order after deletion

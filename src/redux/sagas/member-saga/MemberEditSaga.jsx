@@ -8,10 +8,12 @@ import { memberEditRequest, memberEditSuccess, memberEditFailure, } from '../../
 import { fetchMembersRequest } from "../../slices/member-slice/MemberGetSlice";
 
 function* editMember(action) {
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
   try {
     yield put(memberEditRequest());
     const token = localStorage.getItem('token');
-    const response = yield call(axios.put, `http://88.222.245.236:3002/api/user/update/${action?.payload?.id}`, action?.payload, {
+    const response = yield call(axios.put, `${API_END_POINT}/api/user/update/${action?.payload?.id}`, action?.payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

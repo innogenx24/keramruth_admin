@@ -34,6 +34,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
   const [imageError, setImageError] = useState("");
   const [headingError, setHeadingError] = useState("");
   const [descriptionError, setDescriptionError] = useState(""); // Add descriptionError state
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const roles = [
     { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
@@ -198,7 +199,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
     }
 
     try {
-      const response = await fetch("http://88.222.245.236:3002/announcements/create", {
+      const response = await fetch(`${API_END_POINT}/announcements/create`, {
         method: "POST",
         body: formData,
       });

@@ -14,6 +14,7 @@ const EditOrderLimit = () => {
   const [errors, setErrors] = useState({
     hours: '',
   });
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     if (!limit) {
@@ -52,7 +53,7 @@ const EditOrderLimit = () => {
     }
 
     try {
-      await axios.put(`http://88.222.245.236:3002/api/order-limits/${limit.id}`, { hours });
+      await axios.put(`${API_END_POINT}/api/order-limits/${limit.id}`, { hours });
       setOpenSnackbar(true); // Show success message
       setTimeout(() => navigate("/dashboard/orders_time_set"), 1500); // Redirect after a short delay
     } catch (error) {

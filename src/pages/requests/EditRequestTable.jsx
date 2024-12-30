@@ -32,9 +32,9 @@ const MemberTable = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
   const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
   const [sortedEditRequests, setSortedEditRequests] = useState([]);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  // const imageBaseURL = "http://88.222.245.236:3002/uploads/";
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   // Sort data by updated_at in descending order (initial sort)
   useEffect(() => {
@@ -49,7 +49,7 @@ const MemberTable = () => {
 
   const fetchEditRequests = async () => {
     try {
-      const response = await fetch("http://88.222.245.236:3002/edit-requests");
+      const response = await fetch(`${API_END_POINT}/edit-requests`);
       const data = await response.json();
 
       if (data.success) {
@@ -101,7 +101,7 @@ const MemberTable = () => {
     };
 
     try {
-      const response = await fetch(`http://88.222.245.236:3002/api/member-update/update/${memberId}`, {
+      const response = await fetch(`${API_END_POINT}/api/member-update/update/${memberId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
@@ -130,7 +130,7 @@ const MemberTable = () => {
 
   const handleReject = async (requestId) => {
     try {
-      const response = await fetch(`http://88.222.245.236:3002/edit-requests/reject/${requestId}`, {
+      const response = await fetch(`${API_END_POINT}/edit-requests/reject/${requestId}`, {
         method: "DELETE",  // Change from POST to DELETE to match your server-side API
       });
       const data = await response.json();

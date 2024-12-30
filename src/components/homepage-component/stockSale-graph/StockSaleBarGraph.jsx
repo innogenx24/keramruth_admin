@@ -60,6 +60,7 @@ export function StockSaleBarGraph() {
 
   const [totalTarget, setTotalTarget] = useState(0);
   const [totalSold, setTotalSold] = useState(0);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const options = {
     responsive: true,
@@ -140,7 +141,7 @@ export function StockSaleBarGraph() {
     // Fetch data from API
     const fetchStockDetails = async () => {
       try {
-        const response = await axios.get('http://88.222.245.236:3002/overall_sales/stock_over_detail', {
+        const response = await axios.get(`${API_END_POINT}/overall_sales/stock_over_detail`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

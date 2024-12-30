@@ -37,6 +37,7 @@ export default function ReportTable() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
 
   const toggleDatePicker = () => {
@@ -47,7 +48,7 @@ export default function ReportTable() {
     // Fetch areas dynamically from API based on user data
     const fetchAreas = async () => {
       try {
-        const response = await fetch(`http://88.222.245.236:3002/api/user/${userId}`);
+        const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
         const data = await response.json();
         // Assuming the API response contains a list of cities or areas
         const userAreas = [
@@ -101,7 +102,7 @@ export default function ReportTable() {
 
   const fetchUserCounts = async () => {
     try {
-      const response = await fetch(`http://88.222.245.236:3002/api/user/${userId}`);
+      const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
       const data = await response.json();
 
       const users = [
@@ -126,7 +127,7 @@ export default function ReportTable() {
   const fetchSalesAchievement = async (roleId, userId) => {
     try {
       const response = await fetch(
-        `http://88.222.245.236:3002/user_sales_detail/sales_achievement/${roleId}/${userId}`
+        `${API_END_POINT}/user_sales_detail/sales_achievement/${roleId}/${userId}`
       );
       const data = await response.json();
       return data;
@@ -303,7 +304,7 @@ export default function ReportTable() {
                   <Box display="flex" alignItems="center">
                     <Avatar
                       alt={row.full_name}
-                      src={`http://88.222.245.236:3002/uploads/${row.image}`}
+                      src={`${API_END_POINT}/uploads/${row.image}`}
                       sx={{ width: 40, height: 40, marginRight: 2 }}
                     />
                     {row.full_name}

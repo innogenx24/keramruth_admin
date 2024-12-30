@@ -9,13 +9,14 @@ const AddCategoryForm = () => {
   const [sectors, setSectors] = useState([]);
   const [serverError, setServerError] = useState(""); // Store server error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const response = await fetch("http://88.222.245.236:3002/sectors");
+        const response = await fetch(`${API_END_POINT}/sectors`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -54,7 +55,7 @@ const AddCategoryForm = () => {
         // Making the API call directly here
         const token = localStorage.getItem('token');
         const response = await axios.post(
-          'http://88.222.245.236:3002/category',
+          `${API_END_POINT}/category`,
           parsedValues,
           {
             headers: {

@@ -7,8 +7,10 @@ function* editAdminUser(action) {
   try {
     yield put(userEditRequest());
     const token = localStorage.getItem('token');
+    const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
     console.log("action", action);
-    const response = yield call(axios.put, `http://88.222.245.236:3002/api/admin/update`, action?.payload, {
+    const response = yield call(axios.put, `${API_END_POINT}/api/admin/update`, action?.payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

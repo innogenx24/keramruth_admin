@@ -24,6 +24,7 @@ export default function EditMinimumStockForm() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -98,7 +99,7 @@ export default function EditMinimumStockForm() {
     console.log('Sending payload:', JSON.stringify(payload));
 
     try {
-      const response = await fetch(`http://88.222.245.236:3002/minimumstock/${state.row.id}`, {
+      const response = await fetch(`${API_END_POINT}/minimumstock/${state.row.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -27,11 +27,12 @@ const CustomerDashboard = () => {
   const [error, setError] = useState(null);
   const [totalOrders, setTotalOrders] = useState(0);
   const [lastOrderDate, setLastOrderDate] = useState("");
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   useEffect(() => {
     // Fetch customer details using the memberID
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`http://88.222.245.236:3002/api/user/customer-deatils/${memberID}`);
+        const response = await fetch(`${API_END_POINT}/api/user/customer-deatils/${memberID}`);
         if (!response.ok) {
           throw new Error("Failed to fetch customer data");
         }
@@ -47,7 +48,7 @@ const CustomerDashboard = () => {
     // Fetch order data using the memberID
     const fetchOrdersData = async () => {
       try {
-        const response = await fetch(`http://88.222.245.236:3002/orders/get-orders/${memberID}`);
+        const response = await fetch(`${API_END_POINT}/orders/get-orders/${memberID}`);
         if (!response.ok) {
           throw new Error("Failed to fetch order data");
         }
@@ -124,7 +125,7 @@ const CustomerDashboard = () => {
                 <Grid item xs={12} sm={2} display="flex" justifyContent="center">
                   <Avatar
                     alt={customer.full_name}
-                    src={`http://88.222.245.236:3002/uploads/${customer.image}`}
+                    src={`${API_END_POINT}/uploads/${customer.image}`}
                     sx={{
                       width: 100,
                       height: 100,
@@ -180,7 +181,7 @@ const CustomerDashboard = () => {
                   <CardContent>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <img
-                        src={`http://88.222.245.236:3002/uploads/${item.productImage || "placeholder.png"}`}
+                        src={`${API_END_POINT}/uploads/${item.productImage || "placeholder.png"}`}
                         style={{
                           width: "80px",
                           height: "auto",

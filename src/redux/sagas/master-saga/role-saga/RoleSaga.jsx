@@ -7,7 +7,9 @@ import {
 } from "../../../slices/master-slice/role-slice/RoleGetSlice";
 
 function* fetchRoles() {
-  const API_URL = `http://88.222.245.236:3002/roles/role-list`;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+  const API_URL = `${API_END_POINT}/roles/role-list`;
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");

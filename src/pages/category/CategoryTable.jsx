@@ -32,6 +32,7 @@ const CategoryTable = () => {
   const [page, setPage] = useState(0); // State for pagination
   const rowsPerPage = 10; // Define rows per page
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     dispatch(fetchCategorysRequest());
@@ -56,7 +57,7 @@ const CategoryTable = () => {
   // Function to confirm deletion
   const handleConfirmDelete = async () => {
     try {
-      const response = await fetch(`http://88.222.245.236:3002/category/${selectedClub?.id}`, {
+      const response = await fetch(`${API_END_POINT}/category/${selectedClub?.id}`, {
         method: "DELETE",
       });
       if (response.ok) {

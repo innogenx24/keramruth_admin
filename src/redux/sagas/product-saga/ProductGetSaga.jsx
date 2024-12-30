@@ -4,8 +4,8 @@ import { fetchProductsFailure, fetchProductsRequest, fetchProductsSuccess } from
 
 
 /** Define the API URL **/
-// const API_URL = 'http://88.222.245.236:3002/products';
-const API_URL = 'http://88.222.245.236:3002/products/admin_product';
+const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+const API_URL = `${API_END_POINT}/products/admin_product`;
 
 
 /** Worker saga to fetch products**/

@@ -13,6 +13,9 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import "./adduser.css";
 
 const AddUserForm = () => {
+
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
   const [userDetails, setUserDetails] = useState({
     fullName: "",
     mobileNo: "",
@@ -64,7 +67,7 @@ const AddUserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://88.222.245.236:3002/api/admin/signup", {
+      const response = await fetch(`${API_END_POINT}/api/admin/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

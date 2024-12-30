@@ -6,8 +6,9 @@ function* postRole(action) {
   try {
     yield put(rolePostRequest());
     const token = localStorage.getItem('token');
+    const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   
-    const response = yield call(axios.post, 'http://88.222.245.236:3002/roles/create', action.payload, {
+    const response = yield call(axios.post, `${API_END_POINT}/roles/create`, action.payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

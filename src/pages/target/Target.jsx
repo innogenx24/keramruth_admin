@@ -22,6 +22,7 @@ const TargetPage = () => {
   const { users } = useSelector((state) => state.users);
   const userId = users?.id;
   const roleId = users?.role_name;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const fetchTargetData = async () => {
     const token = localStorage.getItem("token");
@@ -32,7 +33,7 @@ const TargetPage = () => {
 
     try {
       const response = await axios.get(
-        `http://88.222.245.236:3002/user_sales_detail/sales_achievement/${roleId}/${userId}`,
+        `${API_END_POINT}/user_sales_detail/sales_achievement/${roleId}/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

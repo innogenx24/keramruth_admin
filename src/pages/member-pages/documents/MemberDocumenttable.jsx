@@ -20,8 +20,9 @@ const MemberDocumenttable = () => {
   const [documents, setDocuments] = useState([]);
   const [page, setPage] = useState(0); // Pagination state
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   // Fetching documents and sorting them by ID in descending order
   const fetchDocuments = async () => {
@@ -29,7 +30,7 @@ const MemberDocumenttable = () => {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
       if (!token) throw new Error("Token not found");
 
-      const response = await axios.get("http://88.222.245.236:3002/documents", {
+      const response = await axios.get(`${API_END_POINT}/documents`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

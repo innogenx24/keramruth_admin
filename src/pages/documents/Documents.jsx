@@ -28,8 +28,9 @@ const DocumentsTable = () => {
   const [documentToDelete, setDocumentToDelete] = useState(null);
   const [page, setPage] = useState(0); // Pagination state
   const navigate = useNavigate();
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   // Fetching documents and sorting them by ID in descending order
   const fetchDocuments = async () => {
@@ -37,7 +38,7 @@ const DocumentsTable = () => {
       const token = localStorage.getItem("token"); // Retrieve token from localStorage
       if (!token) throw new Error("Token not found");
 
-      const response = await axios.get("http://88.222.245.236:3002/documents/admin", {
+      const response = await axios.get(`${API_END_POINT}/documents/admin`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -76,7 +77,7 @@ const DocumentsTable = () => {
   const confirmDelete = async () => {
     if (documentToDelete) {
       try {
-        await axios.delete(`http://88.222.245.236:3002/documents/${documentToDelete.id}`);
+        await axios.delete(`${API_END_POINT}/documents/${documentToDelete.id}`);
         setDocuments((prevDocuments) => 
           prevDocuments.filter((doc) => doc.id !== documentToDelete.id)
         );
@@ -91,7 +92,7 @@ const DocumentsTable = () => {
     const updatedStatus = !document.activateStatus;
 
     try {
-      await axios.patch(`http://88.222.245.236:3002/documents/${document.id}`, {
+      await axios.patch(`${API_END_POINT}/documents/${document.id}`, {
         activateStatus: updatedStatus,
       });
       setDocuments((prevDocuments) =>

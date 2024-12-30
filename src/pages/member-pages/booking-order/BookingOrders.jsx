@@ -12,7 +12,8 @@ const BookingOrders = () => {
   const [openPopup, setOpenPopup] = useState(false); // To control popup visibility
   const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
   const couponCode = ""; // Example coupon code
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
   const { users } = useSelector((state) => state.users); // Fetch users from Redux store
   const userId = users?.id; // Get the user ID from the state.users object
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,7 +38,7 @@ const BookingOrders = () => {
   
     try {
       const response = await axios.get(
-        "http://88.222.245.236:3002/products/user_product",
+        `${API_END_POINT}/products/user_product`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -129,7 +130,7 @@ const BookingOrders = () => {
     };
 
     try {
-      await axios.post("http://88.222.245.236:3002/orders/create-order", orderData, {
+      await axios.post(`${API_END_POINT}/orders/create-order`, orderData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

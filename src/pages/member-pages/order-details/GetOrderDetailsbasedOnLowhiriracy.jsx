@@ -17,7 +17,9 @@ import {
 import axios from 'axios';
 import { useSelector, useDispatch } from "react-redux";
 
-const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+const imageBaseURL = `${API_END_POINT}/uploads/`;
 
 const GetOrderDetailsbasedOnLowhiriracy = () => {
   const [pendingOrders, setPendingOrders] = useState([]);
@@ -33,7 +35,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('error'); // Default severity
 
-  const API_URL = `http://88.222.245.236:3002/orders/get-order-request/${userId}`;
+  const API_URL = `${API_END_POINT}/orders/get-order-request/${userId}`;
 
   const fetchOrders = async () => {
     const token = localStorage.getItem('token');
@@ -84,7 +86,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
     }
 
     try {
-      const apiEndpoint = `http://88.222.245.236:3002/orders/order/${orderId}`;
+      const apiEndpoint = `${API_END_POINT}/orders/order/${orderId}`;
       await axios.post(
         apiEndpoint,
         { action },

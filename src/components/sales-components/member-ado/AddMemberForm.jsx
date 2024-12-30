@@ -692,6 +692,7 @@ const AddMemberForm = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role;
   const UserId = user?.id;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
 
 
@@ -701,7 +702,7 @@ const AddMemberForm = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Token not found");
 
-      const response = await fetch("http://88.222.245.236:3002/club", {
+      const response = await fetch(`${API_END_POINT}/club`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -906,7 +907,7 @@ const AddMemberForm = () => {
     if (selectedAdo && ["3", "4", "5", "6"].includes(selectedRole)) {
       // Fetch MDs based on selected ADO
       fetch(
-        `http://88.222.245.236:3002/directMembers/users-by-ado?adoId=${selectedAdo}&roleId=3`
+        `${API_END_POINT}/directMembers/users-by-ado?adoId=${selectedAdo}&roleId=3`
       )
         .then((res) => res.json())
         .then((data) => setMds(data))
@@ -918,7 +919,7 @@ const AddMemberForm = () => {
     if (selectedMd && ["4", "5", "6"].includes(selectedRole)) {
       // Fetch SDs based on selected MD
       fetch(
-        `http://88.222.245.236:3002/directMembers/users-by-md?mdId=${selectedMd}&roleId=4`
+        `${API_END_POINT}/directMembers/users-by-md?mdId=${selectedMd}&roleId=4`
       )
         .then((res) => res.json())
         .then((data) => setSds(data))
@@ -930,7 +931,7 @@ const AddMemberForm = () => {
     if (selectedSd && ["5", "6"].includes(selectedRole)) {
       // Fetch Ds based on selected SD
       fetch(
-        `http://88.222.245.236:3002/directMembers/users-by-sd?sdId=${selectedSd}&roleId=5`
+        `${API_END_POINT}/directMembers/users-by-sd?sdId=${selectedSd}&roleId=5`
       )
         .then((res) => res.json())
         .then((data) => setDs(data))

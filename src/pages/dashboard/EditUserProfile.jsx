@@ -16,7 +16,8 @@ import axios from "axios";
 
 const EditUserProfile = () => {
   const navigate = useNavigate();
-  const imageBaseURL = "http://88.222.245.236:3002/uploads/";
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT}/uploads/`;
 
   const [selectedImage, setSelectedImage] = useState("/static/images/avatar/1.jpg");
   const [imageFile, setImageFile] = useState(null);
@@ -47,7 +48,7 @@ const EditUserProfile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://88.222.245.236:3002/api/admin/admin-details", {
+        const response = await axios.get(`${API_END_POINT}/api/admin/admin-details`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -236,7 +237,7 @@ const stateCityMap = {
 
     try {
       const token = localStorage.getItem("token"); // Get the token from localStorage
-      const response = await axios.put("http://88.222.245.236:3002/api/admin/update", formData, {
+      const response = await axios.put(`${API_END_POINT}/api/admin/update`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

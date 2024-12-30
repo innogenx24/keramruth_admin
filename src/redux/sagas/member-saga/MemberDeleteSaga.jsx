@@ -8,9 +8,11 @@ import {
 import { fetchMembersRequest } from "../../slices/member-slice/MemberGetSlice";
 
 function deleteMemberApi(memberId, token) {
-  // console.log("memberId", memberId);
+
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
   return axios.delete(
-    `http://88.222.245.236:3002/api/user/delete/${memberId}`,
+    `${API_END_POINT}/api/user/delete/${memberId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

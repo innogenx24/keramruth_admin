@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 const NotificationPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   // Get logged-in user's ID from localStorage
   const loginUser = JSON.parse(localStorage.getItem("user"));
@@ -39,7 +40,7 @@ const NotificationPage = () => {
   const markAsRead = async (notificationId) => {
     try {
       const response = await fetch(
-        `http://88.222.245.236:3002/month_notifications/notifications/read/${loginUserRole}/${notificationId}`,
+        `${API_END_POINT}/month_notifications/notifications/read/${loginUserRole}/${notificationId}`,
         { method: "PUT" }
       );
 
@@ -178,7 +179,7 @@ const NotificationPage = () => {
                     sx={styles.avatar}
                     src={
                       notification.photo
-                        ? `http://88.222.245.236:3002/uploads/notification-images/${notification.photo}`
+                        ? `${API_END_POINT}/uploads/notification-images/${notification.photo}`
                         : null
                     }
                   >
