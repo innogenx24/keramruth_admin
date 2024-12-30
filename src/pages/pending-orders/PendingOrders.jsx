@@ -192,7 +192,7 @@ const OrderManagement = () => {
                       </TableCell>
                       <TableCell>{order.orderUniqueId}</TableCell>
                       <TableCell>
-                        {order.OrderItems.reduce((total, item) => total + item.quantity, 0).toLocaleString()}
+                      {parseFloat(order.totalOrderQuantity).toFixed(0)}
                       </TableCell>
                       <TableCell>Rs. {parseFloat(order.totalAmount).toFixed(2)}</TableCell>
                       <TableCell>

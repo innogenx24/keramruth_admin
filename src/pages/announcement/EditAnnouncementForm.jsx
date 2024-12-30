@@ -91,7 +91,7 @@ const EditAnnouncementForm = () => {
     if (file) {
       const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB size limit
       const fileSizeMB = file.size / (1024 * 1024); // Convert size to MB
-  
+
       // Validate file format
       const validFormats = ['image/jpeg', 'image/png'];
       if (!validFormats.includes(file.type)) {
@@ -102,7 +102,7 @@ const EditAnnouncementForm = () => {
         setExistingImage(""); // Clear existing image if error occurs
         return;
       }
-  
+
       // Validate file size
       if (fileSizeMB > 2) {
         setImageError("File size must be less than 2MB.");
@@ -112,12 +112,12 @@ const EditAnnouncementForm = () => {
         setExistingImage(""); // Clear existing image if error occurs
         return;
       }
-  
+
       // Clear error if file is valid
       setImageError("");
       setImageFile(file);
       setImageFileName(file.name);
-  
+
       // Generate image preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -127,7 +127,7 @@ const EditAnnouncementForm = () => {
       setExistingImage(""); // Clear existing image if new file is selected
     }
   };
-  
+
 
   const validateLink = (url) => {
     const regex = /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
@@ -172,11 +172,7 @@ const EditAnnouncementForm = () => {
       isValid = false;
     }
 
-    // Validate Image (if necessary)
-    if (!imageFile && !existingImage) {
-      setImageError("Image is required.");
-      isValid = false;
-    }
+
 
     return isValid;
   };
@@ -276,7 +272,7 @@ const EditAnnouncementForm = () => {
               </Typography>
             )}
 
-<TextField
+            <TextField
               fullWidth
               label="Link"
               value={link}
@@ -291,11 +287,11 @@ const EditAnnouncementForm = () => {
             )}
           </Box>
         </Grid>
-  
+
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            
-  
+
+
             <FormControl fullWidth margin="normal">
               <Typography variant="h6">Select Receivers</Typography>
               <FormControlLabel
@@ -333,7 +329,7 @@ const EditAnnouncementForm = () => {
           </Box>
         </Grid>
       </Grid>
-  
+
       {errorMessage && (
         <Typography variant="body2" sx={{ color: "red", marginTop: "20px" }}>
           {errorMessage}
@@ -341,7 +337,7 @@ const EditAnnouncementForm = () => {
       )}
     </Box>
   );
-  
+
 };
 
 export default EditAnnouncementForm;

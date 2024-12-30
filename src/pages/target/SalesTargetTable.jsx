@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import EditButton from "../../assets/actions/EditButton.svg";
 
 const SalesTargetTable = () => {
   const [tableData, setTableData] = useState([]);
@@ -84,14 +85,17 @@ const SalesTargetTable = () => {
                 <TableCell>{row.duration}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEditClick(row)}>
-                    <EditIcon />
+                    <img
+                      src={EditButton}
+                      alt="Edit"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "contain",
+                        transform: "scale(1.5)",
+                      }}
+                    />
                   </IconButton>
-                  {/* <IconButton
-                    color="error"
-                    onClick={() => handleDeleteClick(row.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton> */}
                 </TableCell>
               </TableRow>
             ))}

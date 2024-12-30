@@ -15,6 +15,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import EditButton from "../../assets/actions/EditButton.svg";
 
 const OrderLimitsTable = () => {
   const [orderLimits, setOrderLimits] = useState([]);
@@ -25,14 +26,14 @@ const OrderLimitsTable = () => {
 
   useEffect(() => {
     const fetchOrderLimits = async () => {
-      setLoading(true); 
+      setLoading(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token not found");
 
         const response = await axios.get(`${API_END_POINT}/api/order-limits`, {
           headers: {
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -103,8 +104,21 @@ const OrderLimitsTable = () => {
 
                 <TableCell>{limit.hours}</TableCell>
                 <TableCell>
-                  <IconButton color="secondary" onClick={() => handleEditClick(limit)}>
-                    <EditIcon />
+                  {/* Edit Button */}
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEditClick(limit)}
+                  >
+                    <img
+                      src={EditButton}
+                      alt="Edit"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "contain",
+                        transform: "scale(1.5)",
+                      }}
+                    />
                   </IconButton>
                 </TableCell>
               </TableRow>

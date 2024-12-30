@@ -65,7 +65,7 @@ const EditDocumentForm = () => {
           ? document.receiver
           : roles.map((role) => role.value)
       );
-            setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
+      setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
       setImageName(document.image || "");
     }
@@ -95,7 +95,7 @@ const EditDocumentForm = () => {
     const file = event.target.files[0];
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert file size to MB
-  
+
       // Check if file size exceeds 2MB
       if (fileSizeMB > 2) {
         setImageError("File size must be less than 2MB");
@@ -104,7 +104,7 @@ const EditDocumentForm = () => {
       } else {
         setImageError(""); // Clear error if file size is valid
       }
-  
+
       // Check if file type is JPEG, JPG, or PNG
       const validImageTypes = ['image/jpeg', 'image/png'];
       if (!validImageTypes.includes(file.type)) {
@@ -114,12 +114,12 @@ const EditDocumentForm = () => {
       } else {
         setImageError(""); // Clear error if file type is valid
       }
-  
+
       setImage(file);
       setImageName(file.name);
     }
   };
-  
+
   const validateLink = (link) => {
     const validLinkRegex = /^(https?:\/\/|https:\/\/www\.youtube\.com\/watch\?v=)/;
     return validLinkRegex.test(link);
@@ -144,40 +144,36 @@ const EditDocumentForm = () => {
   const validateForm = () => {
     let formErrors = {};
     let isValid = true;
-  
+
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize to start of the day
-  
+
     // Heading validation
     if (!heading.trim()) {
       formErrors.heading = "Heading is required";
       isValid = false;
     }
-  
+
     // Description validation
     if (!description.trim()) {
       formErrors.description = "Description is required";
       isValid = false;
     }
-  
+
     // Link validation
     if (!link.trim() || errors.link) {
       formErrors.link = "Link is required and must be a valid URL";
       isValid = false;
     }
-  
+
     // Receiver validation
     if (receiver.length === 0) {
       formErrors.receiver = "At least one role must be selected";
       isValid = false;
     }
-  
-    // Image validation
-    if (!image && !imageName) {
-      formErrors.image = "Image is required";
-      isValid = false;
-    }
-  
+
+
+
     // From Date validation
     if (autoUpdate && fromDate) {
       const fromDateObj = new Date(fromDate);
@@ -189,7 +185,7 @@ const EditDocumentForm = () => {
       formErrors.fromDate = "From Date is required";
       isValid = false;
     }
-  
+
     // To Date validation
     if (autoUpdate && toDate) {
       const toDateObj = new Date(toDate);
@@ -204,7 +200,7 @@ const EditDocumentForm = () => {
       formErrors.toDate = "To Date is required";
       isValid = false;
     }
-  
+
     setErrors(formErrors);
     return isValid;
   };
@@ -315,15 +311,15 @@ const EditDocumentForm = () => {
                 {errors.description}
               </Typography>
             )}
-              <TextField
-          fullWidth
-          label="Link"
-          value={link}
-          onChange={handleLinkChange}
-          margin="normal"
-          error={!!errors.link}
-          helperText={errors.link}
-        />
+            <TextField
+              fullWidth
+              label="Link"
+              value={link}
+              onChange={handleLinkChange}
+              margin="normal"
+              error={!!errors.link}
+              helperText={errors.link}
+            />
           </Box>
         </Grid>
 
@@ -334,37 +330,37 @@ const EditDocumentForm = () => {
               Select Receiver Roles
             </Typography>
             <FormControl component="fieldset" sx={{ mb: 3 }}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={selectAll}
-              onChange={handleReceiverChange}
-              value="selectAll"
-            />
-          }
-          label="Select All"
-        />
-        {roles.map((role) => (
-          <FormControlLabel
-            key={role.value}
-            control={
-              <Checkbox
-                checked={receiver.includes(role.value)}
-                onChange={handleReceiverChange}
-                value={role.value}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectAll}
+                    onChange={handleReceiverChange}
+                    value="selectAll"
+                  />
+                }
+                label="Select All"
               />
-            }
-            label={role.label}
-          />
-        ))}
-        {errors.receiver && (
-          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            {errors.receiver}
-          </Typography>
-        )}
-      </FormControl>
- {/* Auto Update */}
- <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+              {roles.map((role) => (
+                <FormControlLabel
+                  key={role.value}
+                  control={
+                    <Checkbox
+                      checked={receiver.includes(role.value)}
+                      onChange={handleReceiverChange}
+                      value={role.value}
+                    />
+                  }
+                  label={role.label}
+                />
+              ))}
+              {errors.receiver && (
+                <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                  {errors.receiver}
+                </Typography>
+              )}
+            </FormControl>
+            {/* Auto Update */}
+            <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
               <label style={{ marginRight: "8px" }}>Auto Update</label>
               <Switch
                 checked={autoUpdate}
@@ -378,28 +374,28 @@ const EditDocumentForm = () => {
               <Box sx={{ mt: 2 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
-                  <TextField
-  fullWidth
-  label="From Date"
-  type="date"
-  value={fromDate}
-  onChange={(e) => setFromDate(e.target.value)}
-  InputLabelProps={{ shrink: true }}
-  error={!!errors.fromDate}
-  helperText={errors.fromDate}
-/>
+                    <TextField
+                      fullWidth
+                      label="From Date"
+                      type="date"
+                      value={fromDate}
+                      onChange={(e) => setFromDate(e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                      error={!!errors.fromDate}
+                      helperText={errors.fromDate}
+                    />
                   </Grid>
                   <Grid item xs={6}>
-                  <TextField
-  fullWidth
-  label="To Date"
-  type="date"
-  value={toDate}
-  onChange={(e) => setToDate(e.target.value)}
-  InputLabelProps={{ shrink: true }}
-  error={!!errors.toDate}
-  helperText={errors.toDate}
-/>
+                    <TextField
+                      fullWidth
+                      label="To Date"
+                      type="date"
+                      value={toDate}
+                      onChange={(e) => setToDate(e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                      error={!!errors.toDate}
+                      helperText={errors.toDate}
+                    />
                   </Grid>
                 </Grid>
               </Box>

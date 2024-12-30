@@ -127,7 +127,7 @@ const RoutesConfig = () => {
             <Route path="feedback" element={<FeedbackTable />} />
 
             <Route path="place-orders" element={<OrderDetails />} />
-            <Route path="place-orders/feedback/:orderId" element={<FeedbackComponent />} />
+            <Route path="place-orders/feedback/:orderId/:ProductId" element={<FeedbackComponent />} />
             <Route path="documents" element={<Documents />} />
             <Route path="documents-member" element={<MemberDocumenttable />} />
 

@@ -25,6 +25,7 @@ const OrderDetails = () => {
   const [page, setPage] = useState(0); // Current page state
   const [rowsPerPage] = useState(10);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -55,18 +56,25 @@ const OrderDetails = () => {
     setSelectedOrderId(selectedOrderId === orderId ? null : orderId);
   };
 
-  const handleFeedbackClick = (order) => {
-    const firstProduct = order.OrderItems[0];
-
-    navigate(`/dashboard/place-orders/feedback/${order.id}`, {
-      state: {
-        productName: firstProduct.product.name,
-        productImage: firstProduct.product.image,
-        orderId: order.id,
-        productId: firstProduct.product.id,
-      },
-    });
+  const handleFeedbackClick = (order, product) => {
+    if (product) {
+      navigate(`/dashboard/place-orders/feedback/${order.id}/${product.id}`, {
+        state: {
+          productName: product.name,
+          productImage: product.image,
+          orderId: order.id,
+          productId: product.id,
+        },
+      });
+    } else {
+      // No product found
+      console.log("No product found in this order:", order);
+      alert("No product found in this order.");
+    }
   };
+
+
+
 
   const renderPagination = (page, setPage, totalRows) => (
     <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
@@ -90,7 +98,6 @@ const OrderDetails = () => {
     </div>
   );
 
-
   const paginatedOrders = orders.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   return (
@@ -109,13 +116,12 @@ const OrderDetails = () => {
               <TableCell>Total Order Quantity</TableCell>
               <TableCell>Order Date</TableCell>
               <TableCell>Status</TableCell>
-              {roleId === 6 && <TableCell>Feedback</TableCell>} {/* Conditional Rendering */}
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell colSpan={6} align="center">
                   Loading...
                 </TableCell>
               </TableRow>
@@ -128,13 +134,12 @@ const OrderDetails = () => {
                   >
                     <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>{order.order_id}</TableCell>
-
                     <TableCell>Rs. {parseFloat(order.total_amount).toFixed(2)}</TableCell>
                     <TableCell>
-                      {order.OrderItems.reduce(
+                      {order.OrderItems?.reduce(
                         (total, item) => total + item.quantity,
                         0
-                      ).toLocaleString()}
+                      ).toLocaleString() || "0"}
                     </TableCell>
                     <TableCell>
                       {new Date(order.createdAt).toLocaleDateString("en-US", {
@@ -157,25 +162,11 @@ const OrderDetails = () => {
                     >
                       {order.status}
                     </TableCell>
-                    {roleId === 6 && ( // Only show Feedback button if role_id is 6
-                      <TableCell>
-                        {(order.status === "Accepted" || order.status === "Cancelled") && (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            onClick={() => handleFeedbackClick(order)}
-                          >
-                            Feedback
-                          </Button>
-                        )}
-                      </TableCell>
-                    )}
                   </TableRow>
 
                   {/* Product Details Collapse */}
                   <TableRow>
-                    <TableCell colSpan={5} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                    <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
                       <Collapse in={selectedOrderId === order.id} timeout="auto" unmountOnExit>
                         <Table size="small">
                           <TableHead>
@@ -185,10 +176,11 @@ const OrderDetails = () => {
                               <TableCell>Price</TableCell>
                               <TableCell>Quantity</TableCell>
                               <TableCell>Final Price</TableCell>
+                              {roleId === 6 && order.status !== "Pending" && <TableCell>Feedback</TableCell>}
                             </TableRow>
                           </TableHead>
                           <TableBody>
-                            {order.OrderItems.map((item) => (
+                            {order.OrderItems?.map((item) => (
                               <TableRow key={item.id}>
                                 <TableCell>
                                   <img
@@ -208,7 +200,23 @@ const OrderDetails = () => {
                                 <TableCell>{item.baseprice}</TableCell>
                                 <TableCell>{item.quantity}</TableCell>
                                 <TableCell>{item.final_price}</TableCell>
+                                {roleId === 6 && (
+                                  <TableCell>
+                                    {(order.status === "Accepted" || order.status === "Cancelled") && (
+                                      <Button
+                                        variant="contained"
+                                        style={{ backgroundColor: 'green', color: 'white' }} 
+                                        size="small"
+                                        onClick={() => handleFeedbackClick(order, item.product)}
+                                      >
+                                        Feedback
+                                      </Button>
+                                    )}
+                                  </TableCell>
+
+                                )}
                               </TableRow>
+
                             ))}
                           </TableBody>
                         </Table>

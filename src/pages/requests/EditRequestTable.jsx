@@ -20,7 +20,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-
+import DoneIcon from '@mui/icons-material/Done';
 const MemberTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize the navigate hook
@@ -168,102 +168,126 @@ const MemberTable = () => {
         Current Details
       </Typography>
       <TableContainer component={Paper}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell>ID Proof</TableCell>
-        <TableCell>Member Name</TableCell>
-        <TableCell>Role</TableCell>
-        <TableCell>Date Of Joining</TableCell>
-        <TableCell>Mobile No</TableCell>
-        <TableCell>New Mobile Number</TableCell>
-        <TableCell>New Email ID</TableCell>
-        <TableCell>New Address</TableCell>
-        <TableCell>Request Reason</TableCell>
-        <TableCell>Action</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {sortedEditRequests.map((request) => {
-        // Skip rows if the status is not "Pending"
-        if (request.status !== "Pending") return null;
-
-        // Find the corresponding member from combinedMembers
-        const member = combinedMembers.find((member) => member.id === request.user_id);
-
-        // If member is not found or if the member's approval is pending, skip rendering
-        if (!member || member.approved === "Pending") return null;
-
-        // Check if the existing and new data are the same
-        const isMobileSame = member?.mobile_number === request.new_mobile_number;
-        const isEmailSame = member?.email === request.new_email_id;
-        const isAddressSame =
-          member?.street_name === request.new_address.street &&
-          member?.city === request.new_address.city &&
-          member?.state === request.new_address.state &&
-          member?.pincode === request.new_address.zip;
-
-        // Only display the row if any of the mobile number, email, or address fields differ
-        if (!isMobileSame || !isEmailSame || !isAddressSame) {
-          return (
-            <TableRow key={request.id}>
-              <TableCell>
-                {request.image ? (
-                  <img
-                    src={`${imageBaseURL}${request.image}`}
-                    style={{ width: 50, height: 50, cursor: "pointer" }}
-                    onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
-                  />
-                ) : (
-                  "No Image"
-                )}
-              </TableCell>
-              <TableCell>{member.full_name}</TableCell>
-              <TableCell>{member.role_name}</TableCell>
-              <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
-              <TableCell>{member.mobile_number}</TableCell>
-              <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
-              <TableCell
-                sx={{
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: 2,
-                  wordBreak: "break-word",
-                }}
-              >
-                {isEmailSame ? "-" : request.new_email_id}
-              </TableCell>
-              <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
-              <TableCell>{request.request_reason}</TableCell>
-              <TableCell>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    style={{ color: "red" }}
-                    onClick={() => handleReject(request.id)}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                  <IconButton
-                    style={{ color: "green" }}
-                    onClick={() => handleApprove(member.id)}
-                  >
-                    <CheckIcon />
-                  </IconButton>
-                </div>
-              </TableCell>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID Proof</TableCell>
+              <TableCell>Member Name</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Date Of Joining</TableCell>
+              <TableCell>Mobile No</TableCell>
+              <TableCell>New Mobile Number</TableCell>
+              <TableCell>New Email ID</TableCell>
+              <TableCell>New Address</TableCell>
+              <TableCell>Request Reason</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
-          );
-        }
-        return null;
-      })}
-    </TableBody>
-  </Table>
-</TableContainer>
+          </TableHead>
+          <TableBody>
+            {sortedEditRequests.map((request) => {
+              // Skip rows if the status is not "Pending"
+              if (request.status !== "Pending") return null;
+
+              // Find the corresponding member from combinedMembers
+              const member = combinedMembers.find((member) => member.id === request.user_id);
+
+              // If member is not found or if the member's approval is pending, skip rendering
+              if (!member || member.approved === "Pending") return null;
+
+              // Check if the existing and new data are the same
+              const isMobileSame = member?.mobile_number === request.new_mobile_number;
+              const isEmailSame = member?.email === request.new_email_id;
+              const isAddressSame =
+                member?.street_name === request.new_address.street &&
+                member?.city === request.new_address.city &&
+                member?.state === request.new_address.state &&
+                member?.pincode === request.new_address.zip;
+
+              // Only display the row if any of the mobile number, email, or address fields differ
+              if (!isMobileSame || !isEmailSame || !isAddressSame) {
+                return (
+                  <TableRow key={request.id}>
+                    <TableCell>
+                      {request.image ? (
+                        <img
+                          src={`${imageBaseURL}${request.image}`}
+                          style={{ width: 50, height: 50, cursor: "pointer" }}
+                          onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
+                        />
+                      ) : (
+                        "No Image"
+                      )}
+                    </TableCell>
+                    <TableCell>{member.full_name}</TableCell>
+                    <TableCell>{member.role_name}</TableCell>
+                    <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>{member.mobile_number}</TableCell>
+                    <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
+                    <TableCell
+                      sx={{
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 2,
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {isEmailSame ? "-" : request.new_email_id}
+                    </TableCell>
+                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+                    <TableCell>{request.request_reason}</TableCell>
+                    <TableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div style={{ display: "flex", gap: "5px" }}>
+
+                          <IconButton
+                            style={{
+                              width: "45px",
+                              height: "40px",
+                              backgroundColor: "red",
+                              color: "white",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              borderRadius: "6px",
+                            }}
+                            onClick={() => handleReject(request.id)}
+                          >
+                            <ClearIcon />
+                          </IconButton>
+                          <IconButton
+                            style={{
+                              width: "45px",
+                              height: "40px",
+                              backgroundColor: "green",
+                              color: "white",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              borderRadius: "6px",
+                            }}
+                            onClick={() => handleApprove(member.id)}
+                          >
+                            <DoneIcon />
+                          </IconButton>
+                        </div>
+
+
+
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              }
+              return null;
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
 
 

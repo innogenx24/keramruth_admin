@@ -39,9 +39,10 @@ import axios from 'axios';
 import { HiMiniUserGroup } from "react-icons/hi2";
 import { clearMembers, fetchMembersRequest } from "../../../../redux/slices/member-slice/MemberGetSlice";
 import SearchBox from "../../../../search-box/SearchBox";
-
+import DeleteButton from "../../../../assets/actions/DeleteButton.svg"
+import EditButton from "../../../../assets/actions/EditButton.svg"
 const MemberDetailTable = () => {
- 
+
   const dispatch = useDispatch();
   // const { members } = useSelector((state) => state.members);
   // const membersList = Array.isArray(members) ? members : [members];
@@ -377,8 +378,7 @@ const MemberDetailTable = () => {
 
   const newMemberID = memberID || newMemberId
 
-  const { StockAchievementPercent, achievementAmountPercent, MonthlyTargetAmount, AchievementAmount, pendingAmount, StockTarget, StockAchievement, PendingStockTarget } = salesData[0];
-
+  const { MonthlyTargetAmount, achievementAmountPercent, StockAchievementPercent, AchievementAmount, pendingAmount, StockTarget, StockAchievement, PendingStockTarget } = salesData[0];
 
   const renderPagination = (page, setPage, totalRows) => {
     const totalPages = Math.ceil(totalRows / rowsPerPage);
@@ -489,7 +489,7 @@ const MemberDetailTable = () => {
                         />
                         <CircularProgress
                           variant="determinate"
-                          value={achievementAmountPercent}
+                          value={achievementAmountPercent} // Keep as is, since it's already in decimal form
                           size={80}
                           thickness={5}
                           style={{
@@ -497,7 +497,7 @@ const MemberDetailTable = () => {
                             color:
                               achievementAmountPercent < 50
                                 ? "red"
-                                : achievementAmountPercent < 80
+                                : achievementAmountPercent < 75
                                   ? "orange"
                                   : "green",
                           }}
@@ -509,7 +509,7 @@ const MemberDetailTable = () => {
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
                           <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
-                            {Math.round(achievementAmountPercent)}%
+                            {(parseFloat(achievementAmountPercent) || 0).toFixed(2)}% {/* Safely format */}
                           </Typography>
                         </Box>
                       </Box>
@@ -533,6 +533,7 @@ const MemberDetailTable = () => {
                     </Box>
 
 
+
                     {/* Sales Target Section */}
                     <Box
                       display="flex"
@@ -554,7 +555,7 @@ const MemberDetailTable = () => {
                         />
                         <CircularProgress
                           variant="determinate"
-                          value={Math.max(parseFloat(StockAchievementPercent), 1)}
+                          value={StockAchievementPercent} // Keep as is, since it's already in decimal form
                           size={80}
                           thickness={5}
                           style={{
@@ -562,7 +563,7 @@ const MemberDetailTable = () => {
                             color:
                               StockAchievementPercent < 50
                                 ? "red"
-                                : StockAchievementPercent < 80
+                                : StockAchievementPercent < 75
                                   ? "orange"
                                   : "green",
                           }}
@@ -574,7 +575,7 @@ const MemberDetailTable = () => {
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
                           <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
-                            {StockAchievementPercent}%
+                            {(parseFloat(StockAchievementPercent) || 0).toFixed(2)}% {/* Safely format */}
                           </Typography>
                         </Box>
                       </Box>
@@ -722,24 +723,48 @@ const MemberDetailTable = () => {
                         <TableCell>{member?.email}</TableCell>
                         {role === "Admin" && (
                           <TableCell>
-                            <IconButton
-                              color="secondary"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                handleEditMemberClick(member);
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              color="error"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                handleDeleteOpen(member);
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
+                            <div style={{ display: "flex" }}>
+
+                              <IconButton
+                                color="secondary"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleDeleteOpen(member);
+                                }}
+                                style={{ marginRight: "5px" }}
+
+                              >
+                                <img
+                                  src={DeleteButton}
+                                  alt="Delete"
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    objectFit: "contain",
+                                    transform: "scale(1.5)",
+                                  }}
+                                />
+                              </IconButton>
+
+                              <IconButton
+                                color="primary"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleEditMemberClick(member);
+                                }}
+                              >
+                                <img
+                                  src={EditButton}
+                                  alt="Edit"
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    objectFit: "contain",
+                                    transform: "scale(1.5)",
+                                  }}
+                                />
+                              </IconButton>
+                            </div>
                           </TableCell>
                         )}
                       </TableRow>
@@ -750,7 +775,7 @@ const MemberDetailTable = () => {
           </TableContainer>
 
           <div style={{ marginTop: "10px" }}>
-          {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
+            {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
           </div>
 
 
@@ -777,8 +802,8 @@ const MemberDetailTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    
-      
+
+
 
     </Box>
   );

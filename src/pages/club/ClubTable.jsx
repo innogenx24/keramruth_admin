@@ -20,7 +20,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
-
+import DeleteButton from "../../assets/actions/DeleteButton.svg";
+import EditButton from "../../assets/actions/EditButton.svg";
 const ClubTable = () => {
   const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -170,11 +171,39 @@ const ClubTable = () => {
                       <Typography>{parseInt(club.litre_quantity, 10)}</Typography>
                     </TableCell>
                     <TableCell>
-                      <IconButton color="secondary" onClick={() => handleEditClick(club)}>
-                        <EditIcon />
+
+
+                      <IconButton
+                        color="secondary"
+                        onClick={() => handleDeleteClick(club)}
+                        style={{ marginRight: "5px" }}
+
+                      >
+                        <img
+                          src={DeleteButton}
+                          alt="Delete"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "contain",
+                            transform: "scale(1.5)",
+                          }}
+                        />
                       </IconButton>
-                      <IconButton color="error" onClick={() => handleDeleteClick(club)}>
-                        <DeleteIcon />
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditClick(club)}
+                      >
+                        <img
+                          src={EditButton}
+                          alt="Edit"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "contain",
+                            transform: "scale(1.5)",
+                          }}
+                        />
                       </IconButton>
                     </TableCell>
                   </TableRow>
