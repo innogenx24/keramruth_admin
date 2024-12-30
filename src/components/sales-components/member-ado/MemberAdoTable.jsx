@@ -34,6 +34,8 @@ import SearchBox from "../../../search-box/SearchBox";
 import axios from 'axios';
 import { HiMiniUserGroup } from "react-icons/hi2";
 import React, { useRef } from 'react';
+import DeleteButton from "../../../assets/actions/DeleteButton.svg"
+import EditButton from "../../../assets/actions/EditButton.svg"
 
 const MemberAdoTable = () => {
   const dispatch = useDispatch();
@@ -228,14 +230,14 @@ const MemberAdoTable = () => {
 
   ///////
   const handleRowClick = (memberId, roleId) => {
-  
+
     // If the current roleId is greater than or equal to 6, navigate to the customer details page
     if (roleId >= 6) {
       navigate(`/dashboard/customer_details/${memberId}/${roleId}`);
       window.location.reload();
       return;
     }
-  
+
     // Increment roleId and check if the nextRoleId is 7
     const nextRoleId = roleId + 1;
     if (nextRoleId === 7) {
@@ -243,10 +245,10 @@ const MemberAdoTable = () => {
     } else {
       navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
     }
-  
+
     window.location.reload();
   };
-  
+
 
 
 
@@ -271,7 +273,7 @@ const MemberAdoTable = () => {
 
   const renderPagination = (page, setPage, totalRows) => {
     const totalPages = Math.ceil(totalRows / rowsPerPage);
-  
+
     return (
       <Box
         sx={{
@@ -302,7 +304,7 @@ const MemberAdoTable = () => {
       </Box>
     );
   };
-  
+
 
 
   return (
@@ -410,23 +412,45 @@ const MemberAdoTable = () => {
                     <TableCell>{member?.email}</TableCell>
                     {role === 'Admin' && (
                       <TableCell>
+
                         <IconButton
                           color="secondary"
                           onClick={(e) => {
-                            e.stopPropagation(); // Prevent row click
+                            e.stopPropagation();
+                            handleDeleteOpen(member);
+                          }}
+                          style={{ marginRight: "5px" }}
+
+                        >
+                          <img
+                            src={DeleteButton}
+                            alt="Delete"
+                            style={{
+                              width: "30px",
+                              height: "30px",
+                              objectFit: "contain",
+                              transform: "scale(1.5)",
+                            }}
+                          />
+                        </IconButton>
+
+                        <IconButton
+                          color="primary"
+                          onClick={(e) => {
+                            e.stopPropagation();
                             handleEditMemberClick(member);
                           }}
                         >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          color="error"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent row click
-                            handleDeleteOpen(member);
-                          }}
-                        >
-                          <DeleteIcon />
+                          <img
+                            src={EditButton}
+                            alt="Edit"
+                            style={{
+                              width: "30px",
+                              height: "30px",
+                              objectFit: "contain",
+                              transform: "scale(1.5)",
+                            }}
+                          />
                         </IconButton>
                       </TableCell>
                     )}
@@ -437,7 +461,7 @@ const MemberAdoTable = () => {
           </TableContainer>
 
           <div style={{ marginTop: "10px" }}>
-          {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
+            {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
           </div>
 
 

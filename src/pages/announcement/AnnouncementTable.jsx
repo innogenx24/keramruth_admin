@@ -21,6 +21,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DeleteButton from "../../assets/actions/DeleteButton.svg"
+import EditButton from "../../assets/actions/EditButton.svg"
 
 const AnnouncementTable = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -178,11 +180,11 @@ const AnnouncementTable = () => {
                 </TableCell>
                 <TableCell>{announcement.heading}</TableCell>
                 <TableCell
-                  sx={{ 
-                    WebkitBoxOrient: 'vertical', 
-                    WebkitLineClamp: 4, 
+                  sx={{
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 4,
                     wordBreak: 'break-word',
-                    maxWidth: '250px' 
+                    maxWidth: '250px'
                   }}
                 >
                   {announcement.description}
@@ -191,20 +193,45 @@ const AnnouncementTable = () => {
                   {announcement.receiver.join(", ")}
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEditClick(announcement)} color="primary">
-                    <EditIcon />
+                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary" style={{ marginRight: "5px" }} 
+                  >
+                    <img
+                      src={DeleteButton}
+                      alt="Delete"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "contain",
+                        transform: "scale(1.5)", 
+                      }}
+                    />
                   </IconButton>
-                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary">
-                    <DeleteIcon />
+                  <IconButton
+                    onClick={() => handleEditClick(announcement)}
+                    color="primary"
+                  >
+                    <img
+                      src={EditButton}
+                      alt="Edit"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "contain",
+                        transform: "scale(1.5)", 
+                      }}
+                    />
                   </IconButton>
+
+
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{marginTop:"10px"}}>
-      {renderPagination(page, setPage, announcements.length)}
+      <div style={{ marginTop: "10px" }}>
+        {renderPagination(page, setPage, announcements.length)}
 
       </div>
 

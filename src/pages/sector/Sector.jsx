@@ -19,7 +19,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
-
+import DeleteButton from "../../assets/actions/DeleteButton.svg";
+import EditButton from "../../assets/actions/EditButton.svg";
 const SectorTable = () => {
   const [sectors, setSectors] = useState([]);
   const [selectedSector, setSelectedSector] = useState(null);
@@ -116,12 +117,12 @@ const SectorTable = () => {
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button variant="contained" color="primary" onClick={handleAddSectorClick}
-        style={{
-          backgroundColor: "#28a745",
-          color: "white",
-          fontWeight: "bold",
-          borderRadius: "5px",
-        }}
+          style={{
+            backgroundColor: "#28a745",
+            color: "white",
+            fontWeight: "bold",
+            borderRadius: "5px",
+          }}
         >
           + Add Sector
         </Button>
@@ -137,21 +138,49 @@ const SectorTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-  {paginatedSectors.map((row, index) => (
-    <TableRow key={row.id}>
-      <TableCell>{page * rowsPerPage + index + 1}</TableCell> {/* Update to reflect pagination */}
-      <TableCell>{row.sector_name}</TableCell>
-      <TableCell>
-        <IconButton color="secondary" onClick={() => handleEditClick(row)}>
-          <EditIcon />
-        </IconButton>
-        <IconButton color="error" onClick={() => handleDeleteClick(row)}>
-          <DeleteIcon />
-        </IconButton>
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
+            {paginatedSectors.map((row, index) => (
+              <TableRow key={row.id}>
+                <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                <TableCell>{row.sector_name}</TableCell>
+                <TableCell>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => handleDeleteClick(row)}
+                    style={{ marginRight: "5px" }}
+
+                  >
+                    <img
+                      src={DeleteButton}
+                      alt="Delete"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "contain",
+                        transform: "scale(1.5)",
+                      }}
+                    />
+                  </IconButton>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleEditClick(row)}
+                  >
+                    <img
+                      src={EditButton}
+                      alt="Edit"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        objectFit: "contain",
+                        transform: "scale(1.5)",
+                      }}
+                    />
+                  </IconButton>
+
+
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
 
         </Table>
       </TableContainer>

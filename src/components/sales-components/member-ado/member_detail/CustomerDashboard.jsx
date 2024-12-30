@@ -17,7 +17,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { LocationOn, Phone, Mail } from '@mui/icons-material';
 const CustomerDashboard = () => {
   const { memberID } = useParams();  // Fetch memberID from URL
   const [customer, setCustomer] = useState(null);
@@ -27,6 +27,7 @@ const CustomerDashboard = () => {
   const [error, setError] = useState(null);
   const [totalOrders, setTotalOrders] = useState(0);
   const [lastOrderDate, setLastOrderDate] = useState("");
+  const [visibleHistoryCount, setVisibleHistoryCount] = useState(5);
   useEffect(() => {
     // Fetch customer details using the memberID
     const fetchCustomerData = async () => {
@@ -113,6 +114,13 @@ const CustomerDashboard = () => {
     );
   }
 
+
+  const handleSeeMoreClick = () => {
+    setVisibleHistoryCount((prevCount) => prevCount + 5); // Increase by 5 entries each time
+  };
+
+
+
   return (
     <Box p={3} display="flex" flexDirection="column" gap={2}>
       {/* Customer Details */}
@@ -138,22 +146,32 @@ const CustomerDashboard = () => {
                   <Typography variant="h6" style={{ fontWeight: "bold" }}>{customer.full_name}</Typography>
                   <Typography variant="subtitle1">ID: {customer.id}</Typography>
                   <Typography variant="body2">Role: {customer.role_name}</Typography>
+
                   <Typography variant="body2">
-                    Address: {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}.
+                    <LocationOn style={{ marginRight: "8px",marginTop:"20px"}} />
+                    {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}
                   </Typography>
 
-                  <Typography variant="body2">Mobile No: {customer.mobile_number}</Typography>
-                  <Typography variant="body2">Email ID: {customer.email}</Typography>
+                  <Typography variant="body2">
+                    <Phone style={{ marginRight: "8px",marginTop:"10px" }} />
+                    {customer.mobile_number}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    <Mail style={{ marginRight: "8px",marginTop:"10px" }} />
+                    {customer.email}
+                  </Typography>
                 </Grid>
               </Grid>
             </Grid>
             <Grid item xs={12} sm={6} textAlign="right">
               <Typography variant="body2">
-                Joined: {new Date(customer.createdAt).toLocaleDateString()}
+                {new Date(customer.createdAt).toLocaleDateString()} Joined
               </Typography>
-              <Typography variant="body2">
-                Total Booked: {totalOrders}
+              <Typography variant="body2" style={{ color: "#1c96c5" }}>
+                Total Booked: <span style={{ color: "#1c96c5" }}>{totalOrders}</span>
               </Typography>
+
             </Grid>
           </Grid>
         </CardContent>
@@ -188,6 +206,7 @@ const CustomerDashboard = () => {
                           border: "1px solid #ccc",
                           boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
                           borderRadius: "10px",
+                          marginRight: "5px"
                         }}
                         alt="Product"
                       />
@@ -228,12 +247,13 @@ const CustomerDashboard = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Details</TableCell>
+                  <TableCell>Order Details</TableCell>
+                  <TableCell>Booking Date</TableCell>
+
                 </TableRow>
               </TableHead>
               <TableBody>
-                {history.map((entry, index) => (
+                {history.slice(0, visibleHistoryCount).map((entry, index) => (
                   <TableRow key={index}>
                     <TableCell>{entry.date}</TableCell>
                     <TableCell>{entry.product}</TableCell>
@@ -242,9 +262,16 @@ const CustomerDashboard = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <Button variant="text" sx={{ mt: 2 }}>
-            See More
-          </Button>
+          {visibleHistoryCount < history.length && (
+            <Button
+              variant="text"
+              sx={{ mt: 2, ml: 'auto', display: 'block' }}
+              onClick={handleSeeMoreClick}
+            >
+              See More
+            </Button>
+
+          )}
         </CardContent>
       </Card>
     </Box>

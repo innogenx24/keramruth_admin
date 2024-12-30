@@ -26,6 +26,10 @@ import ProductPriceModal from "./ProductPriceModal";
 import { fetchProductsRequest } from "../../redux/slices/product-slice/ProductGetSlice";
 import { deleteProductRequest } from "../../redux/slices/product-slice/ProductDeleteSlice";
 import SearchProducts from "../member-pages/booking-order/SearchProducts"
+import DeleteButton from "../../assets/actions/DeleteButton.svg"
+import EditButton from "../../assets/actions/EditButton.svg"
+import TurnOn from "../../assets/actions/TurnOn.svg"
+import TurnOff from "../../assets/actions/TurnOff.svg"
 const ProductPage = () => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.products);
@@ -140,7 +144,7 @@ const ProductPage = () => {
   );
 
 
-const renderPagination = (page, setPage, totalRows) => (
+  const renderPagination = (page, setPage, totalRows) => (
     <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
       <Button
         onClick={() => setPage(page - 1)}
@@ -204,66 +208,100 @@ const renderPagination = (page, setPage, totalRows) => (
             </TableRow>
           </TableHead>
           <TableBody>
-  {filteredProducts
-    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Apply pagination
-    .map((product, index) => (
-      <TableRow key={product.id}>
-        <TableCell>{page * rowsPerPage + index + 1}</TableCell> {/* Adjust row number */}
-        <TableCell>
-          {product.image ? (
-            <img
-              src={`${imageBaseURL}${product.image}`}
-              style={{
-                width: "80px",
-                height: "auto",
-                objectFit: "contain",
-                border: "1px solid #ccc",
-                boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                borderRadius: "10px",
-              }}
-            />
-          ) : (
-            <span>No Image Available</span>
-          )}
-        </TableCell>
-        <TableCell>{product.name}</TableCell>
-        <TableCell>{product.stock_quantity}</TableCell>
-        <TableCell>{product.category_name}</TableCell>
-        <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
-        <TableCell>{product.price}</TableCell>
-        <TableCell>
-          <Button onClick={() => handleViewClick(product)}>View</Button>
-        </TableCell>
-        <TableCell>
-          <Switch
-            checked={product.status}
-            onChange={() => handleToggleStockStatus(product)}
-          />
-        </TableCell>
-        <TableCell>
-          <IconButton
-            color="primary"
-            onClick={() => handleEditProductClick(product)}
-          >
-            <Edit />
-          </IconButton>
-          <IconButton
-            color="secondary"
-            onClick={() => handleDeleteProductClick(product)}
-          >
-            <Delete />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-    ))}
-</TableBody>
+            {filteredProducts
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Apply pagination
+              .map((product, index) => (
+                <TableRow key={product.id}>
+                  <TableCell>{page * rowsPerPage + index + 1}</TableCell> {/* Adjust row number */}
+                  <TableCell>
+                    {product.image ? (
+                      <img
+                        src={`${imageBaseURL}${product.image}`}
+                        style={{
+                          width: "80px",
+                          height: "auto",
+                          objectFit: "contain",
+                          border: "1px solid #ccc",
+                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                          borderRadius: "10px",
+                        }}
+                      />
+                    ) : (
+                      <span>No Image Available</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{product.name}</TableCell>
+                  <TableCell>{product.stock_quantity}</TableCell>
+                  <TableCell>{product.category_name}</TableCell>
+                  <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
+                  <TableCell>{product.price}</TableCell>
+                  <TableCell>
+                    <Button onClick={() => handleViewClick(product)}>View</Button>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => handleToggleStockStatus(product)}
+                      color={product.status ? "primary" : "default"}
+                    >
+                      <img
+                        src={product.status ? TurnOn : TurnOff}
+                        alt={product.status ? "Turn On" : "Turn Off"}
+                        style={{
+                          width: "70px",
+                          height: "30px",
+                          objectFit: "contain",
+                          transform: "scale(1.5)",
+                        }}
+                      />
+                    </IconButton>
+                  </TableCell>
+
+                  <TableCell>
+                    <div style={{ display: "flex" }}>
+                      <IconButton
+                        onClick={() => handleDeleteProductClick(product)}
+                        color="secondary"
+                        style={{ marginRight: "5px" }}
+                      >
+                        <img
+                          src={DeleteButton}
+                          alt="Delete"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "contain",
+                            transform: "scale(1.5)",
+                          }}
+                        />
+                      </IconButton>
+
+                      <IconButton
+                        onClick={() => handleEditProductClick(product)}
+                        color="primary"
+                      >
+                        <img
+                          src={EditButton}
+                          alt="Edit"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "contain",
+                            transform: "scale(1.5)",
+                          }}
+                        />
+                      </IconButton>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
 
         </Table>
       </TableContainer>
 
       <div style={{ marginTop: "10px" }}>
-  {renderPagination(page, setPage, filteredProducts.length)}
-</div>
+        {renderPagination(page, setPage, filteredProducts.length)}
+      </div>
 
 
 

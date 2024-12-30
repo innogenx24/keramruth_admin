@@ -21,6 +21,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import { fetchCategorysRequest } from "../../redux/slices/master-slice/categort-slice/CategortGetSlice";
 import { useSelector, useDispatch } from "react-redux";
+import DeleteButton from "../../assets/actions/DeleteButton.svg";
+import EditButton from "../../assets/actions/EditButton.svg";
 
 const CategoryTable = () => {
   const dispatch = useDispatch();
@@ -148,11 +150,38 @@ const CategoryTable = () => {
                       <Typography sx={{ marginLeft: "10px" }}>{row?.sector_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <IconButton color="secondary" onClick={() => handleEditClick(row)}>
-                        <EditIcon />
+                      <IconButton
+                        color="secondary"
+                        onClick={() => handleDeleteClick(row)}
+                        style={{ marginRight: "5px" }}
+
+                      >
+                        <img
+                          src={DeleteButton}
+                          alt="Delete"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "contain",
+                            transform: "scale(1.5)",
+                          }}
+                        />
                       </IconButton>
-                      <IconButton color="error" onClick={() => handleDeleteClick(row)}>
-                        <DeleteIcon />
+
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditClick(row)}
+                      >
+                        <img
+                          src={EditButton}
+                          alt="Edit"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "contain",
+                            transform: "scale(1.5)",
+                          }}
+                        />
                       </IconButton>
                     </TableCell>
                   </TableRow>

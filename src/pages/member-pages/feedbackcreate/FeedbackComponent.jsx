@@ -45,7 +45,7 @@ const FeedbackComponent = () => {
         if (error.response && error.response.data && error.response.data.message) {
           const message = error.response.data.message;
           if (message === "Feedback already submitted for this order.") {
-            setErrorMessage("You have already submitted feedback for this order.");
+            setErrorMessage("You have already submitted feedback for this product.");
           } else {
             setErrorMessage("Failed to submit feedback. Please try again.");
           }

@@ -19,7 +19,8 @@ import {
 import { Delete, Edit, Add as AddIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import DeleteButton from "../../assets/actions/DeleteButton.svg"
+import EditButton from "../../assets/actions/EditButton.svg"
 const rowsPerPage = 10; // Number of rows per page
 
 const DocumentsTable = () => {
@@ -77,7 +78,7 @@ const DocumentsTable = () => {
     if (documentToDelete) {
       try {
         await axios.delete(`http://88.222.245.236:3002/documents/${documentToDelete.id}`);
-        setDocuments((prevDocuments) => 
+        setDocuments((prevDocuments) =>
           prevDocuments.filter((doc) => doc.id !== documentToDelete.id)
         );
         handleDeleteClose();
@@ -193,36 +194,65 @@ const DocumentsTable = () => {
                   )}
                 </TableCell>
                 <TableCell>{document.heading}</TableCell>
-                <TableCell sx={{ 
-     
-     WebkitBoxOrient: 'vertical', 
-     WebkitLineClamp: 2, 
-     wordBreak: 'break-word', 
- }}>
+                <TableCell sx={{
+
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 2,
+                  wordBreak: 'break-word',
+                }}>
                   {document.description}
                 </TableCell>                <TableCell>
-  {Array.isArray(document.receiver) 
-    ? document.receiver.join(", ") 
-    : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
-  }
-</TableCell>
+                  {Array.isArray(document.receiver)
+                    ? document.receiver.join(", ")
+                    : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
+                  }
+                </TableCell>
                 <TableCell>
                   <div style={{ display: "flex" }}>
-                    <IconButton onClick={() => handleEditClick(document)} color="primary">
-                      <Edit />
+                    <IconButton
+                      onClick={() => handleDeleteOpen(document)}
+                      color="secondary"
+                      style={{ marginRight: "5px" }}
+
+                    >
+                      <img
+                        src={DeleteButton}
+                        alt="Delete"
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          objectFit: "contain",
+                          transform: "scale(1.5)",
+                        }}
+                      />
                     </IconButton>
-                    <IconButton onClick={() => handleDeleteOpen(document)} color="secondary">
-                      <Delete />
+                    <IconButton
+                      onClick={() => handleEditClick(document)}
+                      color="primary"
+                    >
+                      <img
+                        src={EditButton}
+                        alt="Edit"
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          objectFit: "contain",
+                          transform: "scale(1.5)",
+                        }}
+                      />
                     </IconButton>
+
+
                   </div>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{padding:"0px"}}>
-      {renderPagination()}
+      <div style={{ padding: "0px" }}>
+        {renderPagination()}
 
       </div>
 
