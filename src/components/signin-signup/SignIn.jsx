@@ -6,6 +6,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { signInRequest } from '../../redux/slices/authSlice';
 import LoginImage from '../../assets/logo/LoginImage.png';
+// import LoginImage from '../../assets/logo/Keramruth-bg-1.png';
+
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import './style.css';
 
@@ -48,10 +50,10 @@ const SignIn = () => {
       // Redirect based on the user role
       if (user?.role === 'Admin') {
         navigate('/dashboard');
-      }else if (user?.role === 'Customer') {
+      } else if (user?.role === 'Customer') {
         navigate('/dashboard/book-orders');
       }
-      else{
+      else {
         navigate('/dashboard');
       }
     }
@@ -182,9 +184,9 @@ const SignIn = () => {
               >
                 LOGIN
               </Button>
-              
 
-<Box sx={{ textAlign: "right", mt: 2 }}>
+
+              <Box sx={{ textAlign: "right", mt: 2 }}>
                 <Typography variant="body2">
                   <Button
                     color="secondary"
@@ -192,7 +194,7 @@ const SignIn = () => {
                     onClick={() => navigate('/forgot-password')}
                     sx={{ textTransform: "none" }}
                   >
-                   Forgot your password
+                    Forgot your password
                   </Button>
                 </Typography>
               </Box>
@@ -207,7 +209,7 @@ const SignIn = () => {
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 ContentProps={{
                   sx: {
-                    backgroundColor: error ? 'red' : 'green', 
+                    backgroundColor: error ? 'red' : 'green',
                     color: 'white',
                     fontWeight: 'bold',
                   },

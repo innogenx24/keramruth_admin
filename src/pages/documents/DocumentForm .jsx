@@ -65,7 +65,7 @@ const DocumentForm = () => {
       toDate: Yup.date()
         .nullable()
         .min(Yup.ref("fromDate"), "To Date must be after From Date"),
-  }),
+    }),
     onSubmit: (values) => {
       const formData = new FormData();
       formData.append("documentID", values.documentID);
@@ -75,23 +75,23 @@ const DocumentForm = () => {
       formData.append("receiver", JSON.stringify(values.receiver));
       formData.append("autoUpdate", values.autoUpdate);
       formData.append("activateStatus", values.activateStatus);
-      
-      // Check if autoUpdate is false, set From Date and To Date to null
-if (values.autoUpdate) {
-  if (values.fromDate) formData.append("fromDate", values.fromDate);
-  if (values.toDate) formData.append("toDate", values.toDate);
-} else {
-  // Do not append fromDate and toDate when they should be null
-  formData.delete("fromDate");
-  formData.delete("toDate");
-}
 
-      
+      // Check if autoUpdate is false, set From Date and To Date to null
+      if (values.autoUpdate) {
+        if (values.fromDate) formData.append("fromDate", values.fromDate);
+        if (values.toDate) formData.append("toDate", values.toDate);
+      } else {
+        // Do not append fromDate and toDate when they should be null
+        formData.delete("fromDate");
+        formData.delete("toDate");
+      }
+
+
       if (selectedFile) {
         formData.append("image", selectedFile);
         formData.append("imageName", selectedFile.name);
       }
-    
+
       fetch(`${API_END_POINT}/documents/create`, {
         method: "POST",
         body: formData,
@@ -104,7 +104,7 @@ if (values.autoUpdate) {
         .catch((error) => {
           console.error("Error:", error);
         });
-    },    
+    },
   });
 
   const handleImageChange = (event) => {
@@ -229,41 +229,41 @@ if (values.autoUpdate) {
 
               <InputLabel>Receiver</InputLabel>
               <Box sx={{ display: "flex", flexDirection: "column", marginTop: "10px" }}>
-  <FormControlLabel
-    control={
-      <Checkbox
-        checked={selectAll}
-        onChange={handleSelectAllChange}
-        color="primary"
-      />
-    }
-    label="Select All"
-  />
-  {roles.map((role) => (
-    <FormControlLabel
-      key={role}
-      control={
-        <Checkbox
-          value={role}
-          checked={formik.values.receiver.includes(role)}
-          onChange={(e) => {
-            const { checked } = e.target;
-            const newReceiver = checked
-              ? [...formik.values.receiver, role]
-              : formik.values.receiver.filter((r) => r !== role);
-            formik.setFieldValue("receiver", newReceiver);
-          }}
-        />
-      }
-      label={role}
-    />
-  ))}
-  {formik.touched.receiver && formik.errors.receiver && (
-    <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
-      {formik.errors.receiver}
-    </Typography>
-  )}
-</Box>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectAll}
+                      onChange={handleSelectAllChange}
+                      color="primary"
+                    />
+                  }
+                  label="Select All"
+                />
+                {roles.map((role) => (
+                  <FormControlLabel
+                    key={role}
+                    control={
+                      <Checkbox
+                        value={role}
+                        checked={formik.values.receiver.includes(role)}
+                        onChange={(e) => {
+                          const { checked } = e.target;
+                          const newReceiver = checked
+                            ? [...formik.values.receiver, role]
+                            : formik.values.receiver.filter((r) => r !== role);
+                          formik.setFieldValue("receiver", newReceiver);
+                        }}
+                      />
+                    }
+                    label={role}
+                  />
+                ))}
+                {formik.touched.receiver && formik.errors.receiver && (
+                  <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+                    {formik.errors.receiver}
+                  </Typography>
+                )}
+              </Box>
 
 
               <Box sx={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
@@ -278,49 +278,49 @@ if (values.autoUpdate) {
               </Box>
 
               {formik.values.autoUpdate && (
-            <Grid container spacing={2} sx={{ marginTop: 2 }}>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="From Date"
-                  type="date"
-                  name="fromDate"
-                  value={formik.values.fromDate}
-                  onChange={formik.handleChange}
-                  error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
-                  helperText={formik.touched.fromDate && formik.errors.fromDate}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="To Date"
-                  type="date"
-                  name="toDate"
-                  value={formik.values.toDate}
-                  onChange={formik.handleChange}
-                  error={formik.touched.toDate && Boolean(formik.errors.toDate)}
-                  helperText={formik.touched.toDate && formik.errors.toDate}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-            </Grid>
-          )}
+                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="From Date"
+                      type="date"
+                      name="fromDate"
+                      value={formik.values.fromDate}
+                      onChange={formik.handleChange}
+                      error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
+                      helperText={formik.touched.fromDate && formik.errors.fromDate}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      label="To Date"
+                      type="date"
+                      name="toDate"
+                      value={formik.values.toDate}
+                      onChange={formik.handleChange}
+                      error={formik.touched.toDate && Boolean(formik.errors.toDate)}
+                      helperText={formik.touched.toDate && formik.errors.toDate}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              )}
               <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-              <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
-            >
-              Save
-            </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
+                >
+                  Save
+                </Button>
               </Box>
             </Box>
           </Grid>
