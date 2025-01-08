@@ -12,7 +12,8 @@ function deleteMemberApi(memberId, token) {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   return axios.delete(
-    `${API_END_POINT}/api/user/delete/${memberId}`,
+    // `${API_END_POINT}/api/user/delete/${memberId}`,
+    `${API_END_POINT}/user/delete/${memberId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -33,7 +33,8 @@ const CustomerDashboard = () => {
     // Fetch customer details using the memberID
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`${API_END_POINT}/api/user/customer-deatils/${memberID}`);
+        // const response = await fetch(`${API_END_POINT}/api/user/customer-deatils/${memberID}`);
+        const response = await fetch(`${API_END_POINT}/user/customer-deatils/${memberID}`);
         if (!response.ok) {
           throw new Error("Failed to fetch customer data");
         }

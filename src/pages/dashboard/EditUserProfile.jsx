@@ -48,7 +48,8 @@ const EditUserProfile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`${API_END_POINT}/api/admin/admin-details`, {
+        // const response = await axios.get(`${API_END_POINT}/api/admin/admin-details`, {
+        const response = await axios.get(`${API_END_POINT}/admin/admin-details`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -237,7 +238,8 @@ const stateCityMap = {
 
     try {
       const token = localStorage.getItem("token"); // Get the token from localStorage
-      const response = await axios.put(`${API_END_POINT}/api/admin/update`, formData, {
+      // const response = await axios.put(`${API_END_POINT}/api/admin/update`, formData, {
+      const response = await axios.put(`${API_END_POINT}/admin/update`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

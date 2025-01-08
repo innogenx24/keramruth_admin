@@ -31,7 +31,8 @@ const OrderLimitsTable = () => {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Token not found");
 
-        const response = await axios.get(`${API_END_POINT}/api/order-limits`, {
+        // const response = await axios.get(`${API_END_POINT}/api/order-limits`, {
+        const response = await axios.get(`${API_END_POINT}/order-limits`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

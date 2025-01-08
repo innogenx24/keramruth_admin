@@ -12,8 +12,14 @@ const BookingOrders = () => {
   const [openPopup, setOpenPopup] = useState(false); // To control popup visibility
   const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
   const couponCode = ""; // Example coupon code
-  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT_IMG;
+  const imageBaseURL = `${API_END_POINT}/src/uploads/`;
+  // const imageBaseURL = `https://erp.keramruth.com:4000/uploads`;
+  // const imageBaseURL = `https://erp.keramruth.com/uploads/`;
+  console.log("hi image");
+  
+ 
+  // https://erp.keramruth.com/api
   const { users } = useSelector((state) => state.users); // Fetch users from Redux store
   const userId = users?.id; // Get the user ID from the state.users object
   const [searchQuery, setSearchQuery] = useState("");

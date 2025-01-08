@@ -101,7 +101,8 @@ const MemberTable = () => {
     };
 
     try {
-      const response = await fetch(`${API_END_POINT}/api/member-update/update/${memberId}`, {
+      // const response = await fetch(`${API_END_POINT}/api/member-update/update/${memberId}`, {
+        const response = await fetch(`${API_END_POINT}/member-update/update/${memberId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),

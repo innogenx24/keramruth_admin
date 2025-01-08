@@ -48,7 +48,8 @@ export default function ReportTable() {
     // Fetch areas dynamically from API based on user data
     const fetchAreas = async () => {
       try {
-        const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+        // const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+        const response = await fetch(`${API_END_POINT}/user/${userId}`);
         const data = await response.json();
         // Assuming the API response contains a list of cities or areas
         const userAreas = [
@@ -102,7 +103,8 @@ export default function ReportTable() {
 
   const fetchUserCounts = async () => {
     try {
-      const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+      // const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+      const response = await fetch(`${API_END_POINT}/user/${userId}`);
       const data = await response.json();
 
       const users = [

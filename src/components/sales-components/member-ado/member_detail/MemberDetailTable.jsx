@@ -226,7 +226,8 @@ const MemberDetailTable = () => {
 
   const fetchUserCounts = async () => {
     try {
-      const response = await axios.get(`${API_END_POINT}/api/user/${memberID}`);
+      // const response = await axios.get(`${API_END_POINT}/api/user/${memberID}`);
+      const response = await axios.get(`${API_END_POINT}/user/${memberID}`);
       setRoleCounts(response.data);
     } catch (error) {
       console.error("Error fetching role counts:", error);

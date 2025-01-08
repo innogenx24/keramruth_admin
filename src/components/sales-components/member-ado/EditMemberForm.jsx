@@ -374,7 +374,8 @@ useEffect(() => {
     }
   
     axios
-      .put(`${API_END_POINT}/api/user/update/${memberId}`, data, config)
+      // .put(`${API_END_POINT}/api/user/update/${memberId}`, data, config)
+      .put(`${API_END_POINT}/user/update/${memberId}`, data, config)
       .then(() => {
         navigate(`/dashboard/members`);
       })

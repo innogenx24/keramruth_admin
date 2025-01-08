@@ -20,7 +20,8 @@ function* fetchMembers(action) {
 const API_URL = (() => {
   switch (role) {
     case "Admin":
-      return `${API_END_POINT}/api/user/role-user?role_id=${roleId}`;
+      // return `${API_END_POINT}/api/user/role-user?role_id=${roleId}`;
+      return `${API_END_POINT}/user/role-user?role_id=${roleId}`;
     case "Area Development Officer":
       return `${API_END_POINT}/directMembers/users-by-ado?adoId=${id}&roleId=${roleId}`;
     case "Master Distributor":

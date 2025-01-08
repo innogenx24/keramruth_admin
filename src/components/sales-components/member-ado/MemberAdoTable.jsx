@@ -168,7 +168,8 @@ const MemberAdoTable = () => {
     if (!token) throw new Error("Token not found");
 
     try {
-      const response = await axios.get(`${API_END_POINT}/api/user/${UserId}`, {
+      // const response = await axios.get(`${API_END_POINT}/api/user/${UserId}`, {
+        const response = await axios.get(`${API_END_POINT}/user/${UserId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

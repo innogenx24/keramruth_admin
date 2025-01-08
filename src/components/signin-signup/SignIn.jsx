@@ -6,8 +6,12 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { signInRequest } from '../../redux/slices/authSlice';
 import LoginImage from '../../assets/logo/LoginImage.png';
+import BannerImage from '../../assets/logo/BannerImage.jpg';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import './style.css';
+import AppLogo2 from '../../assets/logo/AppLogo2';
+import DishaLogo from '../../assets/logo/DishaLogo';
+import AppLogo from '../../assets/logo/AppLogo';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -95,7 +99,7 @@ const SignIn = () => {
           }}
         >
           <Box>
-            <img src={LoginImage} alt="Login" style={{ maxWidth: '100%', height: '100%', borderRadius: '8px' }} />
+            <img src={BannerImage} alt="Login" style={{ maxWidth: '100%', height: '100%', borderRadius: '8px' }} />
           </Box>
         </Grid>
 
@@ -115,9 +119,27 @@ const SignIn = () => {
             padding: '16px'
           }}
         >
+
           <Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              flexDirection: "column",
+              width: "100%",
+              marginBottom: "50px",
+              marginTop: "30px",
+            }}
+          >
+            {/* <DishaLogo/>
+            <AppLogo /> */}
+            <AppLogo2 />
+            {/* working */}
+          </Box>
+
             <Typography variant="h4" gutterBottom>
-              Sign In
+              Login
             </Typography>
             <form onSubmit={formik.handleSubmit}>
               {/* Mobile Number Field */}
