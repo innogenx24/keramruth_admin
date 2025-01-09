@@ -13,11 +13,12 @@ import {
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 const EditUserProfile = () => {
   const navigate = useNavigate();
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   const [selectedImage, setSelectedImage] = useState("/static/images/avatar/1.jpg");
   const [imageFile, setImageFile] = useState(null);

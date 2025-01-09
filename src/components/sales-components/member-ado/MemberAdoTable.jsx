@@ -36,6 +36,7 @@ import { HiMiniUserGroup } from "react-icons/hi2";
 import React, { useRef } from 'react';
 import DeleteButton from "../../../assets/actions/DeleteButton.svg"
 import EditButton from "../../../assets/actions/EditButton.svg"
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const MemberAdoTable = () => {
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ const MemberAdoTable = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const navigate = useNavigate();
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   const { users } = useSelector((state) => state.users);
   const UserId = users?.id;

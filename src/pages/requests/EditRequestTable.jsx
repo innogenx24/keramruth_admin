@@ -21,6 +21,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import DoneIcon from '@mui/icons-material/Done';
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 const MemberTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize the navigate hook
@@ -34,7 +35,7 @@ const MemberTable = () => {
   const [sortedEditRequests, setSortedEditRequests] = useState([]);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   // Sort data by updated_at in descending order (initial sort)
   useEffect(() => {

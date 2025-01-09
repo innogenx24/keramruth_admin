@@ -21,6 +21,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DeleteButton from "../../assets/actions/DeleteButton.svg"
 import EditButton from "../../assets/actions/EditButton.svg"
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 const rowsPerPage = 10; // Number of rows per page
 
 const DocumentsTable = () => {
@@ -31,7 +32,7 @@ const DocumentsTable = () => {
   const navigate = useNavigate();
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   // Fetching documents and sorting them by ID in descending order
   const fetchDocuments = async () => {

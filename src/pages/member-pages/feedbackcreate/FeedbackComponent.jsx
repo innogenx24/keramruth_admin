@@ -3,6 +3,7 @@ import { Box, Typography, TextField, Button, Card, CardContent, Avatar, Rating }
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const FeedbackComponent = () => {
   const { state } = useLocation(); // Get the passed state
@@ -66,7 +67,7 @@ const FeedbackComponent = () => {
           <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
             <Avatar
               alt={productName || "Product Image"}
-              src={`${API_END_POINT}/uploads/${productImage}`}
+              src={`${API_END_POINT_IMG}/uploads/${productImage}`}
               sx={{ width: 64, height: 64, marginRight: 2 }}
             />
             <Typography variant="body1" fontWeight="bold">

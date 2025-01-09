@@ -15,6 +15,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { fetchNotificationsStart } from "../../../redux/slices/notification-slice/notificationsSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const NotificationPage = () => {
   const dispatch = useDispatch();
@@ -179,7 +180,7 @@ const NotificationPage = () => {
                     sx={styles.avatar}
                     src={
                       notification.photo
-                        ? `${API_END_POINT}/uploads/notification-images/${notification.photo}`
+                        ? `${API_END_POINT_IMG}/uploads/notification-images/${notification.photo}`
                         : null
                     }
                   >

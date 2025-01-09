@@ -1,3 +1,8 @@
+export const API_END_POINT_IMG = import.meta.env.VITE_API_ENDPOINT_IMG;
+
+
+
+
 // src/apiConstants.js
 export const ADMIN_API = {
     // SIGNIN: '/api/admin/signin',
@@ -21,5 +26,6 @@ export const ADMIN_API = {
     LIST: '/category/list',
     DETAIL: '/category/detail',
   };
+
   
 

@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { LocationOn, Phone, Mail } from '@mui/icons-material';
+import { API_END_POINT_IMG } from "../../../../constants/ApiConstant";
 const CustomerDashboard = () => {
   const { memberID } = useParams();  // Fetch memberID from URL
   const [customer, setCustomer] = useState(null);
@@ -134,7 +135,7 @@ const CustomerDashboard = () => {
                 <Grid item xs={12} sm={2} display="flex" justifyContent="center">
                   <Avatar
                     alt={customer.full_name}
-                    src={`${API_END_POINT}/uploads/${customer.image}`}
+                    src={`${API_END_POINT_IMG}/uploads/${customer.image}`}
                     sx={{
                       width: 100,
                       height: 100,
@@ -200,7 +201,7 @@ const CustomerDashboard = () => {
                   <CardContent>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <img
-                        src={`${API_END_POINT}/uploads/${item.productImage || "placeholder.png"}`}
+                        src={`${API_END_POINT_IMG}/uploads/${item.productImage || "placeholder.png"}`}
                         style={{
                           width: "80px",
                           height: "auto",

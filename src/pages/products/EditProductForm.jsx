@@ -13,13 +13,14 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 const EditProductForm = ({ handleBackToProducts }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const [serverError, setServerError] = useState("");
 
   const [errors, setErrors] = useState({

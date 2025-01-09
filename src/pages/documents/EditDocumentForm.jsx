@@ -15,14 +15,14 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 const EditDocumentForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const document = location.state?.document || {};
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const roles = [
     { label: "Area Development Officer", value: "Area Development Officer" },
     { label: "Master Distributor", value: "Master Distributor" },

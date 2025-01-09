@@ -6,16 +6,16 @@ import { useLocation } from "react-router-dom";
 import AppLogo from "../../../assets/logo/AppLogo";
 import "./style.css"
 import SearchProducts from "./SearchProducts"
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 const BookingOrders = () => {
   const [products, setProducts] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
   const [openPopup, setOpenPopup] = useState(false); // To control popup visibility
   const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
   const couponCode = ""; // Example coupon code
-  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT_IMG;
-  const imageBaseURL = `${API_END_POINT}/src/uploads/`;
-  // const imageBaseURL = `https://erp.keramruth.com:4000/uploads`;
-  // const imageBaseURL = `https://erp.keramruth.com/uploads/`;
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
+
   console.log("hi image");
   
  
