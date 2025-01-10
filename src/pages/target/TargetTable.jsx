@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import SearchBox from "../../search-box/SearchUser";
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 const TargetTable = () => {
   const [data, setData] = useState([]);
@@ -24,7 +25,7 @@ const TargetTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const { users } = useSelector((state) => state.users);
   const userId = users?.id;
 

@@ -13,7 +13,8 @@ import {
 function* fetchAllMembers() {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const API_URL = `${API_END_POINT}/api/user/all`;
+  // const API_URL = `${API_END_POINT}/api/user/all`;
+  const API_URL = `${API_END_POINT}/user/all`;
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");

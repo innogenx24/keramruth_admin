@@ -16,6 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SearchProducts from "../booking-order/SearchProducts";
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const MemberProductPage = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const MemberProductPage = () => {
   const [page, setPage] = useState(0); // Pagination state
   const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch products from API

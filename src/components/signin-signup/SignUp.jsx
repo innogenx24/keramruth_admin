@@ -41,7 +41,8 @@ const SignUp = () => {
 
     onSubmit: async (values) => {
       try {
-        const response = await fetch(`${API_END_POINT}/api/admin/signup`, {
+        // const response = await fetch(`${API_END_POINT}/api/admin/signup`, {
+        const response = await fetch(`${API_END_POINT}/admin/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

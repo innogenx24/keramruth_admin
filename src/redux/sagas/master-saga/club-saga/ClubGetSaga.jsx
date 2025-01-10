@@ -9,7 +9,8 @@ import {
 function* fetchClubs() {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const API_URL = `${API_END_POINT}/api/user`;
+  // const API_URL = `${API_END_POINT}/api/user`;
+  const API_URL = `${API_END_POINT}/user`;
   try {
     /** Retrieve the token from localStorage **/
     const token = localStorage.getItem("token");

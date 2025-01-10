@@ -67,7 +67,8 @@ const AddUserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_END_POINT}/api/admin/signup`, {
+      // const response = await fetch(`${API_END_POINT}/api/admin/signup`, {
+      const response = await fetch(`${API_END_POINT}/admin/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

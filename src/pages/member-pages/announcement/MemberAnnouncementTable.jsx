@@ -13,6 +13,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const AnnouncementTable = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -21,7 +22,7 @@ const AnnouncementTable = () => {
   const navigate = useNavigate();
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   const fetchAnnouncements = async () => {
     try {

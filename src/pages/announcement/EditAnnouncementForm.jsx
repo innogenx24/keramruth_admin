@@ -16,13 +16,14 @@ import {
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./announcement.css";
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 const EditAnnouncementForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const announcement = location.state?.announcement || {};
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   const [documentID, setDocumentID] = useState("");
   const [heading, setHeading] = useState("");

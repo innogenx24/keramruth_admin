@@ -30,6 +30,7 @@ import DeleteButton from "../../assets/actions/DeleteButton.svg"
 import EditButton from "../../assets/actions/EditButton.svg"
 import TurnOn from "../../assets/actions/TurnOn.svg"
 import TurnOff from "../../assets/actions/TurnOff.svg"
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 const ProductPage = () => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.products);
@@ -42,7 +43,7 @@ const ProductPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const [searchQuery, setSearchQuery] = useState("");
 
   const [page, setPage] = useState(0); // Pagination state

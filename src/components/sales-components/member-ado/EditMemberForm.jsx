@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Snackbar, Alert } from '@mui/material';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const EditMemberForm = () => {
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ const EditMemberForm = () => {
   const [image, setImage] = useState(null); // Store the selected image
   const [imageName, setImageName] = useState(""); // Store image file name for display
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const [showPassword, setShowPassword] = useState(false);
   const [imageError, setImageError] = useState(""); // Store image error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -374,7 +375,8 @@ useEffect(() => {
     }
   
     axios
-      .put(`${API_END_POINT}/api/user/update/${memberId}`, data, config)
+      // .put(`${API_END_POINT}/api/user/update/${memberId}`, data, config)
+      .put(`${API_END_POINT}/user/update/${memberId}`, data, config)
       .then(() => {
         navigate(`/dashboard/members`);
       })

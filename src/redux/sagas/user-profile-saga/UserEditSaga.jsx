@@ -10,7 +10,8 @@ function* editAdminUser(action) {
     const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
     console.log("action", action);
-    const response = yield call(axios.put, `${API_END_POINT}/api/admin/update`, action?.payload, {
+    // const response = yield call(axios.put, `${API_END_POINT}/api/admin/update`, action?.payload, {
+    const response = yield call(axios.put, `${API_END_POINT}/admin/update`, action?.payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

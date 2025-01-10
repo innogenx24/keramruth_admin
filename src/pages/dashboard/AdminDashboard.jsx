@@ -47,6 +47,7 @@ import { Home as HomeIcon } from '@mui/icons-material'; // Import the HomeIcon f
 import { FaShoppingCart, FaCheckCircle } from 'react-icons/fa'; // Importing shopping cart icon
 import ReportIcon from "@mui/icons-material/Assessment";
 import { fetchNotificationsStart } from "../../redux/slices/notification-slice/notificationsSlice";
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 // Drawer width
 // const drawerWidth = 240;
@@ -205,7 +206,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   // Set the selected image to the existing image if present
   useEffect(() => {

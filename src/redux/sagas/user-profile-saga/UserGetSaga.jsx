@@ -7,7 +7,8 @@ import {
 function* fetchAdminUser() {
 
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const API_URL = `${API_END_POINT}/api/admin/admin-details`;
+  // const API_URL = `${API_END_POINT}/api/admin/admin-details`;
+  const API_URL = `${API_END_POINT}/admin/admin-details`;
 
   try {
     /** Retrieve the token from localStorage **/

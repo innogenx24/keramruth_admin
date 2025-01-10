@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
 import { signOut } from "../../redux/slices/authSlice";
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 function UserProfile() {
   const navigate = useNavigate(); // Initialize navigate
@@ -22,7 +23,7 @@ function UserProfile() {
   const { users } = useSelector((state) => state.users);
   const [selectedImage, setSelectedImage] = useState(""); // State for selected image
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
   // Set the selected image to the existing image if present
   useEffect(() => {

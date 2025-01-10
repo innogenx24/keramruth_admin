@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import AppLogo from "../../../assets/logo/AppLogo";
 import "./style.css"
 import SearchProducts from "./SearchProducts"
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 const BookingOrders = () => {
   const [products, setProducts] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -13,7 +14,12 @@ const BookingOrders = () => {
   const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
   const couponCode = ""; // Example coupon code
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
+
+  console.log("hi image");
+  
+ 
+  // https://erp.keramruth.com/api
   const { users } = useSelector((state) => state.users); // Fetch users from Redux store
   const userId = users?.id; // Get the user ID from the state.users object
   const [searchQuery, setSearchQuery] = useState("");

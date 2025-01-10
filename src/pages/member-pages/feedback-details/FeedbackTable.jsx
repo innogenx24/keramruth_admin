@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const FeedbackTable = () => {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -82,7 +83,7 @@ const FeedbackTable = () => {
                     <Avatar
                       src={
                         feedback.user.image
-                          ? `${API_END_POINT}/uploads/${feedback.user.image}`
+                          ? `${API_END_POINT_IMG}/uploads/${feedback.user.image}`
                           : undefined
                       }
                       alt={feedback.user.full_name}

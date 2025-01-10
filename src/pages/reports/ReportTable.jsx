@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 const areas = [];
 
 export default function ReportTable() {
@@ -48,7 +49,8 @@ export default function ReportTable() {
     // Fetch areas dynamically from API based on user data
     const fetchAreas = async () => {
       try {
-        const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+        // const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+        const response = await fetch(`${API_END_POINT}/user/${userId}`);
         const data = await response.json();
         // Assuming the API response contains a list of cities or areas
         const userAreas = [
@@ -102,7 +104,8 @@ export default function ReportTable() {
 
   const fetchUserCounts = async () => {
     try {
-      const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+      // const response = await fetch(`${API_END_POINT}/api/user/${userId}`);
+      const response = await fetch(`${API_END_POINT}/user/${userId}`);
       const data = await response.json();
 
       const users = [
@@ -304,7 +307,7 @@ export default function ReportTable() {
                   <Box display="flex" alignItems="center">
                     <Avatar
                       alt={row.full_name}
-                      src={`${API_END_POINT}/uploads/${row.image}`}
+                      src={`${API_END_POINT_IMG}/uploads/${row.image}`}
                       sx={{ width: 40, height: 40, marginRight: 2 }}
                     />
                     {row.full_name}

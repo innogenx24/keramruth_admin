@@ -9,7 +9,8 @@ function* postMember(action) {
     const { role_id } = action.payload;
     const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   
-      const response = yield call(axios.post, `${API_END_POINT}/api/user/signup`, action.payload, {
+      // const response = yield call(axios.post, `${API_END_POINT}/api/user/signup`, action.payload, {
+      const response = yield call(axios.post, `${API_END_POINT}/user/signup`, action.payload, {
 
       headers: {
         Authorization: `Bearer ${token}`,

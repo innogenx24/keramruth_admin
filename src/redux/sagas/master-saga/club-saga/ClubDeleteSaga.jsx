@@ -12,7 +12,8 @@ function deleteClubApi(clubId, token) {
 const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   return axios.delete(
-    `${API_END_POINT}/api/club/delete/${clubId}`,
+    // `${API_END_POINT}/api/club/delete/${clubId}`,
+    `${API_END_POINT}/club/delete/${clubId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

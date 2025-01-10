@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const OrderDetails = () => {
   const [orders, setOrders] = useState([]);
@@ -184,7 +185,7 @@ const OrderDetails = () => {
                               <TableRow key={item.id}>
                                 <TableCell>
                                   <img
-                                    src={`${API_END_POINT}/uploads/${item.product.image}`}
+                                    src={`${API_END_POINT_IMG}/uploads/${item.product.image}`}
                                     alt={item.product.name}
                                     style={{
                                       width: "80px",
