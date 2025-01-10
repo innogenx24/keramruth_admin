@@ -63,7 +63,7 @@ const FeedbackTable = () => {
       </Typography>
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>User Details</TableCell>
               <TableCell>Order ID</TableCell>

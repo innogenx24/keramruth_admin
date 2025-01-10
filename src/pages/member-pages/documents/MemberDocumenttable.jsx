@@ -109,7 +109,7 @@ const MemberDocumenttable = () => {
           </Button> */}
         </div>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Document Image</TableCell>

@@ -170,7 +170,7 @@ const MemberAdoTable = () => {
 
     try {
       // const response = await axios.get(`${API_END_POINT}/api/user/${UserId}`, {
-        const response = await axios.get(`${API_END_POINT}/user/${UserId}`, {
+      const response = await axios.get(`${API_END_POINT}/user/${UserId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -378,15 +378,15 @@ const MemberAdoTable = () => {
             onMouseUp={handleMouseUp}
           >
             <Table stickyHeader aria-label="Member ADO Table">
-              <TableHead>
+              <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
                 <TableRow>
-                  <TableCell>No.</TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Full Name</TableCell>
-                  <TableCell>Mobile No.</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Email</TableCell>
-                  {role === 'Admin' && <TableCell>Action</TableCell>}
+                  <TableCell style={{backgroundColor:"#DCDCDC"}}>No.</TableCell>
+                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Username</TableCell>
+                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Full Name</TableCell>
+                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Mobile No.</TableCell>
+                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Role</TableCell>
+                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Email</TableCell>
+                  {role === 'Admin' && <TableCell style={{backgroundColor:"#DCDCDC"}}>Action</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>

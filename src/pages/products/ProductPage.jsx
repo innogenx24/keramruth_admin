@@ -202,7 +202,7 @@ const ProductPage = () => {
 
       <TableContainer component={Paper} >
         <Table aria-label="product table">
-          <TableHead sx={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "white" }}>
+          <TableHead sx={{ position: "sticky", top: 0, zIndex: 1, backgroundColor: "#DCDCDC" }}>
             <TableRow>
               {columns.map((column) => (
                 <TableCell key={column.id}>{column.label}</TableCell>

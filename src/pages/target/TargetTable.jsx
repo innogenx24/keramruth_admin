@@ -114,7 +114,7 @@ const TargetTable = () => {
 
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
+          <TableHead sx={{backgroundColor:"#DCDCDC"}}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>User Name</TableCell>

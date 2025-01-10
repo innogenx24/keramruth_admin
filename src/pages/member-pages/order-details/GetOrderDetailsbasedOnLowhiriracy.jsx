@@ -159,17 +159,17 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
       <TableContainer component={Paper} sx={{ marginTop: 4,maxHeight: '500px', overflowY: 'auto' }}>
       
       <Table stickyHeader aria-label={`${title} Table`}>
-        <TableHead>
+        <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
           <TableRow>
-            <TableCell>No.</TableCell>
-            <TableCell>Customer Name</TableCell>
-            <TableCell>Order ID</TableCell>
-            <TableCell>Total Order QTY</TableCell>
-            <TableCell>Total Amount</TableCell>
-            <TableCell>Product Details</TableCell>
-            <TableCell>Order Date</TableCell>
-            {showStatus && <TableCell>Order Status</TableCell>}
-            {isActionable && <TableCell>Action</TableCell>}
+            <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
+            <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Customer Name</TableCell>
+            <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order ID</TableCell>
+            <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Total Order QTY</TableCell>
+            <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Total Amount</TableCell>
+            <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Product Details</TableCell>
+            <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order Date</TableCell>
+            {showStatus && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order Status</TableCell>}
+            {isActionable && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>

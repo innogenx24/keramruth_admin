@@ -171,7 +171,7 @@ const MemberTable = () => {
       </Typography>
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>
@@ -303,7 +303,7 @@ const MemberTable = () => {
       {/* Previous Data Table */}
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>

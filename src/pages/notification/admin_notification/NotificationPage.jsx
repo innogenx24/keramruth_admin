@@ -60,7 +60,7 @@ const NotificationPage = () => {
   const handleNavigation = (type) => {
     switch (type) {
       case "announcement":
-        navigate("/dashboard/announcement");
+        navigate("/dashboard/announcement-member");
         break;
       case "order_request":
         const loginUser = JSON.parse(localStorage.getItem("user"));

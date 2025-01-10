@@ -287,7 +287,7 @@ export default function ReportTable() {
 
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Name</TableCell>

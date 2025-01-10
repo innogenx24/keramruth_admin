@@ -88,7 +88,7 @@ const OrderLimitsTable = () => {
           </Button> */}
         </div>
         <Table aria-label="Order Limit Table">
-          <TableHead>
+          <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Role</TableCell>

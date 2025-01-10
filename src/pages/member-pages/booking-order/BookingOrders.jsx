@@ -14,11 +14,11 @@ const BookingOrders = () => {
   const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
   const couponCode = ""; // Example coupon code
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/src/uploads/`;
 
   console.log("hi image");
-  
- 
+
+
   // https://erp.keramruth.com/api
   const { users } = useSelector((state) => state.users); // Fetch users from Redux store
   const userId = users?.id; // Get the user ID from the state.users object
@@ -35,13 +35,13 @@ const BookingOrders = () => {
     }
   }, [orderConfirmation]);
 
-  const fetchProducts = async () => { 
+  const fetchProducts = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Token not found. Please log in.");
       return;
     }
-  
+
     try {
       const response = await axios.get(
         `${API_END_POINT}/products/user_product`,
@@ -51,7 +51,7 @@ const BookingOrders = () => {
           },
         }
       );
-  
+
       // Sort products in descending order based on 'id' or any desired field
       const sortedProducts = response.data.sort((a, b) => b.id - a.id);
       setProducts(sortedProducts);
@@ -59,7 +59,7 @@ const BookingOrders = () => {
       console.error("Error fetching products:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -179,115 +179,121 @@ const BookingOrders = () => {
       >
 
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Image</TableCell>
-                <TableCell>Product Name</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Quantity</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredProducts.map((product) => {
-                const currentQuantity = orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
+<TableContainer component={Paper} sx={{ maxHeight: '400px', overflowY: 'auto' }}>
+  <Table>
+    <TableHead
+      sx={{
+        backgroundColor: '	#DCDCDC',
+        position: 'sticky', 
+        top: 0, 
+        zIndex: 1, 
+      }}
+    >
+      <TableRow>
+        <TableCell align="center">Image</TableCell>
+        <TableCell align="center">Product Name</TableCell>
+        <TableCell align="center">Price</TableCell>
+        <TableCell align="center">Quantity</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {filteredProducts.map((product) => {
+        const currentQuantity =
+          orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
 
-                return (
-                  <TableRow key={product.id}>
-                    {/* Product Image */}
-                    <TableCell>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <img
-                          src={product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'}
-                          alt={product.name || "Product Image"}
-                          style={{
-                            width: "100px",
-                            height: "auto",
-                            objectFit: "contain",
-                            border: "1px solid #ccc",
-                            boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                            borderRadius: "10px",
-                          }}
-                        />
+        return (
+          <TableRow key={product.id}>
+            {/* Product Image */}
+            <TableCell align="center">
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <img
+                  src={
+                    product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'
+                  }
+                  alt={product.name || 'Product Image'}
+                  style={{
+                    width: '100px',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    border: '1px solid #ccc',
+                    boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
+                    borderRadius: '10px',
+                  }}
+                />
+              </div>
+            </TableCell>
 
-                      </div>
-                    </TableCell>
+            {/* Product Name */}
+            <TableCell align="center">{product.name}</TableCell>
+
+            {/* Product Price Display with Offer (super1) */}
+            <TableCell align="center">
+              {product.super1 && product.super1 !== '0.00' ? (
+                <>
+                  <span style={{ textDecoration: 'line-through', color: 'red', marginLeft: '5px' }}>
+                    {product.originalPrice}
+                  </span>
+                  <span style={{ color: 'green', fontWeight: 'bold' }}>
+                    {product.super1}
+                  </span>
+                </>
+              ) : (
+                <span>{product.originalPrice}</span>
+              )}
+            </TableCell>
+
+            {/* Quantity Buttons and Input Box */}
+            <TableCell align="center">
+              <Box display="flex" alignItems="center" justifyContent="center">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => decrementQuantity(product.id)}
+                  style={{ marginRight: '10px' }}
+                >
+                  -
+                </Button>
+
+                <input
+                  type="text"
+                  value={currentQuantity}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    value = value.replace(/^0+/, '') || '0';
+
+                    const numericValue = parseInt(value, 10) || 0;
+
+                    handleQuantityChange(product.id, numericValue);
+                  }}
+                  min="0"
+                  style={{
+                    width: '70px',
+                    textAlign: 'center',
+                    margin: '0 10px',
+                    padding: '10px !important',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                  }}
+                />
+
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => incrementQuantity(product.id)}
+                  style={{ marginLeft: '10px' }}
+                >
+                  +
+                </Button>
+              </Box>
+            </TableCell>
+          </TableRow>
+        );
+      })}
+    </TableBody>
+  </Table>
+</TableContainer>
 
 
-                    {/* Product Name */}
-                    <TableCell>{product.name}</TableCell>
-
-                    {/* Product Price Display with Offer (super1) */}
-                    <TableCell>
-                      {product.super1 && product.super1 !== "0.00" ? (
-                        <>
-                          <span
-                            style={{ textDecoration: "line-through", color: "red", marginLeft: "5px" }}
-                          >
-                            {product.originalPrice}
-                          </span>
-                          <span style={{ color: "green", fontWeight: "bold" }}>
-                            {product.super1}
-                          </span>
-                        </>
-                      ) : (
-                        <span>{product.originalPrice}</span>
-                      )}
-                    </TableCell>
-
-                    {/* Quantity Buttons and Input Box */}
-                    <TableCell>
-                      <Box display="flex" alignItems="center">
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => decrementQuantity(product.id)}
-                          style={{ marginRight: "10px" }}
-                        >
-                          -
-                        </Button>
-
-                        <input
-                          type="text"
-                          value={currentQuantity}
-                          onChange={(e) => {
-                            let value = e.target.value;
-                            value = value.replace(/^0+/, '') || '0';  
-
-                            const numericValue = parseInt(value, 10) || 0;  
-
-                            handleQuantityChange(product.id, numericValue); 
-                          }}
-                          min="0"
-                          style={{
-                            width: "70px",
-                            textAlign: "center",
-                            margin: "0 10px",
-                            padding: "10px !important",
-                            border: "1px solid #ccc",
-                            borderRadius: "4px",
-                          }}
-                        />
-
-
-
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => incrementQuantity(product.id)}
-                          style={{ marginLeft: "10px" }}
-                        >
-                          +
-                        </Button>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
 
 
       </div>

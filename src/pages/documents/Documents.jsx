@@ -80,7 +80,7 @@ const DocumentsTable = () => {
     if (documentToDelete) {
       try {
         await axios.delete(`${API_END_POINT}/documents/${documentToDelete.id}`);
-        setDocuments((prevDocuments) => 
+        setDocuments((prevDocuments) =>
           prevDocuments.filter((doc) => doc.id !== documentToDelete.id)
         );
         handleDeleteClose();
@@ -163,7 +163,7 @@ const DocumentsTable = () => {
           </Button>
         </div>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Document Image</TableCell>
