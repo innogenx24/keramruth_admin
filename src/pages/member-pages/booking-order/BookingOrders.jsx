@@ -16,8 +16,6 @@ const BookingOrders = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const imageBaseURL = `${API_END_POINT_IMG}/src/uploads/`;
 
-  console.log("hi image");
-
 
   // https://erp.keramruth.com/api
   const { users } = useSelector((state) => state.users); // Fetch users from Redux store

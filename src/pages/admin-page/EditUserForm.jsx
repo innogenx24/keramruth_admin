@@ -81,8 +81,8 @@ const EditUserForm = ({ onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("User Details:", userDetails);
-    console.log("Access Controls:", accessControls);
+    // console.log("User Details:", userDetails);
+    // console.log("Access Controls:", accessControls);
     // Handle form submission logic here
     onCancel(); // Call the onCancel function after submission
   };
