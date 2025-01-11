@@ -48,7 +48,7 @@ const MemberDetailTable = () => {
   // const { members } = useSelector((state) => state.members);
   // const membersList = Array.isArray(members) ? members : [members];
   const [membersList, setMembersList] = useState([]);
-  const [salesData, setSalesData] = useState([]);
+  const [salesData, setSalesData] = useState([0]);
   const [roleToUse, setRoleToUse] = useState(null); // Initialize roleToUse state
   const { userId } = useMemo(() => JSON.parse(localStorage.getItem("user")) || {}, []);
   const [loading, setLoading] = useState(false);
