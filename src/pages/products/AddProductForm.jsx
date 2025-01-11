@@ -177,6 +177,7 @@ const AddProductForm = () => {
       formData.append("category_name", values.category_name);
       formData.append("stock_quantity", values.stock_quantity);
       formData.append("autoUpdate", values.autoUpdate);
+      formData.append("description", values.description);
 
       if (!values.autoUpdate) {
 

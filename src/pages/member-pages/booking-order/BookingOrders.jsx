@@ -14,7 +14,8 @@ const BookingOrders = () => {
   const [orderConfirmation, setOrderConfirmation] = useState(false); // To display confirmation message
   const couponCode = ""; // Example coupon code
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const imageBaseURL = `${API_END_POINT_IMG}/src/uploads/`;
+  // const imageBaseURL = `${API_END_POINT_IMG}/src/uploads/`;
+  const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
 
   // https://erp.keramruth.com/api
