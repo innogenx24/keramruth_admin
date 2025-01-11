@@ -248,8 +248,6 @@ const MemberAdoTable = () => {
     } else {
       navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
     }
-
-    window.location.reload();
   };
 
 
