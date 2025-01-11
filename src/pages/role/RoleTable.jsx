@@ -71,7 +71,7 @@ const RoleTable = () => {
 
       <TableContainer component={Paper} sx={{ maxHeight: 400, overflowY: "auto" }}>
         <Table aria-label="Role Table">
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Role Name</TableCell>

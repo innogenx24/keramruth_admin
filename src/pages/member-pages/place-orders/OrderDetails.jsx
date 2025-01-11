@@ -111,15 +111,17 @@ const OrderDetails = () => {
         <Table stickyHeader aria-label="Order Details Table">
           <TableHead>
             <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Order ID</TableCell>
-              <TableCell>Total Amount</TableCell>
-              <TableCell>Total Order Quantity</TableCell>
-              <TableCell>Order Date</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell sx={{ backgroundColor: '	#DCDCDC' }}>No.</TableCell>
+              <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Order ID</TableCell>
+              <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Total Amount</TableCell>
+              <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Total Order Quantity</TableCell>
+              <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Order Date</TableCell>
+              <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
+
+
             {loading ? (
               <TableRow>
                 <TableCell colSpan={6} align="center">
@@ -170,7 +172,14 @@ const OrderDetails = () => {
                     <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
                       <Collapse in={selectedOrderId === order.id} timeout="auto" unmountOnExit>
                         <Table size="small">
-                          <TableHead>
+                          <TableHead
+                            sx={{
+                              backgroundColor: '	#DCDCDC',
+                              position: 'sticky',
+                              top: 0,
+                              zIndex: 1,
+                            }}
+                          >
                             <TableRow>
                               <TableCell>Product Image</TableCell>
                               <TableCell>Product Name</TableCell>
@@ -206,7 +215,7 @@ const OrderDetails = () => {
                                     {(order.status === "Accepted" || order.status === "Cancelled") && (
                                       <Button
                                         variant="contained"
-                                        style={{ backgroundColor: 'green', color: 'white' }} 
+                                        style={{ backgroundColor: 'green', color: 'white' }}
                                         size="small"
                                         onClick={() => handleFeedbackClick(order, item.product)}
                                       >

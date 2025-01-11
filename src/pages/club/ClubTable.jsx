@@ -152,7 +152,7 @@ const ClubTable = () => {
 
           <TableContainer component={Paper} >
             <Table aria-label="Club Table">
-              <TableHead>
+              <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Club Name</TableCell>

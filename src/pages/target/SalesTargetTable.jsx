@@ -65,9 +65,9 @@ const SalesTargetTable = () => {
       {/* Table Container */}
       <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
-              <TableCell >ID</TableCell>
+              <TableCell >No.</TableCell>
               <TableCell>Role Name</TableCell>
               <TableCell>Sales Target</TableCell>
               <TableCell>Stock Target</TableCell>

@@ -60,11 +60,13 @@ const EditDocumentForm = () => {
       setHeading(document.heading || "");
       setDescription(document.description || "");
       setLink(document.link || "");
-      setReceiver(
-        Array.isArray(document.receiver)
-          ? document.receiver
-          : roles.map((role) => role.value)
-      );
+      
+      // Parse the receiver if it's a stringified array
+      const parsedReceiver = Array.isArray(document.receiver)
+        ? document.receiver
+        : JSON.parse(document.receiver || "[]"); 
+      setReceiver(parsedReceiver);
+      
       setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
       setImageName(document.image || "");
@@ -73,23 +75,29 @@ const EditDocumentForm = () => {
 
   const handleReceiverChange = (event) => {
     const { value, checked } = event.target;
-
+  
     if (value === "selectAll") {
       if (checked) {
         setReceiver(roles.map((role) => role.value));
       } else {
         setReceiver([]);
       }
-      setSelectAll(checked);
+      setSelectAll(checked);  
     } else {
       const updatedReceiver = checked
         ? [...receiver, value]
         : receiver.filter((role) => role !== value);
-
+  
       setReceiver(updatedReceiver);
-      setSelectAll(updatedReceiver.length === roles.length);
+      setSelectAll(updatedReceiver.length === roles.length);  
     }
   };
+  
+  // useEffect to update selectAll checkbox state if receiver list changes
+  useEffect(() => {
+    setSelectAll(receiver.length === roles.length);
+  }, [receiver]);
+  
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];

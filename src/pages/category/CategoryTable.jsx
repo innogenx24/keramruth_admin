@@ -132,7 +132,7 @@ const CategoryTable = () => {
           <h2>Category</h2>
           <TableContainer component={Paper} >
             <Table aria-label="Category Table">
-              <TableHead >
+              <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Category Name</TableCell>

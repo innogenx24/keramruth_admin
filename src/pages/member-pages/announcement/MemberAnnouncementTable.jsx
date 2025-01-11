@@ -96,7 +96,7 @@ const AnnouncementTable = () => {
           
         </div>
         <Table>
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Announcement Image</TableCell>

@@ -676,13 +676,13 @@ const MemberDetailTable = () => {
             <Table stickyHeader aria-label="Member ADO Table">
               <TableHead>
                 <TableRow>
-                  <TableCell>No.</TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Full Name</TableCell>
-                  <TableCell>Mobile No.</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Email</TableCell>
-                  {role === 'Admin' && <TableCell>Action</TableCell>}
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Username</TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Full Name</TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Mobile No.</TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Role</TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Email</TableCell>
+                  {role === 'Admin' && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>

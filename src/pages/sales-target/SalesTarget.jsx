@@ -120,11 +120,11 @@ export default function SalesTargetTable() {
       </Box>
       <TableContainer component={Paper} style={{ maxHeight: 480, overflowY: "auto" }}>
         <Table stickyHeader aria-label="sales targets table">
-          <TableHead>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Product Name</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
+              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Product Name</TableCell>
+              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -158,9 +158,9 @@ export default function SalesTargetTable() {
                       <Collapse in={expandedRow === product.id} timeout="auto" unmountOnExit>
                         <Box margin={1}>
                           <Table size="small">
-                            <TableHead>
+                            <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
                               <TableRow>
-                                <TableCell>Role</TableCell>
+                                <TableCell >Role</TableCell>
                                 <TableCell>Sales Target</TableCell>
                                 <TableCell>Stock Target</TableCell>
 
