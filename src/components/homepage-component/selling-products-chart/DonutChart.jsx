@@ -2,6 +2,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import axios from 'axios';
+import DatePicker from 'react-datepicker';
+import { format } from 'date-fns'; // For formatting dates
+import 'react-datepicker/dist/react-datepicker.css';
 import './DonutChart.scss';
 
 Chart.register(ArcElement, Tooltip, Legend);
@@ -20,9 +23,11 @@ const DonutChart = () => {
       ],
     }],
   });
-  const [isDataAvailable, setIsDataAvailable] = useState(true); // To track if data is available
-  const [message, setMessage] = useState(''); // To store error/success message
+  const [isDataAvailable, setIsDataAvailable] = useState(true);
+  const [message, setMessage] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Default to current date
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  
 
   const options = {
     responsive: true,
@@ -51,7 +56,10 @@ const DonutChart = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get(`${API_END_POINT}/overall_sales/mostl_selled_product`, {
+        const selectedMonth = format(selectedDate, 'yyyy-MM'); // Format the date to YYYY-MM
+        const response = await axios.post(`${API_END_POINT}/overall_sales/mostl_selled_product`, {
+          month: selectedMonth,
+        }, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -61,13 +69,12 @@ const DonutChart = () => {
         const labels = data.map(item => `${item.productName} ${item.percentage}%`);
         const salesData = data.map(item => item.sales);
 
-        // Check if sales data is empty or all zeros
         const isZeroData = salesData.every(val => val === 0);
         if (isZeroData || data.length === 0) {
-          setIsDataAvailable(false); // No data available, show fallback message
-          setMessage('No data available for the current month'); // Set custom message
+          setIsDataAvailable(false);
+          setMessage('No data available for the selected month');
         } else {
-          setIsDataAvailable(true); // Data available, update chart
+          setIsDataAvailable(true);
           setChartData({
             labels: labels,
             datasets: [{
@@ -76,42 +83,39 @@ const DonutChart = () => {
               hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
             }],
           });
-          setMessage(''); // Clear any previous messages
+          setMessage('');
         }
       } catch (error) {
         console.error('Error fetching sales data:', error);
-        setIsDataAvailable(false); // In case of an error, show fallback message
-        setMessage(error.response?.data?.message || 'An error occurred while fetching the data'); // Display error message from API response or default message
+        setIsDataAvailable(false);
+        setMessage(error.response?.data?.message || 'An error occurred while fetching the data');
       }
     };
 
     fetchSalesData();
-  }, []); // Empty dependency array ensures this effect runs only once
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (chartRef.current) {
-        chartRef.current.resize();
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  }, [selectedDate]); 
 
   return (
     <div className='dchart-container'>
       <h2>Most Selling Product</h2>
+
+      {/* Month selection */}
+      <div className="month-selector">
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          dateFormat="MMMM yyyy" // Show full month and year in UI
+          showMonthYearPicker // Limit picker to month and year
+          className="date-picker-input"
+        />
+      </div>
 
       <div className='doughnu_chart'>
         {isDataAvailable ? (
           <>
             <Doughnut ref={chartRef} data={chartData} options={options} />
             <div className='chart-content'>
-              <span>This Month</span>
+              <span>{`Data for ${format(selectedDate, 'MMMM yyyy')}`}</span>
             </div>
           </>
         ) : (
@@ -125,6 +129,166 @@ const DonutChart = () => {
 };
 
 export default DonutChart;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useRef, useEffect, useState } from 'react';
+// import { Doughnut } from 'react-chartjs-2';
+// import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+// import axios from 'axios';
+// import './DonutChart.scss';
+
+// Chart.register(ArcElement, Tooltip, Legend);
+
+// const DonutChart = () => {
+//   const chartRef = useRef(null);
+//   const [chartData, setChartData] = useState({
+//     labels: [],
+//     datasets: [{
+//       data: [],
+//       backgroundColor: [
+//         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+//       ],
+//       hoverBackgroundColor: [
+//         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+//       ],
+//     }],
+//   });
+//   const [isDataAvailable, setIsDataAvailable] = useState(true); // To track if data is available
+//   const [message, setMessage] = useState(''); // To store error/success message
+//   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+//   const options = {
+//     responsive: true,
+//     maintainAspectRatio: false,
+//     cutout: '70%',
+//     plugins: {
+//       legend: {
+//         position: 'bottom',
+//         labels: {
+//           usePointStyle: true,
+//         },
+//       },
+//       tooltip: {
+//         callbacks: {
+//           label: function (tooltipItem) {
+//             const dataset = tooltipItem.dataset.data;
+//             const total = dataset.reduce((acc, val) => acc + val, 0);
+//             const percentage = ((dataset[tooltipItem.dataIndex] / total) * 100).toFixed(2);
+//             return `${tooltipItem.label}: ${percentage}%`;
+//           },
+//         },
+//       },
+//     },
+//   };
+
+//   useEffect(() => {
+//     const fetchSalesData = async () => {
+//       try {
+//         const response = await axios.get(`${API_END_POINT}/overall_sales/mostl_selled_product`, {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("token")}`,
+//           },
+//         });
+
+//         const data = response.data.mostSellingProducts;
+//         const labels = data.map(item => `${item.productName} ${item.percentage}%`);
+//         const salesData = data.map(item => item.sales);
+
+//         // Check if sales data is empty or all zeros
+//         const isZeroData = salesData.every(val => val === 0);
+//         if (isZeroData || data.length === 0) {
+//           setIsDataAvailable(false); // No data available, show fallback message
+//           setMessage('No data available for the current month'); // Set custom message
+//         } else {
+//           setIsDataAvailable(true); // Data available, update chart
+//           setChartData({
+//             labels: labels,
+//             datasets: [{
+//               data: salesData,
+//               backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+//               hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+//             }],
+//           });
+//           setMessage(''); // Clear any previous messages
+//         }
+//       } catch (error) {
+//         console.error('Error fetching sales data:', error);
+//         setIsDataAvailable(false); // In case of an error, show fallback message
+//         setMessage(error.response?.data?.message || 'An error occurred while fetching the data'); // Display error message from API response or default message
+//       }
+//     };
+
+//     fetchSalesData();
+//   }, []); // Empty dependency array ensures this effect runs only once
+
+//   useEffect(() => {
+//     const handleResize = () => {
+//       if (chartRef.current) {
+//         chartRef.current.resize();
+//       }
+//     };
+
+//     window.addEventListener('resize', handleResize);
+
+//     return () => {
+//       window.removeEventListener('resize', handleResize);
+//     };
+//   }, []);
+
+//   return (
+//     <div className='dchart-container'>
+//       <h2>Most Selling Product</h2>
+
+//       <div className='doughnu_chart'>
+//         {isDataAvailable ? (
+//           <>
+//             <Doughnut ref={chartRef} data={chartData} options={options} />
+//             <div className='chart-content'>
+//               <span>This Month</span>
+//             </div>
+//           </>
+//         ) : (
+//           <div className='no-data'>
+//             <span>{message || 'No data available'}</span>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default DonutChart;
 
 
 
