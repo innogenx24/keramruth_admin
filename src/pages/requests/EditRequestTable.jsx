@@ -103,7 +103,7 @@ const MemberTable = () => {
 
     try {
       // const response = await fetch(`${API_END_POINT}/api/member-update/update/${memberId}`, {
-        const response = await fetch(`${API_END_POINT}/member-update/update/${memberId}`, {
+      const response = await fetch(`${API_END_POINT}/member-update/update/${memberId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
@@ -173,6 +173,7 @@ const MemberTable = () => {
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
+              <TableCell>No.</TableCell>
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>
               <TableCell>Role</TableCell>
@@ -186,7 +187,7 @@ const MemberTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedEditRequests.map((request) => {
+            {sortedEditRequests.map((request,index) => {
               // Skip rows if the status is not "Pending"
               if (request.status !== "Pending") return null;
 
@@ -209,6 +210,8 @@ const MemberTable = () => {
               if (!isMobileSame || !isEmailSame || !isAddressSame) {
                 return (
                   <TableRow key={request.id}>
+                    <TableCell>{index + 1}</TableCell>
+
                     <TableCell>
                       {request.image ? (
                         <img
@@ -305,6 +308,8 @@ const MemberTable = () => {
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
+              <TableCell>No</TableCell>
+
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>
               <TableCell>Role</TableCell>
@@ -319,7 +324,7 @@ const MemberTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedEditRequests.map((request) => {
+            {sortedEditRequests.map((request, index) => {
               const member = combinedMembers.find((member) => member.id === request.user_id);
               if (!member) return null;
 
@@ -327,6 +332,7 @@ const MemberTable = () => {
               if (request.status === "Completed" || request.status === "Rejected") {
                 return (
                   <TableRow key={request.id}>
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell>
                       {request.image ? (
                         <img

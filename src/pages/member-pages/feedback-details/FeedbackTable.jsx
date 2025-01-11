@@ -65,6 +65,8 @@ const FeedbackTable = () => {
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
+            <TableCell>No.</TableCell>
+
               <TableCell>User Details</TableCell>
               <TableCell>Order ID</TableCell>
               <TableCell>Quantity</TableCell>
@@ -76,8 +78,9 @@ const FeedbackTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {feedbacks.map((feedback) => (
+            {feedbacks.map((feedback,index) => (
               <TableRow key={feedback.id}>
+                <TableCell>{index+1}</TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center">
                     <Avatar
