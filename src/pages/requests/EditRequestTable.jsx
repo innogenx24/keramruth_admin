@@ -308,7 +308,7 @@ const MemberTable = () => {
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
-              <TableCell>No</TableCell>
+              <TableCell>No.</TableCell>
 
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>

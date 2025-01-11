@@ -67,7 +67,7 @@ const SalesTargetTable = () => {
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
-              <TableCell >ID</TableCell>
+              <TableCell >No.</TableCell>
               <TableCell>Role Name</TableCell>
               <TableCell>Sales Target</TableCell>
               <TableCell>Stock Target</TableCell>
