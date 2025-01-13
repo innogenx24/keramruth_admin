@@ -365,11 +365,12 @@ export default function ReportTable() {
           <TableHead sx={{ backgroundColor: "#DCDCDC", position: 'sticky', top: 0, zIndex: 1 }}>
             <TableRow>
               <TableCell>No.</TableCell>
+              <TableCell>Username</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>City</TableCell>
-              <TableCell>Target Amount</TableCell>
-              <TableCell>Stock QTY</TableCell>
+              <TableCell>Target Amount / Achievement Amount</TableCell>
+              <TableCell>Stock QTY / Achievement QTY</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -379,6 +380,7 @@ export default function ReportTable() {
               paginatedData.map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                  <TableCell>{row.username}</TableCell>
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Avatar
@@ -393,18 +395,20 @@ export default function ReportTable() {
                   <TableCell>{row.city}</TableCell>
                   <TableCell>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {row.salesAchievement?.monthlyDetails?.[0]?.MonthlyTargetAmount || 0}
+                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.MonthlyTargetAmount || 0)}
                       <span style={{ fontSize: "1.5em", margin: "0 3px" }}>/</span>
-                      {row.salesAchievement?.monthlyDetails?.[0]?.AchievementAmount || 0}
+                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.AchievementAmount || 0)}
                     </div>
                   </TableCell>
+
                   <TableCell>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {row.salesAchievement?.monthlyDetails?.[0]?.StockTarget || 0}
+                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.StockTarget || 0)}
                       <span style={{ fontSize: "1.5em", margin: "0 3px" }}>/</span>
-                      {row.salesAchievement?.monthlyDetails?.[0]?.StockAchievement || 0}
+                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.StockAchievement || 0)}
                     </div>
                   </TableCell>
+
                 </TableRow>
               ))
             )}

@@ -58,12 +58,20 @@ const SalesPage = () => {
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
                 <SalesCard
-                  title={`Total Sales (${data.roleName}) (${data.totalUsers})`}
-                  sales={data.totalSalesAmount || 0}
-                  target={data.targetAmount || 0}
+                  title={
+                    <>
+                      Total Sales
+                      <br />
+                      ({data.roleName}) 
+                      ({data.totalUsers})
+                    </>
+                  }
+                  sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
+                  target={`Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
                   growth={data.salesAchievementPercent || 0}
                 />
               </Grid>
+
             ))}
           </Grid>
         </Grid>

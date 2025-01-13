@@ -22,9 +22,9 @@ const FeedbackTable = () => {
   const { users } = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const userId = users?.id; // Assuming the user ID is stored in the state.users object
-  const userRole= users?.role_name;
+  const userRole = users?.role_name;
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  
+
 
   // Fetch feedbacks on component mount
   useEffect(() => {
@@ -65,7 +65,7 @@ const FeedbackTable = () => {
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
-            <TableCell>No.</TableCell>
+              <TableCell>No.</TableCell>
 
               <TableCell>User Details</TableCell>
               <TableCell>Order ID</TableCell>
@@ -78,9 +78,9 @@ const FeedbackTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {feedbacks.map((feedback,index) => (
+            {feedbacks.map((feedback, index) => (
               <TableRow key={feedback.id}>
-                <TableCell>{index+1}</TableCell>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center">
                     <Avatar
@@ -96,7 +96,7 @@ const FeedbackTable = () => {
                   </Box>
                 </TableCell>
                 <TableCell>
-                {feedback.order.order_id}
+                  {feedback.order.order_id}
                 </TableCell>
 
                 <TableCell>
@@ -108,7 +108,9 @@ const FeedbackTable = () => {
                 <TableCell>
                   {new Date(feedback.feedback_date).toLocaleDateString()}
                 </TableCell>
-                <TableCell>₹{feedback.order.total_amount}</TableCell>
+                <TableCell>
+                  Rs {new Intl.NumberFormat('en-IN').format(feedback.order.total_amount || 0)}
+                </TableCell>
                 <TableCell>
                   <Rating value={feedback.rating} precision={0.5} readOnly />
                 </TableCell>

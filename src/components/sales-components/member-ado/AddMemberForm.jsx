@@ -781,13 +781,11 @@ const AddMemberForm = () => {
       mobile_number: Yup.string()
         .required("Required")
         .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
-      email: Yup.string().email("Invalid email address").required("Required"),
       password: Yup.string().required("Required"),
       pincode: Yup.number().required("Required"),
       country: Yup.string().required("Required"),
       state: Yup.string().required("Required"),
       district: Yup.string().required("Required"),
-      city: Yup.string().required("Required"),
       club_name: Yup.string(),
       // superior_id: Yup.string().required("Please select aany one  superior_id"),
     }),
@@ -1125,7 +1123,7 @@ const AddMemberForm = () => {
                   <TextField
                     fullWidth
                     name="email"
-                    label="Email ID*"
+                    label="Email ID"
                     {...formik.getFieldProps("email")}
                     error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
@@ -1244,7 +1242,7 @@ const AddMemberForm = () => {
                   <TextField
                     fullWidth
                     name="city"
-                    label="City*"
+                    label="City / Place"
                     {...formik.getFieldProps("city")}
                     error={formik.touched.city && Boolean(formik.errors.city)}
                     helperText={formik.touched.city && formik.errors.city}

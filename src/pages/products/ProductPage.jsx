@@ -47,7 +47,7 @@ const ProductPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [page, setPage] = useState(0); // Pagination state
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(20); // Rows per page
 
   useEffect(() => {
     dispatch(fetchProductsRequest());
@@ -236,7 +236,10 @@ const ProductPage = () => {
                   <TableCell>{product.stock_quantity}</TableCell>
                   <TableCell>{product.category_name}</TableCell>
                   <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
-                  <TableCell>{product.price}</TableCell>
+                  <TableCell>
+                    Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(product.price || 0)}
+                  </TableCell>
+
                   <TableCell>
                     <Button onClick={() => handleViewClick(product)}>View</Button>
                   </TableCell>

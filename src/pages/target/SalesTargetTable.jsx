@@ -72,7 +72,7 @@ const SalesTargetTable = () => {
               <TableCell>Sales Target</TableCell>
               <TableCell>Stock Target</TableCell>
               <TableCell>Duration</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -80,8 +80,13 @@ const SalesTargetTable = () => {
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
                 <TableCell sx={{ color: "#009AEE" }}>{row.role_name}</TableCell>
-                <TableCell>{row.target}</TableCell>
-                <TableCell>{row.stock_target}</TableCell>
+                <TableCell>
+                  {new Intl.NumberFormat('en-IN').format(row.target || 0)}
+                </TableCell>
+                <TableCell>
+                  {new Intl.NumberFormat('en-IN').format(row.stock_target || 0)}
+                </TableCell>
+
                 <TableCell>{row.duration}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEditClick(row)}>

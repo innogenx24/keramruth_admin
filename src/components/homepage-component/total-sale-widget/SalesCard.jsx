@@ -26,8 +26,8 @@ const SalesCard = ({ title, sales, target, growth, icon }) => {
             {title}
           </div>
           <div className="sales">
-            {sales} Rs{' '}
-            <span className="sales-target">/ {target} Rs</span>
+            {sales}{' '}
+            <span className="sales-target">/ {target}</span>
           </div>
         </div>
 

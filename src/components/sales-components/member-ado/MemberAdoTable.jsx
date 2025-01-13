@@ -320,37 +320,40 @@ const MemberAdoTable = () => {
             <Box sx={{ width: '100%', marginTop: 2 }}>
               <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
             </Box>
+            <Box sx={{ mb: 2 }}>
+              <Typography sx={{ marginBottom: '16px' }}>Select Role</Typography>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              {/* Role Dropdown */}
-              <FormControl style={{ width: '30%' }}>
-                <InputLabel id="role-dropdown-label">Select Role</InputLabel>
-                <Select
-                  labelId="role-dropdown-label"
-                  value={selectedRole}
-                  onChange={(e) => handleChange(e.target.value)}
-                  sx={{ borderRadius: '20px' }}
-                >
-                  {roleOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                {/* Select Role Dropdown */}
+                <FormControl style={{ width: '30%' }}>
+                  <Select
+                    labelId="role-dropdown-label"
+                    value={selectedRole}
+                    onChange={(e) => handleChange(e.target.value)}
+                    sx={{ borderRadius: '20px' }}
+                  >
+                    {roleOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              {/* Role Count */}
-              <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
-                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                  <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
-                  {selectedRole === '2' && roleCounts.adoCount}
-                  {selectedRole === '3' && roleCounts.mdCount}
-                  {selectedRole === '4' && roleCounts.sdCount}
-                  {selectedRole === '5' && roleCounts.distributorCount}
-                  {selectedRole === '6' && roleCounts.customerCount}
-                </Typography>
+                {/* Role Count */}
+                <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                    <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
+                    {selectedRole === '2' && roleCounts.adoCount}
+                    {selectedRole === '3' && roleCounts.mdCount}
+                    {selectedRole === '4' && roleCounts.sdCount}
+                    {selectedRole === '5' && roleCounts.distributorCount}
+                    {selectedRole === '6' && roleCounts.customerCount}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
+
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
@@ -378,13 +381,13 @@ const MemberAdoTable = () => {
             <Table stickyHeader aria-label="Member ADO Table">
               <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
                 <TableRow>
-                  <TableCell style={{backgroundColor:"#DCDCDC"}}>No.</TableCell>
-                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Username</TableCell>
-                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Full Name</TableCell>
-                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Mobile No.</TableCell>
-                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Role</TableCell>
-                  <TableCell style={{backgroundColor:"#DCDCDC"}}>Email</TableCell>
-                  {role === 'Admin' && <TableCell style={{backgroundColor:"#DCDCDC"}}>Action</TableCell>}
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Username</TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Full Name</TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Mobile No.</TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Role</TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Email</TableCell>
+                  {role === 'Admin' && <TableCell style={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>

@@ -76,6 +76,9 @@ const NotificationPage = () => {
       case "document":
         navigate("/dashboard/documents-member");
         break;
+      case "feedback":
+        navigate("/dashboard/feedback");
+        break;
       case "profile_edite_request":
         navigate("/dashboard/edit-request");
         break;
@@ -200,6 +203,7 @@ const NotificationPage = () => {
                     <>
                       {notification.detail?.type !== "announcement" &&
                         notification.detail?.type !== "document" &&
+                        notification.detail?.type !== "feedback" &&
                         notification.detail?.type !== "profile_edit_request_approved" &&
                         notification.detail?.type !== "profile_edit_request_rejected" && (
                           <>
