@@ -151,17 +151,17 @@ const CustomerDashboard = () => {
                   <Typography variant="body2">Role: {customer.role_name}</Typography>
 
                   <Typography variant="body2">
-                    <LocationOn style={{ marginRight: "8px",marginTop:"20px"}} />
+                    <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
                     {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}
                   </Typography>
 
                   <Typography variant="body2">
-                    <Phone style={{ marginRight: "8px",marginTop:"10px" }} />
+                    <Phone style={{ marginRight: "8px", marginTop: "10px" }} />
                     {customer.mobile_number}
                   </Typography>
 
                   <Typography variant="body2">
-                    <Mail style={{ marginRight: "8px",marginTop:"10px" }} />
+                    <Mail style={{ marginRight: "8px", marginTop: "10px" }} />
                     {customer.email}
                   </Typography>
                 </Grid>
@@ -172,7 +172,7 @@ const CustomerDashboard = () => {
                 {new Date(customer.createdAt).toLocaleDateString()} Joined
               </Typography>
               <Typography variant="body2" style={{ color: "#1c96c5" }}>
-                Total Booked: <span style={{ color: "#1c96c5" }}>{totalOrders}</span>
+                Total No. of Booked: <span style={{ color: "#1c96c5" }}>{totalOrders}</span>
               </Typography>
 
             </Grid>
@@ -258,7 +258,13 @@ const CustomerDashboard = () => {
               <TableBody>
                 {history.slice(0, visibleHistoryCount).map((entry, index) => (
                   <TableRow key={index}>
-                    <TableCell>{entry.date}</TableCell>
+                    <TableCell>
+                      {new Date(entry.date).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      })}
+                    </TableCell>
                     <TableCell>{entry.product}</TableCell>
                   </TableRow>
                 ))}

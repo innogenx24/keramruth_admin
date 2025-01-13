@@ -122,43 +122,45 @@ const TrendLineGraph = () => {
 
   return (
     <div className="lineg">
-<Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'wrap', gap: 2 }}>
-  <Box sx={{ flex: 1 }}>
-    <Typography variant="h6">Sales Trend Over Time</Typography>
-    <Typography variant="body1">Total Quantity: {totalQuantity}</Typography>
-  </Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'wrap', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h6">Sales Trend Over Time</Typography>
+          <Typography variant="body1">
+            Total Quantity: {new Intl.NumberFormat('en-IN').format(totalQuantity || 0)}
+          </Typography>
+        </Box>
 
-  <Box display="flex" flexDirection="row" gap={2} alignItems="center" justifyContent="space-between" sx={{ flexWrap: 'wrap', gap: 2 }}>
-    <Box mb={1} display="flex" flexDirection="column" gap={0.5} sx={{ flex: 1, minWidth: '200px' }}>
-      <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>Select Start Month</Typography>
-      <DatePicker
-        selected={startDate}
-        onChange={(date) => setStartDate(date)}
-        dateFormat="yyyy-MM"
-        showMonthYearPicker
-        selectsStart
-        startDate={startDate}
-        endDate={endDate}
-        className="datepicker"
-        style={{ fontSize: '0.875rem' }}  // Make DatePicker input smaller
-      />
-    </Box>
-    <Box mb={1} display="flex" flexDirection="column" gap={0.5} sx={{ flex: 1, minWidth: '200px' }}>
-      <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>Select End Month</Typography>
-      <DatePicker
-        selected={endDate}
-        onChange={(date) => setEndDate(date)}
-        dateFormat="yyyy-MM"
-        showMonthYearPicker
-        selectsEnd
-        startDate={startDate}
-        endDate={endDate}
-        className="datepicker"
-        style={{ fontSize: '0.875rem' }}  // Make DatePicker input smaller
-      />
-    </Box>
-  </Box>
-</Box>
+        <Box display="flex" flexDirection="row" gap={2} alignItems="center" justifyContent="space-between" sx={{ flexWrap: 'wrap', gap: 2 }}>
+          <Box mb={1} display="flex" flexDirection="column" gap={0.5} sx={{ flex: 1, minWidth: '200px' }}>
+            <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>Select Start Month</Typography>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              dateFormat="yyyy-MM"
+              showMonthYearPicker
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              className="datepicker"
+              style={{ fontSize: '0.875rem' }}  // Make DatePicker input smaller
+            />
+          </Box>
+          <Box mb={1} display="flex" flexDirection="column" gap={0.5} sx={{ flex: 1, minWidth: '200px' }}>
+            <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>Select End Month</Typography>
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              dateFormat="yyyy-MM"
+              showMonthYearPicker
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              className="datepicker"
+              style={{ fontSize: '0.875rem' }}  // Make DatePicker input smaller
+            />
+          </Box>
+        </Box>
+      </Box>
 
       <div className="lining_graph">
         <Line data={chartData} options={options} />
@@ -465,7 +467,7 @@ export default TrendLineGraph;
 //             </Box>
 //         </Box>
 //     <div className="lining_graph">
-//            <Line data={data} options={options} />       
+//            <Line data={data} options={options} />
 //     </div>
 //  </div>
 //   );

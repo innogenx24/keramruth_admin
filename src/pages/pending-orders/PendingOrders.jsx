@@ -153,8 +153,8 @@ const OrderManagement = () => {
       <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: '500px', overflowY: 'auto' }}>
 
         <Table stickyHeader aria-label={`${title} Table`}>
-        <TableHead>
-        <TableRow>
+          <TableHead>
+            <TableRow>
               <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
               <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Customer Name</TableCell>
               <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order ID</TableCell>
@@ -193,9 +193,11 @@ const OrderManagement = () => {
                       </TableCell>
                       <TableCell>{order.orderUniqueId}</TableCell>
                       <TableCell>
-                      {parseFloat(order.totalOrderQuantity).toFixed(0)}
+                        {parseFloat(order.totalOrderQuantity).toFixed(0)}
                       </TableCell>
-                      <TableCell>Rs. {parseFloat(order.totalAmount).toFixed(2)}</TableCell>
+                      <TableCell>
+                        Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(order.totalAmount) || 0)}
+                      </TableCell>
                       <TableCell>
                         <Button
                           variant="outlined"
@@ -268,37 +270,40 @@ const OrderManagement = () => {
 
                                   {/* Product Name with Image */}
                                   <TableCell>
-  <div style={{ display: "flex", alignItems: "center" }}>
-    <img
-      src={
-        item.product?.image
-          ? `${imageBaseURL}${item.product.image}`
-          : "/path/to/default-image.jpg"
-      }
-      alt={item.product?.name || "Unknown Product"}
-      style={{
-        width: "60px",
-        height: "auto",
-        objectFit: "contain",
-        border: "1px solid #ccc",
-        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-        borderRadius: "10px",
-        marginRight: "10px",
-      }}
-    />
-    <Typography>{item.product?.name || "Unknown Product"}</Typography>
-  </div>
-</TableCell>
+                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                      <img
+                                        src={
+                                          item.product?.image
+                                            ? `${imageBaseURL}${item.product.image}`
+                                            : "/path/to/default-image.jpg"
+                                        }
+                                        alt={item.product?.name || "Unknown Product"}
+                                        style={{
+                                          width: "60px",
+                                          height: "auto",
+                                          objectFit: "contain",
+                                          border: "1px solid #ccc",
+                                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                                          borderRadius: "10px",
+                                          marginRight: "10px",
+                                        }}
+                                      />
+                                      <Typography>{item.product?.name || "Unknown Product"}</Typography>
+                                    </div>
+                                  </TableCell>
 
 
                                   {/* Quantity */}
                                   <TableCell>{item.quantity}</TableCell>
 
-                                  {/* Base Price */}
-                                  <TableCell>Rs. {parseFloat(item.basePrice).toFixed(2)}</TableCell>
+                                  <TableCell>
+                                    Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(item.basePrice) || 0)}
+                                  </TableCell>
 
-                                  {/* Final Price */}
-                                  <TableCell>Rs. {parseFloat(item.finalPrice).toFixed(2)}</TableCell>
+                                  <TableCell>
+                                    Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(item.finalPrice) || 0)}
+                                  </TableCell>
+
                                 </TableRow>
                               ))}
                             </TableBody>

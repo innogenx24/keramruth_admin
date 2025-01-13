@@ -364,6 +364,7 @@ const MemberDetailTable = () => {
   const {
     full_name,
     role_name,
+    username,
     email,
     mobile_number,
     street_name,
@@ -447,7 +448,7 @@ const MemberDetailTable = () => {
                     <Typography variant="h6" fontWeight="bold">
                       {full_name || "N/A"}
                     </Typography>
-                    <Typography color="primary">{`ID: ${memberID}`}</Typography>
+                    <Typography color="primary">{`ID: ${username}`}</Typography>
                     <Typography variant="subtitle2" color="text.secondary">
                       {role_name || "N/A"}
                     </Typography>
@@ -491,7 +492,7 @@ const MemberDetailTable = () => {
                         />
                         <CircularProgress
                           variant="determinate"
-                          value={achievementAmountPercent} // Keep as is, since it's already in decimal form
+                          value={achievementAmountPercent} 
                           size={80}
                           thickness={5}
                           style={{
@@ -520,17 +521,17 @@ const MemberDetailTable = () => {
                           Target Amount
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Rs. {MonthlyTargetAmount}
+                          Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(MonthlyTargetAmount) || 0)}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "green", fontWeight: "bold" }}
-                        >
-                          Achieved: Rs. {AchievementAmount}
+
+                        <Typography variant="body2" sx={{ color: "green", fontWeight: "bold" }}>
+                          Achieved: Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(AchievementAmount) || 0)}
                         </Typography>
+
                         <Typography variant="body2" color="error" fontWeight="bold">
-                          Pending: Rs. {pendingAmount}
+                          Pending: Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(pendingAmount) || 0)}
                         </Typography>
+
                       </Box>
                     </Box>
 
@@ -586,17 +587,17 @@ const MemberDetailTable = () => {
                           Sales Stock
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Stock : {StockTarget}
+                          Stock: {new Intl.NumberFormat('en-IN').format(parseFloat(StockTarget) || 0)}
                         </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "green", fontWeight: "bold" }}
-                        >
-                          Stock Achieved: {StockAchievement}
+
+                        <Typography variant="body2" sx={{ color: "green", fontWeight: "bold" }}>
+                          Stock Achieved: {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(StockAchievement) || 0)}
                         </Typography>
+
                         <Typography variant="body2" color="error" fontWeight="bold">
-                          Stock Pending: {PendingStockTarget}
+                          Stock Pending: {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(PendingStockTarget) || 0)}
                         </Typography>
+
                       </Box>
                     </Box>
                   </Box>
@@ -638,11 +639,15 @@ const MemberDetailTable = () => {
             <Box sx={{ width: '100%', marginTop: 2 }}>
               <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
             </Box>
+           <Box>
+            <Box sx={{marginBottom:"20px"}}>
+            <InputLabel id="role-dropdown-label">Select Role</InputLabel>
+
+            </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               {/* Role Dropdown */}
               <FormControl sx={{ width: '100%' }}>
-                <InputLabel id="role-dropdown-label">Select Role</InputLabel>
                 <Select
                   labelId="role-dropdown-label"
                   value={selectedRole}
@@ -668,6 +673,7 @@ const MemberDetailTable = () => {
                 </Typography>
               </Box>
             </Box>
+           </Box>
           </Box>
 
 

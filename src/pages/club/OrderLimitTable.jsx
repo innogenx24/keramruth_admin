@@ -94,7 +94,7 @@ const OrderLimitsTable = () => {
               <TableCell>Role</TableCell>
 
               <TableCell>Hours</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

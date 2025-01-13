@@ -168,7 +168,9 @@ const ClubTable = () => {
                       <Typography>{club.club_name}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography>{parseInt(club.litre_quantity, 10)}</Typography>
+                    <Typography>
+  {new Intl.NumberFormat('en-IN').format(parseInt(club.litre_quantity, 10) || 0)}
+</Typography>
                     </TableCell>
                     <TableCell>
 
