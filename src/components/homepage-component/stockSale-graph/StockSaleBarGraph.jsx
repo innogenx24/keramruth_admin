@@ -164,7 +164,7 @@ export function StockSaleBarGraph() {
           setChartData({
             labels: months, // Sorted months as labels
             datasets: [
-              { label: "Unsold Stock", data: unsoldStock,                 backgroundColor: [
+              { label: "Unsold Stock", data: soldStock,                 backgroundColor: [
                 "#FFC600",
                 "rgba(1, 197, 114, 1)",
                 "#FF3535",
@@ -172,7 +172,7 @@ export function StockSaleBarGraph() {
                 "#FFC600",
                 "#FFC600",
               ],},
-              { label: "Sold Stock", data: soldStock,                 backgroundColor: [
+              { label: "Sold Stock", data: unsoldStock,                 backgroundColor: [
                 "#FFEAA3",
                 "rgba(144, 238, 144, 1)",
                 "#FF7F7F",

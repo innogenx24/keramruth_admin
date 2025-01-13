@@ -695,8 +695,6 @@ const AddMemberForm = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
 
-
-
   const fetchClubs = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -736,13 +734,13 @@ const AddMemberForm = () => {
         setImageError("Only JPEG, JPG, or PNG images are allowed.");
         return; // Stop further processing if the file type is not allowed
       }
-  
+
       // Check file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         setImageError("File size must be less than 2MB.");
         return; // Stop further processing if the file size exceeds 2MB
       }
-  
+
       // If validation passes, set the selected file and preview
       setSelectedFile(file);
       formik.setFieldValue("image", file); // Set the image in Formik field
@@ -754,7 +752,7 @@ const AddMemberForm = () => {
       setImageError("");
     }
   };
-  
+
 
   // Formik setup
   const formik = useFormik({
@@ -903,6 +901,32 @@ const AddMemberForm = () => {
     }
   }, [selectedRole]);
 
+  //*** Initialy data set***//
+  useEffect(() => {
+    if (user?.role === "Area Development Officer") {
+      setSelectedAdo(user.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.role === "Master Distributor") {
+      setSelectedMd(user.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.role === "Super Distributor") {
+      setSelectedSd(user.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.role === "Distributor") {
+      setSelectedD(user.id);
+    }
+  }, [user]);
+
+  //*** Dta Fetching For Dynamic dropdown  ***//
   useEffect(() => {
     if (selectedAdo && ["3", "4", "5", "6"].includes(selectedRole)) {
       // Fetch MDs based on selected ADO
@@ -1006,47 +1030,47 @@ const AddMemberForm = () => {
                   </Select>
                 </Grid>
                 <Grid item xs={12}>
-  <InputLabel>Add Image*</InputLabel>
-  <IconButton color="primary" component="label">
-    <AddPhotoAlternateIcon />
-    <input
-      type="file"
-      hidden
-      accept="image/*"
-      onChange={handleImageChange}
-    />
-  </IconButton>
-  {selectedFile && (
-    <Typography variant="body2" sx={{ marginTop: "10px" }}>
-      Selected file: {selectedFile.name}
-    </Typography>
-  )}
-  {/* Preview the uploaded image */}
-  {imagePreview && (
-    <Box mt={2}>
-      <img
-        src={imagePreview}
-        alt="Preview"
-        style={{
-          width: "100%",
-          maxWidth: "300px",
-          height: "auto",
-          borderRadius: "8px",
-        }}
-      />
-    </Box>
-  )}
-  {/* Display error message below image upload */}
-  {imageError && (
-    <Typography
-      color="error"
-      variant="body2"
-      sx={{ marginTop: "10px" }}
-    >
-      {imageError}
-    </Typography>
-  )}
-</Grid>
+                  <InputLabel>Add Image*</InputLabel>
+                  <IconButton color="primary" component="label">
+                    <AddPhotoAlternateIcon />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </IconButton>
+                  {selectedFile && (
+                    <Typography variant="body2" sx={{ marginTop: "10px" }}>
+                      Selected file: {selectedFile.name}
+                    </Typography>
+                  )}
+                  {/* Preview the uploaded image */}
+                  {imagePreview && (
+                    <Box mt={2}>
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        style={{
+                          width: "100%",
+                          maxWidth: "300px",
+                          height: "auto",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </Box>
+                  )}
+                  {/* Display error message below image upload */}
+                  {imageError && (
+                    <Typography
+                      color="error"
+                      variant="body2"
+                      sx={{ marginTop: "10px" }}
+                    >
+                      {imageError}
+                    </Typography>
+                  )}
+                </Grid>
 
 
                 <Grid item xs={12}>
@@ -1313,76 +1337,103 @@ const AddMemberForm = () => {
                   </Grid>
                 ) : null}
 
-                {selectedRole === "3" ||
+                {!["Master Distributor", "Super Distributor", "Distributor"].includes(user?.role) && (
+                  selectedRole === "3" ||
+                    selectedRole === "4" ||
+                    selectedRole === "5" ||
+                    selectedRole === "6" ? (
+
+                    <Grid item xs={12}>
+                      <InputLabel>Area Development Officer (ADO)</InputLabel>
+                      <Select
+                        fullWidth
+                        name="superior_id"
+                        value={selectedAdo || ""} // Show previous ADO for reference
+                        onChange={(e) => handleAdoChange(e.target.value)}
+                        error={Boolean(!selectedAdo)}
+                        disabled={user?.role === "Area Development Officer"}
+                      >
+                        <MenuItem value="">Select ADO</MenuItem>
+                        {user?.role === "Area Development Officer" && (
+                          <MenuItem value={user.id}>{user.user_name}</MenuItem>
+                        )}
+                        {allmembers?.ADOs?.map((item) => (
+                          <MenuItem key={item?.id} value={item?.id}>
+                            {item?.username}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                  ) : null
+                )}
+
+                {!["Super Distributor", "Distributor"].includes(user?.role) && (
                   selectedRole === "4" ||
-                  selectedRole === "5" ||
-                  selectedRole === "6" ? (
-                  <Grid item xs={12}>
-                    <InputLabel>Area Development Officer (ADO)</InputLabel>
-                    <Select
-                      fullWidth
-                      name="superior_id"
-                      value={selectedAdo || ""} // Show previous ADO for reference
-                      onChange={(e) => handleAdoChange(e.target.value)}
-                      error={Boolean(!selectedAdo)}
-                    >
-                      <MenuItem value="">Select ADO</MenuItem>
-                      {allmembers?.ADOs?.map((item) => (
-                        <MenuItem key={item?.id} value={item?.id}>
-                          {item?.username}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Grid>
-                ) : null}
+                    selectedRole === "5" ||
+                    selectedRole === "6" ? (
+                    <Grid item xs={12}>
+                      <InputLabel>Master Distributor (MD)</InputLabel>
+                      <Select
+                        fullWidth
+                        name="superior_id"
+                        value={selectedMd || ""} // Show previous MD for reference
+                        onChange={(e) => handleMdChange(e.target.value)}
+                        disabled={user?.role === "Master Distributor"} // Disable selection if logged-in user is MD
+                      >
+                        {/* Default "Select MD" option */}
+                        <MenuItem value="">Select MD</MenuItem>
 
-                {selectedRole === "4" ||
-                  selectedRole === "5" ||
-                  selectedRole === "6" ? (
-                  <Grid item xs={12}>
-                    <InputLabel>Master Distributor (MD)</InputLabel>
-                    <Select
-                      fullWidth
-                      name="superior_id"
-                      value={selectedMd || ""} // Show previous MD for reference
-                      onChange={(e) => handleMdChange(e.target.value)}
-                    >
-                      <MenuItem value="">Select MD</MenuItem>
-                      {mds.length > 0 ? (
-                        mds.map((item) => (
-                          <MenuItem key={item?.id} value={item?.id}>
-                            {item?.username}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem disabled>No MDs available</MenuItem>
-                      )}
-                    </Select>
-                  </Grid>
-                ) : null}
+                        {/* Logged-in MD option (if applicable) */}
+                        {user?.role === "Master Distributor" && (
+                          <MenuItem value={user.id}>{user.user_name}</MenuItem>
+                        )}
 
-                {selectedRole === "5" || selectedRole === "6" ? (
-                  <Grid item xs={12}>
-                    <InputLabel>Super Distributor (SD)</InputLabel>
-                    <Select
-                      fullWidth
-                      name="superior_id"
-                      value={selectedSd || ""} // Show previous SD for reference
-                      onChange={(e) => handleSdChange(e.target.value)}
-                    >
-                      <MenuItem value="">Select SD</MenuItem>
-                      {sds.length > 0 ? (
-                        sds?.map((item) => (
-                          <MenuItem key={item?.id} value={item?.id}>
-                            {item?.username}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem disabled>No SDs available</MenuItem>
-                      )}
-                    </Select>
-                  </Grid>
-                ) : null}
+                        {/* Render MDs from the fetched list */}
+                        {mds.length > 0 ? (
+                          mds.map((item) => (
+                            <MenuItem key={item.id} value={item.id}>
+                              {item.username}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          // No MDs available message
+                          <MenuItem disabled>No MDs available</MenuItem>
+                        )}
+                      </Select>
+                    </Grid>
+
+                  ) : null
+                )}
+
+                {user?.role !== "Distributor" && (
+                  selectedRole === "5" || selectedRole === "6" ? (
+                    <Grid item xs={12}>
+                      <InputLabel>Super Distributor (SD)</InputLabel>
+                      <Select
+                        fullWidth
+                        name="superior_id"
+                        value={selectedSd || ""} // Show previous SD for reference
+                        onChange={(e) => handleSdChange(e.target.value)}
+                        disabled={user?.role === "Super Distributor"}
+                      >
+                        <MenuItem value="">Select SD</MenuItem>
+                        {user?.role === "Super Distributor" && (
+                          <MenuItem value={user.id}>{user.user_name}</MenuItem>
+                        )}
+
+                        {sds.length > 0 ? (
+                          sds?.map((item) => (
+                            <MenuItem key={item.id} value={item.id}>
+                              {item.username}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <MenuItem disabled>No SDs available</MenuItem>
+                        )}
+                      </Select>
+                    </Grid>
+                  ) : null
+                )}
 
                 {selectedRole === "6" ? (
                   <Grid item xs={12}>
@@ -1392,12 +1443,17 @@ const AddMemberForm = () => {
                       name="superior_id"
                       value={selectedD || ""}
                       onChange={(e) => handleDChange(e.target.value)}
+                      disabled={user?.role === "Distributor"}
                     >
                       <MenuItem value="">Select D</MenuItem>
+                      {user?.role === "Distributor" && (
+                        <MenuItem value={user.id}>{user.user_name}</MenuItem>
+                      )}
+
                       {ds.length > 0 ? (
                         ds?.map((item) => (
-                          <MenuItem key={item?.id} value={item?.id}>
-                            {item?.username}
+                          <MenuItem key={item.id} value={item.id}>
+                            {item.username}
                           </MenuItem>
                         ))
                       ) : (

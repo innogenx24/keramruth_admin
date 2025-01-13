@@ -11,8 +11,11 @@ Chart.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, C
 
 const TrendLineGraph = () => {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
-  const [startDate, setStartDate] = useState(new Date("2024-01-01")); // Default start date
-  const [endDate, setEndDate] = useState(new Date("2024-12-01")); // Default end date
+  // const [startDate, setStartDate] = useState(new Date("2024-01-01")); // Default start date
+  // const [endDate, setEndDate] = useState(new Date("2024-12-01")); // Default end date
+  const currentDate = new Date(); // Get the current date
+  const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), 0, 1)); // Start of the current year
+  const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)); // Start of the current month
   const [totalQuantity, setTotalQuantity] = useState(0);
   const token = localStorage.getItem("token");
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;

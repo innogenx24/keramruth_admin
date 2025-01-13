@@ -82,7 +82,6 @@ const AdminList = () => {
 
   const handleConfirmDelete = () => {
     // Implement the logic to delete the user
-    console.log("Deleting user:", deleteUser);
     setOpenDeleteModal(false);
     setDeleteUser(null);
   };
