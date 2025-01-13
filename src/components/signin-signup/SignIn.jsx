@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { signInRequest } from '../../redux/slices/authSlice';
 import LoginImage from '../../assets/logo/LoginImage.png';
 import BannerImage from '../../assets/logo/BannerImage.jpg';
+import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import './style.css';
 import AppLogo2 from '../../assets/logo/AppLogo2';
@@ -98,8 +99,11 @@ const SignIn = () => {
             }
           }}
         >
-          <Box>
+          {/* <Box>
             <img src={BannerImage} alt="Login" style={{ maxWidth: '100%', height: '100%', borderRadius: '8px' }} />
+          </Box> */}
+          <Box>
+            <img src={LeftSideBanner} alt="Login" style={{ maxWidth: '100%', height: '100%', borderRadius: '8px' }} />
           </Box>
         </Grid>
 
