@@ -253,7 +253,7 @@ const CustomerDashboard = () => {
           <Typography variant="h6">Booking History</Typography>
           <TableContainer component={Paper} sx={{ mt: 2 }}>
             <Table>
-              <TableHead>
+              <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
                 <TableRow>
                   <TableCell>Booking Date</TableCell>
                   <TableCell>Order Details</TableCell>
