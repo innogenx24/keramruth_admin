@@ -19,7 +19,8 @@ const EditClubForm = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const validateFields = () => {
-    const alphanumericRegex = /^[a-zA-Z0-9\s]+$/; // Alphanumeric with spaces allowed
+    // Alphanumeric with spaces and parentheses allowed
+    const alphanumericRegex = /^[a-zA-Z0-9\s()]+$/;
   
     const errors = {
       clubName: "",
@@ -29,7 +30,7 @@ const EditClubForm = () => {
     if (!clubName.trim()) {
       errors.clubName = "Club name is required.";
     } else if (!alphanumericRegex.test(clubName)) {
-      errors.clubName = "Special characters is not allowed.";
+      errors.clubName = "Special characters are not allowed, except parentheses.";
     }
   
     if (litreQuantity === "" || litreQuantity === null || litreQuantity === undefined) {
@@ -41,6 +42,7 @@ const EditClubForm = () => {
     setFormErrors(errors);
     return !Object.values(errors).some((error) => error);
   };
+  
   
   // Function to handle form submission
   const handleFormSubmit = async (event) => {
