@@ -5,14 +5,12 @@ import { Button, TextField, Typography, Container, Grid, Box, Snackbar, InputAdo
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { signInRequest } from '../../redux/slices/authSlice';
-import LoginImage from '../../assets/logo/LoginImage.png';
-import BannerImage from '../../assets/logo/BannerImage.jpg';
 import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import './style.css';
-import AppLogo2 from '../../assets/logo/AppLogo2';
-import DishaLogo from '../../assets/logo/DishaLogo';
-import AppLogo from '../../assets/logo/AppLogo';
+import NewLogo from '../../assets/logo/NewLogo.png';
+import DishaImgLogo from '../../assets/logo/DishaImgLogo.png';
+
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -126,21 +124,42 @@ const SignIn = () => {
 
           <Box>
           <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              flexDirection: "column",
-              width: "100%",
-              marginBottom: "50px",
-              marginTop: "30px",
-            }}
-          >
-            {/* <DishaLogo/>
-            <AppLogo /> */}
-            <AppLogo2 />
-            {/* working */}
-          </Box>
+  sx={{
+    display: "flex",
+    justifyContent: "center", 
+    alignItems: "center",     
+    width: "100%",
+    marginBottom: "50px",
+    marginTop: "30px",
+  }}
+>
+  {/* First Logo */}
+  <Box sx={{ marginRight: 2 }}>
+    <img
+      src={DishaImgLogo}
+      alt="Login"
+      style={{
+        width: '115px',
+        // height: 'auto', // Adjust height based on width to maintain aspect ratio
+        borderRadius: '8px',
+      }}
+    />
+  </Box>
+
+  {/* Second Logo */}
+  <Box sx={{ marginLeft: 2 }}>
+    <img
+      src={NewLogo}
+      alt="Login"
+      style={{
+        width: '130px',
+        // height: 'auto', // Adjust height based on width to maintain aspect ratio
+        borderRadius: '8px',
+      }}
+    />
+  </Box>
+</Box>
+
 
             <Typography variant="h4" gutterBottom>
               Login

@@ -12,4 +12,34 @@
         min-height: 387px;
     }
   }
+
+  .datepicker {
+    width: 100%; /* Makes the DatePicker fill its container */
+    padding: 8px; /* Adjust padding for smaller size */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 0.875rem; /* Adjust font size */
+    box-sizing: border-box; /* Ensures proper sizing */
+  }
+  
+  .datepicker:focus {
+    border-color: #1976d2; /* Focused state */
+    outline: none;
+  }
+  
+
+  .month-selector {
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 300px;  // Limit maximum width
+    .date-picker-input {
+      width: 80%;  // Set width to match the DatePicker input
+      padding: 8px 12px !important;  // Adjust padding as needed
+      font-size: 12px;  // Match font size
+      border: 1px solid #ccc;  // Border style
+      border-radius: 4px;  // Optional: Add rounded corners
+      box-sizing: border-box;  // Ensure padding is included in width
+    }
+  }
+  
   

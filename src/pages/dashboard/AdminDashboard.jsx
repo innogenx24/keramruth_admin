@@ -27,7 +27,6 @@ import { signOut } from "../../redux/slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
 import { FaCodePullRequest } from "react-icons/fa6";
-import AppLogo2 from "../../assets/logo/AppLogo2";
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EditNoteIcon from '@mui/icons-material/EditNote'; // If you want an edit note icon
@@ -48,6 +47,9 @@ import { FaShoppingCart, FaCheckCircle } from 'react-icons/fa'; // Importing sho
 import ReportIcon from "@mui/icons-material/Assessment";
 import { fetchNotificationsStart } from "../../redux/slices/notification-slice/notificationsSlice";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
+import AppLogo from "../../assets/logo/AppLogo";
+import NewLogo from "../../assets/logo/NewLogo.png";
+import DishaImgLogo from "../../assets/logo/DishaImgLogo.png";
 
 // Drawer width
 // const drawerWidth = 240;
@@ -741,18 +743,40 @@ export default function AdminDashboard() {
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              flexDirection: "column",
-              width: "100%",
-            }}
-          >
-            {/* <AppLogo /> */}
-            <AppLogo2 />
-          </Box>
+        <Box
+  sx={{
+    display: "flex",
+    justifyContent: "space-between", // Ensure images are spaced out evenly
+    alignItems: "center",
+    width: "100%",
+  }}
+>
+  <Box>
+    <img
+      src={DishaImgLogo}
+      alt="Login"
+      style={{
+        width: "115px", // Set the same width for both images
+        height: "50px", // Set the same height for both images
+        borderRadius: "8px",
+        objectFit: "contain", // Ensures images don't get distorted
+      }}
+    />
+  </Box>
+  <Box>
+    <img
+      src={NewLogo}
+      alt="Login"
+      style={{
+        width: "130px", // Set the same width for both images
+        height: "50px", // Set the same height for both images
+        borderRadius: "8px",
+        objectFit: "contain", // Ensures images don't get distorted
+      }}
+    />
+  </Box>
+</Box>
+
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />

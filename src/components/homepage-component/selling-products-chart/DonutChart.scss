@@ -11,7 +11,19 @@
     }
     .month-selector{
         margin-bottom: 10px;
+        width: 100%;
+        max-width: 300px; 
+        // margin: 0 auto;
+        .date-picker-input {
+            width: 80%; 
+            padding: 8px 12px !important; 
+            font-size: 12px; 
+            border: 1px solid #ccc; /* Style the border */
+            border-radius: 4px; /* Optional: add rounded corners */
+            box-sizing: border-box; /* Ensure padding is included in width */
+        }
     }
+    
 }
 
 .doughnu_chart {
@@ -27,18 +39,16 @@
 
 .chart-content {
     position: absolute;
-    // top: 25%;
-    top: 40%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: #333;
     text-align: center;
     font-family: Inter500;
     font-size: 18px;
-    color:#232428;
-    //
     pointer-events: none;
-}
+  }
+  
 
 
 .no-data {
@@ -51,4 +61,11 @@
     text-align: center;
     padding-top: 215px;
   }
+
+/* Media query for responsiveness */
+@media screen and (min-width: 1200px) {
+    .chart-content {
+        top: 25% !important;
+    }
+}
   

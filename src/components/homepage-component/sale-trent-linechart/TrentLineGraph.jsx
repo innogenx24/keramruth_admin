@@ -14,7 +14,9 @@ const TrendLineGraph = () => {
   // const [startDate, setStartDate] = useState(new Date("2024-01-01")); // Default start date
   // const [endDate, setEndDate] = useState(new Date("2024-12-01")); // Default end date
   const currentDate = new Date(); // Get the current date
-  const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), 0, 1)); // Start of the current year
+  const [startDate, setStartDate] = useState(
+    new Date(currentDate.getFullYear(), currentDate.getMonth() - 4, 1)
+  );
   const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)); // Start of the current month
   const [totalQuantity, setTotalQuantity] = useState(0);
   const token = localStorage.getItem("token");
@@ -49,12 +51,12 @@ const TrendLineGraph = () => {
           },
         }
       );
-
+  
       if (response.data.success) {
         const result = response.data.result;
-
+  
         const months = generateMonthLabels(startDate, endDate);
-
+  
         const productSales = result.reduce((acc, item) => {
           if (!acc[item.productName]) {
             acc[item.productName] = Array(months.length).fill(0);
@@ -65,9 +67,19 @@ const TrendLineGraph = () => {
           }
           return acc;
         }, {});
-
+  
+        const colors = [];
+        const generateUniqueColor = () => {
+          let color;
+          do {
+            color = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.2)`;
+          } while (colors.includes(color));
+          colors.push(color);
+          return color;
+        };
+  
         const datasets = Object.keys(productSales).map((productName) => {
-          const randomColor = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.2)`;
+          const randomColor = generateUniqueColor();
           return {
             label: productName,
             data: productSales[productName],
@@ -77,8 +89,7 @@ const TrendLineGraph = () => {
             tension: 0.4,
           };
         });
-
-        // Reverse the data and labels to fix the chart line direction
+  
         const reversedMonths = months; // Reverse the months
         const reversedDatasets = datasets.map((dataset) => ({
           ...dataset,
@@ -89,7 +100,7 @@ const TrendLineGraph = () => {
           labels: reversedMonths,  // Reversed months for X-axis labels
           datasets: reversedDatasets,
         });
-
+  
         const total = result.reduce((sum, item) => sum + item.quantity, 0);
         setTotalQuantity(total);
       }
@@ -97,6 +108,7 @@ const TrendLineGraph = () => {
       console.error("Error fetching sales data:", error);
     }
   };
+  
 
   useEffect(() => {
     fetchData();
@@ -108,6 +120,12 @@ const TrendLineGraph = () => {
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          font: {
+            size: 9, 
+          },
+          padding: 9, 
+        },
       },
     },
     scales: {
@@ -130,9 +148,26 @@ const TrendLineGraph = () => {
           </Typography>
         </Box>
 
-        <Box display="flex" flexDirection="row" gap={2} alignItems="center" justifyContent="space-between" sx={{ flexWrap: 'wrap', gap: 2 }}>
-          <Box mb={1} display="flex" flexDirection="column" gap={0.5} sx={{ flex: 1, minWidth: '200px' }}>
-            <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>Select Start Month</Typography>
+        <Box 
+  display="flex" 
+  flexDirection={{ xs: 'column', sm: 'row' }} // Stack vertically on small screens
+  gap={2} 
+  alignItems="center" 
+  justifyContent="space-between" 
+  sx={{ flexWrap: 'wrap', gap: 2 }}
+>
+  {/* Start Date Picker */}
+  <Box 
+    mb={1} 
+    display="flex" 
+    flexDirection="column" 
+    gap={0.5} 
+    sx={{ flex: 1, minWidth: '150px', maxWidth: '300px' }} // Min and max width for responsiveness
+  >
+    <Typography variant="body2" sx={{ fontSize: "0.775rem" }}>
+      Select Start Month
+    </Typography>
+    <div className="month-selector">
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
@@ -141,12 +176,23 @@ const TrendLineGraph = () => {
               selectsStart
               startDate={startDate}
               endDate={endDate}
-              className="datepicker"
-              style={{ fontSize: '0.875rem' }}  // Make DatePicker input smaller
+               className="date-picker-input"
+              style={{ fontSize: '0.875rem', width: '100%' }} // Make DatePicker input smaller
             />
+    </div>
           </Box>
-          <Box mb={1} display="flex" flexDirection="column" gap={0.5} sx={{ flex: 1, minWidth: '200px' }}>
-            <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>Select End Month</Typography>
+  {/* End Date Picker */}
+  <Box 
+    mb={1} 
+    display="flex" 
+    flexDirection="column" 
+    gap={0.5} 
+    sx={{ flex: 1, minWidth: '150px', maxWidth: '300px' }} // Min and max width for responsiveness
+  >
+    <Typography variant="body2" sx={{ fontSize: "0.775rem" }}>
+      Select End Month
+    </Typography>
+    <div className="month-selector">
             <DatePicker
               selected={endDate}
               onChange={(date) => setEndDate(date)}
@@ -155,9 +201,10 @@ const TrendLineGraph = () => {
               selectsEnd
               startDate={startDate}
               endDate={endDate}
-              className="datepicker"
-              style={{ fontSize: '0.875rem' }}  // Make DatePicker input smaller
+            className="date-picker-input"
+              style={{ fontSize: '0.875rem', width: '100%' }}  // Make DatePicker input smaller
             />
+     </div>
           </Box>
         </Box>
       </Box>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import SalesCard from '../../components/homepage-component/total-sale-widget/SalesCard';
 import { StockSaleBarGraph } from '../../components/homepage-component/stockSale-graph/StockSaleBarGraph';
 import DonutChart from '../../components/homepage-component/selling-products-chart/DonutChart';
@@ -49,6 +49,21 @@ const SalesPage = () => {
     return <div>Error: {error}</div>; // Show error message
   }
 
+  // Mapping roles to abbreviations
+const roleAbbreviations = {
+  "Area Development Officer": "ADO",
+  "Master Distributor": "MD",
+  "Super Distributor": "SD",
+  "Distributor": "D",
+  "Customer": "C"
+};
+
+// Utility function to get the abbreviation
+const getRoleAbbreviation = (roleName) => {
+  return roleAbbreviations[roleName] || roleName;
+};
+
+
   return (
     <div>
       <Grid container spacing={3}>
@@ -57,20 +72,23 @@ const SalesPage = () => {
           <Grid container spacing={3}>
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
-                <SalesCard
-                  title={
-                    <>
-                      Total Sales
-                      <br />
-                      ({data.roleName}) 
-                      ({data.totalUsers})
-                    </>
-                  }
-                  sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
-                  target={`Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
-                  growth={data.salesAchievementPercent || 0}
-                />
-              </Grid>
+  <SalesCard
+    title={
+      <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: '#333' }}>
+        Total Sales: 
+        {/* <br /> */}
+        <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
+        ({getRoleAbbreviation(data.roleName)})
+          ({data.totalUsers})
+        </Typography>
+      </Typography>
+    }
+    sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
+    target={`Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
+    growth={data.salesAchievementPercent || 0}
+  />
+</Grid>
+
 
             ))}
           </Grid>
@@ -84,10 +102,12 @@ const SalesPage = () => {
 
       {/* Second Row: Charts */}
       <Grid className="charts-twos" container spacing={3} sx={{ marginTop: 3 }}>
-        <Grid item xs={12} md={3}>
+        {/* <Grid item xs={12} md={3}> */}
+        <Grid  item xs={12} md={12} lg={4}>
           <DonutChart />
         </Grid>
-        <Grid item xs={12} md={9}>
+        {/* <Grid item xs={12} md={9}> */}
+        <Grid item xs={12} md={12} lg={8}>
           <TrentLineGraph />
         </Grid>
       </Grid>

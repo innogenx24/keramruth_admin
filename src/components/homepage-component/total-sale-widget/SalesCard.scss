@@ -1,188 +1,190 @@
-$growth-positive-bg: #01C572;
-$growth-negative-bg: #FF4C4C;
+// $growth-positive-bg: #01C572;
+// $growth-negative-bg: #FF4C4C;
 
-// Base card styling
-.card_content {
-  display: flex;
-  justify-content: center;
-  padding: 5% 10%;
-  background-color: #f4f5ff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  height: 120px;
-  box-sizing: border-box;
+// // Base card styling
+// .card_content {
+//   display: flex;
+//   justify-content: center;
+//   padding: 5% 10%;
+//   background-color: #f4f5ff;
+//   border-radius: 10px;
+//   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+//   width: 100%;
+//   height: auto; // Adjust height to auto for responsive design
+//   box-sizing: border-box;
+//   flex-wrap: wrap; // Allow flex items to wrap for smaller screens
 
-  .card_inner {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+//   .card_inner {
+//     display: flex;
+//     justify-content: space-between;
+//     width: 100%;
+//     flex-wrap: wrap; // Allow wrapping for smaller screens
 
-  .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 100%;
+//     .content {
+//       display: flex;
+//       flex-direction: column;
+//       justify-content: space-around;
+//       width: 70%; // Default width of 70% for larger screens
 
-    .title {
-      color: #7e84a3;
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      cursor: pointer;
-    // .title {
-    //   color: #7e84a3;
-    //   font-family: 'Inter', sans-serif;
-    //   font-size: 1rem;
-    //   overflow: hidden;             
-    //   text-overflow: ellipsis;      
-    //   // white-space: nowrap;       
-    //   width: 100%;              
-    //   display: block;              
-    //   max-width: 100%;             
-    //   cursor: pointer;
-    //   .title:hover {
-    //     overflow: visible;        
-    //     white-space: normal;       
-    //     background-color: #fff;    
-    //     z-index: 1;
-    //   }  
-    
+//       .title {
+//         color: #7e84a3;
+//         font-family: 'Inter', sans-serif;
+//         font-size: 1rem;
+//         overflow: hidden;
+//         text-overflow: ellipsis;
+//         cursor: pointer;
 
-      @media (max-width: 1200px) {
-        font-size: 0.95rem; // Smaller font for medium screens
-      }
+//         @media (max-width: 1200px) {
+//           font-size: 0.95rem;
+//         }
 
-      @media (max-width: 992px) {
-        font-size: 0.9rem; // Even smaller font for tablets
-      }
+//         @media (max-width: 992px) {
+//           font-size: 0.9rem;
+//         }
 
-      @media (max-width: 768px) {
-        font-size: 0.85rem; // Smaller font for mobile landscape
-      }
+//         @media (max-width: 768px) {
+//           font-size: 0.85rem;
+//         }
 
-      @media (max-width: 480px) {
-        font-size: 0.75rem; // Smallest font size for mobile portrait
-      }
-    }
+//         @media (max-width: 480px) {
+//           font-size: 0.75rem;
+//         }
+//       }
 
-    .sales {
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem; // Base font size
-      display: flex;
-      align-items: baseline;
-      text-overflow: ellipsis;
+//       .sales {
+//         font-family: 'Inter', sans-serif;
+//         font-size: 1rem;
+//         display: flex;
+//         align-items: baseline;
+//         text-overflow: ellipsis;
 
-      @media (max-width: 1200px) {
-        font-size: 0.95rem;
-      }
+//         @media (max-width: 1200px) {
+//           font-size: 0.95rem;
+//         }
 
-      @media (max-width: 992px) {
-        font-size: 0.9rem;
-      }
+//         @media (max-width: 992px) {
+//           font-size: 0.9rem;
+//         }
 
-      @media (max-width: 768px) {
-        font-size: 0.85rem;
-      }
+//         @media (max-width: 768px) {
+//           font-size: 0.85rem;
+//         }
 
-      @media (max-width: 480px) {
-        font-size: 0.75rem;
-      }
+//         @media (max-width: 480px) {
+//           font-size: 0.75rem;
+//         }
 
-      .sales-target {
-        color: #7e84a3;
-        font-size: 1rem; // Same as sales base font size
-        margin-left: 1%;
-        text-overflow: ellipsis;
+//         .sales-target {
+//           color: #7e84a3;
+//           font-size: 1rem;
+//           margin-left: 1%;
+//           text-overflow: ellipsis;
 
-        @media (max-width: 1200px) {
-          font-size: 0.95rem;
-        }
+//           @media (max-width: 1200px) {
+//             font-size: 0.95rem;
+//           }
 
-        @media (max-width: 992px) {
-          font-size: 0.9rem;
-        }
+//           @media (max-width: 992px) {
+//             font-size: 0.9rem;
+//           }
 
-        @media (max-width: 768px) {
-          font-size: 0.85rem;
-        }
+//           @media (max-width: 768px) {
+//             font-size: 0.85rem;
+//           }
 
-        @media (max-width: 480px) {
-          font-size: 0.75rem;
-        }
-      }
-    }
-  }
+//           @media (max-width: 480px) {
+//             font-size: 0.75rem;
+//           }
+//         }
+//       }
+//     }
 
-  .icon-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+//     .icon-section {
+//       display: flex;
+//       flex-direction: column;
+//       justify-content: space-around;
+//       width: 30%; // Default width of 30% for larger screens
 
-    .growth-box {
-      background-color: $growth-positive-bg;
-      border-radius: 10px;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      margin-bottom: 2%;
-    }
+//       .growth-box {
+//         background-color: $growth-positive-bg;
+//         border-radius: 10px;
+//         width: 40px;
+//         height: 40px;
+//         display: flex;
+//         align-items: center;
+//         justify-content: center;
+//         color: #fff;
+//         margin-bottom: 2%;
+//       }
 
-    .growth-info {
-      display: flex;
-      align-items: center;
+//       .growth-info {
+//         display: flex;
+//         align-items: center;
 
-      .growth {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.875rem; // Base font size for growth
-        margin-right: 1%;
+//         .growth {
+//           font-family: 'Inter', sans-serif;
+//           font-size: 0.875rem;
+//           margin-right: 1%;
 
-        @media (max-width: 1200px) {
-          font-size: 0.85rem;
-        }
+//           @media (max-width: 1200px) {
+//             font-size: 0.85rem;
+//           }
 
-        @media (max-width: 992px) {
-          font-size: 0.8rem;
-        }
+//           @media (max-width: 992px) {
+//             font-size: 0.8rem;
+//           }
 
-        @media (max-width: 768px) {
-          font-size: 0.75rem;
-        }
+//           @media (max-width: 768px) {
+//             font-size: 0.75rem;
+//           }
 
-        @media (max-width: 480px) {
-          font-size: 0.7rem;
-        }
-      }
+//           @media (max-width: 480px) {
+//             font-size: 0.7rem;
+//           }
+//         }
 
-      .growth-arrow {
-        color: #7e84a3;
-        font-size: 0.8rem;
+//         .growth-arrow {
+//           color: #7e84a3;
+//           font-size: 0.8rem;
 
-        @media (max-width: 1200px) {
-          font-size: 0.75rem;
-        }
+//           @media (max-width: 1200px) {
+//             font-size: 0.75rem;
+//           }
 
-        @media (max-width: 992px) {
-          font-size: 0.7rem;
-        }
+//           @media (max-width: 992px) {
+//             font-size: 0.7rem;
+//           }
 
-        @media (max-width: 768px) {
-          font-size: 0.65rem;
-        }
+//           @media (max-width: 768px) {
+//             font-size: 0.65rem;
+//           }
 
-        @media (max-width: 480px) {
-          font-size: 0.6rem;
-        }
-      }
-    }
-  }
+//           @media (max-width: 480px) {
+//             font-size: 0.6rem;
+//           }
+//         }
+//       }
+//     }
+//   }
 
-  &.negative .growth-box {
-    background-color: $growth-negative-bg;
-  }
-}
+//   &.negative .growth-box {
+//     background-color: $growth-negative-bg;
+//   }
+
+//   // Add more responsiveness
+//   @media (max-width: 768px) {
+//     .card_inner {
+//       flex-direction: column; // Stack elements vertically on smaller screens
+//     }
+
+//     .content, .icon-section {
+//       width: 100%; // Full width for both content and icon section on smaller screens
+//     }
+//   }
+
+//   @media (max-width: 480px) {
+//     .content .title {
+//       font-size: 0.7rem; // Even smaller font for very small screens
+//     }
+//   }
+// }
