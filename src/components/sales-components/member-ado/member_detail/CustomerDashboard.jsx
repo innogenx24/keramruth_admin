@@ -152,7 +152,7 @@ const CustomerDashboard = () => {
 
                   <Typography variant="body2">
                     <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
-                    {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}
+                    {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}.
                   </Typography>
 
                   <Typography variant="body2">
@@ -169,7 +169,7 @@ const CustomerDashboard = () => {
             </Grid>
             <Grid item xs={12} sm={6} textAlign="right">
               <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
-                Date of Joined: {new Date(customer.createdAt).toLocaleDateString("en-GB", {
+                Date of Joining: {new Date(customer.createdAt).toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "short",
                   year: "2-digit",
@@ -255,8 +255,8 @@ const CustomerDashboard = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Order Details</TableCell>
                   <TableCell>Booking Date</TableCell>
+                  <TableCell>Order Details</TableCell>
 
                 </TableRow>
               </TableHead>

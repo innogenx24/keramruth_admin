@@ -458,7 +458,7 @@ const MemberDetailTable = () => {
                     </Typography>
                     <Typography variant="body2">
                       <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
-                      {street_name}, {building_no_name}, {city}, {district}, {state},{pincode}
+                      {street_name}, {building_no_name}, {city}, {district}, {state},{pincode}.
                     </Typography>
 
                     <Typography variant="body2">
@@ -635,7 +635,7 @@ const MemberDetailTable = () => {
                       </span>
                     </Typography>
                     <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
-                      Date of Joined: {new Date(createdAt).toLocaleDateString("en-GB", {
+                      Date of Joining: {new Date(createdAt).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
                         year: "2-digit",
