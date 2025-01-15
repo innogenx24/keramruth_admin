@@ -30,6 +30,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { LocationOn, Phone, Mail } from '@mui/icons-material';
+
 // import { fetchMembersRequest, clearMembers } from "../../../redux/slices/member-slice/MemberGetSlice";
 // import { deleteMemberRequest } from "../../../redux/slices/member-slice/MemberDeleteSlice";
 import AddMemberForm from ".././AddMemberForm";
@@ -375,6 +377,8 @@ const MemberDetailTable = () => {
     building_no_name,
     createdAt,
     club_name,
+    district,
+    pincode,
   } = userProfile;
 
 
@@ -452,15 +456,19 @@ const MemberDetailTable = () => {
                     <Typography variant="subtitle2" color="text.secondary">
                       {role_name || "N/A"}
                     </Typography>
-                    <Typography variant="body2" mt={1}>
-                      {`${building_no_name || ""}, ${street_name || ""}, ${city || ""
-                        }, ${state || ""}, ${country || ""}`}
+                    <Typography variant="body2">
+                      <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
+                      {street_name}, {building_no_name}, {city}, {district}, {state},{pincode}.
                     </Typography>
-                    <Typography variant="body2" mt={0.5}>
-                      {mobile_number ? `+91 ${mobile_number}` : "N/A"}
+
+                    <Typography variant="body2">
+                      <Phone style={{ marginRight: "8px", marginTop: "10px" }} />
+                      {mobile_number}
                     </Typography>
-                    <Typography variant="body2" mt={0.5}>
-                      {email || "N/A"}
+
+                    <Typography variant="body2">
+                      <Mail style={{ marginRight: "8px", marginTop: "10px" }} />
+                      {email}
                     </Typography>
                   </Box>
                 </Box>
@@ -483,6 +491,7 @@ const MemberDetailTable = () => {
                       }}
                     >
                       <Box position="relative" display="inline-flex" mr={2}>
+                        {/* Background Circular Progress */}
                         <CircularProgress
                           variant="determinate"
                           value={100}
@@ -490,9 +499,10 @@ const MemberDetailTable = () => {
                           thickness={5}
                           style={{ color: "#e0e0e0" }}
                         />
+                        {/* Foreground Circular Progress */}
                         <CircularProgress
                           variant="determinate"
-                          value={achievementAmountPercent} 
+                          value={achievementAmountPercent}
                           size={80}
                           thickness={5}
                           style={{
@@ -505,17 +515,25 @@ const MemberDetailTable = () => {
                                   : "green",
                           }}
                         />
+                        {/* Centered Text */}
                         <Box
                           position="absolute"
                           top="50%"
                           left="50%"
-                          sx={{ transform: "translate(-50%, -50%)" }}
+                          sx={{
+                            transform: "translate(-50%, -50%)",
+                          }}
                         >
-                          <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
-                            {(parseFloat(achievementAmountPercent) || 0).toFixed(2)}% {/* Safely format */}
+                          <Typography
+                            variant="h6"
+                            fontWeight="bold"
+                            sx={{ fontSize: "1.08rem !important", color: "primary" }}
+                          >
+                            {(parseFloat(achievementAmountPercent) || 0).toFixed(2)}%
                           </Typography>
                         </Box>
                       </Box>
+
                       <Box>
                         <Typography variant="h6" fontWeight="bold" mb={0.5}>
                           Target Amount
@@ -577,7 +595,7 @@ const MemberDetailTable = () => {
                           left="50%"
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
-                          <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
+                          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: "1.08rem !important", color: "primary" }}>
                             {(parseFloat(StockAchievementPercent) || 0).toFixed(2)}% {/* Safely format */}
                           </Typography>
                         </Box>
@@ -616,13 +634,13 @@ const MemberDetailTable = () => {
                         {club_name}
                       </span>
                     </Typography>
-                    <Typography color="text.secondary">
-                      {new Date(createdAt).toLocaleDateString("en-GB", {
+                    <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
+                      Date of Joining: {new Date(createdAt).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
                         year: "2-digit",
                       })}{" "}
-                      Joined
+
                     </Typography>
                   </Box>
                 </Box>
@@ -639,41 +657,41 @@ const MemberDetailTable = () => {
             <Box sx={{ width: '100%', marginTop: 2 }}>
               <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
             </Box>
-           <Box>
-            <Box sx={{marginBottom:"20px"}}>
-            <InputLabel id="role-dropdown-label">Select Role</InputLabel>
+            <Box>
+              <Box sx={{ marginBottom: "20px" }}>
+                <InputLabel id="role-dropdown-label">Select Role</InputLabel>
 
-            </Box>
+              </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              {/* Role Dropdown */}
-              <FormControl sx={{ width: '100%' }}>
-                <Select
-                  labelId="role-dropdown-label"
-                  value={selectedRole}
-                  onChange={(e) => handleChange(e.target.value)}
-                  sx={{ borderRadius: '20px' }}
-                >
-                  {filteredRoleOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                {/* Role Dropdown */}
+                <FormControl sx={{ width: '100%' }}>
+                  <Select
+                    labelId="role-dropdown-label"
+                    value={selectedRole}
+                    onChange={(e) => handleChange(e.target.value)}
+                    sx={{ borderRadius: '20px' }}
+                  >
+                    {filteredRoleOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              {/* Role Count */}
-              <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
-                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                  <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
-                  {selectedRole === '3' && roleCounts.mdCount}
-                  {selectedRole === '4' && roleCounts.sdCount}
-                  {selectedRole === '5' && roleCounts.distributorCount}
-                  {selectedRole === '6' && roleCounts.customerCount}
-                </Typography>
+                {/* Role Count */}
+                <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+                    <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
+                    {selectedRole === '3' && roleCounts.mdCount}
+                    {selectedRole === '4' && roleCounts.sdCount}
+                    {selectedRole === '5' && roleCounts.distributorCount}
+                    {selectedRole === '6' && roleCounts.customerCount}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
-           </Box>
           </Box>
 
 

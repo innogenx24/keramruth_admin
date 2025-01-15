@@ -84,17 +84,10 @@ const AnnouncementTable = () => {
   return (
     <div>
       <TableContainer component={Paper}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "10px",
-            alignItems: "center",
-          }}
-        >
-          <h2 style={{ margin: 0 }}>All Announcements</h2>
-          
-        </div>
+        <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+                    Announcements
+              </Typography>
+        
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>

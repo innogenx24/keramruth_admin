@@ -165,8 +165,9 @@ const BookingOrders = () => {
 
   return (
     <div style={{ position: "relative", height: "100vh" }}>
-      <h1>Product List</h1>
-      <Box sx={{ width: "100%", marginBottom: 2 }}>
+<Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+                    Product List
+              </Typography>      <Box sx={{ width: "100%", marginBottom: 2 }}>
         <SearchProducts value={searchQuery} onSearchChange={setSearchQuery} />
       </Box>
       <div
@@ -178,119 +179,119 @@ const BookingOrders = () => {
       >
 
 
-<TableContainer component={Paper} sx={{ maxHeight: '400px', overflowY: 'auto' }}>
-  <Table>
-    <TableHead
-      sx={{
-        backgroundColor: '	#DCDCDC',
-        position: 'sticky', 
-        top: 0, 
-        zIndex: 1, 
-      }}
-    >
-      <TableRow>
-        <TableCell align="center">Image</TableCell>
-        <TableCell align="center">Product Name</TableCell>
-        <TableCell align="center">Price</TableCell>
-        <TableCell align="center">Quantity</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {filteredProducts.map((product) => {
-        const currentQuantity =
-          orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
+        <TableContainer component={Paper} sx={{ maxHeight: '400px', overflowY: 'auto' }}>
+          <Table>
+            <TableHead
+              sx={{
+                backgroundColor: '	#DCDCDC',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              <TableRow>
+                <TableCell align="center">Image</TableCell>
+                <TableCell align="center">Product Name</TableCell>
+                <TableCell align="center">Price</TableCell>
+                <TableCell align="center">Quantity</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredProducts.map((product) => {
+                const currentQuantity =
+                  orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
 
-        return (
-          <TableRow key={product.id}>
-            {/* Product Image */}
-            <TableCell align="center">
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img
-                  src={
-                    product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'
-                  }
-                  alt={product.name || 'Product Image'}
-                  style={{
-                    width: '100px',
-                    height: 'auto',
-                    objectFit: 'contain',
-                    border: '1px solid #ccc',
-                    boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
-                    borderRadius: '10px',
-                  }}
-                />
-              </div>
-            </TableCell>
+                return (
+                  <TableRow key={product.id}>
+                    {/* Product Image */}
+                    <TableCell align="center">
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <img
+                          src={
+                            product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'
+                          }
+                          alt={product.name || 'Product Image'}
+                          style={{
+                            width: '100px',
+                            height: 'auto',
+                            objectFit: 'contain',
+                            border: '1px solid #ccc',
+                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
+                            borderRadius: '10px',
+                          }}
+                        />
+                      </div>
+                    </TableCell>
 
-            {/* Product Name */}
-            <TableCell align="center">{product.name}</TableCell>
+                    {/* Product Name */}
+                    <TableCell align="center">{product.name}</TableCell>
 
-            {/* Product Price Display with Offer (super1) */}
-            <TableCell align="center">
-              {product.super1 && product.super1 !== '0.00' ? (
-                <>
-                  <span style={{ textDecoration: 'line-through', color: 'red', marginLeft: '5px' }}>
-                    {product.originalPrice}
-                  </span>
-                  <span style={{ color: 'green', fontWeight: 'bold' }}>
-                    {product.super1}
-                  </span>
-                </>
-              ) : (
-                <span>{product.originalPrice}</span>
-              )}
-            </TableCell>
+                    {/* Product Price Display with Offer (super1) */}
+                    <TableCell align="center">
+                      {product.super1 && product.super1 !== '0.00' ? (
+                        <>
+                          <span style={{ textDecoration: 'line-through', color: 'red', marginLeft: '5px' }}>
+                            {product.originalPrice}
+                          </span>
+                          <span style={{ color: 'green', fontWeight: 'bold' }}>
+                            {product.super1}
+                          </span>
+                        </>
+                      ) : (
+                        <span>{product.originalPrice}</span>
+                      )}
+                    </TableCell>
 
-            {/* Quantity Buttons and Input Box */}
-            <TableCell align="center">
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => decrementQuantity(product.id)}
-                  style={{ marginRight: '10px' }}
-                >
-                  -
-                </Button>
+                    {/* Quantity Buttons and Input Box */}
+                    <TableCell align="center">
+                      <Box display="flex" alignItems="center" justifyContent="center">
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => decrementQuantity(product.id)}
+                          style={{ marginRight: '10px' }}
+                        >
+                          -
+                        </Button>
 
-                <input
-                  type="text"
-                  value={currentQuantity}
-                  onChange={(e) => {
-                    let value = e.target.value;
-                    value = value.replace(/^0+/, '') || '0';
+                        <input
+                          type="text"
+                          value={currentQuantity}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            value = value.replace(/^0+/, '') || '0';
 
-                    const numericValue = parseInt(value, 10) || 0;
+                            const numericValue = parseInt(value, 10) || 0;
 
-                    handleQuantityChange(product.id, numericValue);
-                  }}
-                  min="0"
-                  style={{
-                    width: '70px',
-                    textAlign: 'center',
-                    margin: '0 10px',
-                    padding: '10px !important',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                  }}
-                />
+                            handleQuantityChange(product.id, numericValue);
+                          }}
+                          min="0"
+                          style={{
+                            width: '70px',
+                            textAlign: 'center',
+                            margin: '0 10px',
+                            padding: '10px !important',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                          }}
+                        />
 
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => incrementQuantity(product.id)}
-                  style={{ marginLeft: '10px' }}
-                >
-                  +
-                </Button>
-              </Box>
-            </TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
-  </Table>
-</TableContainer>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => incrementQuantity(product.id)}
+                          style={{ marginLeft: '10px' }}
+                        >
+                          +
+                        </Button>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
 
 

@@ -147,12 +147,12 @@ const CustomerDashboard = () => {
                 </Grid>
                 <Grid item xs={12} sm={10}>
                   <Typography variant="h6" style={{ fontWeight: "bold" }}>{customer.full_name}</Typography>
-                  <Typography variant="subtitle1">ID: {customer.id}</Typography>
+                  <Typography variant="subtitle1" color="primary">ID: {customer.username}</Typography>
                   <Typography variant="body2">Role: {customer.role_name}</Typography>
 
                   <Typography variant="body2">
                     <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
-                    {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}
+                    {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}.
                   </Typography>
 
                   <Typography variant="body2">
@@ -168,8 +168,13 @@ const CustomerDashboard = () => {
               </Grid>
             </Grid>
             <Grid item xs={12} sm={6} textAlign="right">
-              <Typography variant="body2">
-                {new Date(customer.createdAt).toLocaleDateString()} Joined
+              <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
+                Date of Joining: {new Date(customer.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "2-digit",
+                })}{" "}
+
               </Typography>
               <Typography variant="body2" style={{ color: "#1c96c5" }}>
                 Total No. of Booked: <span style={{ color: "#1c96c5" }}>{totalOrders}</span>
@@ -220,9 +225,17 @@ const CustomerDashboard = () => {
                         <Typography variant="body2" style={{ color: "#555" }}>
                           Qty: {item.qty}
                         </Typography>
-                        <Typography variant="body2" style={{ color: "#007b55", fontWeight: "bold" }}>
-                          ₹ {item.qty && item.price ? (parseFloat(item.price) / item.qty).toFixed(2) : "N/A"}
+                        <Typography
+                          variant="body2"
+                          style={{ color: "#007b55", fontWeight: "bold" }}
+                        >
+                          ₹{" "}
+                          {item.qty && item.price
+                            ? (parseFloat(item.price) / item.qty)
+                              .toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            : "N/A"}
                         </Typography>
+
 
                       </div>
                     </div>
@@ -235,10 +248,21 @@ const CustomerDashboard = () => {
           <Typography
             mt={2}
             variant="h6"
-            style={{ textAlign: "center", marginTop: "16px", fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              marginTop: "16px",
+              fontWeight: "bold",
+            }}
           >
-            Total Amount: ₹ {recentBookings.reduce((total, item) => total + parseFloat(item.price || 0), 0).toFixed(2)}
+            Total Amount: ₹{" "}
+            {recentBookings
+              .reduce((total, item) => total + parseFloat(item.price || 0), 0)
+              .toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
           </Typography>
+
         </CardContent>
       </Card>
 
@@ -248,10 +272,10 @@ const CustomerDashboard = () => {
           <Typography variant="h6">Booking History</Typography>
           <TableContainer component={Paper} sx={{ mt: 2 }}>
             <Table>
-              <TableHead>
+              <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
                 <TableRow>
-                  <TableCell>Order Details</TableCell>
                   <TableCell>Booking Date</TableCell>
+                  <TableCell>Order Details</TableCell>
 
                 </TableRow>
               </TableHead>

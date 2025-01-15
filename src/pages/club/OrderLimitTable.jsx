@@ -70,7 +70,7 @@ const OrderLimitsTable = () => {
   return (
     <>
       <TableContainer component={Paper}>
-        <div
+        {/* <div
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -79,21 +79,23 @@ const OrderLimitsTable = () => {
           }}
         >
           <h2 style={{ margin: 0 }}>Master / Set Order Time</h2>
-          {/* <Button
+          <Button
             variant="contained"
             color="primary"
             onClick={handleAddTimeClick} // Button click handler for navigating to add-time
           >
             Add Time
-          </Button> */}
-        </div>
+          </Button>
+        </div> */}
+         <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Masters / Set Roles Timings
+      </Typography>
         <Table aria-label="Order Limit Table">
           <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
             <TableRow>
               <TableCell>No.</TableCell>
-              <TableCell>Role</TableCell>
-
-              <TableCell>Hours</TableCell>
+              <TableCell>Roles</TableCell>
+              <TableCell>Days</TableCell>
               <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
@@ -103,7 +105,7 @@ const OrderLimitsTable = () => {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{limit.role}</TableCell>
 
-                <TableCell>{limit.hours}</TableCell>
+                <TableCell>{limit.hours} Days</TableCell>
                 <TableCell>
                   {/* Edit Button */}
                   <IconButton

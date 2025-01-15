@@ -103,7 +103,7 @@ const OrderDetails = () => {
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Order Details
       </Typography>
 

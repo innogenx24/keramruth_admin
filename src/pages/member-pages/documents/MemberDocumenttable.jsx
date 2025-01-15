@@ -83,31 +83,12 @@ const MemberDocumenttable = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Documents
+      </Typography>
+
       <TableContainer component={Paper} style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "15px",
-            borderBottom: "1px solid #ddd",
-          }}
-        >
-          <h2 style={{ margin: 0 }}>All Documents</h2>
-          {/* <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={handleAddClick}
-            style={{
-              backgroundColor: "#28a745",
-              color: "white",
-              fontWeight: "bold",
-              borderRadius: "5px",
-            }}
-          >
-            CREATE DOCUMENT
-          </Button> */}
-        </div>
+
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
@@ -153,8 +134,8 @@ const MemberDocumenttable = () => {
                   {Array.isArray(document.receiver)
                     ? document.receiver.join(", ")
                     : document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[')
-                    ? JSON.parse(document.receiver).join(", ")
-                    : document.receiver}
+                      ? JSON.parse(document.receiver).join(", ")
+                      : document.receiver}
                 </TableCell>
               </TableRow>
             ))}
