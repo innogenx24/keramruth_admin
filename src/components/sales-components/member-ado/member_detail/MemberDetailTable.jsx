@@ -491,6 +491,7 @@ const MemberDetailTable = () => {
                       }}
                     >
                       <Box position="relative" display="inline-flex" mr={2}>
+                        {/* Background Circular Progress */}
                         <CircularProgress
                           variant="determinate"
                           value={100}
@@ -498,6 +499,7 @@ const MemberDetailTable = () => {
                           thickness={5}
                           style={{ color: "#e0e0e0" }}
                         />
+                        {/* Foreground Circular Progress */}
                         <CircularProgress
                           variant="determinate"
                           value={achievementAmountPercent}
@@ -513,17 +515,25 @@ const MemberDetailTable = () => {
                                   : "green",
                           }}
                         />
+                        {/* Centered Text */}
                         <Box
                           position="absolute"
                           top="50%"
                           left="50%"
-                          sx={{ transform: "translate(-50%, -50%)" }}
+                          sx={{
+                            transform: "translate(-50%, -50%)",
+                          }}
                         >
-                          <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
-                            {(parseFloat(achievementAmountPercent) || 0).toFixed(2)}% {/* Safely format */}
+                          <Typography
+                            variant="h6"
+                            fontWeight="bold"
+                            sx={{ fontSize: "1.08rem !important", color: "primary" }}
+                          >
+                            {(parseFloat(achievementAmountPercent) || 0).toFixed(2)}%
                           </Typography>
                         </Box>
                       </Box>
+
                       <Box>
                         <Typography variant="h6" fontWeight="bold" mb={0.5}>
                           Target Amount
@@ -585,7 +595,7 @@ const MemberDetailTable = () => {
                           left="50%"
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
-                          <Typography variant="h6" fontWeight="bold" sx={{ color: "primary" }}>
+                          <Typography variant="h6" fontWeight="bold" sx={{fontSize: "1.08rem !important", color: "primary" }}>
                             {(parseFloat(StockAchievementPercent) || 0).toFixed(2)}% {/* Safely format */}
                           </Typography>
                         </Box>
