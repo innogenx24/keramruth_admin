@@ -236,7 +236,7 @@ const ProductPage = () => {
                   <TableCell>{product.stock_quantity}</TableCell>
                   <TableCell>{product.category_name}</TableCell>
                   <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
-                  <TableCell>
+                  <TableCell style={{width:"130px"}}>
                     Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(product.price || 0)}
                   </TableCell>
 
