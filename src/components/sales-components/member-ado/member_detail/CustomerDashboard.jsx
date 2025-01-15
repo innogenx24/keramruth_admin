@@ -168,8 +168,13 @@ const CustomerDashboard = () => {
               </Grid>
             </Grid>
             <Grid item xs={12} sm={6} textAlign="right">
-              <Typography variant="body2">
-                {new Date(customer.createdAt).toLocaleDateString()} Joined
+              <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
+                Date of Joined: {new Date(customer.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "2-digit",
+                })}{" "}
+
               </Typography>
               <Typography variant="body2" style={{ color: "#1c96c5" }}>
                 Total No. of Booked: <span style={{ color: "#1c96c5" }}>{totalOrders}</span>

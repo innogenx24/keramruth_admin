@@ -595,7 +595,7 @@ const MemberDetailTable = () => {
                           left="50%"
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
-                          <Typography variant="h6" fontWeight="bold" sx={{fontSize: "1.08rem !important", color: "primary" }}>
+                          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: "1.08rem !important", color: "primary" }}>
                             {(parseFloat(StockAchievementPercent) || 0).toFixed(2)}% {/* Safely format */}
                           </Typography>
                         </Box>
@@ -634,13 +634,13 @@ const MemberDetailTable = () => {
                         {club_name}
                       </span>
                     </Typography>
-                    <Typography color="text.secondary">
-                      {new Date(createdAt).toLocaleDateString("en-GB", {
+                    <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
+                      Date of Joined: {new Date(createdAt).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
                         year: "2-digit",
                       })}{" "}
-                      Joined
+
                     </Typography>
                   </Box>
                 </Box>
