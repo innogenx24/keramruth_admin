@@ -225,9 +225,17 @@ const CustomerDashboard = () => {
                         <Typography variant="body2" style={{ color: "#555" }}>
                           Qty: {item.qty}
                         </Typography>
-                        <Typography variant="body2" style={{ color: "#007b55", fontWeight: "bold" }}>
-                          ₹ {item.qty && item.price ? (parseFloat(item.price) / item.qty).toFixed(2) : "N/A"}
+                        <Typography
+                          variant="body2"
+                          style={{ color: "#007b55", fontWeight: "bold" }}
+                        >
+                          ₹{" "}
+                          {item.qty && item.price
+                            ? (parseFloat(item.price) / item.qty)
+                              .toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            : "N/A"}
                         </Typography>
+
 
                       </div>
                     </div>
@@ -240,10 +248,21 @@ const CustomerDashboard = () => {
           <Typography
             mt={2}
             variant="h6"
-            style={{ textAlign: "center", marginTop: "16px", fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              marginTop: "16px",
+              fontWeight: "bold",
+            }}
           >
-            Total Amount: ₹ {recentBookings.reduce((total, item) => total + parseFloat(item.price || 0), 0).toFixed(2)}
+            Total Amount: ₹{" "}
+            {recentBookings
+              .reduce((total, item) => total + parseFloat(item.price || 0), 0)
+              .toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
           </Typography>
+
         </CardContent>
       </Card>
 
