@@ -129,7 +129,6 @@ const CategoryTable = () => {
               + Add Category
             </Button>
           </Box>
-          <h2>Category</h2>
           <TableContainer component={Paper} >
             <Table aria-label="Category Table">
               <TableHead sx={{ backgroundColor: '#DCDCDC' }}>

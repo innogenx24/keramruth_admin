@@ -75,7 +75,7 @@ const EditOrderLimit = () => {
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
-          label="Time Limit (hours)"
+          label="Time Limit (Days)"
           type="number"
           value={hours}
           onChange={handleChange}

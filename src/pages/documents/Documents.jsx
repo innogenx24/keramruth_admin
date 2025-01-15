@@ -147,7 +147,9 @@ const DocumentsTable = () => {
             borderBottom: "1px solid #ddd",
           }}
         >
-          <h2 style={{ margin: 0 }}>All Documents</h2>
+          <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+            Documents
+          </Typography>
           <Button
             variant="contained"
             startIcon={<AddIcon />}

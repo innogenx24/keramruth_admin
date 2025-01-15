@@ -58,9 +58,10 @@ const FeedbackTable = () => {
 
   return (
     <Box padding={2}>
-      <Typography variant="h5" gutterBottom>
-        Feedback Details
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Feedbacks
       </Typography>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>

@@ -132,7 +132,10 @@ const AnnouncementTable = () => {
             alignItems: "center",
           }}
         >
-          <h2 style={{ margin: 0 }}>All Announcements</h2>
+          <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+            Announcements
+      </Typography>
+
           <Button
             variant="contained"
             color="primary"

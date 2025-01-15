@@ -301,7 +301,7 @@ export default function ReportTable() {
               },
             }}
           >
-            <MenuItem value="">Area</MenuItem>
+            <MenuItem value="">All Areas</MenuItem>
             {areas.map((area) => (
               <MenuItem key={area} value={area}>
                 {area}

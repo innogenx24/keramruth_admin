@@ -58,9 +58,10 @@ const SalesTargetTable = () => {
 
   return (
     <div style={{ padding: "16px" }}>
-      <Typography variant="h6" sx={{ marginBottom: "20px" }}>
-        Sales Targets
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Masters / Sales Target
       </Typography>
+
 
       {/* Table Container */}
       <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
