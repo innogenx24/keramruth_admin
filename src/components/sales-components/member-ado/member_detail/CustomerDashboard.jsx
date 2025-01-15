@@ -147,7 +147,7 @@ const CustomerDashboard = () => {
                 </Grid>
                 <Grid item xs={12} sm={10}>
                   <Typography variant="h6" style={{ fontWeight: "bold" }}>{customer.full_name}</Typography>
-                  <Typography variant="subtitle1">ID: {customer.id}</Typography>
+                  <Typography variant="subtitle1" color="primary">ID: {customer.username}</Typography>
                   <Typography variant="body2">Role: {customer.role_name}</Typography>
 
                   <Typography variant="body2">
