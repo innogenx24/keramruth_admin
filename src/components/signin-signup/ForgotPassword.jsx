@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import LoginImage from "../../assets/logo/LoginImage.png"; // Ensure this path is correct
 import "./style.css"; // Ensure this file contains the necessary styles
+import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ const ForgotPassword = () => {
         >
           <Box>
             <img
-              src={LoginImage}
+              src={LeftSideBanner}
               alt="Login"
               style={{ maxWidth: "100%", height: "100%", borderRadius: "8px" }}
             />

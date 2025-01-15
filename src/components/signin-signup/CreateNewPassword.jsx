@@ -15,6 +15,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LoginImage from "../../assets/logo/LoginImage.png";
 import "./style.css";
+import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
 
 const CreateNewPassword = () => {
   const navigate = useNavigate();
@@ -116,7 +117,7 @@ const CreateNewPassword = () => {
         >
           <Box>
             <img
-              src={LoginImage}
+              src={LeftSideBanner}
               alt="Login"
               style={{ maxWidth: "100%", height: "100%", borderRadius: "8px" }}
             />

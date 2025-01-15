@@ -16,6 +16,7 @@ import LoginImage from "../../assets/logo/LoginImage.png"; // Assuming you have 
 import "./style.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { signUpRequest } from '../../redux/slices/authSlice';
+import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
 
 
 const SignUp = () => {
@@ -85,7 +86,7 @@ const SignUp = () => {
           sm={6}
           sx={{
             display: { xs: "none", sm: "block" },
-            backgroundImage: `url(${LoginImage})`,
+            backgroundImage: `url(${LeftSideBanner})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             height: "100%",
