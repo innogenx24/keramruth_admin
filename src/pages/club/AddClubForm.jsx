@@ -15,7 +15,7 @@ const AddClubForm = () => {
   // Validate form fields
   const validate = () => {
     let formErrors = {};
-    const alphanumericRegex = /^[a-zA-Z\s]+$/; // Alphanumeric with spaces only, no numbers
+    const alphanumericRegex = /^[a-zA-Z0-9\s()]+$/;
     
     if (!clubName.trim()) {
       formErrors.clubName = "Club name is required.";
