@@ -53,12 +53,19 @@ const DonutChart = () => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: '70%', // Create a donut effect by cutting the center of the chart
+    cutout: '70%', 
     plugins: {
       legend: {
         position: 'bottom',
+        align: 'start',
         labels: {
           usePointStyle: true,
+          padding: 10, 
+          boxWidth: 12, 
+          boxHeight: 12, 
+          font: {
+            size: 12,
+          },
         },
       },
       tooltip: {
@@ -120,12 +127,11 @@ const DonutChart = () => {
     <div className='dchart-container'>
       <h2>Most Selling Product</h2>
 
-      {/* Month selection */}
       <div className="month-selector">
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
-          dateFormat="MMMM yyyy" // Show full month and year in UI
+          dateFormat="MMMM yyyy" 
           showMonthYearPicker // Limit picker to month and year
           className="date-picker-input"
         />
