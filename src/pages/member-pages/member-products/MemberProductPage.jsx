@@ -44,9 +44,9 @@ const MemberProductPage = () => {
           },
         }
       );
-      const sortedProducts = response.data.sort((a, b) => b.id - a.id);
+      // const sortedProducts = response.data.sort((a, b) => b.id - a.id);
 
-      setProducts(sortedProducts);
+      setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
     }

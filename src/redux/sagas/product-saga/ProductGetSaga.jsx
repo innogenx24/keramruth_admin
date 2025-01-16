@@ -21,10 +21,10 @@ function* fetchProducts() {
         Authorization: `Bearer ${token}`,
       },
     });
-    const sortedProducts = response.data.sort((a, b) => b.id - a.id);
+    // const sortedProducts = response.data.sort((a, b) => b.id - a.id);
 
     /** Dispatch success action with the fetched data **/
-    yield put(fetchProductsSuccess(sortedProducts));
+    yield put(fetchProductsSuccess(response.data));
     // console.log('Fetched Products:', response.data);
 
   } catch (error) {
