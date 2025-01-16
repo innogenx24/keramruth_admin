@@ -70,8 +70,8 @@ export function StockSaleBarGraph() {
                   backgroundColor: greenGradient, // Green gradient
                   barThickness: 25,
                   borderRadius: {
-                    topLeft: 10,
-                    topRight: 10,
+                    // topLeft: 10,
+                    // topRight: 10,
                     bottomLeft: 0,
                     bottomRight: 0,
                   },

@@ -21,4 +21,14 @@
     display: flex;
     justify-content: space-between;
     padding: 0 30px;
+    div{
+        margin-bottom: 10px;
+        font-family: "Inter500", "Roboto", sans-serif;
+        font-size: 18px;
+        color: #232428;
+    }
+    div:nth-child(2) {
+        font-size: 14px;
+        color: #989FA9;
+    }
 }

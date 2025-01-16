@@ -527,7 +527,7 @@ const MemberDetailTable = () => {
                           <Typography
                             variant="h6"
                             fontWeight="bold"
-                            sx={{ fontSize: "1.08rem !important", color: "primary" }}
+                            sx={{ fontSize: "0.8rem !important", color: "primary" }}
                           >
                             {(parseFloat(achievementAmountPercent) || 0).toFixed(2)}%
                           </Typography>

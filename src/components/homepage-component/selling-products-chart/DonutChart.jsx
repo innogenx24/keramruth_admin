@@ -118,7 +118,7 @@ const DonutChart = () => {
 
   return (
     <div className='dchart-container'>
-      <h2>Most Selling Product</h2>
+      <p>Most Selling Product</p>
 
       {/* Month selection */}
       <div className="month-selector">

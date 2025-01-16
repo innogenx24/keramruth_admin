@@ -78,8 +78,8 @@ const getRoleAbbreviation = (roleName) => {
         Total Sales: 
         {/* <br /> */}
         <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
-        ({getRoleAbbreviation(data.roleName)})
-          ({data.totalUsers})
+         {' '} {getRoleAbbreviation( data.roleName)}
+         {' '} ({data.totalUsers})
         </Typography>
       </Typography>
     }
