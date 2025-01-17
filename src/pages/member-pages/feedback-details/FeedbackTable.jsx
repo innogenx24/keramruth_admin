@@ -104,11 +104,12 @@ const FeedbackTable = () => {
                   {Number(feedback.order.total_order_quantity).toString()}
                 </TableCell>
                 <TableCell>
-                  {new Date(feedback.order.createdAt).toLocaleDateString()}
+                  {new Intl.DateTimeFormat('en-GB').format(new Date(feedback.order.createdAt))}
                 </TableCell>
                 <TableCell>
-                  {new Date(feedback.feedback_date).toLocaleDateString()}
+                  {new Intl.DateTimeFormat('en-GB').format(new Date(feedback.feedback_date))}
                 </TableCell>
+
                 <TableCell>
                   Rs {new Intl.NumberFormat('en-IN').format(feedback.order.total_amount || 0)}
                 </TableCell>

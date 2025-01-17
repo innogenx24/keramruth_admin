@@ -207,9 +207,9 @@ const OrderDetails = () => {
                                   />
                                 </TableCell>
                                 <TableCell>{item.product.name}</TableCell>
-                                <TableCell>{item.baseprice}</TableCell>
+                                <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(item.baseprice)}</TableCell>
                                 <TableCell>{item.quantity}</TableCell>
-                                <TableCell>{item.final_price}</TableCell>
+                                <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(item.baseprice * item.quantity)}</TableCell>
                                 {roleId === 6 && (
                                   <TableCell>
                                     {(order.status === "Accepted" || order.status === "Cancelled") && (
