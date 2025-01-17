@@ -171,3 +171,162 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import {
+//   Button,
+//   TextField,
+//   Typography,
+//   Container,
+//   Grid,
+//   Box,
+//   Snackbar,
+//   Alert,
+// } from "@mui/material";
+// import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
+
+// const ForgotPassword = () => {
+//   const navigate = useNavigate();
+//   const [mobileNumber, setMobileNumber] = useState("");
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [successMessage, setSuccessMessage] = useState("");
+//   const [openSnackbar, setOpenSnackbar] = useState(false);
+//   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+//   const handleCloseSnackbar = () => {
+//     setOpenSnackbar(false);
+//   };
+
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+
+//     if (!mobileNumber) {
+//       setErrorMessage("Mobile number is required");
+//       return;
+//     }
+
+//     try {
+//       const response = await fetch(`${API_END_POINT}/forgot-password`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ mobileNumber }), // Use mobile number in the request body
+//       });
+
+//       const data = await response.json();
+
+//       if (response.ok) {
+//         setSuccessMessage("OTP sent to your mobile number.");
+//         setOpenSnackbar(true); // Show success message
+//         setMobileNumber(""); // Clear mobile number field
+//         setErrorMessage(""); // Clear error message
+//         // Redirect to OTP verification page (if applicable)
+//         navigate("/verify-otp", { state: { mobileNumber } });
+//       } else {
+//         setErrorMessage(data.message || "Error sending OTP");
+//       }
+//     } catch (error) {
+//       setErrorMessage("Error connecting to server");
+//     }
+//   };
+
+//   return (
+//     <Container maxWidth={false}>
+//       <Grid container sx={{ height: "100%", width: "100%" }}>
+//         <Grid
+//           item
+//           xs={12}
+//           sm={6}
+//           sx={{
+//             display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             height: "100vh",
+//           }}
+//         >
+//           <Box>
+//             <img
+//               src={LeftSideBanner}
+//               alt="Login"
+//               style={{ maxWidth: "100%", height: "100%", borderRadius: "8px" }}
+//             />
+//           </Box>
+//         </Grid>
+
+//         <Grid
+//           item
+//           xs={12}
+//           sm={6}
+//           sx={{
+//             display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             height: "100vh",
+//             padding: "16px",
+//           }}
+//         >
+//           <Box>
+//             <Typography variant="h4" gutterBottom>
+//               Forgot Password
+//             </Typography>
+//             <Typography variant="body1" gutterBottom>
+//               Enter your mobile number and we'll send you OTP to reset your
+//               password.
+//             </Typography>
+//             <form onSubmit={handleSubmit}>
+//               <TextField
+//                 fullWidth
+//                 label="Enter Mobile Number"
+//                 name="mobileNumber"
+//                 type="text"
+//                 variant="outlined"
+//                 margin="normal"
+//                 value={mobileNumber}
+//                 onChange={(e) => setMobileNumber(e.target.value)}
+//                 error={Boolean(errorMessage)}
+//                 helperText={errorMessage}
+//               />
+//               <Button
+//                 color="primary"
+//                 variant="contained"
+//                 fullWidth
+//                 type="submit"
+//                 sx={{ mt: 2, backgroundColor: "#00b050", fontSize: "16px" }}
+//               >
+//                 NEXT
+//               </Button>
+//             </form>
+
+//             <Snackbar
+//               open={openSnackbar}
+//               autoHideDuration={6000}
+//               onClose={handleCloseSnackbar}
+//               anchorOrigin={{ vertical: "top", horizontal: "right" }}
+//             >
+//               <Alert
+//                 onClose={handleCloseSnackbar}
+//                 severity="success"
+//                 sx={{ width: "100%", backgroundColor: "#4caf50", color: "white" }}
+//               >
+//                 {successMessage}
+//               </Alert>
+//             </Snackbar>
+//           </Box>
+//         </Grid>
+//       </Grid>
+//     </Container>
+//   );
+// };
+
+// export default ForgotPassword;

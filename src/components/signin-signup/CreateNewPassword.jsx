@@ -262,3 +262,177 @@ const CreateNewPassword = () => {
 };
 
 export default CreateNewPassword;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from "react";
+// import { useNavigate, useLocation } from "react-router-dom";
+// import {
+//   Button,
+//   TextField,
+//   Typography,
+//   Container,
+//   Grid,
+//   Box,
+//   Snackbar,
+//   Alert,
+// } from "@mui/material";
+// import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
+
+// const CreateNewPassword = () => {
+//   const navigate = useNavigate();
+//   const location = useLocation();
+//   const { mobileNumber } = location.state || {}; // Retrieve mobile number from location state
+
+//   const [otp, setOtp] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [successMessage, setSuccessMessage] = useState("");
+//   const [openSnackbar, setOpenSnackbar] = useState(false);
+//   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+//   const handleCloseSnackbar = () => {
+//     setOpenSnackbar(false);
+//   };
+
+//   const handleSubmit = async (event) => {
+//     event.preventDefault();
+
+//     if (!otp || !password) {
+//       setErrorMessage("OTP and password are required.");
+//       return;
+//     }
+
+//     try {
+//       const response = await fetch(`${API_END_POINT}/reset-password`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ mobileNumber, otp, password }),
+//       });
+
+//       const data = await response.json();
+
+//       if (response.ok) {
+//         setSuccessMessage("Password reset successfully.");
+//         setOpenSnackbar(true);
+//         setTimeout(() => {
+//           navigate("/signin");
+//         }, 6000);
+//       } else {
+//         setErrorMessage(data.message || "Error resetting password");
+//       }
+//     } catch (error) {
+//       setErrorMessage("Error connecting to server");
+//     }
+//   };
+
+//   return (
+//     <Container maxWidth={false}>
+//       <Grid container sx={{ height: "100%", width: "100%" }}>
+//         <Grid
+//           item
+//           xs={12}
+//           sm={6}
+//           sx={{
+//             display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             height: "100vh",
+//           }}
+//         >
+//           <Box>
+//             <img
+//               src={LeftSideBanner}
+//               alt="Login"
+//               style={{ maxWidth: "100%", height: "100%", borderRadius: "8px" }}
+//             />
+//           </Box>
+//         </Grid>
+
+//         <Grid
+//           item
+//           xs={12}
+//           sm={6}
+//           sx={{
+//             display: "flex",
+//             justifyContent: "center",
+//             alignItems: "center",
+//             height: "100vh",
+//             padding: "16px",
+//           }}
+//         >
+//           <Box sx={{ width: "80%" }}>
+//             <Typography variant="h4" gutterBottom>
+//               Reset Your Password
+//             </Typography>
+//             <form onSubmit={handleSubmit}>
+//               <TextField
+//                 fullWidth
+//                 label="Enter OTP"
+//                 name="otp"
+//                 type="text"
+//                 variant="outlined"
+//                 margin="normal"
+//                 value={otp}
+//                 onChange={(e) => setOtp(e.target.value)}
+//                 error={Boolean(errorMessage)}
+//                 helperText={errorMessage}
+//               />
+//               <TextField
+//                 fullWidth
+//                 label="New Password"
+//                 name="password"
+//                 type="password"
+//                 variant="outlined"
+//                 margin="normal"
+//                 value={password}
+//                 onChange={(e) => setPassword(e.target.value)}
+//                 error={Boolean(errorMessage)}
+//                 helperText={errorMessage}
+//               />
+//               <Button
+//                 color="primary"
+//                 variant="contained"
+//                 fullWidth
+//                 type="submit"
+//                 sx={{ mt: 2, backgroundColor: "#00b050", fontSize: "16px" }}
+//               >
+//                 RESET PASSWORD
+//               </Button>
+//             </form>
+
+//             <Snackbar
+//               open={openSnackbar}
+//               autoHideDuration={6000}
+//               onClose={handleCloseSnackbar}
+//               anchorOrigin={{ vertical: "top", horizontal: "right" }}
+//             >
+//               <Alert
+//                 onClose={handleCloseSnackbar}
+//                 severity="success"
+//                 sx={{ width: "100%", backgroundColor: "#4caf50", color: "white" }}
+//               >
+//                 {successMessage}
+//               </Alert>
+//             </Snackbar>
+//           </Box>
+//         </Grid>
+//       </Grid>
+//     </Container>
+//   );
+// };
+
+// export default CreateNewPassword;
