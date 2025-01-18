@@ -442,7 +442,7 @@ const MemberDetailTable = () => {
                   <Avatar
                     src={
                       image
-                        ? `${API_END_POINT}/uploads/${image}`
+                        ? `${imageBaseURL}${image}`
                         : undefined
                     }
                     alt={full_name || "N/A"}
