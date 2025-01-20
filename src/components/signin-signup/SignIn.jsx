@@ -123,42 +123,42 @@ const SignIn = () => {
         >
 
           <Box>
-          <Box
-  sx={{
-    display: "flex",
-    justifyContent: "center", 
-    alignItems: "center",     
-    width: "100%",
-    marginBottom: "50px",
-    marginTop: "30px",
-  }}
->
-  {/* First Logo */}
-  <Box sx={{ marginRight: 2 }}>
-    <img
-      src={DishaImgLogo}
-      alt="Login"
-      style={{
-        width: '115px',
-        // height: 'auto', // Adjust height based on width to maintain aspect ratio
-        borderRadius: '8px',
-      }}
-    />
-  </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                marginBottom: "50px",
+                marginTop: "30px",
+              }}
+            >
+              {/* First Logo */}
+              <Box sx={{ marginRight: 2 }}>
+                <img
+                  src={DishaImgLogo}
+                  alt="Login"
+                  style={{
+                    width: '115px',
+                    // height: 'auto', // Adjust height based on width to maintain aspect ratio
+                    borderRadius: '8px',
+                  }}
+                />
+              </Box>
 
-  {/* Second Logo */}
-  <Box sx={{ marginLeft: 2 }}>
-    <img
-      src={NewLogo}
-      alt="Login"
-      style={{
-        width: '130px',
-        // height: 'auto', // Adjust height based on width to maintain aspect ratio
-        borderRadius: '8px',
-      }}
-    />
-  </Box>
-</Box>
+              {/* Second Logo */}
+              <Box sx={{ marginLeft: 2 }}>
+                <img
+                  src={NewLogo}
+                  alt="Login"
+                  style={{
+                    width: '130px',
+                    // height: 'auto', // Adjust height based on width to maintain aspect ratio
+                    borderRadius: '8px',
+                  }}
+                />
+              </Box>
+            </Box>
 
 
             <Typography variant="h4" gutterBottom>
@@ -242,7 +242,6 @@ const SignIn = () => {
                 </Typography>
               </Box>
 
-              {error && <Typography color="error">{error}</Typography>}
 
               <Snackbar
                 open={openSnackbar}
