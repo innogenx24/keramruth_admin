@@ -237,6 +237,47 @@ export default function ReportTable() {
   );
 
 
+  // const renderCircularProgress = (percent) => {
+  //   const color = getColor(percent);
+
+  //   return (
+  //     <Box position="relative" display="inline-flex" mr={2}>
+  //       <CircularProgress
+  //         variant="determinate"
+  //         value={100}
+  //         size={80}
+  //         thickness={5}
+  //         style={{ color: "#e0e0e0" }}
+  //       />
+  //       <CircularProgress
+  //         variant="determinate"
+  //         value={percent}
+  //         size={80}
+  //         thickness={5}
+  //         style={{
+  //           position: "absolute",
+  //           color: color,
+  //         }}
+  //       />
+  //       <Box
+  //         position="absolute"
+  //         top="50%"
+  //         left="50%"
+  //         sx={{ transform: "translate(-50%, -50%)" }}
+  //       >
+  //         <Typography variant="h6" fontWeight="bold" sx={{ fontSize: "1.08rem !important", color: "primary" }}>
+  //           {`${(parseFloat(percent) || 0).toFixed(2)}%`}
+  //         </Typography>
+  //       </Box>
+  //     </Box>
+  //   );
+  // };
+
+  // const getColor = (percent) => {
+  //   if (percent >= 75) return 'green';
+  //   if (percent >= 50) return 'orange';
+  //   return 'red';
+  // };
 
 
   return (
@@ -369,6 +410,7 @@ export default function ReportTable() {
               <TableCell>Name</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>City</TableCell>
+              {/* <TableCell>Target/Stock(%)</TableCell> */}
               <TableCell>Target Amount / Achievement Amount</TableCell>
               <TableCell>Stock QTY / Achievement QTY</TableCell>
             </TableRow>
@@ -393,6 +435,18 @@ export default function ReportTable() {
                   </TableCell>
                   <TableCell>{row.role_name}</TableCell>
                   <TableCell>{row.city}</TableCell>
+
+                  {/* <TableCell>
+                    <Box display="flex" alignItems="center" justifyContent="center">
+                      {renderCircularProgress(
+                        row.salesAchievement?.monthlyDetails?.[0]?.achievementAmountPercent || 0
+                      )}
+                      {renderCircularProgress(
+                        row.salesAchievement?.monthlyDetails?.[0]?.StockAchievementPercent || 0
+                      )}
+                    </Box>
+                  </TableCell> */}
+
                   <TableCell>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.MonthlyTargetAmount || 0)}
@@ -401,6 +455,7 @@ export default function ReportTable() {
                     </div>
                   </TableCell>
 
+                  {/* Stock QTY / Achievement QTY */}
                   <TableCell>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.StockTarget || 0)}
@@ -408,13 +463,13 @@ export default function ReportTable() {
                       {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.StockAchievement || 0)}
                     </div>
                   </TableCell>
-
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </TableContainer>
+
 
       <div style={{ marginTop: "10px" }}>
         {renderPagination(page, setPage, salesData.length)}
