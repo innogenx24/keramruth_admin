@@ -22,7 +22,7 @@ const MemberProductPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0); // Pagination state
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(20); // Rows per page
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const [searchQuery, setSearchQuery] = useState("");

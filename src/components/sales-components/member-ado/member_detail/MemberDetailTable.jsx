@@ -442,7 +442,7 @@ const MemberDetailTable = () => {
                   <Avatar
                     src={
                       image
-                        ? `${API_END_POINT}/uploads/${image}`
+                        ? `${imageBaseURL}${image}`
                         : undefined
                     }
                     alt={full_name || "N/A"}
@@ -454,7 +454,7 @@ const MemberDetailTable = () => {
                     </Typography>
                     <Typography color="primary">{`ID: ${username}`}</Typography>
                     <Typography variant="subtitle2" color="text.secondary">
-                      {role_name || "N/A"}
+                      Role: {role_name || "N/A"}
                     </Typography>
                     <Typography variant="body2">
                       <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
@@ -630,10 +630,11 @@ const MemberDetailTable = () => {
                   >
                     <Typography>
                       Club:{" "}
-                      <span style={{ color: "#1976D2", fontWeight: "bold" }}>
-                        {club_name}
+                      <span style={{ color: "#1c96c5"}}>
+                        {club_name ? club_name : "N/A"}
                       </span>
                     </Typography>
+
                     <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
                       Date of Joining: {new Date(createdAt).toLocaleDateString("en-GB", {
                         day: "2-digit",
