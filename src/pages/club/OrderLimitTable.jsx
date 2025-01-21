@@ -87,15 +87,15 @@ const OrderLimitsTable = () => {
             Add Time
           </Button>
         </div> */}
-         <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-        Masters / Set Roles Timings
-      </Typography>
+        <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+          Masters / Set Role Order Timings
+        </Typography>
         <Table aria-label="Order Limit Table">
           <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Roles</TableCell>
-              <TableCell>Days</TableCell>
+              <TableCell>Days / Hours</TableCell>
               <TableCell>Edit</TableCell>
             </TableRow>
           </TableHead>
@@ -104,10 +104,10 @@ const OrderLimitsTable = () => {
               <TableRow key={limit.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{limit.role}</TableCell>
-
-                <TableCell>{limit.hours} Days</TableCell>
                 <TableCell>
-                  {/* Edit Button */}
+                  {limit.days} {limit.days > 1 ? 'Days' : 'Day'} {limit.hours} {limit.hours > 1 ? 'Hours' : 'Hour'}
+                </TableCell>               
+                <TableCell>
                   <IconButton
                     color="primary"
                     onClick={() => handleEditClick(limit)}

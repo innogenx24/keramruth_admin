@@ -12,6 +12,7 @@ import {
   InputAdornment,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
@@ -26,7 +27,7 @@ const AddMemberForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [clubs, setClubs] = useState([]);
-  const { loading, success, error, member } = useSelector(
+  const { success, error, member } = useSelector(
     (state) => state.memberPost
   );
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -44,6 +45,8 @@ const AddMemberForm = () => {
   const { allmembers } = useSelector((state) => state.allmembers);
   const [imagePreview, setImagePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [stateDistrictMapping, setStateDistrictMapping] = useState({});
 
   useEffect(() => {
     if (isFormSubmitted) {
@@ -61,634 +64,39 @@ const AddMemberForm = () => {
   // const [loading, setLoading] = useState(false);
 
   // State to City mapping
-  const stateDistrictMapping = {
-    "Andhra Pradesh": [
-      "Anakapalli",
-      "Anantapur",
-      "Bapatla",
-      "Chittoor",
-      "East Godavari",
-      "Eluru",
-      "Guntur",
-      "Kakinada",
-      "Konaseema",
-      "Krishna",
-      "Kurnool",
-      "Nandyal",
-      "Nellore",
-      "Parvathipuram Manyam",
-      "Prakasam",
-      "Sri Potti Sriramulu Nellore",
-      "Sri Sathya Sai",
-      "Srikakulam",
-      "Tirupati",
-      "Visakhapatnam",
-      "Vizianagaram",
-      "West Godavari",
-      "YSR Kadapa",
-      "Alluri Sitharama Raju",
-      "NTR",
-      "Palnadu",
-    ],
-    "Arunachal Pradesh": [
-      "Anjaw",
-      "Changlang",
-      "Dibang Valley",
-      "East Kameng",
-      "East Siang",
-      "Kamle",
-      "Kra Daadi",
-      "Kurung Kumey",
-      "Lepa Rada",
-      "Lohit",
-      "Longding",
-      "Lower Dibang Valley",
-      "Lower Siang",
-      "Lower Subansiri",
-      "Namsai",
-      "Pakke Kessang",
-      "Papum Pare",
-      "Shi-Yomi",
-      "Siang",
-      "Tawang",
-      "Tirap",
-      "Upper Siang",
-      "Upper Subansiri",
-      "West Kameng",
-      "West Siang",
-    ],
-    Assam: [
-      "Baksa",
-      "Barpeta",
-      "Biswanath",
-      "Bongaigaon",
-      "Cachar",
-      "Charaideo",
-      "Chirang",
-      "Darrang",
-      "Dhemaji",
-      "Dhubri",
-      "Dibrugarh",
-      "Dima Hasao",
-      "Goalpara",
-      "Golaghat",
-      "Hailakandi",
-      "Hojai",
-      "Jorhat",
-      "Kamrup",
-      "Kamrup Metropolitan",
-      "Karbi Anglong",
-      "Karimganj",
-      "Kokrajhar",
-      "Lakhimpur",
-      "Majuli",
-      "Morigaon",
-      "Nagaon",
-      "Nalbari",
-      "Sivasagar",
-      "Sonitpur",
-      "South Salmara-Mankachar",
-      "Tinsukia",
-      "Udalguri",
-      "West Karbi Anglong",
-    ],
-    Bihar: [
-      "Araria",
-      "Arwal",
-      "Aurangabad",
-      "Banka",
-      "Begusarai",
-      "Bhagalpur",
-      "Bhojpur",
-      "Buxar",
-      "Darbhanga",
-      "East Champaran",
-      "Gaya",
-      "Gopalganj",
-      "Jamui",
-      "Jehanabad",
-      "Kaimur",
-      "Katihar",
-      "Khagaria",
-      "Kishanganj",
-      "Lakhisarai",
-      "Madhepura",
-      "Madhubani",
-      "Munger",
-      "Muzaffarpur",
-      "Nalanda",
-      "Nawada",
-      "Patna",
-      "Purnia",
-      "Rohtas",
-      "Saharsa",
-      "Samastipur",
-      "Saran",
-      "Sheikhpura",
-      "Sheohar",
-      "Sitamarhi",
-      "Siwan",
-      "Supaul",
-      "Vaishali",
-      "West Champaran",
-    ],
-    Chhattisgarh: [
-      "Balod",
-      "Baloda Bazar",
-      "Balrampur",
-      "Bastar",
-      "Bemetara",
-      "Bijapur",
-      "Bilaspur",
-      "Dantewada",
-      "Dhamtari",
-      "Durg",
-      "Gariaband",
-      "Gaurela-Pendra-Marwahi",
-      "Janjgir-Champa",
-      "Jashpur",
-      "Kabirdham",
-      "Kanker",
-      "Kondagaon",
-      "Korba",
-      "Korea",
-      "Mahasamund",
-      "Mungeli",
-      "Narayanpur",
-      "Raigarh",
-      "Raipur",
-      "Rajnandgaon",
-      "Sukma",
-      "Surajpur",
-      "Surguja",
-    ],
-    Goa: ["North Goa", "South Goa", "Panaji", "Vasco da Gama", "Margao"],
-    Gujarat: [
-      "Ahmedabad",
-      "Surat",
-      "Vadodara",
-      "Rajkot",
-      "Bhavnagar",
-      "Junagadh",
-      "Kheda",
-      "Mehsana",
-      "Patan",
-      "Sabarkantha",
-      "Anand",
-      "Banaskantha",
-      "Dahod",
-      "Narmada",
-      "Porbandar",
-      "Chhota Udepur",
-      "Gir Somnath",
-      "Mahisagar",
-      "Morbi",
-      "Navajo",
-      "Surendranagar",
-      "Tapi",
-      "Valsad",
-    ],
-    Haryana: [
-      "Chandigarh",
-      "Faridabad",
-      "Gurugram",
-      "Ambala",
-      "Hisar",
-      "Karnal",
-      "Panipat",
-      "Rewari",
-      "Sonipat",
-      "Yamunanagar",
-      "Bhiwani",
-      "Rohtak",
-      "Sirsa",
-      "Jhajjar",
-      "Mahendragarh",
-      "Nuh",
-      "Panchkula",
-      "Fatehabad",
-      "Palwal",
-      "Kaithal",
-    ],
-    "Himachal Pradesh": [
-      "Shimla",
-      "Manali",
-      "Kullu",
-      "Dharamsala",
-      "Kangra",
-      "Solan",
-      "Mandi",
-      "Bilaspur",
-      "Hamirpur",
-      "Una",
-      "Sirmaur",
-      "Chamba",
-      "Kullu",
-      "Lahaul and Spiti",
-      "Una",
-    ],
-    Jharkhand: [
-      "Ranchi",
-      "Jamshedpur",
-      "Dhanbad",
-      "Hazaribagh",
-      "Bokaro",
-      "Deoghar",
-      "Giridih",
-      "Dumka",
-      "Khunti",
-      "Pakur",
-      "Sahebganj",
-      "Ramgarh",
-      "Godda",
-      "Latehar",
-      "Palamu",
-      "Simdega",
-      "Chatra",
-      "Garhwa",
-      "Koderma",
-      "Saraikela Kharsawan",
-    ],
-    Karnataka: [
-      "Bangalore",
-      "Mysuru",
-      "Mangalore",
-      "Hubli",
-      "Belgaum",
-      "Bidar",
-      "Chikkaballapur",
-      "Chikkamagaluru",
-      "Davanagere",
-      "Hassan",
-      "Hubli",
-      "Kolar",
-      "Koppal",
-      "Mandya",
-      "Raichur",
-      "Ramanagara",
-      "Shivamogga",
-      "Tumkur",
-      "Udupi",
-      "Ballari",
-      "Chitradurga",
-      "Dakshina Kannada",
-      "Gadag",
-      "Haveri",
-      "Kodagu",
-      "Bagalkot",
-      "Yadgir",
-    ],
-    Kerala: [
-      "Thiruvananthapuram",
-      "Kochi",
-      "Kozhikode",
-      "Kottayam",
-      "Alappuzha",
-      "Idukki",
-      "Kannur",
-      "Kasaragod",
-      "Kollam",
-      "Kottayam",
-      "Malappuram",
-      "Palakkad",
-      "Pathanamthitta",
-      "Pernakulam",
-      "Thrissur",
-      "Wayanad",
-    ],
-    "Madhya Pradesh": [
-      "Bhopal",
-      "Indore",
-      "Gwalior",
-      "Ujjain",
-      "Jabalpur",
-      "Sagar",
-      "Rewa",
-      "Satna",
-      "Dewas",
-      "Ratlam",
-      "Shivpuri",
-      "Sehore",
-      "Shahdol",
-      "Chhindwara",
-      "Mandla",
-      "Tikamgarh",
-      "Panna",
-      "Khargone",
-      "Burhanpur",
-      "Neemuch",
-      "Mandsaur",
-      "Balaghat",
-      "Betul",
-      "Hoshangabad",
-      "Khandwa",
-      "Alirajpur",
-      "Anuppur",
-      "Ashoknagar",
-      "Chhatarpur",
-      "Dindori",
-      "Harda",
-      "Jhabua",
-      "Katni",
-      "Narsinghpur",
-      "Seoni",
-      "Shivpuri",
-      "Singrauli",
-      "Umaria",
-    ],
-    Maharashtra: [
-      "Mumbai",
-      "Pune",
-      "Nagpur",
-      "Nashik",
-      "Aurangabad",
-      "Thane",
-      "Solapur",
-      "Sangli",
-      "Ratnagiri",
-      "Jalgaon",
-      "Satara",
-      "Kolhapur",
-      "Latur",
-      "Nanded",
-      "Amravati",
-      "Akola",
-      "Yavatmal",
-      "Buldhana",
-      "Hingoli",
-      "Wardha",
-      "Washim",
-      "Chandrapur",
-      "Gadchiroli",
-      "Bhandara",
-      "Sindhudurg",
-      "Palghar",
-    ],
-    Manipur: [
-      "Imphal",
-      "Thoubal",
-      "Kangpokpi",
-      "Bishnupur",
-      "Churachandpur",
-      "Senapati",
-      "Ukhrul",
-      "Tamenglong",
-      "Noney",
-      "Peren",
-    ],
-    Meghalaya: [
-      "East Khasi Hills",
-      "West Khasi Hills",
-      "Ri-Bhoi",
-      "West Jaintia Hills",
-      "East Jaintia Hills",
-      "South Garo Hills",
-      "North Garo Hills",
-      "West Garo Hills",
-    ],
-    Mizoram: [
-      "Aizawl",
-      "Lunglei",
-      "Champhai",
-      "Kolasib",
-      "Mamit",
-      "Serchhip",
-      "Lawngtlai",
-      "Hnahthial",
-      "Siaha",
-    ],
-    Nagaland: [
-      "Kohima",
-      "Dimapur",
-      "Mokokchung",
-      "Mon",
-      "Phek",
-      "Tuensang",
-      "Zunheboto",
-    ],
-    Odisha: [
-      "Bhubaneswar",
-      "Cuttack",
-      "Rourkela",
-      "Berhampur",
-      "Balasore",
-      "Baripada",
-      "Bargarh",
-      "Jagatsinghpur",
-      "Jajpur",
-      "Kendrapara",
-      "Khurda",
-      "Koraput",
-      "Nayagarh",
-      "Puri",
-      "Sambalpur",
-      "Sundargarh",
-      "Angul",
-      "Ganjam",
-      "Kalahandi",
-      "Dhenkanal",
-      "Deogarh",
-      "Nuapada",
-      "Malkangiri",
-      "Rayagada",
-      "Mayurbhanj",
-    ],
-    Punjab: [
-      "Chandigarh",
-      "Amritsar",
-      "Ludhiana",
-      "Jalandhar",
-      "Patiala",
-      "Bathinda",
-      "Firozpur",
-      "Hoshiarpur",
-      "Rupnagar",
-      "Moga",
-      "Faridkot",
-      "Barnala",
-      "Sangrur",
-      "Mansa",
-      "Muktsar",
-      "Kapurthala",
-      "Tarn Taran",
-      "Shaheed Bhagat Singh Nagar",
-      "Fatehgarh Sahib",
-      "Sri Muktsar Sahib",
-    ],
-    Rajasthan: [
-      "Jaipur",
-      "Udaipur",
-      "Jodhpur",
-      "Ajmer",
-      "Kota",
-      "Alwar",
-      "Bikaner",
-      "Bundi",
-      "Churu",
-      "Dausa",
-      "Hanumangarh",
-      "Jhunjhunu",
-      "Jhalawar",
-      "Nagaur",
-      "Pali",
-      "Rajsamand",
-      "Sikar",
-      "Sirohi",
-      "Tonk",
-      "Barmer",
-      "Banswara",
-      "Baran",
-      "Bhilwara",
-      "Dholpur",
-      "Dungarpur",
-      "Karauli",
-      "Pali",
-      "Pratapgarh",
-      "Rajasmand",
-      "Sawai Madhopur",
-      "Shri Ganganagar",
-    ],
-    Sikkim: ["Gangtok", "Namchi", "Pakyong", "Mangan", "Rangpo"],
-    "Tamil Nadu": [
-      "Chennai",
-      "Coimbatore",
-      "Madurai",
-      "Trichy",
-      "Salem",
-      "Tirunelveli",
-      "Erode",
-      "Vellore",
-      "Tirupur",
-      "Dharmapuri",
-      "Cuddalore",
-      "Kanchipuram",
-      "Nagapattinam",
-      "Karur",
-      "Pudukkottai",
-      "Thanjavur",
-      "Villupuram",
-      "Dindigul",
-      "Kanyakumari",
-      "Ramanathapuram",
-      "Thoothukudi",
-      "Virudhunagar",
-      "Sivaganga",
-      "Krishnagiri",
-      "Ariyalur",
-      "Perambalur",
-      "Tiruvarur",
-    ],
-    Telangana: [
-      "Hyderabad",
-      "Warangal",
-      "Khammam",
-      "Adilabad",
-      "Nalgonda",
-      "Karimnagar",
-      "Mahabubnagar",
-      "Nizamabad",
-      "Medak",
-      "Khammam",
-      "Rangareddy",
-      "Siddipet",
-      "Jangaon",
-      "Peddapalli",
-      "Suryapet",
-      "Warangal Rural",
-      "Warangal Urban",
-      "Mancherial",
-      "Bhupalpally",
-      "Mulugu",
-      "Jayashankar",
-      "Jogulamba Gadwal",
-    ],
-    Tripura: [
-      "Agartala",
-      "Udaipur",
-      "Belonia",
-      "Kailashahar",
-      "Dharmanagar",
-      "Ambassa",
-      "Sabroom",
-      "Khowai",
-      "Teliamura",
-      "Jolaibari",
-    ],
-    "Uttar Pradesh": [
-      "Lucknow",
-      "Kanpur",
-      "Agra",
-      "Varanasi",
-      "Allahabad",
-      "Gorakhpur",
-      "Noida",
-      "Meerut",
-      "Mathura",
-      "Firozabad",
-      "Jhansi",
-      "Ghaziabad",
-      "Aligarh",
-      "Bareilly",
-      "Shahjahanpur",
-      "Rampur",
-      "Bijnor",
-      "Moradabad",
-      "Muzaffarnagar",
-      "Saharanpur",
-      "Jaunpur",
-      "Sitapur",
-      "Etawah",
-      "Mau",
-      "Azamgarh",
-      "Ballia",
-    ],
-    Uttarakhand: [
-      "Dehradun",
-      "Haridwar",
-      "Nainital",
-      "Rishikesh",
-      "Almora",
-      "Bageshwar",
-      "Chamoli",
-      "Champawat",
-      "Haldwani",
-      "Pauri Garhwal",
-      "Pithoragarh",
-      "Rudraprayag",
-      "Tehri Garhwal",
-      "Udham Singh Nagar",
-      "Uttarkashi",
-    ],
-    "West Bengal": [
-      "Kolkata",
-      "Darjeeling",
-      "Siliguri",
-      "Asansol",
-      "Howrah",
-      "Bardhaman",
-      "Malda",
-      "Purulia",
-      "Hooghly",
-      "North 24 Parganas",
-      "South 24 Parganas",
-      "Maldah",
-      "Birbhum",
-      "Jalpaiguri",
-      "Murshidabad",
-      "Nadia",
-      "Bankura",
-      "Cooch Behar",
-      "Purba Medinipur",
-      "Paschim Medinipur",
-    ],
-    "Andaman and Nicobar Islands": ["Port Blair"],
-    Chandigarh: ["Chandigarh"],
-    "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
-    Lakshadweep: ["Kavaratti"],
-    Delhi: ["New Delhi", "Old Delhi", "Dwarka", "Rohini"],
-    Puducherry: ["Puducherry", "Auroville", "Mahe"],
-  };
+  const handlePincodeChange = async (e) => {
+    const pincode = e.target.value;
+    formik.setFieldValue("pincode", pincode);
 
+    if (pincode.length === 6) {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `https://api.postalpincode.in/pincode/${pincode}`
+        );
+        const data = await response.json();
+
+        if (data[0].Status === "Success") {
+          const { State, District } = data[0].PostOffice[0];
+          formik.setFieldValue("state", State);
+          formik.setFieldValue("district", District);
+
+          // Populate districts and mapping dynamically if needed
+          setStateDistrictMapping((prev) => ({
+            ...prev,
+            [State]: [...new Set(data[0].PostOffice.map((po) => po.District))],
+          }));
+          setDistricts([...new Set(data[0].PostOffice.map((po) => po.District))]);
+        } else {
+          formik.setFieldError("pincode", "Invalid Pincode.");
+        }
+      } catch (error) {
+        formik.setFieldError("pincode", "Failed to fetch details.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role;
   const UserId = user?.id;
@@ -1162,125 +570,106 @@ const AddMemberForm = () => {
             </Box>
 
             {/* {/ Address Section /} */}
-            <Box
-              mt={3}
-              sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}
-            >
-              <InputLabel>Address</InputLabel>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="pincode"
-                    label="Pincode*"
-                    {...formik.getFieldProps("pincode")}
-                    error={
-                      formik.touched.pincode && Boolean(formik.errors.pincode)
-                    }
-                    helperText={formik.touched.pincode && formik.errors.pincode}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="country"
-                    label="Country*"
-                    value={formik.values.country} // Bind value from Formik's values
-                    InputProps={{
-                      readOnly: true, // Make the field read-only
-                    }}
-                    {...formik.getFieldProps("country")}
-                    error={
-                      formik.touched.country && Boolean(formik.errors.country)
-                    }
-                    helperText={formik.touched.country && formik.errors.country}
-                  />
-                </Grid>
+            <Box mt={3} sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
+      <InputLabel>Address</InputLabel>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="pincode"
+            label="Pincode*"
+            value={formik.values.pincode}
+            onChange={handlePincodeChange}
+            error={formik.touched.pincode && Boolean(formik.errors.pincode)}
+            helperText={formik.touched.pincode && formik.errors.pincode}
+          />
+          {loading && <CircularProgress size={20} />}
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="country"
+            label="Country*"
+            value={formik.values.country}
+            InputProps={{
+              readOnly: true,
+            }}
+            error={formik.touched.country && Boolean(formik.errors.country)}
+            helperText={formik.touched.country && formik.errors.country}
+          />
+        </Grid>
 
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="state"
-                    label="State*"
-                    select
-                    value={formik.values.state}
-                    onChange={handleStateChange}
-                    error={formik.touched.state && Boolean(formik.errors.state)}
-                    helperText={formik.touched.state && formik.errors.state}
-                  >
-                    {Object.keys(stateDistrictMapping).map((state) => (
-                      <MenuItem key={state} value={state}>
-                        {state}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="state"
+            label="State*"
+            value={formik.values.state}
+            InputProps={{
+              readOnly: true, // State is auto-filled based on PIN code
+            }}
+            error={formik.touched.state && Boolean(formik.errors.state)}
+            helperText={formik.touched.state && formik.errors.state}
+          />
+        </Grid>
 
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="district"
-                    label="District*"
-                    select
-                    value={formik.values.district}
-                    onChange={formik.handleChange}
-                    error={
-                      formik.touched.district && Boolean(formik.errors.district)
-                    }
-                    helperText={
-                      formik.touched.district && formik.errors.district
-                    }
-                  >
-                    {districts.map((district) => (
-                      <MenuItem key={district} value={district}>
-                        {district}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="city"
-                    label="City / Place"
-                    {...formik.getFieldProps("city")}
-                    error={formik.touched.city && Boolean(formik.errors.city)}
-                    helperText={formik.touched.city && formik.errors.city}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="street_name"
-                    label="Street Name"
-                    {...formik.getFieldProps("street_name")}
-                    error={
-                      formik.touched.street_name &&
-                      Boolean(formik.errors.street_name)
-                    }
-                    helperText={
-                      formik.touched.street_name && formik.errors.street_name
-                    }
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    name="building_no_name"
-                    label="Building No / Name"
-                    {...formik.getFieldProps("building_no_name")}
-                    error={
-                      formik.touched.building_no_name &&
-                      Boolean(formik.errors.building_no_name)
-                    }
-                    helperText={
-                      formik.touched.building_no_name &&
-                      formik.errors.building_no_name
-                    }
-                  />
-                </Grid>
-              </Grid>
-            </Box>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="district"
+            label="District*"
+            value={formik.values.district}
+            InputProps={{
+              readOnly: true, // District is auto-filled based on PIN code
+            }}
+            error={formik.touched.district && Boolean(formik.errors.district)}
+            helperText={formik.touched.district && formik.errors.district}
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="city"
+            label="City / Place"
+            {...formik.getFieldProps("city")}
+            error={formik.touched.city && Boolean(formik.errors.city)}
+            helperText={formik.touched.city && formik.errors.city}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="street_name"
+            label="Street Name"
+            {...formik.getFieldProps("street_name")}
+            error={
+              formik.touched.street_name &&
+              Boolean(formik.errors.street_name)
+            }
+            helperText={
+              formik.touched.street_name && formik.errors.street_name
+            }
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            name="building_no_name"
+            label="Building No / Name"
+            {...formik.getFieldProps("building_no_name")}
+            error={
+              formik.touched.building_no_name &&
+              Boolean(formik.errors.building_no_name)
+            }
+            helperText={
+              formik.touched.building_no_name &&
+              formik.errors.building_no_name
+            }
+          />
+        </Grid>
+      </Grid>
+    </Box>
           </Grid>
 
           {/* {/ Right Side: Club & Superior Distributors /} */}
