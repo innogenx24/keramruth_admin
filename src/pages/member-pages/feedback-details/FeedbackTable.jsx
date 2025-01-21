@@ -11,22 +11,23 @@ import {
   Box,
   Typography,
   Rating,
+  Button,
 } from "@mui/material";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const FeedbackTable = () => {
   const [feedbacks, setFeedbacks] = useState([]);
-  const token = localStorage.getItem("token"); // Retrieve token from localStorage
+  const [page, setPage] = useState(0);
+  const [rowsPerPage] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
+  const token = localStorage.getItem("token");
   const { users } = useSelector((state) => state.users);
-  const dispatch = useDispatch();
-  const userId = users?.id; // Assuming the user ID is stored in the state.users object
+  const userId = users?.id;
   const userRole = users?.role_name;
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-
-  // Fetch feedbacks on component mount
   useEffect(() => {
     const fetchFeedbacks = async () => {
       if (!token) {
@@ -35,7 +36,6 @@ const FeedbackTable = () => {
       }
 
       try {
-        // Determine API endpoint based on user role
         const apiEndpoint =
           userRole === "Admin"
             ? `${API_END_POINT}/feedback/hierarchy`
@@ -47,6 +47,7 @@ const FeedbackTable = () => {
           },
         });
         setFeedbacks(response.data.feedbacks);
+        setTotalRows(response.data.feedbacks.length); // Set the total rows for pagination
       } catch (error) {
         console.error("Error fetching feedback data:", error);
       }
@@ -55,6 +56,29 @@ const FeedbackTable = () => {
     fetchFeedbacks();
   }, [token, userId, userRole]);
 
+  const renderPagination = () => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setPage(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1}
+      </Typography>
+      <Button
+        onClick={() => setPage(page + 1)}
+        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+
+  const currentFeedbacks = feedbacks.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   return (
     <Box padding={2}>
@@ -67,8 +91,8 @@ const FeedbackTable = () => {
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>No.</TableCell>
-
               <TableCell>User Details</TableCell>
+              <TableCell>Product Name</TableCell>
               <TableCell>Order ID</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Booked Date</TableCell>
@@ -79,7 +103,7 @@ const FeedbackTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {feedbacks.map((feedback, index) => (
+            {currentFeedbacks.map((feedback, index) => (
               <TableRow key={feedback.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
@@ -97,21 +121,33 @@ const FeedbackTable = () => {
                   </Box>
                 </TableCell>
                 <TableCell>
-                  {feedback.order.order_id}
+                  <Box display="flex" alignItems="center">
+                    {feedback.product.image && (
+                      <img
+                        src={`${API_END_POINT_IMG}/uploads/${feedback.product.image}`}
+                        alt={feedback.product.name}
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          marginRight: "10px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                    <Typography>{feedback.product.name}</Typography>
+                  </Box>
                 </TableCell>
-
+                <TableCell>{feedback.order.order_id}</TableCell>
+                <TableCell>{Number(feedback.order.total_order_quantity).toString()}</TableCell>
                 <TableCell>
-                  {Number(feedback.order.total_order_quantity).toString()}
+                  {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.order.createdAt))}
                 </TableCell>
                 <TableCell>
-                  {new Intl.DateTimeFormat('en-GB').format(new Date(feedback.order.createdAt))}
+                  {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.feedback_date))}
                 </TableCell>
                 <TableCell>
-                  {new Intl.DateTimeFormat('en-GB').format(new Date(feedback.feedback_date))}
-                </TableCell>
-
-                <TableCell>
-                  Rs {new Intl.NumberFormat('en-IN').format(feedback.order.total_amount || 0)}
+                  Rs {new Intl.NumberFormat("en-IN").format(feedback.order.total_amount || 0)}
                 </TableCell>
                 <TableCell>
                   <Rating value={feedback.rating} precision={0.5} readOnly />
@@ -122,6 +158,10 @@ const FeedbackTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <div style={{ marginTop: "10px" }}>
+        {renderPagination()}
+      </div>
     </Box>
   );
 };

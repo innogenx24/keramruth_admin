@@ -29,7 +29,12 @@ const CustomerDashboard = () => {
   const [totalOrders, setTotalOrders] = useState(0);
   const [lastOrderDate, setLastOrderDate] = useState("");
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-  const [visibleHistoryCount, setVisibleHistoryCount] = useState(5);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage] = useState(10); // Set the number of rows per page
+  const [totalRows, setTotalRows] = useState(0);
+
+
   useEffect(() => {
     // Fetch customer details using the memberID
     const fetchCustomerData = async () => {
@@ -82,7 +87,7 @@ const CustomerDashboard = () => {
           setTotalOrders(totalOrders);
 
           setLastOrderDate(formattedDate);
-
+          setTotalRows(data.orders.length); // Set the total rows for pagination
         }
       } catch (err) {
         setError(err.message);
@@ -123,6 +128,31 @@ const CustomerDashboard = () => {
   };
 
 
+  const currentHistory = history.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+
+  const renderPagination = () => (
+    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+      <Button
+        onClick={() => setPage(page - 1)}
+        disabled={page === 0}
+        variant="outlined"
+      >
+        Previous
+      </Button>
+      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+        Page {page + 1}
+      </Typography>
+      <Button
+        onClick={() => setPage(page + 1)}
+        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
+        variant="outlined"
+      >
+        Next
+      </Button>
+    </div>
+  );
+
+
 
   return (
     <Box p={3} display="flex" flexDirection="column" gap={2}>
@@ -157,7 +187,7 @@ const CustomerDashboard = () => {
                   <Typography
                     variant="h6"
                     fontWeight="bold"
-                    
+
                   >
                     {customer.full_name || "N/A"}
                   </Typography>
@@ -165,13 +195,13 @@ const CustomerDashboard = () => {
                   <Typography
                     variant="subtitle2"
                     color="text.secondary"
-                    
+
                   >
                     Role: {customer.role_name || "N/A"}
                   </Typography>
                   <Typography
                     variant="body2"
-                    
+
                   >
                     <LocationOn
                       style={{ marginRight: "8px", verticalAlign: "middle" }}
@@ -181,7 +211,7 @@ const CustomerDashboard = () => {
 
                   <Typography
                     variant="body2"
-                    
+
                   >
                     <Phone
                       style={{ marginRight: "8px", verticalAlign: "middle" }}
@@ -190,7 +220,7 @@ const CustomerDashboard = () => {
                   </Typography>
                   <Typography
                     variant="body2"
-                    
+
                   >
                     <Mail style={{ marginRight: "8px", verticalAlign: "middle" }} />
                     {customer.email}
@@ -305,13 +335,13 @@ const CustomerDashboard = () => {
             <Table>
               <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
                 <TableRow>
-                  <TableCell>Booking Date</TableCell>
+                  <TableCell sx={{ width: '11%' }}>Booking Date</TableCell>
                   <TableCell>Order Details</TableCell>
 
                 </TableRow>
               </TableHead>
               <TableBody>
-                {history.slice(0, visibleHistoryCount).map((entry, index) => (
+                {currentHistory.map((entry, index) => (
                   <TableRow key={index}>
                     <TableCell>
                       {new Date(entry.date).toLocaleDateString('en-GB', {
@@ -324,18 +354,13 @@ const CustomerDashboard = () => {
                   </TableRow>
                 ))}
               </TableBody>
+
             </Table>
           </TableContainer>
-          {visibleHistoryCount < history.length && (
-            <Button
-              variant="text"
-              sx={{ mt: 2, ml: 'auto', display: 'block' }}
-              onClick={handleSeeMoreClick}
-            >
-              See More
-            </Button>
 
-          )}
+          <div style={{ marginTop: "10px" }}>
+            {renderPagination()}
+          </div>
         </CardContent>
       </Card>
     </Box>

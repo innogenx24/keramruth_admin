@@ -165,9 +165,10 @@ const BookingOrders = () => {
 
   return (
     <div style={{ position: "relative", height: "100vh" }}>
-<Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-                    Product List
-              </Typography>      <Box sx={{ width: "100%", marginBottom: 2 }}>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Product List
+      </Typography>      
+      <Box sx={{ width: "100%", marginBottom: 2 }}>
         <SearchProducts value={searchQuery} onSearchChange={setSearchQuery} />
       </Box>
       <div

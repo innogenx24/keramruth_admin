@@ -6,22 +6,21 @@ import {
   Typography,
   Avatar,
   Button,
-  Checkbox,
-  FormControlLabel,
   Box,
-  Paper,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
 import { signOut } from "../../redux/slices/authSlice";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
+import ProfileIdCard from './ProfileIdCard';
+
 function UserProfile() {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
-  const [selectedImage, setSelectedImage] = useState(""); // State for selected image
+  const [selectedImage, setSelectedImage] = useState("");
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
@@ -50,14 +49,13 @@ function UserProfile() {
   };
 
   return (
-    <Grid container spacing={2} justifyContent="left">
-      <Grid item xs={12}>
-        <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+    <Grid container spacing={2}>
+      {/* Profile Details - Left Side */}
+      <Grid item xs={12} sm={6} sx={{ width: '80% !important' }}>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
           Profile Details
         </Typography>
-      </Grid>
-      
-      <Grid item xs={12} sm={4}>
+
         <Card>
           <CardContent>
             <Box display="flex" justifyContent="center">
@@ -104,12 +102,17 @@ function UserProfile() {
           </CardContent>
         </Card>
       </Grid>
+
+      {/* ProfileIdCard - Right Side */}
+      <Grid item xs={12} sm={6}>
+        <ProfileIdCard />
+      </Grid>
     </Grid>
   );
-  
 }
 
 export default UserProfile;
+
 
 
 
