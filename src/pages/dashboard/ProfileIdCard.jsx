@@ -121,6 +121,7 @@ export default function ProfileCard() {
       <Box textAlign="center" mt={3}>
         <Button
           variant="contained"
+          sx={{ backgroundColor: 'green' }}
           onClick={handleDownload}
         >
           Download Profile ID Card
