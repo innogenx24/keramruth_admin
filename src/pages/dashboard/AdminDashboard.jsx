@@ -50,7 +50,7 @@ import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import AppLogo from "../../assets/logo/AppLogo";
 import NewLogo from "../../assets/logo/NewLogo.png";
 import DishaImgLogo from "../../assets/logo/DishaImgLogo.png";
-
+import "./Style.css"
 // Drawer width
 // const drawerWidth = 240;
 const drawerWidth = 300;
@@ -549,7 +549,7 @@ export default function AdminDashboard() {
   }) => {
     const isActive = location.pathname === item.path; // Active if exact path matches
     const isParentActive =
-      item.subItems && item.subItems.some((sub) => location.pathname === sub.path); // Active if any sub-item matches
+      item.subItems && item.subItems.some((sub) => location.pathname === sub.path); 
   
     return (
       <React.Fragment>
