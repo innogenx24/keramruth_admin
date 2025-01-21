@@ -50,7 +50,6 @@ import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import AppLogo from "../../assets/logo/AppLogo";
 import NewLogo from "../../assets/logo/NewLogo.png";
 import DishaImgLogo from "../../assets/logo/DishaImgLogo.png";
-import "./Style.css"
 // Drawer width
 // const drawerWidth = 240;
 const drawerWidth = 300;
