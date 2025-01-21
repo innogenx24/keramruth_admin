@@ -131,41 +131,72 @@ const CustomerDashboard = () => {
         <CardContent>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={2} display="flex" justifyContent="center">
-                  <Avatar
-                    alt={customer.full_name}
-                    src={`${API_END_POINT_IMG}/uploads/${customer.image}`}
-                    sx={{
-                      width: 100,
-                      height: 100,
-                      border: '2px solidrgb(64, 66, 66)',
-                      boxShadow: '0px 4px 10px hsla(152, 5.60%, 54.30%, 0.50)',
-                    }}
-                  />
-
-                </Grid>
-                <Grid item xs={12} sm={10}>
-                  <Typography variant="h6" style={{ fontWeight: "bold" }}>{customer.full_name}</Typography>
-                  <Typography variant="subtitle1" color="primary">ID: {customer.username}</Typography>
-                  <Typography variant="body2">Role: {customer.role_name}</Typography>
-
-                  <Typography variant="body2">
-                    <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
-                    {customer.street_name}, {customer.building_no_name}, {customer.city}, {customer.district}, {customer.state},{customer.pincode}.
+              <Box
+                display="flex"
+                alignItems="center"
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  height: "100%",
+                }}
+              >
+                <Avatar
+                  src={
+                    customer.image
+                      ? `${API_END_POINT_IMG}/uploads/${customer.image}`
+                      : undefined
+                  }
+                  alt={customer.full_name || "N/A"}
+                  sx={{
+                    width: { xs: 60, sm: 80, md: 100 }, // Responsive sizes
+                    height: { xs: 60, sm: 80, md: 100 },
+                    mr: 2,
+                  }}
+                />
+                <Box>
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    
+                  >
+                    {customer.full_name || "N/A"}
+                  </Typography>
+                  <Typography color="primary">{`ID: ${customer.username}`}</Typography>
+                  <Typography
+                    variant="subtitle2"
+                    color="text.secondary"
+                    
+                  >
+                    Role: {customer.role_name || "N/A"}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    
+                  >
+                    <LocationOn
+                      style={{ marginRight: "8px", verticalAlign: "middle" }}
+                    />
+                    {`${customer.street_name}, ${customer.building_no_name}, ${customer.city}, ${customer.district}, ${customer.state}, ${customer.pincode}`}
                   </Typography>
 
-                  <Typography variant="body2">
-                    <Phone style={{ marginRight: "8px", marginTop: "10px" }} />
+                  <Typography
+                    variant="body2"
+                    
+                  >
+                    <Phone
+                      style={{ marginRight: "8px", verticalAlign: "middle" }}
+                    />
                     {customer.mobile_number}
                   </Typography>
-
-                  <Typography variant="body2">
-                    <Mail style={{ marginRight: "8px", marginTop: "10px" }} />
+                  <Typography
+                    variant="body2"
+                    
+                  >
+                    <Mail style={{ marginRight: "8px", verticalAlign: "middle" }} />
                     {customer.email}
                   </Typography>
-                </Grid>
-              </Grid>
+                </Box>
+              </Box>
             </Grid>
             <Grid item xs={12} sm={6} textAlign="right">
               <Typography color="text.secondary" style={{ color: "#1c96c5" }}>

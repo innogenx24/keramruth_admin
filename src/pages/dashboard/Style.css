@@ -1,0 +1,14 @@
+.MuiList-root{
+    margin-right: -15px !important;
+}
+
+@media (min-width: 600px) {
+    .css-g4fdxh-MuiDrawer-docked .MuiDrawer-paper {
+        width: calc(80px + 1px) !important;
+    }
+}
+
+
+.css-hyv94l-MuiButtonBase-root-MuiListItemButton-root {
+    margin-left: -30px !important;
+}
