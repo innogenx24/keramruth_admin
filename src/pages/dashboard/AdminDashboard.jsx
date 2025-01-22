@@ -50,6 +50,7 @@ import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import AppLogo from "../../assets/logo/AppLogo";
 import NewLogo from "../../assets/logo/NewLogo.png";
 import DishaImgLogo from "../../assets/logo/DishaImgLogo.png";
+import CommonLogos from "../../assets/logo/CommonLogos.png";
 // Drawer width
 // const drawerWidth = 240;
 const drawerWidth = 300;
@@ -742,39 +743,29 @@ export default function AdminDashboard() {
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-        <Box
-  sx={{
-    display: "flex",
-    justifyContent: "space-between", // Ensure images are spaced out evenly
-    alignItems: "center",
-    width: "100%",
-  }}
->
-  <Box>
-    <img
-      src={DishaImgLogo}
-      alt="Login"
-      style={{
-        width: "115px", // Set the same width for both images
-        height: "50px", // Set the same height for both images
-        borderRadius: "8px",
-        objectFit: "contain", // Ensures images don't get distorted
-      }}
-    />
-  </Box>
-  <Box>
-    <img
-      src={NewLogo}
-      alt="Login"
-      style={{
-        width: "130px", // Set the same width for both images
-        height: "50px", // Set the same height for both images
-        borderRadius: "8px",
-        objectFit: "contain", // Ensures images don't get distorted
-      }}
-    />
-  </Box>
-</Box>
+          
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Box>
+              <img
+                src={CommonLogos}
+                alt="Login"
+                style={{
+                  width: "100%",
+                  // height: "100%",
+                  borderRadius: "8px",
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
+          </Box>
 
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
