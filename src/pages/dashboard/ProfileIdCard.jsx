@@ -6,16 +6,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import html2canvas from 'html2canvas';
+import { RiDownload2Fill } from "react-icons/ri";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   width: '350px',
-  height: '500px',
+  height: '535px',
   margin: 'auto',
   borderRadius: '15px',
   position: 'relative',
   overflow: 'hidden',
   backgroundColor: 'transparent',
-  boxShadow: 'none', 
+  boxShadow: 'none',
   backgroundImage: `url(${backgroundImg})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
@@ -29,15 +30,15 @@ const ProfileImageContainer = styled(Box)({
 });
 
 const ProfileImage = styled(Avatar)({
-  marginTop: '98px',
-  width: '149px',
+  marginTop: '112px',
+  width: '152px',
   height: '150px',
   border: '3px solid #fff',
 });
 
 const InfoBox = styled(Box)(({ theme }) => ({
   marginTop: '10px',
-  padding: '61px',
+  padding: '26px',
   borderRadius: '10px',
   textAlign: 'center',
 }));
@@ -49,6 +50,13 @@ const FullName = styled(Typography)({
 });
 
 const RoleName = styled(Typography)({
+  fontSize: '1rem',
+  fontStyle: 'italic',
+  color: 'black',
+});
+
+
+const UserName = styled(Typography)({
   fontSize: '1rem',
   fontStyle: 'italic',
   color: 'black',
@@ -82,7 +90,7 @@ export default function ProfileCard() {
     if (cardRef.current) {
       html2canvas(cardRef.current).then(canvas => {
         const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png'); 
+        link.href = canvas.toDataURL('image/png');
         link.download = 'profile-id-card.png';
         link.click();
       });
@@ -96,35 +104,50 @@ export default function ProfileCard() {
         <CardContent>
           <ProfileImageContainer>
             <ProfileImage
-              src={selectedImage || "default-avatar.jpg"} 
+              src={selectedImage || "default-avatar.jpg"}
               alt={users?.full_name}
             />
           </ProfileImageContainer>
 
           <Box textAlign="center" mt={3}>
             <FullName>{users?.full_name}</FullName>
+            <UserName style={{ color: "#1c96c5" }}>{users?.username}</UserName>
             <RoleName>{users?.role_name}</RoleName>
+
           </Box>
 
-          <InfoBox style={{ textAlign: 'left' }}>
-            <Typography variant="body2">Email: {users?.email}</Typography>
-            <Typography variant="body2">Phone: {users?.mobile_number}</Typography>
-            <Typography variant="body2">
-              Address: {users?.building_no_name}, {users?.street_name}, {users?.city},{' '}
-              {users?.state},{users?.pincode}.
+          <InfoBox style={{ textAlign: 'center' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>
+              Email:
+            </Typography>
+            <Typography variant="body2" style={{ fontStyle: 'italic' }}>
+              {users?.email}
+            </Typography>
+
+            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginTop: '10px' }}>
+              Phone:
+            </Typography>
+            <Typography variant="body2" style={{ fontStyle: 'italic' }}>
+              +91 {users?.mobile_number}
+            </Typography>
+
+            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginTop: '10px' }}>
+              Address:
+            </Typography>
+            <Typography variant="body2" style={{ fontStyle: 'italic', width: '200px', marginLeft: '30px' }}>
+              {users?.building_no_name}, {users?.street_name}, {users?.city}, {users?.state}, {users?.pincode}.
             </Typography>
           </InfoBox>
         </CardContent>
       </StyledCard>
 
-      {/* Download Button */}
       <Box textAlign="center" mt={3}>
         <Button
           variant="contained"
           sx={{ backgroundColor: 'green' }}
           onClick={handleDownload}
         >
-          Download Profile ID Card
+          Download
         </Button>
       </Box>
     </Box>

@@ -193,11 +193,12 @@ const OrderManagement = () => {
                       </TableCell>
                       <TableCell>{order.orderUniqueId}</TableCell>
                       <TableCell>
-                        {parseFloat(order.totalOrderQuantity).toFixed(0)}
+                        {new Intl.NumberFormat('en-IN').format(order.totalOrderQuantity)}
                       </TableCell>
                       <TableCell>
-                        Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(order.totalAmount) || 0)}
+                        Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(order.totalAmount)}
                       </TableCell>
+
                       <TableCell>
                         <Button
                           variant="outlined"

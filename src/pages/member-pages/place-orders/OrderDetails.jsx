@@ -137,13 +137,16 @@ const OrderDetails = () => {
                   >
                     <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                     <TableCell>{order.order_id}</TableCell>
-                    <TableCell>Rs. {parseFloat(order.total_amount).toFixed(2)}</TableCell>
                     <TableCell>
-                      {order.OrderItems?.reduce(
-                        (total, item) => total + item.quantity,
-                        0
-                      ).toLocaleString() || "0"}
+                      Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(order.total_amount).toFixed(2))}
                     </TableCell>
+
+                    <TableCell>
+                      {new Intl.NumberFormat('en-IN').format(
+                        order.OrderItems?.reduce((total, item) => total + item.quantity, 0)
+                      ) || "0"}
+                    </TableCell>
+
                     <TableCell>
                       {new Date(order.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -208,7 +211,9 @@ const OrderDetails = () => {
                                 </TableCell>
                                 <TableCell>{item.product.name}</TableCell>
                                 <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(item.baseprice)}</TableCell>
-                                <TableCell>{item.quantity}</TableCell>
+                                <TableCell>
+                                  {new Intl.NumberFormat('en-IN').format(item.quantity)}
+                                </TableCell>
                                 <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(item.baseprice * item.quantity)}</TableCell>
                                 {roleId === 6 && (
                                   <TableCell>

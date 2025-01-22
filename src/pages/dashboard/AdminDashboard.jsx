@@ -386,7 +386,7 @@ export default function AdminDashboard() {
       icon: <DescriptionIcon />,
     },
     {
-      text: "Member Reports",
+      text: "Reports",
       path: "/dashboard/report",
       icon: <ReportIcon />,
 
@@ -549,8 +549,8 @@ export default function AdminDashboard() {
   }) => {
     const isActive = location.pathname === item.path; // Active if exact path matches
     const isParentActive =
-      item.subItems && item.subItems.some((sub) => location.pathname === sub.path); 
-  
+      item.subItems && item.subItems.some((sub) => location.pathname === sub.path);
+
     return (
       <React.Fragment>
         {/* Main Menu Item */}
@@ -560,10 +560,10 @@ export default function AdminDashboard() {
             "&:hover": { backgroundColor: "transparent" },
             ...(isActive || isParentActive || openExpand[item.text]
               ? {
-                  background: "linear-gradient(90deg, #01C572 0%, #187E53 100%)",
-                  color: "#000",
-                  borderRadius: "4px 4px 0 0",
-                }
+                background: "linear-gradient(90deg, #01C572 0%, #187E53 100%)",
+                color: "#000",
+                borderRadius: "4px 4px 0 0",
+              }
               : {}),
           }}
         >
@@ -587,7 +587,7 @@ export default function AdminDashboard() {
             ) : null}
           </ListItemButton>
         </ListItem>
-  
+
         {/* Submenu Items */}
         {item.subItems && (
           <Collapse in={openExpand[item.text]} timeout="auto" unmountOnExit>

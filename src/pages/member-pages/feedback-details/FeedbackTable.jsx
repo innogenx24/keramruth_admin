@@ -127,11 +127,13 @@ const FeedbackTable = () => {
                         src={`${API_END_POINT_IMG}/uploads/${feedback.product.image}`}
                         alt={feedback.product.name}
                         style={{
-                          width: "40px",
-                          height: "40px",
+                          width: "60px",
+                          height: "auto",
+                          objectFit: "contain",
+                          border: "1px solid #ccc",
+                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                          borderRadius: "10px",
                           marginRight: "10px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
                         }}
                       />
                     )}
@@ -139,7 +141,9 @@ const FeedbackTable = () => {
                   </Box>
                 </TableCell>
                 <TableCell>{feedback.order.order_id}</TableCell>
-                <TableCell>{Number(feedback.order.total_order_quantity).toString()}</TableCell>
+                <TableCell>
+  {new Intl.NumberFormat('en-IN').format(Number(feedback.order.total_order_quantity))}
+</TableCell>
                 <TableCell>
                   {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.order.createdAt))}
                 </TableCell>

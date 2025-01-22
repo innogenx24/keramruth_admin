@@ -21,8 +21,10 @@ const TargetPage = () => {
 
   const { users } = useSelector((state) => state.users);
   const userId = users?.id;
-  const roleId = users?.role_name;
+  const roleName = users?.role_name;
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+
 
   const fetchTargetData = async () => {
     const token = localStorage.getItem("token");
@@ -33,7 +35,7 @@ const TargetPage = () => {
 
     try {
       const response = await axios.get(
-        `${API_END_POINT}/user_sales_detail/sales_achievement/${roleId}/${userId}`,
+        `${API_END_POINT}/user_sales_detail/sales_achievement/${roleName}/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,10 +57,10 @@ const TargetPage = () => {
   };
 
   useEffect(() => {
-    if (userId && roleId) {
+    if (userId && roleName) {
       fetchTargetData();
     }
-  }, [userId, roleId]);
+  }, [userId, roleName]);
 
   if (loading) {
     return <CircularProgress />;
@@ -185,15 +187,18 @@ const TargetPage = () => {
         Sales-Target Report
       </Typography>
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
-        <Button
-          variant="contained"
-          onClick={handleViewMembersTarget}
-          style={{ backgroundColor: "#28a745", color: "white" }}
-        >
-          View Members Target
-        </Button>
-      </Box>
+      {users?.role_name !== "Distributor" && (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+          <Button
+            variant="contained"
+            onClick={handleViewMembersTarget}
+            style={{ backgroundColor: "#28a745", color: "white" }}
+          >
+            View Members Target
+          </Button>
+        </Box>
+      )}
+
 
       {/* Main Card */}
       <Card elevation={3} sx={{ p: 3 }}>

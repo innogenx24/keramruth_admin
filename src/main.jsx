@@ -7,7 +7,7 @@ import './index.css'
 // Disable all console errors
 console.warn = function() {}; 
 console.error = function() {}; 
-console.log = function() {};   
+// console.log = function() {};   
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

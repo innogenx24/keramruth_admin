@@ -321,7 +321,7 @@ export default function ReportTable() {
               },
             }}
           >
-            <MenuItem value="">Select Role</MenuItem>
+            <MenuItem value="">Select All Role</MenuItem>
             {availableRoles.map((role, index) => (
               <MenuItem key={index} value={role}>
                 {role}
@@ -411,8 +411,8 @@ export default function ReportTable() {
               <TableCell>Role</TableCell>
               <TableCell>City</TableCell>
               {/* <TableCell>Target/Stock(%)</TableCell> */}
-              <TableCell>Target Amount / Achievement Amount</TableCell>
-              <TableCell>Stock QTY / Achievement QTY</TableCell>
+              <TableCell>Sales Target / Achievement (Rs)</TableCell>
+              <TableCell>Stock Target / Achievement (QTY)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
