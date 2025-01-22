@@ -3,7 +3,10 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import axios from "axios";
 import { useSelector } from "react-redux"; // Import useSelector
 import { useLocation } from "react-router-dom";
-import AppLogo from "../../../assets/logo/AppLogo";
+import AppLogo from '../../../assets/logo/AppLogo'
+
+import KeramruthLogo from '../../../assets/keramruth-image.png'
+
 import "./style.css"
 import SearchProducts from "./SearchProducts"
 import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
@@ -82,12 +85,16 @@ const BookingOrders = () => {
       if (existingItem) {
         // Ensure quantity is treated as a number
         existingItem.quantity = parseInt(existingItem.quantity, 10) + 1;
+
       } else {
         updatedItems.push({ product_id: productId, quantity: 1 });
       }
       return updatedItems;
     });
   };
+
+  const totalQuantity = orderItems.reduce((total, item) => total + item.quantity, 0);
+
 
   const decrementQuantity = (productId) => {
     setOrderItems((prevOrderItems) => {
@@ -167,7 +174,7 @@ const BookingOrders = () => {
     <div style={{ position: "relative", height: "100vh" }}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Product List
-      </Typography>      
+      </Typography>
       <Box sx={{ width: "100%", marginBottom: 2 }}>
         <SearchProducts value={searchQuery} onSearchChange={setSearchQuery} />
       </Box>
@@ -232,16 +239,19 @@ const BookingOrders = () => {
                       {product.super1 && product.super1 !== '0.00' ? (
                         <>
                           <span style={{ textDecoration: 'line-through', color: 'red', marginLeft: '5px' }}>
-                            {product.originalPrice}
+                            Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.originalPrice))}
                           </span>
                           <span style={{ color: 'green', fontWeight: 'bold' }}>
-                            {product.super1}
+                            Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.super1))}
                           </span>
                         </>
                       ) : (
-                        <span>{product.originalPrice}</span>
+                        <span>
+                          Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.originalPrice))}
+                        </span>
                       )}
                     </TableCell>
+
 
                     {/* Quantity Buttons and Input Box */}
                     <TableCell align="center">
@@ -349,7 +359,7 @@ const BookingOrders = () => {
                 Order Summary
               </Typography>
               <Box sx={{ height: "60px" }}>
-                <AppLogo />
+                <img src={KeramruthLogo} alt="Keramruth Logo" style={{ height: "150%",marginTop:'-30px' }} />
               </Box>
             </Box>
             {/* Order Items */}
@@ -471,14 +481,19 @@ const BookingOrders = () => {
           variant="contained"
           color="primary"
           onClick={openOrderSummaryPopup}
-          style={{
-            width: "200px", backgroundColor: "#28a745",
+          sx={{
+            width: "200px",
+            backgroundColor: totalQuantity === 0 ? "gray" : "#28a745",
             color: "white",
+            "&:hover": {
+              backgroundColor: totalQuantity === 0 ? "gray" : "#218838",
+            },
           }}
-
+          disabled={totalQuantity === 0}
         >
           Book Order
         </Button>
+
       </div>
     </div>
   );

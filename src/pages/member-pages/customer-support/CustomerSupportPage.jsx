@@ -23,18 +23,18 @@ const CustomerSupportPage = () => {
   const companyDetails = {
     name: "Keramruth Virgin Coconut Oil",
     address:
-      "Upparakalenahalli Village, Javagal Hobali, Arsikere Taluk Hassan District, Karnataka - 573125",
-    phone: "+91 90196 80789",
+      "Upparakalenahalli village, Javagal Hobali, Arsikere Taluk, Hassion District, Karnataka-573125.",
+    phone: "+91 9844436655",
     email: "info.keramruth@gmail.com",
     supportHours: "Mon-Sat: 9:00 AM - 6:00 PM",
-    website: "https://keramruth.com/",
+    website: "https://keramruth.com",
     mapsLocation: "https://www.google.com/maps?q=Upparakalenahalli+Village,+Javagal+Hobali,+Arsikere+Taluk,+Hassan+District,+Karnataka+573125", // Link to Google Maps
-    whatsappLink: "https://wa.me/919019680789", 
+    whatsappLink: "https://wa.me/919019680789",
   };
 
   return (
-    <Box sx={{ p: 3,  minHeight: "100vh" }}>
-      
+    <Box sx={{ p: 3, minHeight: "100vh" }}>
+
       <Paper elevation={3} sx={{ p: 3 }}>
         <Typography variant="h5" sx={{ mb: 2, color: "primary.main" }}>
           Company Details
@@ -80,12 +80,7 @@ const CustomerSupportPage = () => {
               {companyDetails.website}
             </Link>
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-              Support Hours:
-            </Typography>
-            <Typography variant="body1">{companyDetails.supportHours}</Typography>
-          </Grid>
+
         </Grid>
 
         <Divider sx={{ my: 3 }} />
@@ -94,29 +89,29 @@ const CustomerSupportPage = () => {
           Contact Us
         </Typography>
         <List>
-        <ListItem>
-  <ListItemIcon>
-    <PhoneIcon color="primary" />
-  </ListItemIcon>
-  <ListItemText
-    primary="Call Us"
-    secondary={
-      <Link
-        href={`tel:${companyDetails.phone.replace(/\s+/g, '')}`} // This will format the phone number by removing spaces.
-        target="_blank"
-        rel="noopener"
-        underline="hover"
-        sx={{ color: "primary.main", fontWeight: "bold" }}
-      >
-        {companyDetails.phone}
-      </Link>
-    }
-  />
-</ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <PhoneIcon color="primary" />
+            </ListItemIcon>
+            <ListItemText
+              primary="Call Us"
+              secondary={
+                <Link
+                  href={`tel:${companyDetails.phone.replace(/\s+/g, '')}`}
+                  target="_blank"
+                  rel="noopener"
+                  underline="hover"
+                  sx={{ color: "primary.main", fontWeight: "bold" }}
+                >
+                  {companyDetails.phone}
+                </Link>
+              }
+            />
+          </ListItem>
 
           <ListItem>
             <ListItemIcon>
-              <WhatsAppIcon color="primary" /> {/* WhatsApp Icon */}
+              <WhatsAppIcon color="primary" />
             </ListItemIcon>
             <ListItemText
               primary="WhatsApp Us"

@@ -135,10 +135,10 @@ const MemberProductPage = () => {
           </TableHead>
           <TableBody>
             {filteredProducts
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) 
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((product, index) => (
                 <TableRow key={product.id}>
-                  <TableCell>{page * rowsPerPage + index + 1}</TableCell> 
+                  <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                   <TableCell>
                     {product.image ? (
                       <img
@@ -158,12 +158,19 @@ const MemberProductPage = () => {
                   </TableCell>
 
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.stock_quantity}</TableCell>
+                  <TableCell>
+                    {new Intl.NumberFormat('en-IN').format(product.stock_quantity)}
+                  </TableCell>
 
                   <TableCell>{product.category_name}</TableCell>
                   <TableCell>{product.productVolume}{product.quantity_type}</TableCell>
 
-                  <TableCell>{product.super1 && product.super1 !== '0.00' ? product.super1 : product.originalPrice}</TableCell>
+                  <TableCell>
+                    {product.super1 && product.super1 !== '0.00'
+                      ? `Rs. ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.super1))}`
+                      : `Rs. ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.originalPrice))}`
+                    }
+                  </TableCell>
 
                 </TableRow>
               ))}

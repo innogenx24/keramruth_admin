@@ -52,7 +52,7 @@ function UserProfile() {
     <Grid container spacing={2}>
       {/* Profile Details - Left Side */}
       <Grid item xs={12} sm={6} sx={{ width: '80% !important' }}>
-      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
           Profile Details
         </Typography>
 
@@ -94,6 +94,11 @@ function UserProfile() {
                 variant="contained"
                 color="success"
                 onClick={handleEditProfile}
+                // disabled={
+                //   users?.role_name !== "Admin" &&
+                //   users?.role_name !== "Area Development Officer" &&
+                //   users?.role_name !== "Master Distributor"
+                // }
                 sx={{ minWidth: "100px" }}
               >
                 Edit
@@ -119,7 +124,7 @@ export default UserProfile;
 
 
 
- {/* <Grid item xs={12} sm={4}>
+{/* <Grid item xs={12} sm={4}>
         <Paper elevation={3}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
@@ -163,8 +168,8 @@ export default UserProfile;
         </Paper>
       </Grid> */}
 
-      {/* ID Card */}
-      {/* <Grid item xs={12} sm={4}>
+{/* ID Card */ }
+{/* <Grid item xs={12} sm={4}>
         <Card >
           <CardContent >
             <Box display="flex" justifyContent="center" mb={2} marginTop={"73px"}>
