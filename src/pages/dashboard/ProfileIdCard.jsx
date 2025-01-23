@@ -62,6 +62,7 @@ const UserName = styled(Typography)({
   color: 'black',
 });
 
+
 export default function ProfileCard() {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
@@ -124,20 +125,20 @@ export default function ProfileCard() {
               {users?.email}
             </Typography>
 
-            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginTop: '10px' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>
               Phone:
             </Typography>
             <Typography variant="body2" style={{ fontStyle: 'italic' }}>
               +91 {users?.mobile_number}
             </Typography>
 
-            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginTop: '10px' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>
               Address:
             </Typography>
-            <Typography variant="body2" style={{ fontStyle: 'italic', width: '200px', marginLeft: '30px' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', padding: '20px', width: '92%', marginTop: '-20px' }}>
               {users?.building_no_name}, {users?.street_name}, {users?.city}, {users?.state}, {users?.pincode}.
             </Typography>
-            <Typography variant="body2" style={{ fontStyle: 'italic', color: 'gray' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', color: '#1E90FF', marginTop: '-10px' }}>
               {website}
             </Typography>
           </InfoBox>
