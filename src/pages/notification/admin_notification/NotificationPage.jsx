@@ -288,57 +288,9 @@ const NotificationPage = () => {
                         </>
                       )}
 
-                      {/* For Document */}
-                      {notification.detail?.type === "document" && (
-                        <>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Document from: {notification.detail?.user_name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Receivers: {notification.detail?.receiver?.join(", ")}
-                          </Typography>
-                          <a
-                            href={notification.detail?.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: "none", color: "#1c96c5" }}
-                          >
-                            View Document
-                          </a>
-                        </>
-                      )}
+                     
 
-                      {/* For Announcement */}
-                      {notification.detail?.type === "announcement" && (
-                        <>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Announcement by: {notification.detail?.user_name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Receivers: {notification.detail?.receiver?.join(", ")}
-                          </Typography>
-                          <a
-                            href={notification.detail?.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: "none", color: "#1c96c5" }}
-                          >
-                            View Announcement
-                          </a>
-                        </>
-                      )}
+                     
 
                       {/* Timestamp */}
                       <Typography
