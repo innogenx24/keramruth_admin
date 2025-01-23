@@ -5,7 +5,7 @@ import { useSelector } from "react-redux"; // Import useSelector
 import { useLocation } from "react-router-dom";
 import AppLogo from '../../../assets/logo/AppLogo'
 
-import KeramruthLogo from '../../../assets/keramruth-image.png'
+import CommonLogos from '../../../assets/logo/CommonLogos.png'
 
 import "./style.css"
 import SearchProducts from "./SearchProducts"
@@ -359,7 +359,8 @@ const BookingOrders = () => {
                 Order Summary
               </Typography>
               <Box sx={{ height: "60px" }}>
-                <img src={KeramruthLogo} alt="Keramruth Logo" style={{ height: "150%",marginTop:'-30px' }} />
+                {/* <img src={KeramruthLogo} alt="Keramruth Logo" style={{ height: "150%",marginTop:'-30px' }} /> */}
+                <img src={CommonLogos} alt="Keramruth Logo" style={{ height: "150%",marginTop:'-30px' }} />
               </Box>
             </Box>
             {/* Order Items */}

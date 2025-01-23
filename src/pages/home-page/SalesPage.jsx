@@ -86,6 +86,8 @@ const getRoleAbbreviation = (roleName) => {
     sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
     target={`Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
     growth={data.salesAchievementPercent || 0}
+    roleName={data.roleName}
+    customerBuyedAmmount={data.customerBuyedAmmount}
   />
 </Grid>
 
