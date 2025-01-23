@@ -7,7 +7,7 @@ import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGet
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import html2canvas from 'html2canvas';
 import { RiDownload2Fill } from "react-icons/ri";
-
+import LoginImage from '../../assets/logo/LoginImage.png'
 const StyledCard = styled(Card)(({ theme }) => ({
   width: '350px',
   height: '535px',
@@ -33,7 +33,7 @@ const ProfileImage = styled(Avatar)({
   marginTop: '112px',
   width: '152px',
   height: '150px',
-  border: '3px solid #fff',
+  border: '3px solid #90EE90',
 });
 
 const InfoBox = styled(Box)(({ theme }) => ({
@@ -96,6 +96,7 @@ export default function ProfileCard() {
       });
     }
   };
+  const website = "www.keramruth.com";
 
   return (
     <Box>
@@ -113,7 +114,6 @@ export default function ProfileCard() {
             <FullName>{users?.full_name}</FullName>
             <UserName style={{ color: "#1c96c5" }}>{users?.username}</UserName>
             <RoleName>{users?.role_name}</RoleName>
-
           </Box>
 
           <InfoBox style={{ textAlign: 'center' }}>
@@ -137,8 +137,12 @@ export default function ProfileCard() {
             <Typography variant="body2" style={{ fontStyle: 'italic', width: '200px', marginLeft: '30px' }}>
               {users?.building_no_name}, {users?.street_name}, {users?.city}, {users?.state}, {users?.pincode}.
             </Typography>
+            <Typography variant="body2" style={{ fontStyle: 'italic', color: 'gray' }}>
+              {website}
+            </Typography>
           </InfoBox>
         </CardContent>
+
       </StyledCard>
 
       <Box textAlign="center" mt={3}>
@@ -147,7 +151,7 @@ export default function ProfileCard() {
           sx={{ backgroundColor: 'green' }}
           onClick={handleDownload}
         >
-          Download
+          Download ID Card
         </Button>
       </Box>
     </Box>

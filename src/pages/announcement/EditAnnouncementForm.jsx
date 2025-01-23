@@ -134,10 +134,10 @@ const EditAnnouncementForm = () => {
     const regex = /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
     return regex.test(url);
   };
-
+  
   const validateForm = () => {
     let isValid = true;
-
+  
     // Reset all error messages
     setHeadingError("");
     setDescriptionError("");
@@ -145,38 +145,36 @@ const EditAnnouncementForm = () => {
     setReceiverError("");
     setImageError("");
     setErrorMessage(""); // Reset the general error message
-
+  
     // Validate Heading
     if (!heading) {
       setHeadingError("Heading is required.");
       isValid = false;
     }
-
+  
     // Validate Receiver
     if (receiver.length === 0) {
       setReceiverError("Please select at least one receiver.");
       isValid = false;
     }
-
+  
     // Validate Description
     if (!description.trim()) {
       setDescriptionError("Description is required.");
       isValid = false;
     }
-
-    // Validate Link
-    if (!link.trim()) {
-      setLinkError("Link is required.");
-      isValid = false;
-    } else if (!validateLink(link)) {
+  
+    if (link.trim() && !validateLink(link)) {
       setLinkError("Please enter a valid URL.");
       isValid = false;
+    } else if (!link.trim()) {
+      setLink(""); 
     }
-
-
-
+    
+  
     return isValid;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -189,8 +187,10 @@ const EditAnnouncementForm = () => {
     formData.append("documentID", documentID);
     formData.append("heading", heading);
     formData.append("description", description);
-    formData.append("link", link);
-    formData.append("receiver", JSON.stringify(receiver));
+    if (link.trim()) {
+      formData.append("link", link);
+    }
+        formData.append("receiver", JSON.stringify(receiver));
     if (imageFile) {
       formData.append("image", imageFile);
     }

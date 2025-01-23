@@ -90,7 +90,7 @@ const AnnouncementTable = () => {
         
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell>No.</TableCell>
               <TableCell>Announcement Image</TableCell>
               <TableCell>Announcement Heading</TableCell>

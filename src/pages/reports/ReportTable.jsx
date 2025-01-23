@@ -404,7 +404,7 @@ export default function ReportTable() {
       <TableContainer component={Paper} sx={{ maxHeight: 500, overflowY: 'auto' }}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC", position: 'sticky', top: 0, zIndex: 1 }}>
-            <TableRow>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell>No.</TableCell>
               <TableCell>Username</TableCell>
               <TableCell>Name</TableCell>

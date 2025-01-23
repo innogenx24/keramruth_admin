@@ -108,10 +108,14 @@ function UserProfile() {
         </Card>
       </Grid>
 
-      {/* ProfileIdCard - Right Side */}
       <Grid item xs={12} sm={6}>
-        <ProfileIdCard />
+        {/* {users?.role_name !== "Admin" && users?.role_name !== "Customer" && ( */}
+        {users?.role_name !== "Customer" && (
+
+          <ProfileIdCard />
+        )}
       </Grid>
+
     </Grid>
   );
 }

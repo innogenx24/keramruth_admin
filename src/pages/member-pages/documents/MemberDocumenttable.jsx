@@ -91,7 +91,7 @@ const MemberDocumenttable = () => {
 
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell>No.</TableCell>
               <TableCell>Document Image</TableCell>
               <TableCell>Heading</TableCell>

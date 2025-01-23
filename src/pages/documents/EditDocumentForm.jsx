@@ -168,11 +168,7 @@ const EditDocumentForm = () => {
       isValid = false;
     }
 
-    // Link validation
-    if (!link.trim() || errors.link) {
-      formErrors.link = "Link is required and must be a valid URL";
-      isValid = false;
-    }
+   
 
     // Receiver validation
     if (receiver.length === 0) {
