@@ -23,11 +23,11 @@ const CustomerSupportPage = () => {
   const companyDetails = {
     name: "Keramruth Virgin Coconut Oil",
     address:
-      "Upparakalenahalli village, Javagal Hobali, Arsikere Taluk, Hassion District, Karnataka-573125.",
+      "Sri Gurukrupavana Estate, Upparakalenahalli village, Javagal Hobali, Arsikere Taluk, Hassan District, Karnataka-573125.",
     phone: "+91 9844436655",
     email: "info.keramruth@gmail.com",
     supportHours: "Mon-Sat: 9:00 AM - 6:00 PM",
-    website: "https://keramruth.com",
+    website: "www.keramruth.com",
     mapsLocation: "https://www.google.com/maps?q=Upparakalenahalli+Village,+Javagal+Hobali,+Arsikere+Taluk,+Hassan+District,+Karnataka+573125", // Link to Google Maps
     whatsappLink: "https://wa.me/919019680789",
   };

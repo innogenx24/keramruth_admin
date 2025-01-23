@@ -109,8 +109,6 @@ const AddAnnouncementDetails = ({ onClose }) => {
   
     if (value && !urlPattern.test(value)) {
       setLinkError("Please enter a valid URL.");
-    } else if (!value.trim()) {
-      setLinkError("Link is required.");
     } else {
       setLinkError(""); // Clear the error if the link is valid
     }
@@ -165,16 +163,6 @@ const AddAnnouncementDetails = ({ onClose }) => {
       setDescriptionError("");
     }
   
-    // Validate Link
-    if (!link) {
-      setLinkError("Link is required.");
-      isValid = false;
-    } else {
-      validateLink(link);
-      if (linkError) {
-        isValid = false;
-      }
-    }
   
     return isValid;
   };

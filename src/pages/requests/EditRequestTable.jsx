@@ -172,7 +172,7 @@ const MemberTable = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell>No.</TableCell>
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>
@@ -307,7 +307,7 @@ const MemberTable = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell>No.</TableCell>
 
               <TableCell>ID Proof</TableCell>

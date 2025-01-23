@@ -7,7 +7,7 @@ import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGet
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import html2canvas from 'html2canvas';
 import { RiDownload2Fill } from "react-icons/ri";
-
+import LoginImage from '../../assets/logo/LoginImage.png'
 const StyledCard = styled(Card)(({ theme }) => ({
   width: '350px',
   height: '535px',
@@ -33,7 +33,7 @@ const ProfileImage = styled(Avatar)({
   marginTop: '112px',
   width: '152px',
   height: '150px',
-  border: '3px solid #fff',
+  border: '3px solid #90EE90',
 });
 
 const InfoBox = styled(Box)(({ theme }) => ({
@@ -61,6 +61,7 @@ const UserName = styled(Typography)({
   fontStyle: 'italic',
   color: 'black',
 });
+
 
 export default function ProfileCard() {
   const dispatch = useDispatch();
@@ -96,6 +97,7 @@ export default function ProfileCard() {
       });
     }
   };
+  const website = "www.keramruth.com";
 
   return (
     <Box>
@@ -113,7 +115,6 @@ export default function ProfileCard() {
             <FullName>{users?.full_name}</FullName>
             <UserName style={{ color: "#1c96c5" }}>{users?.username}</UserName>
             <RoleName>{users?.role_name}</RoleName>
-
           </Box>
 
           <InfoBox style={{ textAlign: 'center' }}>
@@ -124,21 +125,25 @@ export default function ProfileCard() {
               {users?.email}
             </Typography>
 
-            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginTop: '10px' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>
               Phone:
             </Typography>
             <Typography variant="body2" style={{ fontStyle: 'italic' }}>
               +91 {users?.mobile_number}
             </Typography>
 
-            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginTop: '10px' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>
               Address:
             </Typography>
-            <Typography variant="body2" style={{ fontStyle: 'italic', width: '200px', marginLeft: '30px' }}>
+            <Typography variant="body2" style={{ fontStyle: 'italic', padding: '20px', width: '92%', marginTop: '-20px' }}>
               {users?.building_no_name}, {users?.street_name}, {users?.city}, {users?.state}, {users?.pincode}.
+            </Typography>
+            <Typography variant="body2" style={{ fontStyle: 'italic', color: '#1E90FF', marginTop: '-10px' }}>
+              {website}
             </Typography>
           </InfoBox>
         </CardContent>
+
       </StyledCard>
 
       <Box textAlign="center" mt={3}>
@@ -147,7 +152,7 @@ export default function ProfileCard() {
           sx={{ backgroundColor: 'green' }}
           onClick={handleDownload}
         >
-          Download
+          Download ID Card
         </Button>
       </Box>
     </Box>

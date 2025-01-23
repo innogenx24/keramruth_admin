@@ -89,13 +89,13 @@ const FeedbackTable = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell>No.</TableCell>
               <TableCell>User Details</TableCell>
               <TableCell>Product Name</TableCell>
               <TableCell>Order ID</TableCell>
               <TableCell>Quantity</TableCell>
-              <TableCell>Booked Date</TableCell>
+              <TableCell>Booking Date</TableCell>
               <TableCell>Delivered Date</TableCell>
               <TableCell>Total Amount</TableCell>
               <TableCell>Rating</TableCell>
@@ -142,8 +142,8 @@ const FeedbackTable = () => {
                 </TableCell>
                 <TableCell>{feedback.order.order_id}</TableCell>
                 <TableCell>
-  {new Intl.NumberFormat('en-IN').format(Number(feedback.order.total_order_quantity))}
-</TableCell>
+                  {new Intl.NumberFormat('en-IN').format(Number(feedback.order.total_order_quantity))}
+                </TableCell>
                 <TableCell>
                   {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.order.createdAt))}
                 </TableCell>

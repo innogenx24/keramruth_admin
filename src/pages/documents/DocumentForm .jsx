@@ -56,9 +56,18 @@ const DocumentForm = () => {
       heading: Yup.string().required("Heading is required"),
       description: Yup.string().required("Description is required"),
       link: Yup.string()
-        .required("Link is required")
-        .test("isValidURL", "Enter a valid URL", (value) => validateLink(value)),
-      receiver: Yup.array().min(1, "At least one role must be selected").required("Receiver is required"),
+        .test("isValidURL", "Enter a valid URL", (value) => {
+          if (!value || !value.trim()) {
+            return true; 
+          }
+          const urlPattern = new RegExp(
+            "^(https?:\\/\\/)?(www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[a-zA-Z0-9@:%_\\+.~#?&//=]*)?$"
+          );
+          return urlPattern.test(value); 
+        }),
+      receiver: Yup.array()
+        .min(1, "At least one role must be selected")
+        .required("Receiver is required"),
       fromDate: Yup.date()
         .nullable()
         .min(today, "From Date cannot be in the past"),

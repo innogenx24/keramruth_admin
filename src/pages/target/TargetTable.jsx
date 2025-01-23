@@ -171,7 +171,7 @@ const TargetTable = () => {
               <TableCell>Total Monthly Target</TableCell>
               <TableCell>Achievement Amount</TableCell>
               <TableCell>Pending Amount</TableCell>
-              <TableCell>Sales Achievement %</TableCell>
+              <TableCell>Sales Achievement(%)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

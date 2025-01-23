@@ -180,7 +180,10 @@ const NotificationPage = () => {
               >
                 <ListItemAvatar>
                   <Avatar
-                    sx={styles.avatar}
+                    sx={{
+                      ...styles.avatar,
+                      backgroundColor: notification.detail.type === "profile_edit_request_rejected" ? "red" : "green",
+                    }}
                     src={
                       notification.photo
                         ? `${API_END_POINT_IMG}/uploads/notification-images/${notification.photo}`
@@ -201,26 +204,95 @@ const NotificationPage = () => {
                   }
                   secondary={
                     <>
-                      {notification.detail?.type !== "announcement" &&
-                        notification.detail?.type !== "document" &&
-                        notification.detail?.type !== "feedback" &&
-                        notification.detail?.type !== "profile_edit_request_approved" &&
-                        notification.detail?.type !== "profile_edit_request_rejected" && (
-                          <>
-                            <Typography
-                              variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                            >
-                              {notification.detail?.role} | Status: {notification.detail?.status}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                            >
-                              User: {notification.detail?.user_name}
-                            </Typography>
-                          </>
-                        )}
+                      {/* For Order Request */}
+                      {notification.detail?.type === "order_request" && (
+                        <>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            {notification.detail?.role} | Status: {notification.detail?.status}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            Order ID: {notification.detail?.orderUniqueId}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            User: {notification.detail?.user_name}
+                          </Typography>
+                        </>
+                      )}
+
+                      {/* For Profile Edit Request */}
+                      {notification.detail?.type === "profile_edite_request" && (
+                        <>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            Role: {notification.detail?.role}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            User: {notification.detail?.user_name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            Reason: {notification.detail?.request_reason}
+                          </Typography>
+                        </>
+                      )}
+
+                      {/* For Feedback */}
+                      {notification.detail?.type === "feedback" && (
+                        <>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            Feedback from: {notification.detail?.user_name}
+                          </Typography>
+                        </>
+                      )}
+
+                      {/* For Order Accept/Reject */}
+                      {notification.detail?.type === "order_acceptReject" && (
+                        <>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            {notification.detail?.role} | Status: {notification.detail?.status}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            Order ID: {notification.detail?.orderUniqueId}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                          >
+                            User: {notification.detail?.user_name}
+                          </Typography>
+                        </>
+                      )}
+
+                     
+
+                     
+
+                      {/* Timestamp */}
                       <Typography
                         variant="caption"
                         sx={{
@@ -230,10 +302,11 @@ const NotificationPage = () => {
                           mt: 0.5,
                         }}
                       >
-                        {new Date(notification.created_at).toLocaleString()}
+                        {new Date(notification.created_at).toLocaleDateString('en-GB')}
                       </Typography>
                     </>
                   }
+
                 />
 
               </ListItem>

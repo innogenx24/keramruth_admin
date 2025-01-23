@@ -160,7 +160,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
 
         <Table stickyHeader aria-label={`${title} Table`}>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
               <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Customer Name</TableCell>
               <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order ID</TableCell>
@@ -260,7 +260,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
                         <TableCell colSpan={6}>
                           <Table>
                             <TableHead sx={{ backgroundColor: "#D3D3D3" }}>
-                              <TableRow>
+                              <TableRow style={{ whiteSpace: 'nowrap' }}>
                                 <TableCell>No.</TableCell>
 
                                 <TableCell>Product Name</TableCell>

@@ -134,7 +134,7 @@ const AnnouncementTable = () => {
         >
           <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
             Announcements
-      </Typography>
+          </Typography>
 
           <Button
             variant="contained"
@@ -150,8 +150,8 @@ const AnnouncementTable = () => {
           </Button>
         </div>
         <Table>
-          <TableHead sx={{backgroundColor: '#DCDCDC'}}>
-            <TableRow>
+          <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
+            <TableRow style={{ whiteSpace: 'nowrap' }}>
               <TableCell>No.</TableCell>
               <TableCell>Announcement Image</TableCell>
               <TableCell>Announcement Heading</TableCell>
@@ -198,7 +198,7 @@ const AnnouncementTable = () => {
                   {announcement.receiver.join(", ")}
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary" style={{ marginRight: "5px" }} 
+                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary" style={{ marginRight: "5px" }}
                   >
                     <img
                       src={DeleteButton}
@@ -207,7 +207,7 @@ const AnnouncementTable = () => {
                         width: "30px",
                         height: "30px",
                         objectFit: "contain",
-                        transform: "scale(1.5)", 
+                        transform: "scale(1.5)",
                       }}
                     />
                   </IconButton>
@@ -222,7 +222,7 @@ const AnnouncementTable = () => {
                         width: "30px",
                         height: "30px",
                         objectFit: "contain",
-                        transform: "scale(1.5)", 
+                        transform: "scale(1.5)",
                       }}
                     />
                   </IconButton>
