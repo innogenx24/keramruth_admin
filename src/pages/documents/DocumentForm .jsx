@@ -70,11 +70,12 @@ const DocumentForm = () => {
         .required("Receiver is required"),
       fromDate: Yup.date()
         .nullable()
-        .min(today, "From Date cannot be in the past"),
+        .required("From Date is required"), // Set required only
       toDate: Yup.date()
         .nullable()
         .min(Yup.ref("fromDate"), "To Date must be after From Date"),
     }),
+    
     onSubmit: (values) => {
       const formData = new FormData();
       formData.append("documentID", values.documentID);
