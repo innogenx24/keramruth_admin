@@ -8,8 +8,7 @@ import { signInRequest } from '../../redux/slices/authSlice';
 import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import './style.css';
-import NewLogo from '../../assets/logo/NewLogo.png';
-import DishaImgLogo from '../../assets/logo/DishaImgLogo.png';
+
 import CommonLogos from '../../assets/logo/CommonLogos.png';
 
 
@@ -136,38 +135,15 @@ const SignIn = () => {
             >
               {/* First Logo */}
               <Box sx={{ marginRight: 2 }}>
-                {/* <img
-                  src={DishaImgLogo}
-                  alt="Login"
-                  style={{
-                    width: '115px',
-                    // height: 'auto', // Adjust height based on width to maintain aspect ratio
-                    borderRadius: '8px',
-                  }}
-                /> */}
-                  <img
+
+                <img
                   src={CommonLogos}
                   alt="Login"
                   style={{
                     width: '350px',
-                    borderRadius:'8px',
-                    // height: 'auto', // Adjust height based on width to maintain aspect ratio
                     borderRadius: '8px',
                   }}
                 />
-              </Box>
-
-              {/* Second Logo */}
-              <Box sx={{ marginLeft: 2 }}>
-                {/* <img
-                  src={NewLogo}
-                  alt="Login"
-                  style={{
-                    width: '130px',
-                    // height: 'auto', // Adjust height based on width to maintain aspect ratio
-                    borderRadius: '8px',
-                  }}
-                /> */}
               </Box>
             </Box>
 

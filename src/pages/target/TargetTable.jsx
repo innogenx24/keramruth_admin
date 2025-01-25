@@ -214,7 +214,9 @@ const TargetTable = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={8}>No data found</TableCell>
+                <TableCell colSpan={8} style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                  No data found 50% more than.
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

@@ -19,20 +19,19 @@ const BookingOrders = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   // const imageBaseURL = `${API_END_POINT_IMG}/src/uploads/`;
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
+  const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
 
 
-  // https://erp.keramruth.com/api
-  const { users } = useSelector((state) => state.users); // Fetch users from Redux store
-  const userId = users?.id; // Get the user ID from the state.users object
+  const { users } = useSelector((state) => state.users);
+  const userId = users?.id;
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (orderConfirmation) {
       const timer = setTimeout(() => {
-        setOrderConfirmation(false); // Hide the confirmation message after 1 second
-      }, 2 * 1000); // 1000ms = 1 second
+        setOrderConfirmation(false);
+      }, 2 * 1000);
 
-      // Cleanup the timer when the component unmounts or when the message is hidden manually
       return () => clearTimeout(timer);
     }
   }, [orderConfirmation]);
@@ -170,6 +169,22 @@ const BookingOrders = () => {
   );
 
 
+
+  const handleImageClick = (imageUrl, product) => {
+    setImageModal({
+      open: true,
+      imageUrl,
+      productName: product.name,
+      description: product.description,
+    });
+  };
+
+
+  const handleImageModalClose = () => {
+    setImageModal({ open: false, imageUrl: "" });
+  };
+
+
   return (
     <div style={{ position: "relative", height: "100vh" }}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -186,6 +201,21 @@ const BookingOrders = () => {
         }}
       >
 
+        {orderConfirmation && (
+          <Box
+            position="fixed"
+            bottom="85%"
+            left="50%"
+            transform="translateX(-50%)"
+            bgcolor="green"
+            color="white"
+            padding="10px 20px"
+            borderRadius="5px"
+          >
+            Order placed successfully! <br />
+
+          </Box>
+        )}
 
         <TableContainer component={Paper} sx={{ maxHeight: '400px', overflowY: 'auto' }}>
           <Table>
@@ -211,30 +241,31 @@ const BookingOrders = () => {
 
                 return (
                   <TableRow key={product.id}>
-                    {/* Product Image */}
                     <TableCell align="center">
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <img
                           src={
-                            product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'
+                            product.image
+                              ? `${imageBaseURL}${product.image}`
+                              : '/path/to/default-image.jpg'
                           }
+                          // onClick={() => handleImageClick(`${imageBaseURL}${product.image}`, product)}
                           alt={product.name || 'Product Image'}
                           style={{
+                            // cursor: "pointer",
                             width: '100px',
                             height: 'auto',
                             objectFit: 'contain',
-                            border: '1px solid #ccc',
                             boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
                             borderRadius: '10px',
                           }}
                         />
+
                       </div>
                     </TableCell>
 
-                    {/* Product Name */}
                     <TableCell align="center">{product.name}</TableCell>
 
-                    {/* Product Price Display with Offer (super1) */}
                     <TableCell align="center">
                       {product.super1 && product.super1 !== '0.00' ? (
                         <>
@@ -305,26 +336,51 @@ const BookingOrders = () => {
         </TableContainer>
 
 
+        <Modal open={imageModal.open} onClose={handleImageModalClose}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              display: "flex", // Flexbox for layout
+              gap: 2, // Space between image and text
+              alignItems: "center", // Align items vertically
+              padding: '0px'
+            }}
+          >
+            <Box sx={{ flex: 1 }}>
+              <img
+                src={imageModal.imageUrl}
+                alt="Full size"
+                style={{
+                  width: "100%",
+                  maxHeight: "400px",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
+              />
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="h6" gutterBottom>
+                {imageModal.productName || "Product Name"}
+              </Typography>
+              <Typography variant="body1">
+                {imageModal.description ||
+                  "Description not available. Please check back later."}
+              </Typography>
+            </Box>
+          </Box>
+        </Modal>
+
+
+
 
 
       </div>
-
-      {orderConfirmation && (
-        <Box
-          position="fixed"
-          top="20%"
-          left="50%"
-          transform="translateX(-50%)"
-          bgcolor="green"
-          color="white"
-          padding="10px 20px"
-          borderRadius="5px"
-        >
-          Order placed successfully! <br />
-
-        </Box>
-      )}
-
 
       {/* Order Summary Popup */}
       <Modal open={openPopup} onClose={closeOrderSummaryPopup}>
@@ -359,8 +415,7 @@ const BookingOrders = () => {
                 Order Summary
               </Typography>
               <Box sx={{ height: "60px" }}>
-                {/* <img src={KeramruthLogo} alt="Keramruth Logo" style={{ height: "150%",marginTop:'-30px' }} /> */}
-                <img src={CommonLogos} alt="Keramruth Logo" style={{ height: "150%",marginTop:'-30px' }} />
+                <img src={CommonLogos} alt="Keramruth Logo" style={{ height: "150%", marginTop: '-30px' }} />
               </Box>
             </Box>
             {/* Order Items */}
@@ -394,12 +449,10 @@ const BookingOrders = () => {
                       }}
                     />
                     <Box>
-                      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                      <Typography variant="body1" >
                         {product?.name}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {product?.description || "Product details"}
-                      </Typography>
+
                     </Box>
                   </Box>
                   <Box>
