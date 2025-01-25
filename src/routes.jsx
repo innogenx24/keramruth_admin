@@ -73,6 +73,7 @@ import MemberDetailTable from "./components/sales-components/member-ado/member_d
 import CustomerSupportPage from "./pages/member-pages/customer-support/CustomerSupportPage";
 import NotificationPage from "./pages/notification/admin_notification/NotificationPage";
 import CustomerDashboard from "./components/sales-components/member-ado/member_detail/CustomerDashboard";
+import YearlySalesData from "./components/sales-components/member-ado/member_detail/YearlySalesData";
 
 const RoutesConfig = () => {
   return (
@@ -103,6 +104,8 @@ const RoutesConfig = () => {
             <Route path="edit-profile" element={<EditUserProfile />} />
             <Route path="members" element={<ViewMember />} />
             <Route path="members/:memberID/:rolesID" element={<MemberDetailTable />} />
+            {/* <Route path="members/:memberID/:rolesID" element={<YearlySalesData />} /> */}
+
             <Route path="customer_details/:memberID/:rolesID" element={<CustomerDashboard />} />
 
             <Route path="announcement" element={<AnnouncementTable />} />
