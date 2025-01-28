@@ -27,7 +27,7 @@ const CustomerSupportPage = () => {
     phone: "+91 9844436655",
     email: "info.keramruth@gmail.com",
     supportHours: "Mon-Sat: 9:00 AM - 6:00 PM",
-    website: "www.keramruth.com",
+    website : "https://www.keramruth.com",
     mapsLocation: "https://www.google.com/maps?q=Upparakalenahalli+Village,+Javagal+Hobali,+Arsikere+Taluk,+Hassan+District,+Karnataka+573125", // Link to Google Maps
     whatsappLink: "https://wa.me/919019680789",
   };

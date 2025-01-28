@@ -96,7 +96,7 @@ const MemberDocumenttable = () => {
               <TableCell>Document Image</TableCell>
               <TableCell>Heading</TableCell>
               <TableCell>Description</TableCell>
-              <TableCell>Applying On</TableCell>
+              <TableCell>Download Link</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -130,13 +130,14 @@ const MemberDocumenttable = () => {
                 >
                   {document.description}
                 </TableCell>
-                <TableCell>
-                  {Array.isArray(document.receiver)
-                    ? document.receiver.join(", ")
-                    : document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[')
-                      ? JSON.parse(document.receiver).join(", ")
-                      : document.receiver}
+                <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
+                  <a href={document.link} target="_blank" rel="noopener noreferrer"
+                    style={{ color: '#1c96c5', textDecoration: 'none' }}
+                  >
+                    {document.link}
+                  </a>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>

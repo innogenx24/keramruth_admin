@@ -66,15 +66,15 @@ const RoleTable = () => {
   return (
     <Box sx={{ width: "100%", p: 2 }}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-        Masters / Role
+        Masters / Media/News
       </Typography>
 
       <TableContainer component={Paper} sx={{ maxHeight: 400, overflowY: "auto" }}>
-        <Table aria-label="Role Table">
+        <Table aria-label="">
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
               <TableCell>No.</TableCell>
-              <TableCell>Role Name</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

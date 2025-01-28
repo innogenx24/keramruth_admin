@@ -58,24 +58,24 @@ const DocumentForm = () => {
       link: Yup.string()
         .test("isValidURL", "Enter a valid URL", (value) => {
           if (!value || !value.trim()) {
-            return true; 
+            return true;
           }
           const urlPattern = new RegExp(
             "^(https?:\\/\\/)?(www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[a-zA-Z0-9@:%_\\+.~#?&//=]*)?$"
           );
-          return urlPattern.test(value); 
+          return urlPattern.test(value);
         }),
       receiver: Yup.array()
         .min(1, "At least one role must be selected")
         .required("Receiver is required"),
       fromDate: Yup.date()
         .nullable()
-        .required("From Date is required"), // Set required only
+        .min(today, "From Date cannot be in the past"),
       toDate: Yup.date()
         .nullable()
         .min(Yup.ref("fromDate"), "To Date must be after From Date"),
     }),
-    
+
     onSubmit: (values) => {
       const formData = new FormData();
       formData.append("documentID", values.documentID);
@@ -95,7 +95,6 @@ const DocumentForm = () => {
         formData.delete("fromDate");
         formData.delete("toDate");
       }
-
 
       if (selectedFile) {
         formData.append("image", selectedFile);

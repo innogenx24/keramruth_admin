@@ -24,7 +24,10 @@ const NotificationPage = () => {
 
   // Get logged-in user's ID from localStorage
   const loginUser = JSON.parse(localStorage.getItem("user"));
-  const loginUserRole = loginUser?.id || null;
+  const loginUserID = loginUser?.id || null;
+  const loginUserRole = loginUser?.role;
+
+
 
 
   // Redux state
@@ -32,16 +35,16 @@ const NotificationPage = () => {
 
   // Fetch notifications on component mount
   useEffect(() => {
-    if (loginUserRole) {
-      dispatch(fetchNotificationsStart(loginUserRole));
+    if (loginUserID) {
+      dispatch(fetchNotificationsStart(loginUserID));
     }
-  }, [loginUserRole, dispatch]);
+  }, [loginUserID, dispatch]);
 
   // Mark notification as read
   const markAsRead = async (notificationId) => {
     try {
       const response = await fetch(
-        `${API_END_POINT}/month_notifications/notifications/read/${loginUserRole}/${notificationId}`,
+        `${API_END_POINT}/month_notifications/notifications/read/${loginUserID}/${notificationId}`,
         { method: "PUT" }
       );
 
@@ -50,7 +53,7 @@ const NotificationPage = () => {
       }
 
       // Optimistic update in Redux (or trigger re-fetch)
-      dispatch(fetchNotificationsStart(loginUserRole));
+      dispatch(fetchNotificationsStart(loginUserID));
     } catch (error) {
       console.error("Error marking notification as read:", error);
     }
@@ -78,6 +81,9 @@ const NotificationPage = () => {
         break;
       case "feedback":
         navigate("/dashboard/feedback");
+        break;
+      case "media_news":
+        navigate("/dashboard/media-news");
         break;
       case "profile_edite_request":
         navigate("/dashboard/edit-request");
@@ -167,152 +173,221 @@ const NotificationPage = () => {
       </Typography>
 
       {/* Notification List */}
+
       <List>
         {notifications.length > 0 ? (
-          notifications.map((notification) => (
-            <React.Fragment key={notification.id}>
-              <ListItem
-                sx={styles.listItem(notification.is_read)}
-                onClick={() => {
-                  if (!notification.is_read) markAsRead(notification.id);
-                  handleNavigation(notification.detail?.type);
-                }}
-              >
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      ...styles.avatar,
-                      backgroundColor: notification.detail.type === "profile_edit_request_rejected" ? "red" : "green",
-                    }}
-                    src={
-                      notification.photo
-                        ? `${API_END_POINT_IMG}/uploads/notification-images/${notification.photo}`
-                        : null
-                    }
-                  >
-                    {!notification.photo && <NotificationsIcon />}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={
-                    <Typography
-                      variant="h6"
-                      sx={{ fontWeight: 500, fontFamily: "'Roboto', sans-serif", color: "#444" }}
+          notifications
+            .filter((notification) => {
+              // Only include notifications of specific types
+              const allowedTypes = ["media_news", "announcement", "document"];
+              if (allowedTypes.includes(notification.detail?.type)) {
+                return notification.detail?.receiver?.includes(loginUserRole);
+              }
+              return true; // Include other notifications without filtering
+            })
+            .map((notification) => (
+              <React.Fragment key={notification.id}>
+                <ListItem
+                  sx={styles.listItem(notification.is_read)}
+                  onClick={() => {
+                    if (!notification.is_read) markAsRead(notification.id);
+                    handleNavigation(notification.detail?.type);
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        ...styles.avatar,
+                        backgroundColor:
+                          notification.detail?.type === "profile_edit_request_rejected"
+                            ? "red"
+                            : "green",
+                      }}
+                      src={
+                        notification.photo
+                          ? `${API_END_POINT_IMG}/uploads/notification-images/${notification.photo}`
+                          : null
+                      }
                     >
-                      {notification.message}
-                    </Typography>
-                  }
-                  secondary={
-                    <>
-                      {/* For Order Request */}
-                      {notification.detail?.type === "order_request" && (
-                        <>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            {notification.detail?.role} | Status: {notification.detail?.status}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Order ID: {notification.detail?.orderUniqueId}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            User: {notification.detail?.user_name}
-                          </Typography>
-                        </>
-                      )}
-
-                      {/* For Profile Edit Request */}
-                      {notification.detail?.type === "profile_edite_request" && (
-                        <>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Role: {notification.detail?.role}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            User: {notification.detail?.user_name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Reason: {notification.detail?.request_reason}
-                          </Typography>
-                        </>
-                      )}
-
-                      {/* For Feedback */}
-                      {notification.detail?.type === "feedback" && (
-                        <>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Feedback from: {notification.detail?.user_name}
-                          </Typography>
-                        </>
-                      )}
-
-                      {/* For Order Accept/Reject */}
-                      {notification.detail?.type === "order_acceptReject" && (
-                        <>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            {notification.detail?.role} | Status: {notification.detail?.status}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            Order ID: {notification.detail?.orderUniqueId}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
-                          >
-                            User: {notification.detail?.user_name}
-                          </Typography>
-                        </>
-                      )}
-
-                     
-
-                     
-
-                      {/* Timestamp */}
+                      {!notification.photo && <NotificationsIcon />}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
                       <Typography
-                        variant="caption"
-                        sx={{
-                          fontFamily: "'Roboto', sans-serif",
-                          color: "#aaa",
-                          display: "block",
-                          mt: 0.5,
-                        }}
+                        variant="h6"
+                        sx={{ fontWeight: 500, fontFamily: "'Roboto', sans-serif", color: "#444" }}
                       >
-                        {new Date(notification.created_at).toLocaleDateString('en-GB')}
+                        {notification.message}
                       </Typography>
-                    </>
-                  }
+                    }
+                    secondary={
+                      <>
 
-                />
+                        {/* For Profile Edit Request */}
+                        {notification.detail?.type === "profile_edite_request" && (
+                          <>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              Role: {notification.detail?.role}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              User: {notification.detail?.user_name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              Reason: {notification.detail?.request_reason}
+                            </Typography>
+                          </>
+                        )}
 
-              </ListItem>
-              <Divider variant="inset" component="li" />
-            </React.Fragment>
-          ))
+                        {/* For Feedback */}
+                        {notification.detail?.type === "feedback" && (
+                          <>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              Feedback from: {notification.detail?.user_name}
+                            </Typography>
+                          </>
+                        )}
+
+                        {/* Media News */}
+                        {notification.detail?.type === "media_news" && (
+                          <>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#1c96c5" }}
+                            >
+                              <a
+                                href={notification.detail?.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  textDecoration: "none",
+                                  color: "#1c96c5",
+                                }}
+                              >
+                                View Media / News
+                              </a>
+                            </Typography>
+                          </>
+                        )}
+
+                        {/* Announcement */}
+                        {notification.detail?.type === "announcement" && (
+                          <>
+                           
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#1c96c5" }}
+                            >
+                              <a
+                                href={notification.detail?.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  textDecoration: "none",
+                                  color: "#1c96c5",
+                                }}
+                              >
+                                View Announcement
+                              </a>
+                            </Typography>
+                          </>
+                        )}
+
+                        {/* Document */}
+                        {notification.detail?.type === "document" && (
+                          <>
+                            
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif', color: '#1c96c5" }}
+                            >
+                              <a
+                                href={notification.detail?.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  textDecoration: "none",
+                                  color: "#1c96c5",
+                                }}
+                              >
+                                View Document
+                              </a>
+                            </Typography>
+                          </>
+                        )}
+
+                        {notification.detail?.type === "order_acceptReject" && (
+                          <>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              {notification.detail?.role} | Status: {notification.detail?.status}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              Order ID: {notification.detail?.orderUniqueId}
+                            </Typography>
+                            
+                          </>
+                        )}
+                        {/* For Order Request */}
+                        {notification.detail?.type === "order_request" && (
+                          <>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              {notification.detail?.role} | Status: {notification.detail?.status}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              Order ID: {notification.detail?.orderUniqueId}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                            >
+                              User: {notification.detail?.user_name}
+                            </Typography>
+                          </>
+                        )}
+
+                        {/* Timestamp */}
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            fontFamily: "'Roboto', sans-serif",
+                            color: "#aaa",
+                            display: "block",
+                            mt: 0.5,
+                          }}
+                        >
+                          {new Date(notification.created_at).toLocaleDateString("en-GB")}
+                        </Typography>
+                      </>
+                    }
+                  />
+                </ListItem>
+                <Divider variant="inset" component="li" />
+              </React.Fragment>
+            ))
         ) : (
           <Typography
             variant="body1"
@@ -326,7 +401,8 @@ const NotificationPage = () => {
             No notifications available.
           </Typography>
         )}
-      </List>
+      </List>;
+
     </Container>
   );
 };

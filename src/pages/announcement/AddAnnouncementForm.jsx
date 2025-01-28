@@ -67,10 +67,10 @@ const AddAnnouncementDetails = ({ onClose }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
-    
+
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
-  
+
       // Check if the file type is valid (JPEG, JPG, PNG)
       const validTypes = ['image/jpeg', 'image/png'];
       if (!validTypes.includes(file.type)) {
@@ -78,19 +78,19 @@ const AddAnnouncementDetails = ({ onClose }) => {
         setImageFile(null); // Clear any previously selected file
         setImageFileName("");
         setPreviewUrl("");
-      } 
+      }
       // Check if file size exceeds 2MB
       else if (fileSizeMB > 2) {
         setImageError("File size must be less than 2MB");
         setImageFile(null); // Clear any previously selected file
         setImageFileName("");
         setPreviewUrl("");
-      } 
+      }
       else {
         setImageError(""); // Clear error if file is valid
         setImageFile(file);
         setImageFileName(file.name);
-  
+
         const reader = new FileReader();
         reader.onloadend = () => {
           setPreviewUrl(reader.result);
@@ -99,36 +99,36 @@ const AddAnnouncementDetails = ({ onClose }) => {
       }
     }
   };
-  
+
 
   const validateLink = (value) => {
     // Updated regex for validating general and specific URLs
     const urlPattern = new RegExp(
       "^(https?:\\/\\/)?(www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[a-zA-Z0-9@:%_\\+.~#?&//=]*)?$"
     );
-  
+
     if (value && !urlPattern.test(value)) {
       setLinkError("Please enter a valid URL.");
     } else {
       setLinkError(""); // Clear the error if the link is valid
     }
   };
-  
-  
-  
+
+
+
   const handleLinkChange = (e) => {
     const value = e.target.value;
     setLink(value);
-  
+
     if (!value.trim()) {
       setLinkError("Link is required.");
     } else {
-      validateLink(value); // This will update linkError accordingly
+      validateLink(value); 
     }
   };
-  
-  
-  
+
+
+
   const validateDescription = (value) => {
     if (!value.trim()) {
       setDescriptionError("Description is required.");
@@ -139,7 +139,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
 
   const validateForm = () => {
     let isValid = true;
-  
+
     // Validate Heading
     if (!heading) {
       setHeadingError("Heading is required.");
@@ -147,7 +147,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
     } else {
       setHeadingError("");
     }
-  
+
     // Validate Receiver
     if (!receiver.length) {
       setErrorMessage("Please select at least one receiver.");
@@ -155,18 +155,18 @@ const AddAnnouncementDetails = ({ onClose }) => {
     } else {
       setErrorMessage("");
     }
-  
+
     // Validate Description
     if (!validateDescription(description)) {
       isValid = false;
     } else {
       setDescriptionError("");
     }
-  
-  
+
+
     return isValid;
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const randomDocumentID = Math.floor(100000 + Math.random() * 900000).toString();
@@ -263,26 +263,20 @@ const AddAnnouncementDetails = ({ onClose }) => {
                 {descriptionError}
               </Typography>
             )}
-        <TextField
-  fullWidth
-  label="Link"
-  value={link}
-  onChange={handleLinkChange}
-  placeholder="Enter a valid link"
-  margin="normal"
-  error={!!linkError} // Error state for the field
-/>
-
-
-
-{linkError && (
-  <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
-    {linkError}
-  </Typography>
-)}
-
-
-
+            <TextField
+              fullWidth
+              label="Link"
+              value={link}
+              onChange={handleLinkChange}
+              placeholder="Enter a valid link"
+              margin="normal"
+              error={!!linkError} // Error state for the field
+            />
+            {linkError && (
+              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+                {linkError}
+              </Typography>
+            )}
           </Box>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -326,9 +320,6 @@ const AddAnnouncementDetails = ({ onClose }) => {
             >
               Add Announcement
             </Button>
-
-            
-
             {successMessage && (
               <Typography variant="body2" color="success" sx={{ marginTop: "10px" }}>
                 {successMessage}
@@ -336,9 +327,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
             )}
           </Box>
         </Grid>
-        
-        </Grid>
-
+      </Grid>
     </Box>
   );
 };

@@ -51,6 +51,8 @@ import AppLogo from "../../assets/logo/AppLogo";
 import NewLogo from "../../assets/logo/NewLogo.png";
 import DishaImgLogo from "../../assets/logo/DishaImgLogo.png";
 import CommonLogos from "../../assets/logo/CommonLogos.png";
+import { PiNewspaperClippingFill } from "react-icons/pi";
+
 // Drawer width
 // const drawerWidth = 240;
 const drawerWidth = 300;
@@ -281,6 +283,11 @@ export default function AdminDashboard() {
       icon: <DescriptionIcon />,
     },
     {
+      text: "Media / News",
+      path: "/dashboard/media-news",
+      icon: <PiNewspaperClippingFill />,
+    },
+    {
       text: "Customer Support",
       path: "/dashboard/customer-support",
       icon: <FaHeadset />,
@@ -337,6 +344,11 @@ export default function AdminDashboard() {
       icon: <DescriptionIcon />,
     },
     {
+      text: "Media / News",
+      path: "/dashboard/media-news",
+      icon: <PiNewspaperClippingFill />,
+    },
+    {
       text: "Member Reports",
       path: "/dashboard/report",
       icon: <ReportIcon />,
@@ -384,6 +396,11 @@ export default function AdminDashboard() {
       text: "Downloads",
       path: "/dashboard/documents",
       icon: <DescriptionIcon />,
+    },
+    {
+      text: "Media / News",
+      path: "/dashboard/media-news",
+      icon: <PiNewspaperClippingFill />,
     },
     {
       text: "Reports",

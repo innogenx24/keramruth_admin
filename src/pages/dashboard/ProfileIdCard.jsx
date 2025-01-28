@@ -100,7 +100,7 @@ export default function ProfileCard() {
       });
     }
   };
-  const website = "www.keramruth.com";
+  const website = "https://www.keramruth.com";
 
   return (
     <Box>

@@ -161,7 +161,7 @@ const DocumentsTable = () => {
               borderRadius: "5px",
             }}
           >
-            CREATE DOCUMENT
+            Add DOCUMENT
           </Button>
         </div>
         <Table>
@@ -205,7 +205,8 @@ const DocumentsTable = () => {
                   wordBreak: 'break-word',
                 }}>
                   {document.description}
-                </TableCell>                <TableCell>
+                </TableCell>                
+                <TableCell>
                   {Array.isArray(document.receiver)
                     ? document.receiver.join(", ")
                     : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
