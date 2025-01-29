@@ -132,225 +132,233 @@ const OrderManagement = () => {
     setCompletedSearch(e.target.value);
   };
 
-  const renderPagination = (page, setPage, totalRows) => (
-    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
-      <Button
-        onClick={() => setPage(page - 1)}
-        disabled={page === 0}
-        variant="outlined"
-      >
-        Previous
-      </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
-        Page {page + 1}
-      </Typography>
-      <Button
-        onClick={() => setPage(page + 1)}
-        disabled={page >= Math.ceil(totalRows / rowsPerPage) - 1}
-        variant="outlined"
-      >
-        Next
-      </Button>
-    </div>
-  );
+  const renderPagination = (page, setPage, orders) => {
+    const filteredOrders = filterOrders(orders, page === 'pending' ? pendingSearch : completedSearch);
+    const totalFilteredRows = filteredOrders.length;
 
-  const renderTable = (title, orders, page, setPage, showStatus = false, isActionable = false) => (
-    <div>
-      <Typography variant="h6" >
-        {title}
-      </Typography>
+    const canGoNext = totalFilteredRows > rowsPerPage;  // Only allow next if there are more than rowsPerPage
+    const canGoPrev = page > 0;  // You can go back if you're not on the first page
 
-      <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
-        <TextField
-          label="Search Name or Order-Id"
+    return (
+      <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+        <Button
+          onClick={() => setPage(page - 1)}
+          disabled={!canGoPrev}
           variant="outlined"
-          value={title === "Pending Orders" ? pendingSearch : completedSearch}
-          onChange={title === "Pending Orders" ? handleSearchPendingOrders : handleSearchCompletedOrders}
-          sx={{
-            borderRadius: "20px",
-            "& .MuiOutlinedInput-root": {
+        >
+          Previous
+        </Button>
+        <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+          Page {page + 1}
+        </Typography>
+        <Button
+          onClick={() => setPage(page + 1)}
+          disabled={!canGoNext || page >= Math.ceil(totalFilteredRows / rowsPerPage) - 1}
+          variant="outlined"
+        >
+          Next
+        </Button>
+      </div>
+    );
+  };
+
+
+  const renderTable = (title, orders, page, setPage, showStatus = false, isActionable = false) => {
+    const filteredOrders = filterOrders(orders, title === "Pending Orders" ? pendingSearch : completedSearch);
+    const totalFilteredRows = filteredOrders.length;
+
+    return (
+      <div>
+        <Typography variant="h6">
+          {title}
+        </Typography>
+        <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
+          <TextField
+            label="Search Name or Order-Id"
+            variant="outlined"
+            value={title === "Pending Orders" ? pendingSearch : completedSearch}
+            onChange={title === "Pending Orders" ? handleSearchPendingOrders : handleSearchCompletedOrders}
+            sx={{
               borderRadius: "20px",
-            },
-          }}
-        />
-      </Box>
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "20px",
+              },
+            }}
+          />
+        </Box>
 
-      <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: '500px', overflowY: 'auto' }}>
-
-        <Table stickyHeader aria-label={`${title} Table`}>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
-              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Customer Name</TableCell>
-              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order ID</TableCell>
-              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Total Order QTY</TableCell>
-              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Total Amount</TableCell>
-              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Product Details</TableCell>
-              <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order Date</TableCell>
-              {showStatus && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order Status</TableCell>}
-              {isActionable && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.length === 0 ? (
+        <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: '500px', overflowY: 'auto' }}>
+          <Table stickyHeader aria-label={`${title} Table`}>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={isActionable ? 7 : 6} align="center">
-                  No {title.toLowerCase()} available
-                </TableCell>
+                <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
+                <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Customer Name</TableCell>
+                <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order ID</TableCell>
+                <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Total Order QTY</TableCell>
+                <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Total Amount</TableCell>
+                <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Product Details</TableCell>
+                <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order Date</TableCell>
+                {showStatus && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Order Status</TableCell>}
+                {isActionable && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>}
               </TableRow>
-            ) : (
-              filterOrders(orders, title === "Pending Orders" ? pendingSearch : completedSearch)
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((order, index) => (
-                  <React.Fragment key={order.orderId}>
-                    <TableRow>
-                      <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                      <TableCell>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <Avatar
-                            src={order?.customer?.image ? `${imageBaseURL}${order.customer.image}` : '/path/to/default-image.jpg'}
-                            alt={order?.customer?.name}
-                          />
-                          <Typography style={{ marginLeft: "10px" }}>
-                            {order?.customer?.name || 'Unknown'}
-                          </Typography>
-                        </div>
-                      </TableCell>
-                      <TableCell>{order.orderUniqueId}</TableCell>
-                      <TableCell>
-                        {new Intl.NumberFormat('en-IN').format(order.totalOrderQuantity)}
-                      </TableCell>
-                      <TableCell>
-                        Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(order.totalAmount)}
-                      </TableCell>
-
-                      <TableCell>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => toggleOrderDetails(order.orderId)}
-                        >
-                          {expandedOrders[order.orderId] ? 'Hide Details' : 'Show Details'}
-                        </Button>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(order.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </TableCell>
-                      {showStatus && (
-                        <TableCell
-                          sx={{
-                            color: order.status === 'Accepted' ? 'green' : order.status === 'Cancelled' ? 'red' : 'black',
-                          }}
-                        >
-                          {order.status}
-                        </TableCell>
-                      )}
-                      {isActionable && (
-                        <TableCell>
-                          <Box sx={{ display: 'flex' }}>
-                            <Button
-                              variant="contained"
-                              color="error"
-                              size="small"
-                              onClick={() => handleAction(order.orderId, 'reject')}
-                              disabled={order.status !== 'Pending'}
-                            >
-                              Reject
-                            </Button>
-                            <Button
-                              variant="contained"
-                              color="success"
-                              size="small"
-                              onClick={() => handleAction(order.orderId, 'accept')}
-                              disabled={order.status !== 'Pending'}
-                              sx={{ marginLeft: 1 }}
-                            >
-                              Accept
-                            </Button>
-                          </Box>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                    {expandedOrders[order.orderId] && (
+            </TableHead>
+            <TableBody>
+              {totalFilteredRows === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={isActionable ? 7 : 6} align="center">
+                    No {title.toLowerCase()} available
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOrders
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((order, index) => (
+                    <React.Fragment key={order.orderId}>
                       <TableRow>
-                        <TableCell colSpan={6}>
-                          <Table>
-                            <TableHead sx={{ backgroundColor: "#D3D3D3" }}>
-                              <TableRow>
-                                <TableCell>No.</TableCell>
-                                <TableCell>Product Name</TableCell>
-                                <TableCell>Quantity</TableCell>
-                                <TableCell>Price</TableCell>
-                                <TableCell>Total Price</TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {order.OrderItems.map((item, itemIndex) => (
-                                <TableRow key={item.itemId}>
-                                  {/* Serial No */}
-                                  <TableCell>{itemIndex + 1}</TableCell>
-
-                                  {/* Product Name with Image */}
-                                  <TableCell>
-                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                      <img
-                                        src={
-                                          item.product?.image
-                                            ? `${imageBaseURL}${item.product.image}`
-                                            : "/path/to/default-image.jpg"
-                                        }
-                                        alt={item.product?.name || "Unknown Product"}
-                                        style={{
-                                          width: "60px",
-                                          height: "auto",
-                                          objectFit: "contain",
-                                          border: "1px solid #ccc",
-                                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                                          borderRadius: "10px",
-                                          marginRight: "10px",
-                                        }}
-                                      />
-                                      <Typography>{item.product?.name || "Unknown Product"}</Typography>
-                                    </div>
-                                  </TableCell>
-
-
-                                  {/* Quantity */}
-                                  <TableCell>{item.quantity}</TableCell>
-
-                                  <TableCell>
-                                    Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(item.basePrice) || 0)}
-                                  </TableCell>
-
-                                  <TableCell>
-                                    Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(item.finalPrice) || 0)}
-                                  </TableCell>
-
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
+                        <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                        <TableCell>
+                          <div style={{ display: "flex", alignItems: "center" }}>
+                            <Avatar
+                              src={order?.customer?.image ? `${imageBaseURL}${order.customer.image}` : '/path/to/default-image.jpg'}
+                              alt={order?.customer?.name}
+                            />
+                            <Typography style={{ marginLeft: "10px" }}>
+                              {order?.customer?.name || 'Unknown'}
+                            </Typography>
+                          </div>
                         </TableCell>
+                        <TableCell>{order.orderUniqueId}</TableCell>
+                        <TableCell>{new Intl.NumberFormat('en-IN').format(order.totalOrderQuantity)}</TableCell>
+                        <TableCell>Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(order.totalAmount)}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => toggleOrderDetails(order.orderId)}
+                          >
+                            {expandedOrders[order.orderId] ? 'Hide Details' : 'Show Details'}
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(order.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </TableCell>
+                        {showStatus && (
+                          <TableCell
+                            sx={{
+                              color: order.status === 'Accepted' ? 'green' : order.status === 'Cancelled' ? 'red' : 'black',
+                            }}
+                          >
+                            {order.status}
+                          </TableCell>
+                        )}
+                        {isActionable && (
+                          <TableCell>
+                            <Box sx={{ display: 'flex' }}>
+                              <Button
+                                variant="contained"
+                                color="error"
+                                size="small"
+                                onClick={() => handleAction(order.orderId, 'reject')}
+                                disabled={order.status !== 'Pending'}
+                              >
+                                Reject
+                              </Button>
+                              <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
+                                onClick={() => handleAction(order.orderId, 'accept')}
+                                disabled={order.status !== 'Pending'}
+                                sx={{ marginLeft: 1 }}
+                              >
+                                Accept
+                              </Button>
+                            </Box>
+                          </TableCell>
+                        )}
                       </TableRow>
+                      {expandedOrders[order.orderId] && (
+                        <TableRow>
+                          <TableCell colSpan={6}>
+                            <Table>
+                              <TableHead sx={{ backgroundColor: "#D3D3D3" }}>
+                                <TableRow>
+                                  <TableCell>No.</TableCell>
+                                  <TableCell>Product Name</TableCell>
+                                  <TableCell>Quantity</TableCell>
+                                  <TableCell>Price</TableCell>
+                                  <TableCell>Total Price</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {order.OrderItems.map((item, itemIndex) => (
+                                  <TableRow key={item.itemId}>
+                                    {/* Serial No */}
+                                    <TableCell>{itemIndex + 1}</TableCell>
 
-                    )}
-                  </React.Fragment>
-                ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div style={{ marginTop: "10px" }}>
-        {renderPagination(page, setPage, orders.length)}
+                                    {/* Product Name with Image */}
+                                    <TableCell>
+                                      <div style={{ display: "flex", alignItems: "center" }}>
+                                        <img
+                                          src={
+                                            item.product?.image
+                                              ? `${imageBaseURL}${item.product.image}`
+                                              : "/path/to/default-image.jpg"
+                                          }
+                                          alt={item.product?.name || "Unknown Product"}
+                                          style={{
+                                            width: "60px",
+                                            height: "auto",
+                                            objectFit: "contain",
+                                            border: "1px solid #ccc",
+                                            boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                                            borderRadius: "10px",
+                                            marginRight: "10px",
+                                          }}
+                                        />
+                                        <Typography>{item.product?.name || "Unknown Product"}</Typography>
+                                      </div>
+                                    </TableCell>
+
+
+                                    {/* Quantity */}
+                                    <TableCell>{item.quantity}</TableCell>
+
+                                    <TableCell>
+                                      Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(item.basePrice) || 0)}
+                                    </TableCell>
+
+                                    <TableCell>
+                                      Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(item.finalPrice) || 0)}
+                                    </TableCell>
+
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </TableCell>
+                        </TableRow>
+
+                      )}
+                    </React.Fragment>
+                  ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <div style={{ marginTop: "10px" }}>
+          {renderPagination(page, setPage, orders)}
+
+        </div>
 
       </div>
-
-    </div>
-  );
+    );
+  };
 
 
   const filterOrders = (orders, searchText) => {
