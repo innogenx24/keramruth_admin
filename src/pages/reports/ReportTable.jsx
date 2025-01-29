@@ -114,27 +114,37 @@ export default function ReportTable() {
 
   useEffect(() => {
     const fetchSalesDataForFilteredRoleAndArea = async () => {
-      setIsLoading(true); // Start loading
-      const updatedRows = [];
-
-      for (const user of rows) {
-        if (
+      setIsLoading(true);
+  
+      // Filter rows based on role, area, and name filter
+      const filteredRows = rows.filter(
+        (user) =>
           (roleFilter === "" || user.role_name === roleFilter) &&
-          (areaFilter === "" || user.city === areaFilter)
-        ) {
+          (areaFilter === "" || user.city === areaFilter) &&
+          (nameFilter === "" || user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
+      );
+  
+      // Enrich filtered rows with sales data
+      const enrichedRows = await Promise.all(
+        filteredRows.map(async (user) => {
           const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
-          updatedRows.push({
+          return {
             ...user,
             salesAchievement: salesAchievement || null,
-          });
-        }
-      }
-      setSalesData(updatedRows);
-      setIsLoading(false); // End loading
+          };
+        })
+      );
+  
+      setSalesData(enrichedRows);
+      setIsLoading(false);
     };
-
-    fetchSalesDataForFilteredRoleAndArea();
-  }, [roleFilter, areaFilter, rows]);
+  
+    if (rows.length > 0) {
+      fetchSalesDataForFilteredRoleAndArea();
+    }
+  }, [roleFilter, areaFilter, nameFilter, rows]); // Add `rows` as a dependency
+  
+  
 
   const fetchSalesAchievement = async (roleId, userId) => {
     try {
@@ -154,7 +164,8 @@ export default function ReportTable() {
     fetchUserCounts();
   }, []);
 
-  
+ 
+
   const handleFilterChange = () => {
     console.log("Filters applied with:", roleFilter, areaFilter);
     // Reset page to 0 (first page) when filters are applied
@@ -163,10 +174,7 @@ export default function ReportTable() {
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
-    if (name === "name") {
-      setNameFilter(value);
-      setPage(0);
-    } else if (name === "role") {
+     if (name === "role") {
       setRoleFilter(value);
       setPage(0);
     } else if (name === "area") {
@@ -174,6 +182,16 @@ export default function ReportTable() {
       setPage(0);
     }
   };
+
+
+  const handleSearchChangeName = (e) => {
+    const { value } = e.target;
+    setNameFilter(value); 
+  };
+  
+
+
+
 
   const renderPagination = (page, setPage, totalRows) => (
     <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
@@ -266,7 +284,7 @@ export default function ReportTable() {
           variant="outlined"
           name="name"
           value={nameFilter}
-          onChange={handleSearchChange}
+          onChange={handleSearchChangeName}
           sx={{
             borderRadius: "20px",
             "& .MuiOutlinedInput-root": {
@@ -274,8 +292,6 @@ export default function ReportTable() {
             },
           }}
         />
-
-
       </Box>
       <Box display="flex" flexDirection="column" gap="20px" mb={3}>
         <Box display="flex" gap="20px" position="relative">

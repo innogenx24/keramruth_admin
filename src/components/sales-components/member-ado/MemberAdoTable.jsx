@@ -237,7 +237,6 @@ const MemberAdoTable = () => {
     // If the current roleId is greater than or equal to 6, navigate to the customer details page
     if (roleId >= 6) {
       navigate(`/dashboard/customer_details/${memberId}/${roleId}`);
-      window.location.reload();
       return;
     }
 

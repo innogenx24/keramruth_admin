@@ -74,18 +74,32 @@ const EditProductForm = ({ handleBackToProducts }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${API_END_POINT}/category`);
+        // Get the token (from localStorage, sessionStorage, or state)
+        const token = localStorage.getItem("token"); // or use your preferred storage method
+  
+        // Set up the fetch options with Authorization header
+        const response = await fetch(`${API_END_POINT}/category`, {
+          method: "GET", // HTTP method (GET by default)
+          headers: {
+            "Content-Type": "application/json", // Ensure content type is JSON
+            "Authorization": `Bearer ${token}`, // Add the token to Authorization header
+          },
+        });
+  
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
+  
         const data = await response.json();
         setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
+  
     fetchCategories();
   }, []);
+  
 
   useEffect(() => {
     if (state?.product) {

@@ -10,6 +10,8 @@ import {
   Collapse,
   Typography,
   Button,
+  Box,
+  TextField
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -26,6 +28,7 @@ const OrderDetails = () => {
   const [page, setPage] = useState(0); // Current page state
   const [rowsPerPage] = useState(10);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const [orderIdFilter, setorderIdFilter] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -99,13 +102,42 @@ const OrderDetails = () => {
     </div>
   );
 
-  const paginatedOrders = orders.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+  const filteredOrders = orderIdFilter
+  ? orders.filter((order) =>
+      order.order_id && order.order_id.toString().includes(orderIdFilter.trim())
+    )
+  : orders;
+
+
+const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+
+  
+  const handleSearchOrderId = (e) => {
+    const { value } = e.target;
+    setorderIdFilter(value); 
+  };
 
   return (
     <div>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Order Details
       </Typography>
+
+      <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
+        <TextField
+          label="Search Order-Id"
+          variant="outlined"
+          name="orderId"
+          value={orderIdFilter}
+          onChange={handleSearchOrderId}
+          sx={{
+            borderRadius: "20px",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "20px",
+            },
+          }}
+        />
+      </Box>
 
       <TableContainer sx={{ maxHeight: 440, marginBottom: 2 }}>
         <Table stickyHeader aria-label="Order Details Table">
@@ -148,11 +180,7 @@ const OrderDetails = () => {
                     </TableCell>
 
                     <TableCell>
-                      {new Date(order.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {order.createdAt}
                     </TableCell>
                     <TableCell
                       sx={{

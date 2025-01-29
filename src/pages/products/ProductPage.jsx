@@ -86,6 +86,7 @@ const ProductPage = () => {
     dispatch(deleteProductRequest(productToDelete?.id));
     setOpenDeleteModal(false);
     setProductToDelete(null);
+    window.location.reload();
   };
 
   const handleCloseDeleteModal = () => {
