@@ -52,7 +52,6 @@ const EditAnnouncementForm = () => {
     { label: "Distributor", value: "Distributor" },
     { label: "Customer", value: "Customer" },
   ];
-
   useEffect(() => {
     if (announcement) {
       setDocumentID(announcement.documentID || "");

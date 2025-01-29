@@ -73,6 +73,10 @@ import MemberDetailTable from "./components/sales-components/member-ado/member_d
 import CustomerSupportPage from "./pages/member-pages/customer-support/CustomerSupportPage";
 import NotificationPage from "./pages/notification/admin_notification/NotificationPage";
 import CustomerDashboard from "./components/sales-components/member-ado/member_detail/CustomerDashboard";
+import YearlySalesData from "./components/sales-components/member-ado/member_detail/YearlySalesData";
+import MediaNewsTable from "./pages/media-news/MediaNewsTable";
+import AddMediaNews from "./pages/media-news/AddMediaNews";
+import EditMediaNews from "./pages/media-news/EditMediaNews";
 
 const RoutesConfig = () => {
   return (
@@ -103,6 +107,8 @@ const RoutesConfig = () => {
             <Route path="edit-profile" element={<EditUserProfile />} />
             <Route path="members" element={<ViewMember />} />
             <Route path="members/:memberID/:rolesID" element={<MemberDetailTable />} />
+            {/* <Route path="members/:memberID/:rolesID" element={<YearlySalesData />} /> */}
+
             <Route path="customer_details/:memberID/:rolesID" element={<CustomerDashboard />} />
 
             <Route path="announcement" element={<AnnouncementTable />} />
@@ -130,7 +136,9 @@ const RoutesConfig = () => {
             <Route path="place-orders/feedback/:orderId/:ProductId" element={<FeedbackComponent />} />
             <Route path="documents" element={<Documents />} />
             <Route path="documents-member" element={<MemberDocumenttable />} />
-
+            <Route path="media-news" element={<MediaNewsTable />} />
+            <Route path="media-news/add-media-news" element={<AddMediaNews />} />
+            <Route path="media-news/edit-media-news" element={<EditMediaNews />} />
             <Route path="documents/add-document" element={<DocumentForm />} />
             <Route
               path="documents/edit-document"

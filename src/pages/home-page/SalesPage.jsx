@@ -50,18 +50,18 @@ const SalesPage = () => {
   }
 
   // Mapping roles to abbreviations
-const roleAbbreviations = {
-  "Area Development Officer": "ADO",
-  "Master Distributor": "MD",
-  "Super Distributor": "SD",
-  "Distributor": "D",
-  "Customer": "C"
-};
+  const roleAbbreviations = {
+    "Area Development Officer": "ADO",
+    "Master Distributor": "MD",
+    "Super Distributor": "SD",
+    "Distributor": "D",
+    "Customer": "C"
+  };
 
-// Utility function to get the abbreviation
-const getRoleAbbreviation = (roleName) => {
-  return roleAbbreviations[roleName] || roleName;
-};
+  // Utility function to get the abbreviation
+  const getRoleAbbreviation = (roleName) => {
+    return roleAbbreviations[roleName] || roleName;
+  };
 
 
   return (
@@ -72,27 +72,26 @@ const getRoleAbbreviation = (roleName) => {
           <Grid container spacing={3}>
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
-  <SalesCard
-    title={
-      <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: '#333' }}>
-        Total Sales: 
-        {/* <br /> */}
-        <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
-         {' '} {getRoleAbbreviation( data.roleName)}
-         {' '} ({data.totalUsers})
-        </Typography>
-      </Typography>
-    }
-    sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
-    target={`Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
-    growth={data.salesAchievementPercent || 0}
-    roleName={data.roleName}
-    customerBuyedAmmount={data.customerBuyedAmmount}
-  />
-</Grid>
-
-
+                <SalesCard
+                  title={
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: '#333' }}>
+                      {data.roleName === 'Customer' ? 'Total Buying:' : 'Total Sales:'}
+                      <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
+                        {' '} {getRoleAbbreviation(data.roleName)}
+                        {' '} ({data.totalUsers})
+                      </Typography>
+                    </Typography>
+                  }
+                  sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
+                  // Check if role is "Customer", if true, set target to null or exclude it
+                  target={data.roleName === "Customer" ? null : `Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
+                  growth={data.salesAchievementPercent || 0}
+                  roleName={data.roleName}
+                  customerBuyedAmmount={data.customerBuyedAmmount}
+                />
+              </Grid>
             ))}
+
           </Grid>
         </Grid>
 
@@ -105,7 +104,7 @@ const getRoleAbbreviation = (roleName) => {
       {/* Second Row: Charts */}
       <Grid className="charts-twos" container spacing={3} sx={{ marginTop: 3 }}>
         {/* <Grid item xs={12} md={3}> */}
-        <Grid  item xs={12} md={12} lg={4}>
+        <Grid item xs={12} md={12} lg={4}>
           <DonutChart />
         </Grid>
         {/* <Grid item xs={12} md={9}> */}

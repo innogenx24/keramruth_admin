@@ -95,11 +95,11 @@ const FeedbackTable = () => {
               <TableCell>Product Name</TableCell>
               <TableCell>Order ID</TableCell>
               <TableCell>Quantity</TableCell>
-              <TableCell>Booking Date</TableCell>
-              <TableCell>Delivered Date</TableCell>
+              {/* <TableCell>Booking Date</TableCell>
+              <TableCell>Delivered Date</TableCell> */}
               <TableCell>Total Amount</TableCell>
-              <TableCell>Rating</TableCell>
               <TableCell>Comments</TableCell>
+              <TableCell>Rating</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -144,19 +144,22 @@ const FeedbackTable = () => {
                 <TableCell>
                   {new Intl.NumberFormat('en-IN').format(Number(feedback.order.total_order_quantity))}
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.order.createdAt))}
                 </TableCell>
                 <TableCell>
                   {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.feedback_date))}
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   Rs {new Intl.NumberFormat("en-IN").format(feedback.order.total_amount || 0)}
+                </TableCell>
+                <TableCell sx={{ WebkitBoxOrient: 'vertical',WebkitLineClamp: 2,wordBreak: 'break-word'}}>
+                  {feedback.comments}
                 </TableCell>
                 <TableCell>
                   <Rating value={feedback.rating} precision={0.5} readOnly />
                 </TableCell>
-                <TableCell>{feedback.comments}</TableCell>
+                
               </TableRow>
             ))}
           </TableBody>

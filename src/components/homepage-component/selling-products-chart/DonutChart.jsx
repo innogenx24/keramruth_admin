@@ -141,9 +141,9 @@ const DonutChart = () => {
         {isDataAvailable ? (
           <>
             <Doughnut ref={chartRef} data={chartData} options={options} />
-            <div className='chart-content'>
+            {/* <div className='chart-content'>
               <span>{`${format(selectedDate, 'MMMM yyyy')}`}</span>
-            </div>
+            </div> */}
           </>
         ) : (
           <div className='no-data'>

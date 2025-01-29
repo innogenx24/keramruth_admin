@@ -19,6 +19,7 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
   };
 
   const displaySales = roleName === 'Customer' ? `Rs.${new Intl.NumberFormat('en-IN').format(customerBuyedAmmount || 0)}` : sales;
+  const displayTarget = roleName === 'Customer' ? null : target;
 
   return (
     <Box
@@ -61,17 +62,19 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
                 fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.85rem' },
               }}
             >
-              {displaySales}/
-              <Typography
-                variant="body2"
-                sx={{
-                  color: '#7e84a3',
-                  fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
-                  ml: '1%',
-                }}
-              >
-                {target}
-              </Typography>
+              {displaySales}{displayTarget && `/`}
+              {displayTarget && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#7e84a3',
+                    fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
+                    ml: '1%',
+                  }}
+                >
+                  {displayTarget}
+                </Typography>
+              )}
             </Typography>
           </Box>
         </Box>
@@ -93,31 +96,35 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
           >
             {icon || <PeopleIcon sx={{ fontSize: '1.1rem' }} />}
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: growth >= 0 ? '#01C572' : '#FF4C4C',
-                fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
-                mr: '1%',
-              }}
-            >
-              {growth >= 0 ? `+${growth}%` : `${growth}%`}
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: '#7e84a3',
-                fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
-              }}
-            >
-              {growth >= 0 ? '↑' : '↓'}
-            </Typography>
-          </Box>
+          {roleName !== 'Customer' && (
+           <Box sx={{ display: 'flex', alignItems: 'center' }}>
+             <Typography
+                variant="body2"
+                sx={{
+                    color: growth >= 0 ? '#01C572' : '#FF4C4C',
+                    fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
+                    mr: '1%',
+                }}
+              >
+               {growth >= 0 ? `+${growth}%` : `${growth}%`}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                   color: '#7e84a3',
+                   fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
+                }}
+              >
+               {growth >= 0 ? '↑' : '↓'}
+              </Typography>
+            </Box>
+          )}
+
         </Box>
       </Box>
     </Box>
   );
+
 };
 
 export default SalesCard;

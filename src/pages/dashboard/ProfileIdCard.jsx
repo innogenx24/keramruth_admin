@@ -100,7 +100,7 @@ export default function ProfileCard() {
       });
     }
   };
-  const website = "www.keramruth.com";
+  const website = "https://www.keramruth.com";
 
   return (
     <Box>
@@ -114,7 +114,7 @@ export default function ProfileCard() {
               marginTop: '60px', 
             }}
           >
-            Distributor ID
+            {users.role_name === 'Admin' ? 'Admin ID':'Distributor ID'}
           </Typography>
           <ProfileImageContainer>
             <ProfileImage

@@ -33,18 +33,36 @@ const SectorTable = () => {
   useEffect(() => {
     const fetchSectors = async () => {
       try {
-        const response = await fetch(`${API_END_POINT}/sectors`);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Token not found");
+        }
+  
+        const response = await fetch(`${API_END_POINT}/sectors`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+  
         const data = await response.json();
-
+  
         // Sort sectors by ID in descending order
         const sortedSectors = data.sort((a, b) => b.id - a.id);
         setSectors(sortedSectors);
       } catch (error) {
-        console.error("Error fetching sectors:", error);
+        console.error("Error fetching sectors:", error.message);
       }
     };
+  
     fetchSectors();
   }, []);
+  
 
   const handleAddSectorClick = () => {
     navigate("/dashboard/add-sector");

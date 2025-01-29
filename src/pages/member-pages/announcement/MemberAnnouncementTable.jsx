@@ -46,7 +46,7 @@ const AnnouncementTable = () => {
     fetchAnnouncements();
   }, []);
 
-  
+
 
   const getImageURL = (imagePath) => {
     if (!imagePath) return "";
@@ -85,9 +85,9 @@ const AnnouncementTable = () => {
     <div>
       <TableContainer component={Paper}>
         <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
-                    Announcements
-              </Typography>
-        
+          Announcements
+        </Typography>
+
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow style={{ whiteSpace: 'nowrap' }}>
@@ -95,7 +95,7 @@ const AnnouncementTable = () => {
               <TableCell>Announcement Image</TableCell>
               <TableCell>Announcement Heading</TableCell>
               <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>Description</TableCell>
-              <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>Applying on</TableCell>
+              <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>Announcement Link</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -122,18 +122,23 @@ const AnnouncementTable = () => {
                 </TableCell>
                 <TableCell>{announcement.heading}</TableCell>
                 <TableCell
-                  sx={{ 
-                    WebkitBoxOrient: 'vertical', 
-                    WebkitLineClamp: 4, 
+                  sx={{
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 4,
                     wordBreak: 'break-word',
-                    maxWidth: '250px' 
+                    maxWidth: '250px'
                   }}
                 >
                   {announcement.description}
                 </TableCell>
                 <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
-                  {announcement.receiver.join(", ")}
+                  <a href={announcement.link} target="_blank" rel="noopener noreferrer"
+                    style={{ color: '#1c96c5', textDecoration: 'none' }}
+                  >
+                    {announcement.link}
+                  </a>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>

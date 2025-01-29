@@ -122,7 +122,7 @@ export function StockSaleBarGraph() {
       tooltip: {
         callbacks: {
           label: function (data) {
-            return new Intl.NumberFormat("en-US").format(data.raw);
+            return new Intl.NumberFormat("en-IN").format(data.raw);
           },
         },
       },
