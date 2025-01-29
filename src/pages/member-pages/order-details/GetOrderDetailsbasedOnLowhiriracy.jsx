@@ -215,7 +215,7 @@ const GetOrderDetailsbasedOnLowhiriracy = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.length === 0 ? (
+              {totalFilteredRows === 0 ? (
                 <TableRow>
                   <TableCell colSpan={isActionable ? 7 : 6} align="center">
                     No {title.toLowerCase()} available
