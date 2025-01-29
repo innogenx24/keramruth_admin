@@ -19,8 +19,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { LocationOn, Phone, Mail } from '@mui/icons-material';
 import { API_END_POINT_IMG } from "../../../../constants/ApiConstant";
-import moment from "moment";
-
+import { date } from "yup";
 const CustomerDashboard = () => {
   const { memberID } = useParams();  // Fetch memberID from URL
   const [customer, setCustomer] = useState(null);
@@ -75,13 +74,17 @@ const CustomerDashboard = () => {
           }));
           setRecentBookings(orderItems);
 
-          const formattedDate = new Date(lastOrder.createdAt).toLocaleDateString("en-GB", {
+          const dateParts = lastOrder.createdAt.split("-"); // Split "29-01-2025" into ["29", "01", "2025"]
+          const formattedDate = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "short",
             year: "numeric",
           }).replace(/ /g, "-");
+
+          console.log(formattedDate); // Output: "29-Jan-2025"
+
           setHistory(data.orders.map(order => ({
-            date: new Date(order.createdAt).toLocaleDateString(),
+            createdAt: order.createdAt,
             product: order.OrderItems.map(item => `${item.quantity} x ${item.product.name}`).join(", "),
           })));
 
@@ -258,7 +261,7 @@ const CustomerDashboard = () => {
             Recent Bookings
           </Typography>
 
-          <Typography style={{ textAlign: "center", fontSize: "15px" }}>
+          <Typography style={{ textAlign: "center", fontSize: "15px",marginTop:'4px' }}>
             {lastOrderDate} Last Booking
           </Typography>
 
@@ -337,6 +340,7 @@ const CustomerDashboard = () => {
             <Table>
               <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
                 <TableRow>
+                  <TableCell>No.</TableCell>
                   <TableCell sx={{ width: '11%' }}>Booking Date</TableCell>
                   <TableCell>Order Details</TableCell>
 
@@ -345,7 +349,10 @@ const CustomerDashboard = () => {
               <TableBody>
                 {currentHistory.map((entry, index) => (
                   <TableRow key={index}>
-                    <TableCell>{moment(entry.date).format("DD/MM/YYYY")}</TableCell>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                    <TableCell>
+                      {entry.createdAt}
+                    </TableCell>
                     <TableCell>{entry.product}</TableCell>
                   </TableRow>
                 ))}

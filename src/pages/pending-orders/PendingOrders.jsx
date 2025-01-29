@@ -13,6 +13,7 @@ import {
   Box,
   Snackbar,
   Alert,
+  TextField,
 } from '@mui/material';
 import axios from 'axios';
 import { API_END_POINT_IMG } from '../../constants/ApiConstant';
@@ -30,6 +31,8 @@ const OrderManagement = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('error');
+  const [pendingSearch, setPendingSearch] = useState('');
+  const [completedSearch, setCompletedSearch] = useState('');
 
   const API_URL = `${API_END_POINT}/orders/get-order-request`;
 
@@ -121,7 +124,13 @@ const OrderManagement = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+  const handleSearchPendingOrders = (e) => {
+    setPendingSearch(e.target.value);
+  };
 
+  const handleSearchCompletedOrders = (e) => {
+    setCompletedSearch(e.target.value);
+  };
 
   const renderPagination = (page, setPage, totalRows) => (
     <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
@@ -150,6 +159,22 @@ const OrderManagement = () => {
       <Typography variant="h6" >
         {title}
       </Typography>
+
+      <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
+        <TextField
+          label="Search Name or Order-Id"
+          variant="outlined"
+          value={title === "Pending Orders" ? pendingSearch : completedSearch}
+          onChange={title === "Pending Orders" ? handleSearchPendingOrders : handleSearchCompletedOrders}
+          sx={{
+            borderRadius: "20px",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "20px",
+            },
+          }}
+        />
+      </Box>
+
       <TableContainer component={Paper} sx={{ marginTop: 4, maxHeight: '500px', overflowY: 'auto' }}>
 
         <Table stickyHeader aria-label={`${title} Table`}>
@@ -174,7 +199,7 @@ const OrderManagement = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              orders
+              filterOrders(orders, title === "Pending Orders" ? pendingSearch : completedSearch)
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((order, index) => (
                   <React.Fragment key={order.orderId}>
@@ -326,6 +351,18 @@ const OrderManagement = () => {
 
     </div>
   );
+
+
+  const filterOrders = (orders, searchText) => {
+    const lowerCaseSearchText = searchText.toLowerCase();
+    return orders.filter((order) => {
+      const orderIdMatches = String(order.orderUniqueId).toLowerCase().includes(lowerCaseSearchText);
+      const customerNameMatches = order?.customer?.name?.toLowerCase().includes(lowerCaseSearchText);
+
+      return orderIdMatches || customerNameMatches;
+    });
+  };
+
 
   return (
     <div>

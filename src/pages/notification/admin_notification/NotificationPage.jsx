@@ -82,6 +82,9 @@ const NotificationPage = () => {
       case "feedback":
         navigate("/dashboard/feedback");
         break;
+      case "product":
+        navigate("/dashboard/members-products");
+        break;
       case "media_news":
         navigate("/dashboard/media-news");
         break;
@@ -285,7 +288,7 @@ const NotificationPage = () => {
                         {/* Announcement */}
                         {notification.detail?.type === "announcement" && (
                           <>
-                           
+
                             <Typography
                               variant="body2"
                               sx={{ fontFamily: "'Roboto', sans-serif", color: "#1c96c5" }}
@@ -308,7 +311,7 @@ const NotificationPage = () => {
                         {/* Document */}
                         {notification.detail?.type === "document" && (
                           <>
-                            
+
                             <Typography
                               variant="body2"
                               sx={{ fontFamily: "'Roboto', sans-serif', color: '#1c96c5" }}
@@ -342,7 +345,7 @@ const NotificationPage = () => {
                             >
                               Order ID: {notification.detail?.orderUniqueId}
                             </Typography>
-                            
+
                           </>
                         )}
                         {/* For Order Request */}
@@ -368,6 +371,28 @@ const NotificationPage = () => {
                             </Typography>
                           </>
                         )}
+
+                        {
+                          notification.detail?.type === "product" && (
+                            <>
+                              
+
+                              {notification.detail?.image && (
+                                <img
+                                src={`${API_END_POINT_IMG}/uploads/${notification.detail?.image}`}
+                                alt="Product Image"
+                                  style={{
+                                    width: "50px",
+                                    height: "50px",
+                                    objectFit: "cover",
+                                    marginTop: "10px",
+                                  }}
+                                />
+                              )}
+                            </>
+                          )
+                        }
+
 
                         {/* Timestamp */}
                         <Typography
