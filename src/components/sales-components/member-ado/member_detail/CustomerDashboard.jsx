@@ -19,6 +19,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { LocationOn, Phone, Mail } from '@mui/icons-material';
 import { API_END_POINT_IMG } from "../../../../constants/ApiConstant";
+import moment from "moment";
+
 const CustomerDashboard = () => {
   const { memberID } = useParams();  // Fetch memberID from URL
   const [customer, setCustomer] = useState(null);
@@ -343,13 +345,7 @@ const CustomerDashboard = () => {
               <TableBody>
                 {currentHistory.map((entry, index) => (
                   <TableRow key={index}>
-                    <TableCell>
-                      {new Date(entry.date).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                      })}
-                    </TableCell>
+                    <TableCell>{moment(entry.date).format("DD/MM/YYYY")}</TableCell>
                     <TableCell>{entry.product}</TableCell>
                   </TableRow>
                 ))}
