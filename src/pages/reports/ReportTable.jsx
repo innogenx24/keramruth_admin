@@ -154,30 +154,7 @@ export default function ReportTable() {
     fetchUserCounts();
   }, []);
 
-  useEffect(() => {
-    const fetchSalesDataForFilteredRoleAndArea = async () => {
-      const updatedRows = [];
-
-      for (const user of rows) {
-        if (
-          (roleFilter === "" || user.role_name === roleFilter) &&
-          (areaFilter === "" || user.city === areaFilter) &&
-          (nameFilter === "" || user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
-
-        ) {
-          const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
-          updatedRows.push({
-            ...user,
-            salesAchievement: salesAchievement || null,
-          });
-        }
-      }
-      setSalesData(updatedRows);
-    };
-
-    fetchSalesDataForFilteredRoleAndArea();
-  }, [roleFilter, areaFilter, nameFilter, rows]);
-
+  
   const handleFilterChange = () => {
     console.log("Filters applied with:", roleFilter, areaFilter);
     // Reset page to 0 (first page) when filters are applied
@@ -197,10 +174,6 @@ export default function ReportTable() {
       setPage(0);
     }
   };
-
-
-
-
 
   const renderPagination = (page, setPage, totalRows) => (
     <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>

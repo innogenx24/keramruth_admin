@@ -7,33 +7,34 @@ import {
 } from "../../../slices/master-slice/categort-slice/CategortGetSlice";
 
 function* fetchCategorys() {
-
-  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-
-  const API_URL = `${API_END_POINT}/category`;
-  
   try {
-    /** Retrieve the token from localStorage **/
+    /** Retrieve API endpoint & token **/
+    const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+    const API_URL = `${API_END_POINT}/category`;
     const token = localStorage.getItem("token");
-    if (!token) throw new Error("Token not found");
 
-    /** Make API request with the token in the Authorization header**/
+    /** Ensure token is available **/
+    if (!token) {
+      throw new Error("Token not found");
+    }
+
+    /** Make API request with Authorization header **/
     const response = yield call(axios.get, API_URL, {
       headers: {
+        "Content-Type": "application/json", // Ensure JSON compatibility
         Authorization: `Bearer ${token}`,
       },
     });
 
     /** Dispatch success action with the fetched data **/
     yield put(fetchCategorysSuccess(response.data));
-    // console.log("Fetched Products:", response.data);
   } catch (error) {
     /** Dispatch failure action with the error message **/
-    yield put(fetchCategorysFailure(error.message));
+    yield put(fetchCategorysFailure(error.response?.data?.message || error.message));
   }
 }
 
-/** Watcher saga to trigger fetchProducts on fetchProductsRequest action **/
+/** Watcher saga to trigger fetchCategorys on fetchCategorysRequest action **/
 function* watchFetchCategorys() {
   yield takeEvery(fetchCategorysRequest.type, fetchCategorys);
 }

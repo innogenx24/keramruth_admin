@@ -49,8 +49,21 @@ const MemberTable = () => {
   }, [dispatch]);
 
   const fetchEditRequests = async () => {
+    const token = localStorage.getItem('token');
+
     try {
-      const response = await fetch(`${API_END_POINT}/edit-requests`);
+      const response = await fetch(`${API_END_POINT}/edit-requests`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.success) {
@@ -76,6 +89,7 @@ const MemberTable = () => {
       setLoadingEditRequests(false);
     }
   };
+
 
   const combinedMembers = [
     ...(allmembers.ADOs || []),
@@ -187,7 +201,7 @@ const MemberTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedEditRequests.map((request,index) => {
+            {sortedEditRequests.map((request, index) => {
               // Skip rows if the status is not "Pending"
               if (request.status !== "Pending") return null;
 
