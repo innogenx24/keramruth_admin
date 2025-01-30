@@ -415,7 +415,6 @@ const EditMemberForm = () => {
                   name="role_id"
                   onChange={handleChange}
                 >
-                  <MenuItem value="">Select Role</MenuItem>
                   <MenuItem value="2">Area Development Officer (ADO)</MenuItem>
                   <MenuItem value="3">Master Distributor (MD)</MenuItem>
                   <MenuItem value="4">Super Distributor (SD)</MenuItem>
@@ -637,6 +636,8 @@ const EditMemberForm = () => {
 
 
               {(formData.role_id !== "6" && formData.role_id !== "2") && (selectedRole !== "6" && selectedRole !== "2") && (
+                 (String(selectedRole) !== "6" && String(selectedRole) !== "2") && (
+
                 <Grid item xs={12}>
                   <InputLabel>Club*</InputLabel>
                   <Select
@@ -653,9 +654,7 @@ const EditMemberForm = () => {
                     ))}
                   </Select>
                 </Grid>
-              )}
-
-
+              ))}
 
               {renderDropdownOptions()}
 

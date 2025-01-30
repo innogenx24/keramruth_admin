@@ -628,12 +628,21 @@ const MemberDetailTable = () => {
                     alignItems="center"
                     sx={{ p: 2, borderRadius: 2 }}
                   >
+
+                    {role_name !== 'Area Development Officer' && (
+                      <Typography>
+                        Club:{" "}
+                        <span style={{ color: "#1c96c5" }}>
+                          {club_name ? club_name : "N/A"}
+                        </span>
+                      </Typography>
+                    )}
                     <Typography>
-                      Club:{" "}
-                      <span style={{ color: "#1c96c5"}}>
-                        {club_name ? club_name : "N/A"}
-                      </span>
+
                     </Typography>
+
+
+
 
                     <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
                       Date of Joining: {new Date(createdAt).toLocaleDateString("en-GB", {
