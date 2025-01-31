@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import React, { useRef } from 'react';
 import {
   Table,
   TableBody,
@@ -86,6 +87,23 @@ const MemberDetailTable = () => {
   const { memberID, rolesID } = useParams();
 
   const [newRoleID, setNewRoleID] = useState(rolesID || null);
+
+
+  const isScrolling = useRef(false); // Flag to track scrolling
+
+  const handleMouseDown = () => {
+    isScrolling.current = false;
+  };
+
+  const handleMouseMove = () => {
+    isScrolling.current = true; // Set to true during scrolling
+  };
+
+  const handleMouseUp = () => {
+    setTimeout(() => {
+      isScrolling.current = false; // Reset after mouse interaction ends
+    }, 150);
+  };
 
 
   useEffect(() => {
@@ -628,12 +646,21 @@ const MemberDetailTable = () => {
                     alignItems="center"
                     sx={{ p: 2, borderRadius: 2 }}
                   >
+
+                    {role_name !== 'Area Development Officer' && (
+                      <Typography>
+                        Club:{" "}
+                        <span style={{ color: "#1c96c5" }}>
+                          {club_name ? club_name : "N/A"}
+                        </span>
+                      </Typography>
+                    )}
                     <Typography>
-                      Club:{" "}
-                      <span style={{ color: "#1c96c5"}}>
-                        {club_name ? club_name : "N/A"}
-                      </span>
+
                     </Typography>
+
+
+
 
                     <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
                       Date of Joining: {new Date(createdAt).toLocaleDateString("en-GB", {
@@ -697,7 +724,12 @@ const MemberDetailTable = () => {
 
 
 
-          <TableContainer component={Paper}>
+          <TableContainer
+            component={Paper}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+          >
             <Table stickyHeader aria-label="Member ADO Table">
               <TableHead>
                 <TableRow>
@@ -725,8 +757,12 @@ const MemberDetailTable = () => {
                     .map((member, index) => (
                       <TableRow
                         key={member.id}
-                        onClick={() => handleRowClick(member.id, member.role_id, member)}
-                        style={{ cursor: "pointer" }} // Optional: indicates clickable rows
+                        onClick={(e) => {
+                          if (!isScrolling.current) {
+                            handleRowClick(member.id, member.role_id);
+                          }
+                        }}
+                        style={{ cursor: 'pointer' }}
                       >
                         <TableCell>
                           {(currentPage - 1) * rowsPerPage + index + 1}

@@ -80,22 +80,24 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
-          <Box
-            sx={{
-              backgroundColor: growth >= 0 ? '#01C572' : '#FF4C4C',
-              borderRadius: '10px',
-              width: '35px',
-              height: '35px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fff',
-              mb: '1%',
-              background: istyle.background,
-            }}
-          >
-            {icon || <PeopleIcon sx={{ fontSize: '1.1rem' }} />}
-          </Box>
+        <Box
+  sx={{
+    backgroundColor: growth >= 0 ? '#01C572' : '#FF4C4C',
+    borderRadius: '10px',
+    width: '35px',
+    height: '35px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#fff',
+    mb: '1%',
+    background: istyle.background,
+    mt: roleName === 'Customer' ? '-10px' : '0px',
+  }}
+>
+  {icon || <PeopleIcon sx={{ fontSize: '1.1rem' }} />}
+</Box>
+
           {roleName !== 'Customer' && (
            <Box sx={{ display: 'flex', alignItems: 'center' }}>
              <Typography
@@ -119,6 +121,19 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
               </Typography>
             </Box>
           )}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+             <Typography
+                variant="body2"
+               
+              >
+              </Typography>
+              <Typography
+                variant="body2"
+               
+              >
+                
+              </Typography>
+            </Box>
 
         </Box>
       </Box>

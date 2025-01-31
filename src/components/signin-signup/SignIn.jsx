@@ -79,6 +79,31 @@ const SignIn = () => {
     setOpenSnackbar(false);
   };
 
+
+  useEffect(() => {
+    if (error) {
+      if (error === 'Mobile number not found') {
+        formik.setErrors({
+          mobile_number: 'Mobile number not found',
+          password: '', // Clear password error if mobile number is invalid
+        });
+      } else if (error === 'Invalid password') {
+        formik.setErrors({
+          mobile_number: '', // Clear mobile number error if password is invalid
+          password: 'Invalid password',
+        });
+      } else {
+        formik.setErrors({
+          mobile_number: 'Invalid mobile or password', // Default message for other errors
+          password: 'Invalid mobile or password',
+        });
+      }
+    }
+  }, [error]);
+
+
+
+
   return (
     <Container maxWidth={false}>
       <Grid container sx={{ height: '100%', width: '100%' }}>
@@ -155,8 +180,8 @@ const SignIn = () => {
               {/* Mobile Number Field */}
               <TextField
                 fullWidth
-                label="Mobile Number" // Change label to Mobile Number
-                name="mobile_number" // Change name to mobile_number
+                label="Mobile Number"
+                name="mobile_number"
                 type="text"
                 variant="outlined"
                 margin="normal"
@@ -165,7 +190,6 @@ const SignIn = () => {
                 helperText={formik.touched.mobile_number && formik.errors.mobile_number}
               />
 
-              {/* Password Field with Visibility Toggle */}
               <TextField
                 fullWidth
                 label="Password"
@@ -189,6 +213,7 @@ const SignIn = () => {
                   )
                 }}
               />
+
 
               {/* Remember Me Checkbox */}
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
@@ -228,22 +253,6 @@ const SignIn = () => {
                   </Button>
                 </Typography>
               </Box>
-
-
-              <Snackbar
-                open={openSnackbar}
-                message={error ? "Invalid Mobile Number or Password" : "Successfully login"}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                ContentProps={{
-                  sx: {
-                    backgroundColor: error ? 'red' : 'green',
-                    color: 'white',
-                    fontWeight: 'bold',
-                  },
-                }}
-              />
             </form>
           </Box>
         </Grid>

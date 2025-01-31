@@ -426,7 +426,7 @@ const NotificationPage = () => {
             No notifications available.
           </Typography>
         )}
-      </List>;
+      </List>
 
     </Container>
   );

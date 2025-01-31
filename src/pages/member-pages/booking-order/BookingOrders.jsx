@@ -457,11 +457,14 @@ const BookingOrders = () => {
                   </Box>
                   <Box>
                     <Typography variant="body2">
-                      ₹ {Number(product?.super1 || product?.originalPrice).toFixed(2)}
+                      ₹{" "}
+                      {Number(product?.super1 || product?.originalPrice)
+                        .toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">Qty: {item.quantity}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Qty: {item.quantity.toLocaleString("en-IN")}
+                    </Typography>
                   </Box>
-
                 </Box>
               );
             })}
@@ -497,14 +500,16 @@ const BookingOrders = () => {
                             0),
                         0
                       )
-                      .toFixed(2)}
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{2})+(?!\d))/g, ",")} {/* Indian digit format */}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Qty : {parseInt(orderItems.reduce((totalQty, item) => totalQty + item.quantity, 0), 10)}
+                    Qty:{" "}
+                    {orderItems
+                      .reduce((totalQty, item) => totalQty + item.quantity, 0)
+                      .toLocaleString("en-IN")}
                   </Typography>
-
                 </Box>
-
               </Box>
             </Box>
           </DialogContent>
