@@ -1,13 +1,13 @@
 // redux/sagas/authSaga.js
 import { call, put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
-import { 
-  signInSuccess, 
-  signInFailure, 
-  signUpSuccess, 
-  signUpFailure, 
-  signInRequest, 
-  signUpRequest 
+import {
+  signInSuccess,
+  signInFailure,
+  signUpSuccess,
+  signUpFailure,
+  signInRequest,
+  signUpRequest
 } from '../../slices/authSlice';
 import { ADMIN_API } from '../../../constants/ApiConstant';
 
@@ -18,11 +18,13 @@ function* signIn(action) {
   try {
     const response = yield call(axios.post, `${api2}${ADMIN_API.SIGNIN}`, action.payload);
     yield put(signInSuccess({ user: response.data.user, token: response.data.token }));
-    localStorage.setItem('token', response.data.token); 
+    localStorage.setItem('token', response.data.token);
   } catch (error) {
-    yield put(signInFailure(error.response.data.message || 'An error occurred'));
+    const errorMessage = error.response?.data?.error || 'An error occurred'; 
+    yield put(signInFailure(errorMessage));
   }
 }
+
 
 function* signUp(action) {
   try {
