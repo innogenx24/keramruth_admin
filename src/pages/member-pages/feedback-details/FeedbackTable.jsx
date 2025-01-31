@@ -12,6 +12,7 @@ import {
   Typography,
   Rating,
   Button,
+  TextField,
 } from "@mui/material";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -19,6 +20,8 @@ import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const FeedbackTable = () => {
   const [feedbacks, setFeedbacks] = useState([]);
+  const [filteredFeedbacks, setFilteredFeedbacks] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -46,8 +49,10 @@ const FeedbackTable = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+
         setFeedbacks(response.data.feedbacks);
-        setTotalRows(response.data.feedbacks.length); // Set the total rows for pagination
+        setFilteredFeedbacks(response.data.feedbacks);
+        setTotalRows(response.data.feedbacks.length);
       } catch (error) {
         console.error("Error fetching feedback data:", error);
       }
@@ -55,6 +60,20 @@ const FeedbackTable = () => {
 
     fetchFeedbacks();
   }, [token, userId, userRole]);
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    if (query) {
+      const filteredData = feedbacks.filter((feedback) =>
+        feedback.product.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredFeedbacks(filteredData);
+      setTotalRows(filteredData.length);
+    } else {
+      setFilteredFeedbacks(feedbacks);
+      setTotalRows(feedbacks.length);
+    }
+  };
 
   const renderPagination = () => (
     <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
@@ -78,13 +97,27 @@ const FeedbackTable = () => {
     </div>
   );
 
-  const currentFeedbacks = feedbacks.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+  const currentFeedbacks = filteredFeedbacks.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   return (
     <Box padding={2}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Feedbacks
       </Typography>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
+        <TextField
+          label="Search Product Name"
+          variant="outlined"
+          value={searchQuery}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          sx={{
+            borderRadius: "20px",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "20px",
+            },
+          }}
+        />
+      </Box>
 
       <TableContainer component={Paper}>
         <Table>
@@ -144,22 +177,21 @@ const FeedbackTable = () => {
                 <TableCell>
                   {new Intl.NumberFormat('en-IN').format(Number(feedback.order.total_order_quantity))}
                 </TableCell>
-                {/* <TableCell>
+                <TableCell>
+                  {/* <TableCell>
                   {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.order.createdAt))}
                 </TableCell>
                 <TableCell>
                   {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.feedback_date))}
                 </TableCell> */}
-                <TableCell>
                   Rs {new Intl.NumberFormat("en-IN").format(feedback.order.total_amount || 0)}
                 </TableCell>
-                <TableCell sx={{ WebkitBoxOrient: 'vertical',WebkitLineClamp: 2,wordBreak: 'break-word'}}>
+                <TableCell sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, wordBreak: 'break-word' }}>
                   {feedback.comments}
                 </TableCell>
                 <TableCell>
                   <Rating value={feedback.rating} precision={0.5} readOnly />
                 </TableCell>
-                
               </TableRow>
             ))}
           </TableBody>
