@@ -28,8 +28,8 @@ export function StockSaleBarGraph() {
     datasets: [],
   });
   const [totalTarget, setTotalTarget] = useState(0);
-  const [totalSold, setTotalSold] = useState(0);
-  const chartRef = useRef(null); // Reference for canvas
+  const [totalSoldStockAmount, setTotalSoldStockAmount] = useState(0);
+  const chartRef = useRef(null);
 
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
@@ -41,15 +41,19 @@ export function StockSaleBarGraph() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
         if (response.data.success) {
           const result = response.data.result;
           const sortedResult = result.sort((a, b) => new Date(a.month) - new Date(b.month));
           const months = sortedResult.map(item => item.month);
-          const soldStock = sortedResult.map(item => item.totalSoldStock);
+          const soldStockAmount = sortedResult.map(item => item.totalSoldStockAmount);
           const targetStock = sortedResult.map(item => item.totalTargetStock);
-          const unsoldStock = targetStock.map((stock, index) => stock - soldStock[index]);
 
-          // Create gradients
+          // Ensure unsold stock is never negative
+          const unsoldStock = targetStock.map((stock, index) =>
+            soldStockAmount[index] >= stock ? 0 : stock - soldStockAmount[index]
+          );
+
           const chart = chartRef.current;
           if (chart) {
             const ctx = chart.ctx;
@@ -65,13 +69,11 @@ export function StockSaleBarGraph() {
               labels: months,
               datasets: [
                 {
-                  label: "Sold Stock",
-                  data: soldStock,
-                  backgroundColor: greenGradient, // Green gradient
+                  label: "Sold Stock Amount",
+                  data: soldStockAmount,
+                  backgroundColor: greenGradient,
                   barThickness: 25,
                   borderRadius: {
-                    // topLeft: 10,
-                    // topRight: 10,
                     bottomLeft: 0,
                     bottomRight: 0,
                   },
@@ -79,7 +81,7 @@ export function StockSaleBarGraph() {
                 {
                   label: "Unsold Stock",
                   data: unsoldStock,
-                  backgroundColor: redGradient, // Red gradient
+                  backgroundColor: redGradient,
                   barThickness: 25,
                   borderRadius: {
                     topLeft: 4,
@@ -93,7 +95,7 @@ export function StockSaleBarGraph() {
           }
 
           setTotalTarget(targetStock.reduce((total, current) => total + current, 0));
-          setTotalSold(soldStock.reduce((total, current) => total + current, 0));
+          setTotalSoldStockAmount(soldStockAmount.reduce((total, current) => total + current, 0));
         }
       } catch (error) {
         console.error("Error fetching stock details:", error);
@@ -160,15 +162,16 @@ export function StockSaleBarGraph() {
     <div className="bar_chart_containr">
       <div className="slaes_dotimg">
         <div>Stock / Sales</div>
-        <div>Sold Stock: {new Intl.NumberFormat("en-IN").format(totalSold)}</div>
+        <div>Total Sold Stock Amount: {new Intl.NumberFormat("en-IN").format(totalSoldStockAmount)}</div>
       </div>
-
       <div className="bar_chart">
         <Bar data={chartData} options={options} ref={chartRef} />
       </div>
     </div>
   );
 }
+
+
 
 
 

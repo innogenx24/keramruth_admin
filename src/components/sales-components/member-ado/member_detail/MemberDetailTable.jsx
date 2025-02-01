@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 import {
   Table,
   TableBody,
@@ -31,31 +31,36 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { LocationOn, Phone, Mail } from '@mui/icons-material';
+import { LocationOn, Phone, Mail } from "@mui/icons-material";
 
 // import { fetchMembersRequest, clearMembers } from "../../../redux/slices/member-slice/MemberGetSlice";
 // import { deleteMemberRequest } from "../../../redux/slices/member-slice/MemberDeleteSlice";
 import AddMemberForm from ".././AddMemberForm";
 import EditMemberForm from ".././EditMemberForm";
 // import SearchBox from "../../../search-box/SearchBox";
-import axios from 'axios';
+import axios from "axios";
 import { HiMiniUserGroup } from "react-icons/hi2";
-import { clearMembers, fetchMembersRequest } from "../../../../redux/slices/member-slice/MemberGetSlice";
+import {
+  clearMembers,
+  fetchMembersRequest,
+} from "../../../../redux/slices/member-slice/MemberGetSlice";
 import SearchBox from "../../../../search-box/SearchBox";
-import DeleteButton from "../../../../assets/actions/DeleteButton.svg"
-import EditButton from "../../../../assets/actions/EditButton.svg"
+import DeleteButton from "../../../../assets/actions/DeleteButton.svg";
+import EditButton from "../../../../assets/actions/EditButton.svg";
 import { API_END_POINT_IMG } from "../../../../constants/ApiConstant";
 const MemberDetailTable = () => {
-
   const dispatch = useDispatch();
   // const { members } = useSelector((state) => state.members);
   // const membersList = Array.isArray(members) ? members : [members];
   const [membersList, setMembersList] = useState([]);
   const [salesData, setSalesData] = useState([0]);
   const [roleToUse, setRoleToUse] = useState(null); // Initialize roleToUse state
-  const { userId } = useMemo(() => JSON.parse(localStorage.getItem("user")) || {}, []);
+  const { userId } = useMemo(
+    () => JSON.parse(localStorage.getItem("user")) || {},
+    []
+  );
   const [loading, setLoading] = useState(false);
-  const [newMemberId, setNewMemberId] = useState(null);  // Add this line
+  const [newMemberId, setNewMemberId] = useState(null); // Add this line
 
   const [showTable, setShowTable] = useState(true);
   const [editMember, setEditMember] = useState(null);
@@ -88,7 +93,6 @@ const MemberDetailTable = () => {
 
   const [newRoleID, setNewRoleID] = useState(rolesID || null);
 
-
   const isScrolling = useRef(false); // Flag to track scrolling
 
   const handleMouseDown = () => {
@@ -105,21 +109,24 @@ const MemberDetailTable = () => {
     }, 150);
   };
 
-
   useEffect(() => {
     if (role) {
       const calculatedRoleToUse =
-        role === "Area Development Officer" ? 3 :
-          role === "Master Distributor" ? 4 :
-            role === "Super Distributor" ? 5 :
-              role === "Distributor" ? 6 :
-                role === "Customer" ? 7 : null;
+        role === "Area Development Officer"
+          ? 3
+          : role === "Master Distributor"
+          ? 4
+          : role === "Super Distributor"
+          ? 5
+          : role === "Distributor"
+          ? 6
+          : role === "Customer"
+          ? 7
+          : null;
 
       setRoleToUse(calculatedRoleToUse); // Set roleToUse here
     }
   }, [role]); // Ensure this effect runs on role change
-
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -133,7 +140,6 @@ const MemberDetailTable = () => {
 
   const role_Id = useMemo(() => {
     switch (role) {
-
       case "Master Distributor":
         return 4;
       case "Super Distributor":
@@ -142,7 +148,6 @@ const MemberDetailTable = () => {
         return 6;
       case "Customer":
         return 7;
-
     }
   }, [role]);
 
@@ -165,7 +170,9 @@ const MemberDetailTable = () => {
         return option.value !== "3" && option.value !== "4"; // Hide MD and SD for Distributor
       }
       if (rolesID === "6") {
-        return option.value !== "3" && option.value !== "4" && option.value !== "5"; // Hide MD, SD, and Distributor for Customer
+        return (
+          option.value !== "3" && option.value !== "4" && option.value !== "5"
+        ); // Hide MD, SD, and Distributor for Customer
       }
       if (rolesID === "7") {
         return option.value === "7"; // Only show role 7 (Customer) when it's selected
@@ -177,19 +184,14 @@ const MemberDetailTable = () => {
     setFilteredRoleOptions(filteredRoles);
   }, [rolesID]); // Re-run the effect whenever rolesID changes
 
-
-
   const handleChange = (value) => {
     setSelectedRole(value);
     setRoleToUse(value);
-
   };
 
   useEffect(() => {
     dispatch(clearMembers());
   }, [dispatch, selectedRole]);
-
-
 
   useEffect(() => {
     if (!roleToUse || !memberID) return;
@@ -200,7 +202,9 @@ const MemberDetailTable = () => {
 
     const fetchMembers = async () => {
       try {
-        const response = await axios.get(`${API_END_POINT}/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`);
+        const response = await axios.get(
+          `${API_END_POINT}/directMembers/users-by-ado?adoId=${memberID}&roleId=${roleToUse}`
+        );
         setMembersList(response.data || []); // Set new members list
       } catch (error) {
         console.error("Failed to fetch members:", error);
@@ -213,7 +217,6 @@ const MemberDetailTable = () => {
     fetchMembers();
   }, [roleToUse, memberID]);
 
-
   // Set roleToUse based on URL roleID or user role
   useEffect(() => {
     if (rolesID) {
@@ -221,7 +224,6 @@ const MemberDetailTable = () => {
       setRoleToUse(rolesID); // Set roleToUse for fetching members
     }
   }, [rolesID]);
-
 
   useEffect(() => {
     const fetchSalesAchievement = async () => {
@@ -241,10 +243,6 @@ const MemberDetailTable = () => {
     fetchSalesAchievement();
   }, [roleToUse, memberID]);
 
-
-
-
-
   const fetchUserCounts = async () => {
     try {
       // const response = await axios.get(`${API_END_POINT}/api/user/${memberID}`);
@@ -254,7 +252,6 @@ const MemberDetailTable = () => {
       console.error("Error fetching role counts:", error);
     }
   };
-
 
   useEffect(() => {
     if (memberID) {
@@ -266,12 +263,15 @@ const MemberDetailTable = () => {
     setSearchQuery(query);
   };
 
-  const filteredMembersList = membersList.filter((member) =>
-    member?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    member?.mobile_number.toLowerCase().includes(searchQuery.toLowerCase())  // Add search for mobile_number
+  const filteredMembersList = membersList.filter(
+    (member) =>
+      member?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member?.mobile_number.toLowerCase().includes(searchQuery.toLowerCase()) // Add search for mobile_number
   );
 
-  const sortedMembersList = [...filteredMembersList].sort((a, b) => b.id - a.id);
+  const sortedMembersList = [...filteredMembersList].sort(
+    (a, b) => b.id - a.id
+  );
 
   const handleAddMemberClick = () => {
     setEditMember(null);
@@ -297,7 +297,7 @@ const MemberDetailTable = () => {
   };
 
   const handleChangePage = (event, newPage) => {
-    setCurrentPage(newPage + 1);  // Fix page index starting from 1
+    setCurrentPage(newPage + 1); // Fix page index starting from 1
   };
 
   const currentMembers = sortedMembersList.slice(
@@ -307,7 +307,6 @@ const MemberDetailTable = () => {
 
   ///////
   const handleRowClick = (memberId, roleId, customerData) => {
-
     // if (roleId >= 6) {
     //   return;
     // }
@@ -323,11 +322,11 @@ const MemberDetailTable = () => {
     }
 
     const nextRoleId = roleId + 1;
-    setNewRoleID(nextRoleId)
+    setNewRoleID(nextRoleId);
     navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
   };
 
-  ///***** For Model *****////// 
+  ///***** For Model *****//////
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
@@ -337,17 +336,12 @@ const MemberDetailTable = () => {
     setSelectedCustomer(null);
   };
 
-
-
-
   ///**fetch memeber profile data */
   const [userProfile, setUserProfile] = useState(null);
   // const userId = 606; // Replace with the dynamic userId if needed
   const token = localStorage.getItem("token");
 
-
   useEffect(() => {
-
     if (!memberID) {
       console.warn("No memberID provided, skipping fetch.");
       return;
@@ -380,7 +374,6 @@ const MemberDetailTable = () => {
     return <Typography>Loading profile...</Typography>;
   }
 
-
   const {
     full_name,
     role_name,
@@ -399,11 +392,18 @@ const MemberDetailTable = () => {
     pincode,
   } = userProfile;
 
+  const newMemberID = memberID || newMemberId;
 
-
-  const newMemberID = memberID || newMemberId
-
-  const { MonthlyTargetAmount, achievementAmountPercent, StockAchievementPercent, AchievementAmount, pendingAmount, StockTarget, StockAchievement, PendingStockTarget } = salesData[0];
+  const {
+    MonthlyTargetAmount,
+    achievementAmountPercent,
+    StockAchievementPercent,
+    AchievementAmount,
+    pendingAmount,
+    StockTarget,
+    StockAchievement,
+    PendingStockTarget,
+  } = salesData[0];
 
   const renderPagination = (page, setPage, totalRows) => {
     const totalPages = Math.ceil(totalRows / rowsPerPage);
@@ -439,10 +439,9 @@ const MemberDetailTable = () => {
     );
   };
 
-
   return (
-    <Box sx={{ width: '104%' }}>
-      <Typography variant="h6" sx={{ color: '#989FA9' }}>
+    <Box sx={{ width: "104%" }}>
+      <Typography variant="h6" sx={{ color: "#989FA9" }}>
         All Members
       </Typography>
       {/* /////// */}
@@ -455,14 +454,15 @@ const MemberDetailTable = () => {
                 <Box
                   display="flex"
                   alignItems="center"
-                  sx={{ backgroundColor: "#F1F3FF", p: 2, borderRadius: 2, height: "100%" }}
+                  sx={{
+                    backgroundColor: "#F1F3FF",
+                    p: 2,
+                    borderRadius: 2,
+                    height: "100%",
+                  }}
                 >
                   <Avatar
-                    src={
-                      image
-                        ? `${imageBaseURL}${image}`
-                        : undefined
-                    }
+                    src={image ? `${imageBaseURL}${image}` : undefined}
                     alt={full_name || "N/A"}
                     sx={{ width: 80, height: 80, mr: 2 }}
                   />
@@ -474,29 +474,40 @@ const MemberDetailTable = () => {
                     <Typography variant="subtitle2" color="text.secondary">
                       Role: {role_name || "N/A"}
                     </Typography>
-                    <Typography variant="body2">
-                      <LocationOn style={{ marginRight: "8px", marginTop: "20px" }} />
-                      {street_name}, {building_no_name}, {city}, {district}, {state},{pincode}.
-                    </Typography>
 
-                    <Typography variant="body2">
-                      <Phone style={{ marginRight: "8px", marginTop: "10px" }} />
-                      {mobile_number}
-                    </Typography>
+                    {/* Address */}
+                    <Box display="flex" alignItems="center" mt={2}>
+                      <LocationOn style={{ marginRight: "8px" }} />
+                      <Typography variant="body2">
+                        {street_name}, {building_no_name}, {city}, {district},{" "}
+                        {state}, {pincode}.
+                      </Typography>
+                    </Box>
 
-                    <Typography variant="body2">
-                      <Mail style={{ marginRight: "8px", marginTop: "10px" }} />
-                      {email}
-                    </Typography>
+                    {/* Phone */}
+                    <Box display="flex" alignItems="center" mt={1}>
+                      <Phone style={{ marginRight: "8px" }} />
+                      <Typography variant="body2">{mobile_number}</Typography>
+                    </Box>
+
+                    {/* Email */}
+                    <Box display="flex" alignItems="center" mt={1}>
+                      <Mail style={{ marginRight: "8px" }} />
+                      <Typography variant="body2">{email}</Typography>
+                    </Box>
                   </Box>
                 </Box>
               </Grid>
 
               {/* Sales Section */}
               <Grid item xs={12} md={6}>
-                <Box display="flex" flexDirection="column" gap={3} height="100%">
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  gap={3}
+                  height="100%"
+                >
                   <Box display="flex" justifyContent="space-between" gap={2}>
-                    {/* Target Amount Section */}
                     {/* Target Amount Section */}
                     <Box
                       display="flex"
@@ -529,8 +540,8 @@ const MemberDetailTable = () => {
                               achievementAmountPercent < 50
                                 ? "red"
                                 : achievementAmountPercent < 75
-                                  ? "orange"
-                                  : "green",
+                                ? "orange"
+                                : "green",
                           }}
                         />
                         {/* Centered Text */}
@@ -545,9 +556,15 @@ const MemberDetailTable = () => {
                           <Typography
                             variant="h6"
                             fontWeight="bold"
-                            sx={{ fontSize: "0.8rem !important", color: "primary" }}
+                            sx={{
+                              fontSize: "0.8rem !important",
+                              color: "primary",
+                            }}
                           >
-                            {(parseFloat(achievementAmountPercent) || 0).toFixed(2)}%
+                            {(
+                              parseFloat(achievementAmountPercent) || 0
+                            ).toFixed(2)}
+                            %
                           </Typography>
                         </Box>
                       </Box>
@@ -557,21 +574,37 @@ const MemberDetailTable = () => {
                           Target Amount
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(MonthlyTargetAmount) || 0)}
+                          Rs.{" "}
+                          {new Intl.NumberFormat("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(parseFloat(MonthlyTargetAmount) || 0)}
                         </Typography>
 
-                        <Typography variant="body2" sx={{ color: "green", fontWeight: "bold" }}>
-                          Achieved: Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(AchievementAmount) || 0)}
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "green", fontWeight: "bold" }}
+                        >
+                          Achieved: Rs.{" "}
+                          {new Intl.NumberFormat("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(parseFloat(AchievementAmount) || 0)}
                         </Typography>
 
-                        <Typography variant="body2" color="error" fontWeight="bold">
-                          Pending: Rs. {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(pendingAmount) || 0)}
+                        <Typography
+                          variant="body2"
+                          color="error"
+                          fontWeight="bold"
+                        >
+                          Pending: Rs.{" "}
+                          {new Intl.NumberFormat("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(parseFloat(pendingAmount) || 0)}
                         </Typography>
-
                       </Box>
                     </Box>
-
-
 
                     {/* Sales Target Section */}
                     <Box
@@ -603,8 +636,8 @@ const MemberDetailTable = () => {
                               StockAchievementPercent < 50
                                 ? "red"
                                 : StockAchievementPercent < 75
-                                  ? "orange"
-                                  : "green",
+                                ? "orange"
+                                : "green",
                           }}
                         />
                         <Box
@@ -613,8 +646,18 @@ const MemberDetailTable = () => {
                           left="50%"
                           sx={{ transform: "translate(-50%, -50%)" }}
                         >
-                          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: "1.08rem !important", color: "primary" }}>
-                            {(parseFloat(StockAchievementPercent) || 0).toFixed(2)}% {/* Safely format */}
+                          <Typography
+                            variant="h6"
+                            fontWeight="bold"
+                            sx={{
+                              fontSize: "1.08rem !important",
+                              color: "primary",
+                            }}
+                          >
+                            {(parseFloat(StockAchievementPercent) || 0).toFixed(
+                              2
+                            )}
+                            % {/* Safely format */}
                           </Typography>
                         </Box>
                       </Box>
@@ -623,21 +666,37 @@ const MemberDetailTable = () => {
                           Sales Stock
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Stock: {new Intl.NumberFormat('en-IN').format(parseFloat(StockTarget) || 0)}
+                          Stock:{" "}
+                          {new Intl.NumberFormat("en-IN").format(
+                            parseFloat(StockTarget) || 0
+                          )}
                         </Typography>
 
-                        <Typography variant="body2" sx={{ color: "green", fontWeight: "bold" }}>
-                          Stock Achieved: {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(StockAchievement) || 0)}
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "green", fontWeight: "bold" }}
+                        >
+                          Stock Achieved:{" "}
+                          {new Intl.NumberFormat("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(parseFloat(StockAchievement) || 0)}
                         </Typography>
 
-                        <Typography variant="body2" color="error" fontWeight="bold">
-                          Stock Pending: {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(parseFloat(PendingStockTarget) || 0)}
+                        <Typography
+                          variant="body2"
+                          color="error"
+                          fontWeight="bold"
+                        >
+                          Stock Pending:{" "}
+                          {new Intl.NumberFormat("en-IN", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }).format(parseFloat(PendingStockTarget) || 0)}
                         </Typography>
-
                       </Box>
                     </Box>
                   </Box>
-
 
                   {/* Club Section */}
                   <Box
@@ -646,8 +705,7 @@ const MemberDetailTable = () => {
                     alignItems="center"
                     sx={{ p: 2, borderRadius: 2 }}
                   >
-
-                    {role_name !== 'Area Development Officer' && (
+                    {role_name !== "Area Development Officer" && (
                       <Typography>
                         Club:{" "}
                         <span style={{ color: "#1c96c5" }}>
@@ -655,20 +713,18 @@ const MemberDetailTable = () => {
                         </span>
                       </Typography>
                     )}
-                    <Typography>
+                    <Typography></Typography>
 
-                    </Typography>
-
-
-
-
-                    <Typography color="text.secondary" style={{ color: "#1c96c5" }}>
-                      Date of Joining: {new Date(createdAt).toLocaleDateString("en-GB", {
+                    <Typography
+                      color="text.secondary"
+                      style={{ color: "#1c96c5" }}
+                    >
+                      Date of Joining:{" "}
+                      {new Date(createdAt).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
                         year: "2-digit",
                       })}{" "}
-
                     </Typography>
                   </Box>
                 </Box>
@@ -678,27 +734,41 @@ const MemberDetailTable = () => {
         </Card>
       </Box>
 
-
       {showTable ? (
         <>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <Box sx={{ width: '100%', marginTop: 2 }}>
-              <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <Box sx={{ width: "100%", marginTop: 2 }}>
+              <SearchBox
+                value={searchQuery}
+                onSearchChange={handleSearchChange}
+              />
             </Box>
             <Box>
               <Box sx={{ marginBottom: "20px" }}>
                 <InputLabel id="role-dropdown-label">Select Role</InputLabel>
-
               </Box>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
                 {/* Role Dropdown */}
-                <FormControl sx={{ width: '100%' }}>
+                <FormControl sx={{ width: "100%" }}>
                   <Select
                     labelId="role-dropdown-label"
                     value={selectedRole}
                     onChange={(e) => handleChange(e.target.value)}
-                    sx={{ borderRadius: '20px' }}
+                    sx={{ borderRadius: "20px" }}
                   >
                     {filteredRoleOptions.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -709,20 +779,27 @@ const MemberDetailTable = () => {
                 </FormControl>
 
                 {/* Role Count */}
-                <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                    <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
-                    {selectedRole === '3' && roleCounts.mdCount}
-                    {selectedRole === '4' && roleCounts.sdCount}
-                    {selectedRole === '5' && roleCounts.distributorCount}
-                    {selectedRole === '6' && roleCounts.customerCount}
+                <Box
+                  sx={{ display: "flex", alignItems: "center", marginTop: 2 }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    <HiMiniUserGroup size={30} style={{ marginRight: "8px" }} />
+                    {selectedRole === "3" && roleCounts.mdCount}
+                    {selectedRole === "4" && roleCounts.sdCount}
+                    {selectedRole === "5" && roleCounts.distributorCount}
+                    {selectedRole === "6" && roleCounts.customerCount}
                   </Typography>
                 </Box>
               </Box>
             </Box>
           </Box>
-
-
 
           <TableContainer
             component={Paper}
@@ -734,26 +811,47 @@ const MemberDetailTable = () => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
-                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Username</TableCell>
-                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Full Name</TableCell>
-                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Mobile No.</TableCell>
-                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Role</TableCell>
-                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Email</TableCell>
-                  {role === 'Admin' && <TableCell sx={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>}
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
+                    Username
+                  </TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
+                    Full Name
+                  </TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
+                    Mobile No.
+                  </TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
+                    Role
+                  </TableCell>
+                  <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
+                    Email
+                  </TableCell>
+                  {role === "Admin" && (
+                    <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
+                      Action
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center">Loading...</TableCell>
+                    <TableCell colSpan={7} align="center">
+                      Loading...
+                    </TableCell>
                   </TableRow>
                 ) : membersList.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center">No Data Available</TableCell>
+                    <TableCell colSpan={7} align="center">
+                      No Data Available
+                    </TableCell>
                   </TableRow>
                 ) : (
                   filteredMembersList
-                    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+                    .slice(
+                      (currentPage - 1) * rowsPerPage,
+                      currentPage * rowsPerPage
+                    )
                     .map((member, index) => (
                       <TableRow
                         key={member.id}
@@ -762,17 +860,20 @@ const MemberDetailTable = () => {
                             handleRowClick(member.id, member.role_id);
                           }
                         }}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                       >
                         <TableCell>
                           {(currentPage - 1) * rowsPerPage + index + 1}
                         </TableCell>
                         <TableCell>
-                          <div style={{ display: "flex", alignItems: "center" }}>
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
                             <Avatar
-                              src={member?.image
-                                ? `${imageBaseURL}${member.image}`
-                                : "/path/to/default-image.jpg"
+                              src={
+                                member?.image
+                                  ? `${imageBaseURL}${member.image}`
+                                  : "/path/to/default-image.jpg"
                               }
                             />
                             <Typography style={{ marginLeft: "10px" }}>
@@ -787,7 +888,6 @@ const MemberDetailTable = () => {
                         {role === "Admin" && (
                           <TableCell>
                             <div style={{ display: "flex" }}>
-
                               <IconButton
                                 color="secondary"
                                 onClick={(event) => {
@@ -795,7 +895,6 @@ const MemberDetailTable = () => {
                                   handleDeleteOpen(member);
                                 }}
                                 style={{ marginRight: "5px" }}
-
                               >
                                 <img
                                   src={DeleteButton}
@@ -838,10 +937,12 @@ const MemberDetailTable = () => {
           </TableContainer>
 
           <div style={{ marginTop: "10px" }}>
-            {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
+            {renderPagination(
+              currentPage,
+              setCurrentPage,
+              sortedMembersList.length
+            )}
           </div>
-
-
         </>
       ) : editMember ? (
         <EditMemberForm member={editMember} />
@@ -865,12 +966,8 @@ const MemberDetailTable = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-
     </Box>
   );
 };
 
-
-export default MemberDetailTable
+export default MemberDetailTable;
