@@ -52,6 +52,8 @@ import NewLogo from "../../assets/logo/NewLogo.png";
 import DishaImgLogo from "../../assets/logo/DishaImgLogo.png";
 import CommonLogos from "../../assets/logo/CommonLogos.png";
 import { PiNewspaperClippingFill } from "react-icons/pi";
+import { MdAutoDelete } from "react-icons/md";
+import { RiDeleteBin3Fill } from "react-icons/ri";
 
 // Drawer width
 // const drawerWidth = 240;
@@ -417,6 +419,12 @@ export default function AdminDashboard() {
           path: "/dashboard/edit-request",
           default: true,
           icon: <EditNoteIcon />,
+        },
+        {
+          text: "Delete Request",
+          path: "/dashboard/delete-request",
+          default: true,
+          icon: <RiDeleteBin3Fill />,
         },
       ],
     },
