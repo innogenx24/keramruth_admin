@@ -27,11 +27,10 @@ const NotificationPage = () => {
   const loginUserID = loginUser?.id || null;
   const loginUserRole = loginUser?.role;
 
-
-
-
   // Redux state
-  const { notifications, loading, error } = useSelector((state) => state.notifications);
+  const { notifications, loading, error } = useSelector(
+    (state) => state.notifications
+  );
 
   // Fetch notifications on component mount
   useEffect(() => {
@@ -83,7 +82,12 @@ const NotificationPage = () => {
         navigate("/dashboard/feedback");
         break;
       case "product":
-        navigate("/dashboard/members-products");
+        const loginUserForProduct = JSON.parse(localStorage.getItem("user"));
+        if (loginUserForProduct?.role === "Customer") {
+          navigate("/dashboard/book-orders");
+        } else {
+          navigate("/dashboard/members-products");
+        }
         break;
       case "media_news":
         navigate("/dashboard/media-news");
@@ -202,7 +206,8 @@ const NotificationPage = () => {
                       sx={{
                         ...styles.avatar,
                         backgroundColor:
-                          notification.detail?.type === "profile_edit_request_rejected"
+                          notification.detail?.type ===
+                          "profile_edit_request_rejected"
                             ? "red"
                             : "green",
                       }}
@@ -219,32 +224,45 @@ const NotificationPage = () => {
                     primary={
                       <Typography
                         variant="h6"
-                        sx={{ fontWeight: 500, fontFamily: "'Roboto', sans-serif", color: "#444" }}
+                        sx={{
+                          fontWeight: 500,
+                          fontFamily: "'Roboto', sans-serif",
+                          color: "#444",
+                        }}
                       >
                         {notification.message}
                       </Typography>
                     }
                     secondary={
                       <>
-
                         {/* For Profile Edit Request */}
-                        {notification.detail?.type === "profile_edite_request" && (
+                        {notification.detail?.type ===
+                          "profile_edite_request" && (
                           <>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
                               Role: {notification.detail?.role}
                             </Typography>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
                               User: {notification.detail?.user_name}
                             </Typography>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
                               Reason: {notification.detail?.request_reason}
                             </Typography>
@@ -256,7 +274,10 @@ const NotificationPage = () => {
                           <>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
                               Feedback from: {notification.detail?.user_name}
                             </Typography>
@@ -268,7 +289,10 @@ const NotificationPage = () => {
                           <>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#1c96c5" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#1c96c5",
+                              }}
                             >
                               <a
                                 href={notification.detail?.link}
@@ -288,10 +312,12 @@ const NotificationPage = () => {
                         {/* Announcement */}
                         {notification.detail?.type === "announcement" && (
                           <>
-
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#1c96c5" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#1c96c5",
+                              }}
                             >
                               <a
                                 href={notification.detail?.link}
@@ -311,10 +337,12 @@ const NotificationPage = () => {
                         {/* Document */}
                         {notification.detail?.type === "document" && (
                           <>
-
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif', color: '#1c96c5" }}
+                              sx={{
+                                fontFamily:
+                                  "'Roboto', sans-serif', color: '#1c96c5",
+                              }}
                             >
                               <a
                                 href={notification.detail?.link}
@@ -335,17 +363,23 @@ const NotificationPage = () => {
                           <>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
-                              {notification.detail?.role} | Status: {notification.detail?.status}
+                              {notification.detail?.role} | Status:{" "}
+                              {notification.detail?.status}
                             </Typography>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
                               Order ID: {notification.detail?.orderUniqueId}
                             </Typography>
-
                           </>
                         )}
                         {/* For Order Request */}
@@ -353,46 +387,51 @@ const NotificationPage = () => {
                           <>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
-                              {notification.detail?.role} | Status: {notification.detail?.status}
+                              {notification.detail?.role} | Status:{" "}
+                              {notification.detail?.status}
                             </Typography>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
                               Order ID: {notification.detail?.orderUniqueId}
                             </Typography>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: "'Roboto', sans-serif", color: "#666" }}
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
                             >
                               User: {notification.detail?.user_name}
                             </Typography>
                           </>
                         )}
 
-                        {
-                          notification.detail?.type === "product" && (
-                            <>
-                              
-
-                              {notification.detail?.image && (
-                                <img
+                        {notification.detail?.type === "product" && (
+                          <>
+                            {notification.detail?.image && (
+                              <img
                                 src={`${API_END_POINT_IMG}/uploads/${notification.detail?.image}`}
                                 alt="Product Image"
-                                  style={{
-                                    width: "50px",
-                                    height: "50px",
-                                    objectFit: "cover",
-                                    marginTop: "10px",
-                                  }}
-                                />
-                              )}
-                            </>
-                          )
-                        }
-
+                                style={{
+                                  width: "50px",
+                                  height: "50px",
+                                  objectFit: "cover",
+                                  marginTop: "10px",
+                                }}
+                              />
+                            )}
+                          </>
+                        )}
 
                         {/* Timestamp */}
                         <Typography
@@ -404,7 +443,9 @@ const NotificationPage = () => {
                             mt: 0.5,
                           }}
                         >
-                          {new Date(notification.created_at).toLocaleDateString("en-GB")}
+                          {new Date(notification.created_at).toLocaleDateString(
+                            "en-GB"
+                          )}
                         </Typography>
                       </>
                     }
@@ -427,7 +468,6 @@ const NotificationPage = () => {
           </Typography>
         )}
       </List>
-
     </Container>
   );
 };
