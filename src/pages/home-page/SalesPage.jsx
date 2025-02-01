@@ -70,13 +70,13 @@ const SalesPage = () => {
         {/* Left Side: Sales Cards */}
         <Grid item xs={12} md={12} lg={6}>
 
-        <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
+        {/* <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
 
     <Button
      variant="contained" >
       Filter
     </Button>
-  </Grid>
+  </Grid> */}
           <Grid container spacing={3}>
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
