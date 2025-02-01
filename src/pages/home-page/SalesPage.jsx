@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import SalesCard from '../../components/homepage-component/total-sale-widget/SalesCard';
 import { StockSaleBarGraph } from '../../components/homepage-component/stockSale-graph/StockSaleBarGraph';
 import DonutChart from '../../components/homepage-component/selling-products-chart/DonutChart';
@@ -69,6 +69,14 @@ const SalesPage = () => {
       <Grid container spacing={3}>
         {/* Left Side: Sales Cards */}
         <Grid item xs={12} md={12} lg={6}>
+
+        <Grid container justifyContent="flex-end" sx={{ mb: 2 }}>
+
+    <Button
+     variant="contained" >
+      Filter
+    </Button>
+  </Grid>
           <Grid container spacing={3}>
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
