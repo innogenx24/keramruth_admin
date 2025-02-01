@@ -20,12 +20,14 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import DoneIcon from '@mui/icons-material/Done';
+import DoneIcon from "@mui/icons-material/Done";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 const MemberTable = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize the navigate hook
-  const { allmembers, loading, error } = useSelector((state) => state.allmembers);
+  const { allmembers, loading, error } = useSelector(
+    (state) => state.allmembers
+  );
   const [editRequests, setEditRequests] = useState([]);
   const [loadingEditRequests, setLoadingEditRequests] = useState(true);
   const [editRequestError, setEditRequestError] = useState(null);
@@ -39,7 +41,9 @@ const MemberTable = () => {
 
   // Sort data by updated_at in descending order (initial sort)
   useEffect(() => {
-    const sortedRequests = [...editRequests].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    const sortedRequests = [...editRequests].sort(
+      (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+    );
     setSortedEditRequests(sortedRequests);
   }, [editRequests]);
 
@@ -49,13 +53,13 @@ const MemberTable = () => {
   }, [dispatch]);
 
   const fetchEditRequests = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     try {
       const response = await fetch(`${API_END_POINT}/edit-requests`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -69,15 +73,20 @@ const MemberTable = () => {
       if (data.success) {
         const mostRecentRequests = data.data.reduce((acc, request) => {
           const existingRequest = acc[request.user_id];
-          if (!existingRequest || new Date(request.updated_at) > new Date(existingRequest.updated_at)) {
+          if (
+            !existingRequest ||
+            new Date(request.updated_at) > new Date(existingRequest.updated_at)
+          ) {
             acc[request.user_id] = request;
           }
           return acc;
         }, {});
 
-        const sortedRequests = Object.values(mostRecentRequests).sort((a, b) => {
-          return new Date(b.updated_at) - new Date(a.updated_at);
-        });
+        const sortedRequests = Object.values(mostRecentRequests).sort(
+          (a, b) => {
+            return new Date(b.updated_at) - new Date(a.updated_at);
+          }
+        );
 
         setEditRequests(sortedRequests);
       } else {
@@ -90,7 +99,6 @@ const MemberTable = () => {
     }
   };
 
-
   const combinedMembers = [
     ...(allmembers.ADOs || []),
     ...(allmembers.MDs || []),
@@ -99,7 +107,9 @@ const MemberTable = () => {
   ];
 
   const handleApprove = async (memberId) => {
-    const requestToApprove = editRequests.find((request) => request.user_id === memberId);
+    const requestToApprove = editRequests.find(
+      (request) => request.user_id === memberId
+    );
 
     if (!requestToApprove) {
       console.error("Request not found:", memberId);
@@ -117,11 +127,14 @@ const MemberTable = () => {
 
     try {
       // const response = await fetch(`${API_END_POINT}/api/member-update/update/${memberId}`, {
-      const response = await fetch(`${API_END_POINT}/member-update/update/${memberId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
-      });
+      const response = await fetch(
+        `${API_END_POINT}/member-update/update/${memberId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedData),
+        }
+      );
 
       const data = await response.json();
 
@@ -146,12 +159,15 @@ const MemberTable = () => {
 
   const handleReject = async (requestId) => {
     try {
-      const response = await fetch(`${API_END_POINT}/edit-requests/reject/${requestId}`, {
-        method: "DELETE",  // Change from POST to DELETE to match your server-side API
-      });
+      const response = await fetch(
+        `${API_END_POINT}/edit-requests/reject/${requestId}`,
+        {
+          method: "DELETE", // Change from POST to DELETE to match your server-side API
+        }
+      );
       const data = await response.json();
       if (data.success) {
-        fetchEditRequests();  // Fetch the updated list after the request is deleted
+        fetchEditRequests(); // Fetch the updated list after the request is deleted
       } else {
         console.error("Failed to reject request:", data.message);
       }
@@ -159,7 +175,6 @@ const MemberTable = () => {
       console.error("Error rejecting request:", error);
     }
   };
-
 
   const handleImageClick = (imageUrl) => {
     setImageModal({ open: true, imageUrl });
@@ -176,7 +191,11 @@ const MemberTable = () => {
 
   if (loading || loadingEditRequests) return <CircularProgress />;
   if (error) return <div>Error: {error}</div>;
-  if (editRequestError) return <div>Error fetching edit requests: {editRequestError}</div>;
+  if (editRequestError)
+    return <div>Error fetching edit requests: {editRequestError}</div>;
+
+  let currentIndex = 0;
+  let completedIndex = 0;
 
   return (
     <>
@@ -186,7 +205,7 @@ const MemberTable = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow style={{ whiteSpace: 'nowrap' }}>
+            <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>
@@ -206,13 +225,16 @@ const MemberTable = () => {
               if (request.status !== "Pending") return null;
 
               // Find the corresponding member from combinedMembers
-              const member = combinedMembers.find((member) => member.id === request.user_id);
+              const member = combinedMembers.find(
+                (member) => member.id === request.user_id
+              );
 
               // If member is not found or if the member's approval is pending, skip rendering
               if (!member || member.approved === "Pending") return null;
 
               // Check if the existing and new data are the same
-              const isMobileSame = member?.mobile_number === request.new_mobile_number;
+              const isMobileSame =
+                member?.mobile_number === request.new_mobile_number;
               const isEmailSame = member?.email === request.new_email_id;
               const isAddressSame =
                 member?.street_name === request.new_address.street &&
@@ -222,16 +244,19 @@ const MemberTable = () => {
 
               // Only display the row if any of the mobile number, email, or address fields differ
               if (!isMobileSame || !isEmailSame || !isAddressSame) {
+                currentIndex++;
                 return (
                   <TableRow key={request.id}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{currentIndex}</TableCell>
 
                     <TableCell>
                       {request.image ? (
                         <img
                           src={`${imageBaseURL}${request.image}`}
                           style={{ width: 50, height: 50, cursor: "pointer" }}
-                          onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
+                          onClick={() =>
+                            handleImageClick(`${imageBaseURL}${request.image}`)
+                          }
                         />
                       ) : (
                         "No Image"
@@ -239,9 +264,13 @@ const MemberTable = () => {
                     </TableCell>
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{member.role_name}</TableCell>
-                    <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(member.createdAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>{member.mobile_number}</TableCell>
-                    <TableCell>{isMobileSame ? "-" : request.new_mobile_number}</TableCell>
+                    <TableCell>
+                      {isMobileSame ? "-" : request.new_mobile_number}
+                    </TableCell>
                     <TableCell
                       sx={{
                         WebkitBoxOrient: "vertical",
@@ -262,7 +291,6 @@ const MemberTable = () => {
                         }}
                       >
                         <div style={{ display: "flex", gap: "5px" }}>
-
                           <IconButton
                             style={{
                               width: "45px",
@@ -294,9 +322,6 @@ const MemberTable = () => {
                             <DoneIcon />
                           </IconButton>
                         </div>
-
-
-
                       </div>
                     </TableCell>
                   </TableRow>
@@ -307,8 +332,6 @@ const MemberTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
-
 
       {/* Spacer */}
       <div style={{ margin: "20px 0" }} />
@@ -321,7 +344,7 @@ const MemberTable = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow style={{ whiteSpace: 'nowrap' }}>
+            <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
 
               <TableCell>ID Proof</TableCell>
@@ -339,20 +362,28 @@ const MemberTable = () => {
           </TableHead>
           <TableBody>
             {sortedEditRequests.map((request, index) => {
-              const member = combinedMembers.find((member) => member.id === request.user_id);
+              const member = combinedMembers.find(
+                (member) => member.id === request.user_id
+              );
               if (!member) return null;
 
               // Only show completed requests (Accepted / Rejected)
-              if (request.status === "Completed" || request.status === "Rejected") {
+              if (
+                request.status === "Completed" ||
+                request.status === "Rejected"
+              ) {
+                completedIndex++;
                 return (
                   <TableRow key={request.id}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{completedIndex}</TableCell>
                     <TableCell>
                       {request.image ? (
                         <img
                           src={`${imageBaseURL}${request.image}`}
                           style={{ width: 50, height: 50, cursor: "pointer" }}
-                          onClick={() => handleImageClick(`${imageBaseURL}${request.image}`)}
+                          onClick={() =>
+                            handleImageClick(`${imageBaseURL}${request.image}`)
+                          }
                         />
                       ) : (
                         "No Image"
@@ -360,16 +391,18 @@ const MemberTable = () => {
                     </TableCell>
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{member.role_name}</TableCell>
-                    <TableCell>{new Date(member.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(member.createdAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>{request.new_mobile_number}</TableCell>
 
-
-                    <TableCell sx={{
-
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: 2,
-                      wordBreak: 'break-word',
-                    }}>
+                    <TableCell
+                      sx={{
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 2,
+                        wordBreak: "break-word",
+                      }}
+                    >
                       {request.new_email_id}
                     </TableCell>
                     <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
@@ -377,7 +410,12 @@ const MemberTable = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: request.status === "Completed" ? "green" : request.status === "Rejected" ? "red" : "black",
+                          color:
+                            request.status === "Completed"
+                              ? "green"
+                              : request.status === "Rejected"
+                              ? "red"
+                              : "black",
                         }}
                       >
                         {request.status}
@@ -416,8 +454,16 @@ const MemberTable = () => {
       </Modal>
 
       {/* Snackbar for success message */}
-      <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           {successMessage}
         </Alert>
       </Snackbar>
