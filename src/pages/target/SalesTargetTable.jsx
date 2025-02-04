@@ -70,8 +70,8 @@ const SalesTargetTable = () => {
             <TableRow>
               <TableCell >No.</TableCell>
               <TableCell>Role Name</TableCell>
-              <TableCell>Sales Target</TableCell>
-              <TableCell>Stock Target</TableCell>
+              <TableCell>Sales Target (Rs.)</TableCell>
+              <TableCell>Stock Target (Nos.)</TableCell>
               <TableCell>Duration</TableCell>
               <TableCell>Edit</TableCell>
             </TableRow>

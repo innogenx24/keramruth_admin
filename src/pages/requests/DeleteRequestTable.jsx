@@ -14,26 +14,27 @@ import {
   Avatar,
   TextField,
   Box,
+  Button,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import DoneIcon from "@mui/icons-material/Done";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 
 const MemberTable = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const [deleteRequests, setDeleteRequests] = useState([]);
-  const [pendingFilteredRequests, setPendingFilteredRequests] = useState([]); // Separate state for pending requests filter
-  const [deletedFilteredRequests, setDeletedFilteredRequests] = useState([]); // Separate state for deleted/rejected requests filter
-  const [pendingSearchQuery, setPendingSearchQuery] = useState(""); // For Pending Search
-  const [deletedSearchQuery, setDeletedSearchQuery] = useState(""); // For Deleted/Rejected Search
+  const [pendingFilteredRequests, setPendingFilteredRequests] = useState([]);
+  const [deletedFilteredRequests, setDeletedFilteredRequests] = useState([]);
+  const [pendingSearchQuery, setPendingSearchQuery] = useState("");
+  const [deletedSearchQuery, setDeletedSearchQuery] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  const [pendingPage, setPendingPage] = useState(0);
+  const [deletedPage, setDeletedPage] = useState(0);
+  const rowsPerPage = 10; 
 
   useEffect(() => {
     fetchDeleteRequests();
@@ -41,7 +42,6 @@ const MemberTable = () => {
 
   const fetchDeleteRequests = async () => {
     const token = localStorage.getItem("token");
-
     try {
       const response = await fetch(`${API_END_POINT}/delete_request/user`, {
         method: "GET",
@@ -143,11 +143,53 @@ const MemberTable = () => {
     setDeletedFilteredRequests(filteredData);
   };
 
-  let currentIndex = 0;
-  let completedIndex = 0;
+  // Pagination controls
+  const renderPagination = (page, setPage, filteredRequests) => {
+    const totalFilteredRows = filteredRequests.length;
+    const canGoNext = page * rowsPerPage + rowsPerPage < totalFilteredRows;
+    const canGoPrev = page > 0;
+
+    return (
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "15px" }}>
+        <Button
+          onClick={() => setPage(page - 1)}
+          disabled={!canGoPrev}
+          variant="outlined"
+        >
+          Previous
+        </Button>
+        <Typography
+          variant="body1"
+          style={{ minWidth: "60px", textAlign: "center" }}
+        >
+          Page {page + 1}
+        </Typography>
+        <Button
+          onClick={() => setPage(page + 1)}
+          disabled={!canGoNext}
+          variant="outlined"
+        >
+          Next
+        </Button>
+      </div>
+    );
+  };
+
+  // Pending Requests Table
+  const paginatedPendingRequests = pendingFilteredRequests.slice(
+    pendingPage * rowsPerPage,
+    (pendingPage + 1) * rowsPerPage
+  );
+
+  // Deleted/Rejected Requests Table
+  const paginatedDeletedRequests = deletedFilteredRequests.slice(
+    deletedPage * rowsPerPage,
+    (deletedPage + 1) * rowsPerPage
+  );
 
   return (
     <>
+      {/* Pending Requests Table */}
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Pending Details
       </Typography>
@@ -182,71 +224,70 @@ const MemberTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {pendingFilteredRequests.map((request) => {
-              currentIndex++;
-              return (
-                <TableRow key={request.id}>
-                  <TableCell>{currentIndex}</TableCell>
-                  <TableCell>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Avatar
-                        src={
-                          request?.image
-                            ? `${imageBaseURL}${request.image}`
-                            : "/path/to/default-image.jpg"
-                        }
-                      />
-                      <Typography style={{ marginLeft: "10px" }}>
-                        {request?.username}
-                      </Typography>
-                    </div>
-                  </TableCell>
-                  <TableCell>{request.member_name}</TableCell>
-                  <TableCell>{request.role}</TableCell>
-                  <TableCell>
-                    {new Date(request.date_of_joining).toLocaleDateString(
-                      "en-IN"
-                    )}
-                  </TableCell>
-                  <TableCell>{request.mobile_number}</TableCell>
-                  <TableCell>{request.request_reason}</TableCell>
-                  <TableCell>
-                    <div style={{ display: "flex", gap: "5px" }}>
-                      <IconButton
-                        style={{
-                          width: "45px",
-                          height: "40px",
-                          backgroundColor: "red",
-                          color: "white",
-                          borderRadius: "6px",
-                        }}
-                        onClick={() => handleReject(request.id)}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                      <IconButton
-                        style={{
-                          width: "45px",
-                          height: "40px",
-                          backgroundColor: "green",
-                          color: "white",
-                          borderRadius: "6px",
-                        }}
-                        onClick={() => handleApprove(request.id)}
-                      >
-                        <DoneIcon />
-                      </IconButton>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {paginatedPendingRequests.map((request, index) => (
+              <TableRow key={request.id}>
+                <TableCell>{index + 1 + pendingPage * rowsPerPage}</TableCell>
+                <TableCell>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Avatar
+                      src={
+                        request?.image
+                          ? `${imageBaseURL}${request.image}`
+                          : "/path/to/default-image.jpg"
+                      }
+                    />
+                    <Typography style={{ marginLeft: "10px" }}>
+                      {request?.username}
+                    </Typography>
+                  </div>
+                </TableCell>
+                <TableCell>{request.member_name}</TableCell>
+                <TableCell>{request.role}</TableCell>
+                <TableCell>
+                  {new Date(request.date_of_joining).toLocaleDateString(
+                    "en-IN"
+                  )}
+                </TableCell>
+                <TableCell>{request.mobile_number}</TableCell>
+                <TableCell>{request.request_reason}</TableCell>
+                <TableCell>
+                  <div style={{ display: "flex", gap: "5px" }}>
+                    <IconButton
+                      style={{
+                        width: "45px",
+                        height: "40px",
+                        backgroundColor: "red",
+                        color: "white",
+                        borderRadius: "6px",
+                      }}
+                      onClick={() => handleReject(request.id)}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                    <IconButton
+                      style={{
+                        width: "45px",
+                        height: "40px",
+                        backgroundColor: "green",
+                        color: "white",
+                        borderRadius: "6px",
+                      }}
+                      onClick={() => handleApprove(request.id)}
+                    >
+                      <DoneIcon />
+                    </IconButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <div style={{ marginTop: "10px" }}>
+        {renderPagination(pendingPage, setPendingPage, pendingFilteredRequests)}
+      </div>
 
-      <div style={{ marginBottom: "40px" }} />
-
+      {/* Deleted/Rejected Requests Table */}
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Deleted / Rejected Data
       </Typography>
@@ -279,29 +320,27 @@ const MemberTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {deletedFilteredRequests.map((request) => {
-              completedIndex++;
-              return (
-                <TableRow key={request.id}>
-                  <TableCell>{completedIndex}</TableCell>
-                  <TableCell>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Avatar
-                        src={
-                          request?.image
-                            ? `${imageBaseURL}${request.image}`
-                            : "/path/to/default-image.jpg"
-                        }
-                      />
-                      <Typography style={{ marginLeft: "10px" }}>
-                        {request?.username}
-                      </Typography>
-                    </div>
-                  </TableCell>
-                  <TableCell>{request.full_name}</TableCell>
-                  <TableCell>{request.role}</TableCell>
-                  <TableCell>{request.request_reason}</TableCell>
-                  <TableCell>
+            {paginatedDeletedRequests.map((request, index) => (
+              <TableRow key={request.id}>
+                <TableCell>{index + 1 + deletedPage * rowsPerPage}</TableCell>
+                <TableCell>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Avatar
+                      src={
+                        request?.image
+                          ? `${imageBaseURL}${request.image}`
+                          : "/path/to/default-image.jpg"
+                      }
+                    />
+                    <Typography style={{ marginLeft: "10px" }}>
+                      {request?.username}
+                    </Typography>
+                  </div>
+                </TableCell>
+                <TableCell>{request.full_name}</TableCell>
+                <TableCell>{request.role}</TableCell>
+                <TableCell>{request.request_reason}</TableCell>
+                <TableCell>
                     <Typography
                       sx={{
                         color:
@@ -315,13 +354,16 @@ const MemberTable = () => {
                       {request.status}
                     </Typography>
                   </TableCell>
-                </TableRow>
-              );
-            })}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <div style={{ marginTop: "10px" }}>
+        {renderPagination(deletedPage, setDeletedPage, deletedFilteredRequests)}
+      </div>
 
+      {/* Snackbar for success messages */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}

@@ -43,10 +43,13 @@ const EditAnnouncementForm = () => {
   const [receiverError, setReceiverError] = useState("");
   const [imageError, setImageError] = useState(""); // Image file error state
   const [errorMessage, setErrorMessage] = useState(""); // General error message
-  const [successMessage, setSuccessMessage] = useState("");  // Add this state for success messages
+  const [successMessage, setSuccessMessage] = useState(""); // Add this state for success messages
 
   const roles = [
-    { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
+    {
+      label: "Area Development Officer (ADO)",
+      value: "Area Development Officer",
+    },
     { label: "Master Distributor (MD)", value: "Master Distributor" },
     { label: "Super Distributor (SD)", value: "Super Distributor" },
     { label: "Distributor", value: "Distributor" },
@@ -59,8 +62,12 @@ const EditAnnouncementForm = () => {
       setDescription(announcement.description || "");
       setLink(announcement.link || "");
       setReceiver(announcement.receiver || []);
-      setImageFileName(announcement.image ? announcement.image.split('/').pop() : "");
-      setExistingImage(announcement.image ? `${imageBaseURL}${announcement.image}` : "");
+      setImageFileName(
+        announcement.file ? announcement.file.split("/").pop() : ""
+      );
+      setExistingImage(
+        announcement.file ? `${imageBaseURL}${announcement.file}` : ""
+      );
     }
   }, [announcement]);
 
@@ -73,7 +80,9 @@ const EditAnnouncementForm = () => {
     if (checked) {
       setReceiver((prevReceivers) => [...prevReceivers, value]);
     } else {
-      setReceiver((prevReceivers) => prevReceivers.filter((item) => item !== value));
+      setReceiver((prevReceivers) =>
+        prevReceivers.filter((item) => item !== value)
+      );
     }
   };
 
@@ -86,16 +95,16 @@ const EditAnnouncementForm = () => {
     }
   };
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB size limit
       const fileSizeMB = file.size / (1024 * 1024); // Convert size to MB
 
-      // Validate file format
-      const validFormats = ['image/jpeg', 'image/png'];
+      // Validate file format (images and PDFs)
+      const validFormats = ["image/jpeg", "image/png", "application/pdf"];
       if (!validFormats.includes(file.type)) {
-        setImageError("Only JPEG, JPG, or PNG images are allowed.");
+        setImageError("Only JPEG, JPG, PNG, or PDF files are allowed.");
         setImageFile(null); // Clear selected file
         setImageFileName("");
         setPreviewUrl("");
@@ -104,8 +113,8 @@ const EditAnnouncementForm = () => {
       }
 
       // Validate file size
-      if (fileSizeMB > 2) {
-        setImageError("File size must be less than 2MB.");
+      if (fileSizeMB > 5) {
+        setImageError("File size must be less than 5MB.");
         setImageFile(null); // Clear selected file
         setImageFileName("");
         setPreviewUrl("");
@@ -118,25 +127,30 @@ const EditAnnouncementForm = () => {
       setImageFile(file);
       setImageFileName(file.name);
 
-      // Generate image preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
-      setExistingImage(""); // Clear existing image if new file is selected
+      // Generate image preview for image files
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+        setExistingImage(""); // Clear existing image if new file is selected
+      } else if (file.type === "application/pdf") {
+        setPreviewUrl(""); // No preview for PDF
+        setExistingImage(""); // Clear any existing image
+      }
     }
   };
 
-
   const validateLink = (url) => {
-    const regex = /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
+    const regex =
+      /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
     return regex.test(url);
   };
-  
+
   const validateForm = () => {
     let isValid = true;
-  
+
     // Reset all error messages
     setHeadingError("");
     setDescriptionError("");
@@ -144,36 +158,34 @@ const EditAnnouncementForm = () => {
     setReceiverError("");
     setImageError("");
     setErrorMessage(""); // Reset the general error message
-  
+
     // Validate Heading
     if (!heading) {
       setHeadingError("Heading is required.");
       isValid = false;
     }
-  
+
     // Validate Receiver
     if (receiver.length === 0) {
       setReceiverError("Please select at least one receiver.");
       isValid = false;
     }
-  
+
     // Validate Description
     if (!description.trim()) {
       setDescriptionError("Description is required.");
       isValid = false;
     }
-  
+
     if (link.trim() && !validateLink(link)) {
       setLinkError("Please enter a valid URL.");
       isValid = false;
     } else if (!link.trim()) {
-      setLink(""); 
+      setLink("");
     }
-    
-  
+
     return isValid;
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -189,16 +201,19 @@ const EditAnnouncementForm = () => {
     if (link.trim()) {
       formData.append("link", link);
     }
-        formData.append("receiver", JSON.stringify(receiver));
+    formData.append("receiver", JSON.stringify(receiver));
     if (imageFile) {
-      formData.append("image", imageFile);
+      formData.append("file", imageFile);
     }
 
     try {
-      const response = await fetch(`${API_END_POINT}/announcements/${announcement.id}`, {
-        method: "PUT",
-        body: formData,
-      });
+      const response = await fetch(
+        `${API_END_POINT}/announcements/${announcement.id}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -214,35 +229,64 @@ const EditAnnouncementForm = () => {
   };
 
   return (
-    <Box p={3} component="form" onSubmit={handleSubmit} encType="multipart/form-data">
+    <Box
+      p={3}
+      component="form"
+      onSubmit={handleSubmit}
+      encType="multipart/form-data"
+    >
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Announcement / Edit Announcement
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Edit Images</InputLabel>
+
+          <InputLabel>Edit Images and File</InputLabel>
+
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
-              <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+              <input
+                type="file"
+                hidden
+                accept="image/*,application/pdf"
+                onChange={handleFileChange}
+              />
             </IconButton>
             {imageFileName && (
               <Typography variant="body2" sx={{ marginTop: "10px" }}>
                 Selected file: {imageFileName}
               </Typography>
             )}
+
+            {/* Show preview if the file is an image */}
             {previewUrl && (
               <Box sx={{ marginTop: "10px" }}>
-                <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
               </Box>
             )}
+
+            {/* Show existing image if available */}
             {existingImage && (
               <Box sx={{ marginTop: "10px" }}>
-                <img src={existingImage} alt="Existing Image" style={{ maxWidth: "100%", height: "auto" }} />
+                <img
+                  src={existingImage}
+                  alt="Existing Image"
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
               </Box>
             )}
+
+            {/* Display error if any */}
             {imageError && (
-              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                sx={{ color: "red", marginTop: "10px" }}
+              >
                 {imageError}
               </Typography>
             )}
@@ -254,7 +298,10 @@ const EditAnnouncementForm = () => {
               margin="normal"
             />
             {headingError && (
-              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                sx={{ color: "red", marginTop: "10px" }}
+              >
                 {headingError}
               </Typography>
             )}
@@ -267,7 +314,10 @@ const EditAnnouncementForm = () => {
               onChange={(e) => setDescription(e.target.value)}
             />
             {descriptionError && (
-              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                sx={{ color: "red", marginTop: "10px" }}
+              >
                 {descriptionError}
               </Typography>
             )}
@@ -281,7 +331,10 @@ const EditAnnouncementForm = () => {
               margin="normal"
             />
             {linkError && (
-              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                sx={{ color: "red", marginTop: "10px" }}
+              >
                 {linkError}
               </Typography>
             )}
@@ -290,12 +343,15 @@ const EditAnnouncementForm = () => {
 
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-
-
             <FormControl fullWidth margin="normal">
               <Typography variant="h6">Select Receivers</Typography>
               <FormControlLabel
-                control={<Checkbox checked={selectAll} onChange={handleSelectAllChange} />}
+                control={
+                  <Checkbox
+                    checked={selectAll}
+                    onChange={handleSelectAllChange}
+                  />
+                }
                 label="Select All"
               />
               {roles.map((role) => (
@@ -313,7 +369,10 @@ const EditAnnouncementForm = () => {
               ))}
             </FormControl>
             {receiverError && (
-              <Typography variant="body2" sx={{ color: "red", marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                sx={{ color: "red", marginTop: "10px" }}
+              >
                 {receiverError}
               </Typography>
             )}
@@ -337,7 +396,6 @@ const EditAnnouncementForm = () => {
       )}
     </Box>
   );
-
 };
 
 export default EditAnnouncementForm;

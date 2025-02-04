@@ -17,7 +17,8 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
 const validateLink = (url) => {
-  const regex = /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
+  const regex =
+    /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
   return regex.test(url);
 };
 
@@ -29,12 +30,18 @@ const DocumentForm = () => {
   const [imageName, setImageName] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [selectAll, setSelectAll] = useState(false);
-  const roles = ["Area Development Officer", "Master Distributor", "Super Distributor", "Distributor", "Customer"];
+  const roles = [
+    "Area Development Officer",
+    "Master Distributor",
+    "Super Distributor",
+    "Distributor",
+    "Customer",
+  ];
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const [imageError, setImageError] = useState("");
-
+  const [fileError, setFileError] = useState("");
   const today = new Date().toISOString().split("T")[0]; // Get current date in 'yyyy-MM-dd' format
-
+  const [fileName, setFileName] = useState("");
   const generateDocumentID = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
@@ -50,21 +57,20 @@ const DocumentForm = () => {
       toDate: "",
       autoUpdate: false,
       activateStatus: true,
-      image: "",
+      file: "",
     },
     validationSchema: Yup.object({
       heading: Yup.string().required("Heading is required"),
       description: Yup.string().required("Description is required"),
-      link: Yup.string()
-        .test("isValidURL", "Enter a valid URL", (value) => {
-          if (!value || !value.trim()) {
-            return true;
-          }
-          const urlPattern = new RegExp(
-            "^(https?:\\/\\/)?(www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[a-zA-Z0-9@:%_\\+.~#?&//=]*)?$"
-          );
-          return urlPattern.test(value);
-        }),
+      link: Yup.string().test("isValidURL", "Enter a valid URL", (value) => {
+        if (!value || !value.trim()) {
+          return true;
+        }
+        const urlPattern = new RegExp(
+          "^(https?:\\/\\/)?(www\\.)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[a-zA-Z0-9@:%_\\+.~#?&//=]*)?$"
+        );
+        return urlPattern.test(value);
+      }),
       receiver: Yup.array()
         .min(1, "At least one role must be selected")
         .required("Receiver is required"),
@@ -97,8 +103,8 @@ const DocumentForm = () => {
       }
 
       if (selectedFile) {
-        formData.append("image", selectedFile);
-        formData.append("imageName", selectedFile.name);
+        formData.append("file", selectedFile); // Append the actual file object
+        formData.append("imageName", selectedFile.name); // Append the file name
       }
 
       fetch(`${API_END_POINT}/documents/create`, {
@@ -116,29 +122,45 @@ const DocumentForm = () => {
     },
   });
 
-  const handleImageChange = (event) => {
+  const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const fileSizeMB = file.size / (1024 * 1024);
-      const validImageTypes = ["image/jpeg", "image/png"];
-      if (!validImageTypes.includes(file.type)) {
-        setImageError("Only JPEG, JPG, or PNG images are allowed");
+      const fileSizeMB = file.size / (1024 * 1024); // Convert bytes to MB
+      const validFileTypes = ["image/jpeg", "image/png", "application/pdf"];
+
+      // Check if the file is a ZIP file by extension (disallow ZIP)
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+      const isZipFile = fileExtension === "zip";
+      // Check if the file type is valid (no ZIP files allowed)
+      if (!validFileTypes.includes(file.type) || isZipFile) {
+        setImageError(
+          "Only JPEG, JPG, PNG, and PDF files are allowed (ZIP files are not allowed)"
+        );
         return;
       }
-      if (fileSizeMB > 2) {
-        setImageError("File size must be less than 2MB");
+
+      // Check if the file size is greater than 5MB
+      if (fileSizeMB > 5) {
+        setImageError("File size must be less than 5MB");
         return;
       } else {
-        setImageError("");
+        setImageError(""); // Clear any previous errors
       }
+
       formik.setFieldValue("image", file.name);
       setSelectedFile(file);
-      setImageName(file.name);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setFileName(file.name); // Update the file name state
+
+      // Only update imagePreview if the file is an image
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setImagePreview(""); // Clear image preview for non-image files
+      }
     }
   };
 
@@ -151,41 +173,82 @@ const DocumentForm = () => {
     }
   };
 
-
   return (
-    <Box sx={{ padding: "20px", maxWidth: "1200px", margin: "0 auto", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
+    <Box
+      sx={{
+        padding: "20px",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        backgroundColor: "#f5f5f5",
+        borderRadius: "8px",
+      }}
+    >
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Add Document
       </Typography>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            <Box sx={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
+            <Box
+              sx={{
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Document Details
               </Typography>
 
-              <InputLabel>Add Image</InputLabel>
+              <InputLabel>Add Image and File</InputLabel>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
+                <IconButton
+                  color="primary"
+                  onClick={() => fileInputRef.current.click()}
+                >
                   <AddPhotoAlternateIcon />
                 </IconButton>
                 <input
+                  name="file"
                   type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
+                  accept="image/*,application/pdf,application/zip" // Allow images, PDFs, and ZIP files
+                  onChange={handleFileChange} // Use the updated handleFileChange
                   ref={fileInputRef}
                   style={{ display: "none" }}
                 />
               </Box>
-              {imageName && <Typography variant="body2" sx={{ marginTop: 1 }}>{imageName}</Typography>}
-              {imagePreview && (
+
+              {fileName && (
+                <Typography variant="body2" sx={{ marginTop: 1 }}>
+                  Selected File: {fileName}{" "}
+                  {/* Display the selected file name */}
+                </Typography>
+              )}
+
+              {/* Display image preview only if the selected file is an image */}
+              {(imagePreview &&
+                !imageError &&
+                fileName &&
+                fileName.endsWith(".jpg")) ||
+              fileName.endsWith(".jpeg") ||
+              fileName.endsWith(".png") ? (
                 <img
                   src={imagePreview}
                   alt="Selected"
-                  style={{ marginTop: "10px", maxWidth: "100%", height: "auto", borderRadius: "8px" }}
+                  style={{
+                    marginTop: "10px",
+                    maxWidth: "100%",
+                    height: "auto",
+                    borderRadius: "8px",
+                  }}
                 />
-              )}
+              ) : fileName &&
+                !imagePreview &&
+                !imageError &&
+                (fileName.endsWith(".pdf") || fileName.endsWith(".zip")) ? (
+                <Typography variant="body2" sx={{ marginTop: 1 }}></Typography>
+              ) : null}
+
               {imageError && (
                 <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
                   {imageError}
@@ -211,8 +274,13 @@ const DocumentForm = () => {
                 rows={3}
                 value={formik.values.description}
                 onChange={formik.handleChange}
-                error={formik.touched.description && Boolean(formik.errors.description)}
-                helperText={formik.touched.description && formik.errors.description}
+                error={
+                  formik.touched.description &&
+                  Boolean(formik.errors.description)
+                }
+                helperText={
+                  formik.touched.description && formik.errors.description
+                }
                 margin="normal"
                 sx={{ marginBottom: "10px" }}
               />
@@ -231,13 +299,21 @@ const DocumentForm = () => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Box sx={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
-              <Typography variant="h6" gutterBottom>
-                Additional Settings
-              </Typography>
-
+            <Box
+              sx={{
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+              }}
+            >
               <InputLabel>Receiver</InputLabel>
-              <Box sx={{ display: "flex", flexDirection: "column", marginTop: "10px" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: "10px",
+                }}
+              >
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -268,17 +344,31 @@ const DocumentForm = () => {
                   />
                 ))}
                 {formik.touched.receiver && formik.errors.receiver && (
-                  <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    sx={{ marginTop: 1 }}
+                  >
                     {formik.errors.receiver}
                   </Typography>
                 )}
               </Box>
 
-
-              <Box sx={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop: "20px",
+                }}
+              >
                 <Switch
                   checked={formik.values.autoUpdate}
-                  onChange={() => formik.setFieldValue("autoUpdate", !formik.values.autoUpdate)}
+                  onChange={() =>
+                    formik.setFieldValue(
+                      "autoUpdate",
+                      !formik.values.autoUpdate
+                    )
+                  }
                   color="primary"
                 />
                 <Typography variant="body1" sx={{ marginLeft: 1 }}>
@@ -296,8 +386,13 @@ const DocumentForm = () => {
                       name="fromDate"
                       value={formik.values.fromDate}
                       onChange={formik.handleChange}
-                      error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
-                      helperText={formik.touched.fromDate && formik.errors.fromDate}
+                      error={
+                        formik.touched.fromDate &&
+                        Boolean(formik.errors.fromDate)
+                      }
+                      helperText={
+                        formik.touched.fromDate && formik.errors.fromDate
+                      }
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -311,7 +406,9 @@ const DocumentForm = () => {
                       name="toDate"
                       value={formik.values.toDate}
                       onChange={formik.handleChange}
-                      error={formik.touched.toDate && Boolean(formik.errors.toDate)}
+                      error={
+                        formik.touched.toDate && Boolean(formik.errors.toDate)
+                      }
                       helperText={formik.touched.toDate && formik.errors.toDate}
                       InputLabelProps={{
                         shrink: true,
@@ -320,13 +417,23 @@ const DocumentForm = () => {
                   </Grid>
                 </Grid>
               )}
-              <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: "20px",
+                }}
+              >
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
                   fullWidth
-                  sx={{ marginTop: "24px", borderRadius: "15px", padding: "8px" }}
+                  sx={{
+                    marginTop: "24px",
+                    borderRadius: "15px",
+                    padding: "8px",
+                  }}
                 >
                   Save
                 </Button>
