@@ -45,11 +45,11 @@ const MemberDocumenttable = () => {
     fetchDocuments();
   }, []);
 
-  const handleDownload = (file) => {
-    const fileURL = `${API_END_POINT_IMG}/uploads/${file}`;
+  const handleDownload = (image) => {
+    const fileURL = `${API_END_POINT_IMG}/uploads/${image}`;
     const link = document.createElement("a");
     link.href = fileURL;
-    link.setAttribute("download", file);
+    link.setAttribute("download", image);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -96,9 +96,9 @@ const MemberDocumenttable = () => {
                   </a>
                 </TableCell>
                 <TableCell>
-                  {document.file ? (
+                  {document.image ? (
                     <a
-                      href={`${API_END_POINT_IMG}/uploads/${document.file}`}
+                      href={`${API_END_POINT_IMG}/uploads/${document.image}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       download
