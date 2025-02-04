@@ -63,10 +63,10 @@ const EditAnnouncementForm = () => {
       setLink(announcement.link || "");
       setReceiver(announcement.receiver || []);
       setImageFileName(
-        announcement.file ? announcement.file.split("/").pop() : ""
+        announcement.image ? announcement.image.split("/").pop() : ""
       );
       setExistingImage(
-        announcement.file ? `${imageBaseURL}${announcement.file}` : ""
+        announcement.image ? `${imageBaseURL}${announcement.image}` : ""
       );
     }
   }, [announcement]);
