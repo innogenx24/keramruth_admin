@@ -88,11 +88,7 @@ const AnnouncementTable = () => {
     navigate("add-announcement");
   };
 
-  const getImageURL = (imagePath) => {
-    if (!imagePath) return "";
-    const imageName = imagePath.includes("\\") ? imagePath.split("\\").pop() : imagePath;
-    return `${imageBaseURL}${imageName}`;
-  };
+
 
   // Pagination logic
   const startIndex = page * rowsPerPage;
@@ -167,8 +163,8 @@ const AnnouncementTable = () => {
                 <TableCell style={{ width: 100, textAlign: "center" }}>
                   {announcement.image ? (
                     <img
-                      src={getImageURL(announcement.image)}
-                      alt="Announcement"
+                    src={`${imageBaseURL}${announcement.image}`}
+                    alt="Announcement"
                       style={{
                         width: "80px",
                         height: "auto",

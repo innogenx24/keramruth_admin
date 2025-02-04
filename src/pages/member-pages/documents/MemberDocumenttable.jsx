@@ -78,10 +78,10 @@ const MemberDocumenttable = () => {
               <TableRow key={document.id}>
                 <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                 <TableCell>
-                  {document.file ? (
+                  {document.image ? (
                     <img
-                      src={`${imageBaseURL}${document.file}`}
-                      alt="pdf"
+                      src={`${imageBaseURL}${document.image}`}
+                      alt="PDF File"
                       style={{ width: "80px", height: "auto", borderRadius: "10px" }}
                     />
                   ) : (
