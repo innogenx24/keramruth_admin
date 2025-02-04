@@ -81,7 +81,7 @@ const MemberDocumenttable = () => {
                   {document.file ? (
                     <img
                       src={`${imageBaseURL}${document.file}`}
-                      alt="Document"
+                      alt="pdf"
                       style={{ width: "80px", height: "auto", borderRadius: "10px" }}
                     />
                   ) : (
@@ -96,17 +96,31 @@ const MemberDocumenttable = () => {
                   </a>
                 </TableCell>
                 <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href={`${API_END_POINT_IMG}/uploads/${document.file}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download
-                  >
-                    Download
-                  </Button>
+                  {document.file ? (
+                    <a
+                      href={`${API_END_POINT_IMG}/uploads/${document.file}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Button
+                        variant="contained"
+                        style={{
+                          backgroundColor: "#28a745",
+                          color: "white",
+                          fontWeight: "bold",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Download
+                      </Button>
+                    </a>
+                  ) : (
+                    <span style={{ color: "#999" }}>No File</span>
+                  )}
                 </TableCell>
+
 
               </TableRow>
             ))}

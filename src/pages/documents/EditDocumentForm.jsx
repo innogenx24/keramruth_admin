@@ -69,7 +69,7 @@ const EditDocumentForm = () => {
 
       setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
-      setImageName(document.file || "");
+      setImageName(document.image || "");
     }
   }, [document]);
 
@@ -269,7 +269,7 @@ const EditDocumentForm = () => {
         {/* Left Side: Image and Basic Info */}
         <Grid item xs={12} md={6}>
           <Box p={2} sx={{ backgroundColor: "#f5f5f5", borderRadius: 2 }}>
-            <InputLabel>Edit Images</InputLabel>
+            <InputLabel>Edit Images and File</InputLabel>
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
               <input type="file" hidden onChange={handleFileUpload} />
@@ -293,9 +293,9 @@ const EditDocumentForm = () => {
                     marginTop: "8px",
                   }}
                 />
-              ) : document.file ? (
+              ) : document.image ? (
                 <img
-                  src={`${imageBaseURL}${document.file}`}
+                  src={`${imageBaseURL}${document.image}`}
                   alt="Existing Document Image"
                   style={{
                     maxWidth: "100%",
