@@ -15,19 +15,31 @@ const AddCategoryForm = () => {
 
   useEffect(() => {
     const fetchSectors = async () => {
-      try {
-        const response = await fetch(`${API_END_POINT}/sectors`);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`${API_END_POINT}/sectors`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,  // Include the token here
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            setSectors(data);
+        } catch (error) {
+            console.error("Error fetching sectors:", error);
         }
-        const data = await response.json();
-        setSectors(data);
-      } catch (error) {
-        console.error("Error fetching sectors:", error);
-      }
     };
+
     fetchSectors();
-  }, []);
+}, []);
+
 
   const formik = useFormik({
     initialValues: {

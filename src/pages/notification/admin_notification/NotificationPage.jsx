@@ -95,6 +95,9 @@ const NotificationPage = () => {
       case "profile_edite_request":
         navigate("/dashboard/edit-request");
         break;
+      case "profile_delete_request":
+        navigate("/dashboard/delete-request");
+        break;
       case "profile_edit_request_approved":
       case "profile_edit_request_rejected":
         navigate("/dashboard/profile");
@@ -212,7 +215,10 @@ const NotificationPage = () => {
                             : "green",
                       }}
                       src={
-                        notification.photo
+                        notification.detail?.type ===
+                          "profile_delete_request" && notification.photo
+                          ? `${API_END_POINT_IMG}/uploads/${notification.photo}`
+                          : notification.photo
                           ? `${API_END_POINT_IMG}/uploads/notification-images/${notification.photo}`
                           : null
                       }
@@ -220,6 +226,7 @@ const NotificationPage = () => {
                       {!notification.photo && <NotificationsIcon />}
                     </Avatar>
                   </ListItemAvatar>
+
                   <ListItemText
                     primary={
                       <Typography
@@ -238,6 +245,39 @@ const NotificationPage = () => {
                         {/* For Profile Edit Request */}
                         {notification.detail?.type ===
                           "profile_edite_request" && (
+                          <>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
+                            >
+                              Role: {notification.detail?.role}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
+                            >
+                              User: {notification.detail?.user_name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontFamily: "'Roboto', sans-serif",
+                                color: "#666",
+                              }}
+                            >
+                              Reason: {notification.detail?.request_reason}
+                            </Typography>
+                          </>
+                        )}
+
+                        {notification.detail?.type ===
+                          "profile_delete_request" && (
                           <>
                             <Typography
                               variant="body2"

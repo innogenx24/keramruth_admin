@@ -40,7 +40,7 @@ const EditDocumentForm = () => {
   const [receiver, setReceiver] = useState(roles.map((role) => role.value));
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [image, setImage] = useState(null);
+  const [file, setImage] = useState(null);
   const [imageName, setImageName] = useState("");
   const [selectAll, setSelectAll] = useState(true);
   const [imageError, setImageError] = useState("");
@@ -49,7 +49,7 @@ const EditDocumentForm = () => {
     description: "",
     link: "",
     receiver: "",
-    image: "",
+    file: "",
   });
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const EditDocumentForm = () => {
 
       setFromDate(document.fromDate ? document.fromDate.split("T")[0] : "");
       setToDate(document.toDate ? document.toDate.split("T")[0] : "");
-      setImageName(document.image || "");
+      setImageName(document.file || "");
     }
   }, [document]);
 
@@ -98,38 +98,54 @@ const EditDocumentForm = () => {
     setSelectAll(receiver.length === roles.length);
   }, [receiver]);
 
-
-  const handleImageUpload = (event) => {
+  const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert file size to MB
-
+  
       // Check if file size exceeds 2MB
       if (fileSizeMB > 2) {
         setImageError("File size must be less than 2MB");
-        setImage(null); // Reset image if the file is too large
+        setImage(null); // Reset file if the file is too large
         return; // Prevent further actions
       } else {
         setImageError(""); // Clear error if file size is valid
       }
-
-      // Check if file type is JPEG, JPG, or PNG
-      const validImageTypes = ['image/jpeg', 'image/png'];
-      if (!validImageTypes.includes(file.type)) {
-        setImageError("Only JPEG, JPG, and PNG images are allowed");
-        setImage(null); // Reset image if the file type is not valid
+  
+      // Check if file type is JPEG, JPG, PNG, or PDF (without ZIP)
+      const validFileTypes = [
+        "image/jpeg",
+        "image/png",
+        "application/pdf",
+      ];
+      const validExtensions = ["pdf", "jpeg", "jpg", "png"];
+  
+      // Check file extension
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+  
+      // Check if MIME type or file extension is valid (exclude ZIP files)
+      if (
+        !validFileTypes.includes(file.type) &&
+        !validExtensions.includes(fileExtension)
+      ) {
+        setImageError("Only JPEG, JPG, PNG, and PDF files are allowed (ZIP files are not allowed)");
+        setImage(null); // Reset file if the file type is not valid
         return; // Prevent further actions
       } else {
         setImageError(""); // Clear error if file type is valid
       }
-
-      setImage(file);
-      setImageName(file.name);
+  
+      setImage(file); // Set the file
+      setImageName(file.name); // Set the file name
     }
   };
+  
+  
+  
 
   const validateLink = (link) => {
-    const validLinkRegex = /^(https?:\/\/|https:\/\/www\.youtube\.com\/watch\?v=)/;
+    const validLinkRegex =
+      /^(https?:\/\/|https:\/\/www\.youtube\.com\/watch\?v=)/;
     return validLinkRegex.test(link);
   };
 
@@ -168,22 +184,17 @@ const EditDocumentForm = () => {
       isValid = false;
     }
 
-
-
     // Receiver validation
     if (receiver.length === 0) {
       formErrors.receiver = "At least one role must be selected";
       isValid = false;
     }
 
-
-
     // From Date validation (only required)
     if (autoUpdate && !fromDate) {
       formErrors.fromDate = "From Date is required";
       isValid = false;
     }
-
 
     // To Date validation
     if (autoUpdate && toDate) {
@@ -224,8 +235,8 @@ const EditDocumentForm = () => {
     formData.append("fromDate", fromDate);
     formData.append("toDate", toDate);
 
-    if (image) {
-      formData.append("image", image);
+    if (file) {
+      formData.append("file", file);
     }
 
     try {
@@ -261,7 +272,7 @@ const EditDocumentForm = () => {
             <InputLabel>Edit Images</InputLabel>
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
-              <input type="file" hidden onChange={handleImageUpload} />
+              <input type="file" hidden onChange={handleFileUpload} />
             </IconButton>
             {imageName && <Typography variant="body2">{imageName}</Typography>}
 
@@ -272,20 +283,30 @@ const EditDocumentForm = () => {
             )}
 
             <Box sx={{ marginTop: "16px" }}>
-              {image ? (
+              {file ? (
                 <img
-                  src={URL.createObjectURL(image)}
+                  src={URL.createObjectURL(file)}
                   alt="Uploaded Preview"
-                  style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    marginTop: "8px",
+                  }}
+                />
+              ) : document.file ? (
+                <img
+                  src={`${imageBaseURL}${document.file}`}
+                  alt="Existing Document Image"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    marginTop: "8px",
+                  }}
                 />
               ) : (
-                document.image && (
-                  <img
-                    src={`${imageBaseURL}${document.image}`}
-                    alt="Existing Document Image"
-                    style={{ maxWidth: "100%", maxHeight: "200px", marginTop: "8px" }}
-                  />
-                )
+                <Typography variant="body2" color="textSecondary">
+                  No image available
+                </Typography>
               )}
             </Box>
 
@@ -306,7 +327,11 @@ const EditDocumentForm = () => {
               style={{ width: "100%", margin: "16px 0" }}
             />
             {errors.description && (
-              <Typography variant="body2" color="error" sx={{ marginBottom: "8px" }}>
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginBottom: "8px" }}
+              >
                 {errors.description}
               </Typography>
             )}

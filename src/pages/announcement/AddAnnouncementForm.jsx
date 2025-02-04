@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+
 import {
   Button,
   Checkbox,
@@ -18,6 +19,10 @@ import { useNavigate } from "react-router-dom";
 import "./announcement.css";
 
 const AddAnnouncementDetails = ({ onClose }) => {
+
+  const fileInputRef = useRef(null);
+  const [fileName, setFileName] = useState(""); // Declare fileName state
+
   const navigate = useNavigate();
   const [documentID, setDocumentID] = useState("");
   const [heading, setHeading] = useState("");
@@ -35,9 +40,13 @@ const AddAnnouncementDetails = ({ onClose }) => {
   const [headingError, setHeadingError] = useState("");
   const [descriptionError, setDescriptionError] = useState(""); // Add descriptionError state
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const [imagePreview, setImagePreview] = useState("");
 
   const roles = [
-    { label: "Area Development Officer (ADO)", value: "Area Development Officer" },
+    {
+      label: "Area Development Officer (ADO)",
+      value: "Area Development Officer",
+    },
     { label: "Master Distributor (MD)", value: "Master Distributor" },
     { label: "Super Distributor (SD)", value: "Super Distributor" },
     { label: "Distributor", value: "Distributor" },
@@ -49,7 +58,9 @@ const AddAnnouncementDetails = ({ onClose }) => {
     if (checked) {
       setReceiver((prevReceivers) => [...prevReceivers, value]);
     } else {
-      setReceiver((prevReceivers) => prevReceivers.filter((item) => item !== value));
+      setReceiver((prevReceivers) =>
+        prevReceivers.filter((item) => item !== value)
+      );
       setSelectAll(false); // Uncheck "Select All" if any item is unchecked
     }
   };
@@ -64,42 +75,46 @@ const AddAnnouncementDetails = ({ onClose }) => {
     }
   };
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
-
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
-
-      // Check if the file type is valid (JPEG, JPG, PNG)
-      const validTypes = ['image/jpeg', 'image/png'];
+  
+      // Check if the file type is valid (JPEG, JPG, PNG, PDF)
+      const validTypes = ["image/jpeg", "image/png", "application/pdf"];
       if (!validTypes.includes(file.type)) {
-        setImageError("Only JPEG, JPG, and PNG files are allowed.");
+        setImageError("Only JPEG, JPG, PNG, and PDF files are allowed.");
         setImageFile(null); // Clear any previously selected file
         setImageFileName("");
         setPreviewUrl("");
       }
-      // Check if file size exceeds 2MB
-      else if (fileSizeMB > 2) {
-        setImageError("File size must be less than 2MB");
+      // Check if file size exceeds 5MB
+      else if (file.size > MAX_FILE_SIZE) {
+        setImageError("File size must be less than 5MB");
         setImageFile(null); // Clear any previously selected file
         setImageFileName("");
         setPreviewUrl("");
-      }
-      else {
+      } else {
         setImageError(""); // Clear error if file is valid
         setImageFile(file);
         setImageFileName(file.name);
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreviewUrl(reader.result);
-        };
-        reader.readAsDataURL(file);
+  
+        // If the file is an image, generate a preview
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setPreviewUrl(reader.result);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          setPreviewUrl(""); // Clear preview for non-image files (e.g., PDF)
+        }
       }
     }
   };
-
+  
 
   const validateLink = (value) => {
     // Updated regex for validating general and specific URLs
@@ -114,8 +129,6 @@ const AddAnnouncementDetails = ({ onClose }) => {
     }
   };
 
-
-
   const handleLinkChange = (e) => {
     const value = e.target.value;
     setLink(value);
@@ -123,11 +136,9 @@ const AddAnnouncementDetails = ({ onClose }) => {
     if (!value.trim()) {
       setLinkError("Link is required.");
     } else {
-      validateLink(value); 
+      validateLink(value);
     }
   };
-
-
 
   const validateDescription = (value) => {
     if (!value.trim()) {
@@ -163,13 +174,14 @@ const AddAnnouncementDetails = ({ onClose }) => {
       setDescriptionError("");
     }
 
-
     return isValid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const randomDocumentID = Math.floor(100000 + Math.random() * 900000).toString();
+    const randomDocumentID = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
     setDocumentID(randomDocumentID);
 
     if (!validateForm()) {
@@ -183,7 +195,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
     formData.append("link", link);
     formData.append("receiver", JSON.stringify(receiver));
     if (imageFile) {
-      formData.append("image", imageFile);
+      formData.append("file", imageFile); 
     }
 
     try {
@@ -214,18 +226,76 @@ const AddAnnouncementDetails = ({ onClose }) => {
   };
 
   return (
-    <Box p={3} component="form" onSubmit={handleSubmit} encType="multipart/form-data">
+    <Box
+      p={3}
+      component="form"
+      onSubmit={handleSubmit}
+      encType="multipart/form-data"
+    >
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Announcement / Add Announcement
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Add Images</InputLabel>
-            <IconButton color="primary" component="label">
-              <AddPhotoAlternateIcon />
-              <input type="file" hidden accept="image/*" onChange={handleImageChange} />
-            </IconButton>
+            <InputLabel>Add Image and File</InputLabel>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <IconButton
+                color="primary"
+                onClick={() => fileInputRef.current.click()}
+              >
+                <AddPhotoAlternateIcon />
+              </IconButton>
+              <input
+                name="file"
+                type="file"
+                accept="image/*,application/pdf,application/zip" // Allow images, PDFs, and ZIP files
+                onChange={handleFileChange} // Use the updated handleFileChange
+                ref={fileInputRef}
+                style={{ display: "none" }}
+              />
+            </Box>
+
+            {fileName && (
+              <Typography variant="body2" sx={{ marginTop: 1 }}>
+                Selected File: {fileName} {/* Display the selected file name */}
+              </Typography>
+            )}
+
+            {/* Display image preview only if the selected file is an image */}
+            {imagePreview &&
+            !imageError &&
+            fileName &&
+            (fileName.endsWith(".jpg") ||
+              fileName.endsWith(".jpeg") ||
+              fileName.endsWith(".png")) ? (
+              <img
+                src={imagePreview}
+                alt="Selected"
+                style={{
+                  marginTop: "10px",
+                  maxWidth: "100%",
+                  height: "auto",
+                  borderRadius: "8px",
+                }}
+              />
+            ) : fileName &&
+              !imagePreview &&
+              !imageError &&
+              (fileName.endsWith(".pdf") || fileName.endsWith(".zip")) ? (
+              <Typography variant="body2" sx={{ marginTop: 1 }}>
+                {/* Optional: Provide additional file-specific details if needed */}
+              </Typography>
+            ) : null}
+
+            {imageError && (
+              <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+                {imageError}
+              </Typography>
+            )}
+
+            {/* Code for adding a single image file */}
+           
             {imageFileName && (
               <Typography variant="body2" sx={{ marginTop: "10px" }}>
                 Selected file: {imageFileName}
@@ -233,14 +303,15 @@ const AddAnnouncementDetails = ({ onClose }) => {
             )}
             {previewUrl && (
               <Box sx={{ marginTop: "10px" }}>
-                <img src={previewUrl} alt="Preview" style={{ maxWidth: "100%", height: "auto" }} />
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
               </Box>
             )}
-            {imageError && (
-              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
-                {imageError}
-              </Typography>
-            )}
+            
+
             <TextField
               fullWidth
               label="Announcement Heading*"
@@ -256,10 +327,18 @@ const AddAnnouncementDetails = ({ onClose }) => {
               placeholder="Enter Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              style={{ width: "100%", margin: "16px 0", backgroundColor: "#f5f5f5" }}
+              style={{
+                width: "100%",
+                margin: "16px 0",
+                backgroundColor: "#f5f5f5",
+              }}
             />
             {descriptionError && (
-              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginTop: "10px" }}
+              >
                 {descriptionError}
               </Typography>
             )}
@@ -273,7 +352,11 @@ const AddAnnouncementDetails = ({ onClose }) => {
               error={!!linkError} // Error state for the field
             />
             {linkError && (
-              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginTop: "10px" }}
+              >
                 {linkError}
               </Typography>
             )}
@@ -308,7 +391,11 @@ const AddAnnouncementDetails = ({ onClose }) => {
               ))}
             </FormControl>
             {errorMessage && (
-              <Typography variant="body2" color="error" sx={{ marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ marginTop: "10px" }}
+              >
                 {errorMessage}
               </Typography>
             )}
@@ -321,7 +408,11 @@ const AddAnnouncementDetails = ({ onClose }) => {
               Add Announcement
             </Button>
             {successMessage && (
-              <Typography variant="body2" color="success" sx={{ marginTop: "10px" }}>
+              <Typography
+                variant="body2"
+                color="success"
+                sx={{ marginTop: "10px" }}
+              >
                 {successMessage}
               </Typography>
             )}

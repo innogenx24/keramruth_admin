@@ -13,6 +13,7 @@ import {
   Modal,
   Box,
   Typography,
+  Button,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllMembersRequest } from "../../redux/slices/member-slice/GetAllmemberSlices";
@@ -36,6 +37,10 @@ const MemberTable = () => {
   const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
   const [sortedEditRequests, setSortedEditRequests] = useState([]);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+  const [currentPageCurrent, setCurrentPageCurrent] = useState(0);
+  const [currentPageCompleted, setCurrentPageCompleted] = useState(0);
+  const rowsPerPage = 10;
 
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
@@ -197,6 +202,23 @@ const MemberTable = () => {
   let currentIndex = 0;
   let completedIndex = 0;
 
+  const pendingRequests = editRequests.filter(
+    (req) => req.status === "Pending"
+  );
+  const completedRequests = editRequests.filter(
+    (req) => req.status !== "Pending"
+  );
+
+  const paginatedPending = pendingRequests.slice(
+    currentPageCurrent * rowsPerPage,
+    (currentPageCurrent + 1) * rowsPerPage
+  );
+
+  const paginatedCompleted = completedRequests.slice(
+    currentPageCompleted * rowsPerPage,
+    (currentPageCompleted + 1) * rowsPerPage
+  );
+
   return (
     <>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
@@ -220,7 +242,7 @@ const MemberTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedEditRequests.map((request, index) => {
+            {paginatedPending.map((request, index) => {
               // Skip rows if the status is not "Pending"
               if (request.status !== "Pending") return null;
 
@@ -247,7 +269,9 @@ const MemberTable = () => {
                 currentIndex++;
                 return (
                   <TableRow key={request.id}>
-                    <TableCell>{currentIndex}</TableCell>
+                    <TableCell>
+                      {currentPageCurrent * rowsPerPage + index + 1}
+                    </TableCell>
 
                     <TableCell>
                       {request.image ? (
@@ -333,6 +357,39 @@ const MemberTable = () => {
         </Table>
       </TableContainer>
 
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          margin: "10px 0",
+        }}
+      >
+        <Button
+          onClick={() => setCurrentPageCurrent((prev) => Math.max(prev - 1, 0))}
+          disabled={currentPageCurrent === 0}
+        >
+          Previous
+        </Button>
+        <Typography sx={{ margin: "0 15px" }}>
+          Page {currentPageCurrent + 1}
+        </Typography>
+        <Button
+          onClick={() =>
+            setCurrentPageCurrent((prev) =>
+              prev < Math.ceil(pendingRequests.length / rowsPerPage) - 1
+                ? prev + 1
+                : prev
+            )
+          }
+          disabled={
+            currentPageCurrent >=
+            Math.ceil(pendingRequests.length / rowsPerPage) - 1
+          }
+        >
+          Next
+        </Button>
+      </div>
+
       {/* Spacer */}
       <div style={{ margin: "20px 0" }} />
 
@@ -361,7 +418,7 @@ const MemberTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedEditRequests.map((request, index) => {
+            {paginatedCompleted.map((request, index) => {
               const member = combinedMembers.find(
                 (member) => member.id === request.user_id
               );
@@ -375,7 +432,10 @@ const MemberTable = () => {
                 completedIndex++;
                 return (
                   <TableRow key={request.id}>
-                    <TableCell>{completedIndex}</TableCell>
+                    <TableCell>
+                      {currentPageCompleted * rowsPerPage + index + 1}
+                    </TableCell>
+
                     <TableCell>
                       {request.image ? (
                         <img
@@ -429,6 +489,41 @@ const MemberTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          margin: "10px 0",
+        }}
+      >
+        <Button
+          onClick={() =>
+            setCurrentPageCompleted((prev) => Math.max(prev - 1, 0))
+          }
+          disabled={currentPageCompleted === 0}
+        >
+          Previous
+        </Button>
+        <Typography sx={{ margin: "0 15px" }}>
+          Page {currentPageCompleted + 1}
+        </Typography>
+        <Button
+          onClick={() =>
+            setCurrentPageCompleted((prev) =>
+              prev < Math.ceil(completedRequests.length / rowsPerPage) - 1
+                ? prev + 1
+                : prev
+            )
+          }
+          disabled={
+            currentPageCompleted >=
+            Math.ceil(completedRequests.length / rowsPerPage) - 1
+          }
+        >
+          Next
+        </Button>
+      </div>
 
       <Modal open={imageModal.open} onClose={handleImageModalClose}>
         <Box

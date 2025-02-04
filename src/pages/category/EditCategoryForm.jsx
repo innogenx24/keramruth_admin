@@ -29,22 +29,33 @@ const EditCategoryForm = ({ onCancel }) => {
   const [serverError, setServerError] = useState(""); // State to track server error
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  // Fetch sectors
-  useEffect(() => {
-    const fetchSectors = async () => {
+ // Fetch sectors
+useEffect(() => {
+  const fetchSectors = async () => {
+      const token = localStorage.getItem('token');
+
       try {
-        const response = await fetch(`${API_END_POINT}/sectors`);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setSectors(data);
+          const response = await fetch(`${API_END_POINT}/sectors`, {
+              method: "GET",
+              headers: {
+                  "Authorization": `Bearer ${token}`,  // Include token
+                  "Content-Type": "application/json",
+              },
+          });
+
+          if (!response.ok) {
+              throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          setSectors(data);
       } catch (error) {
-        console.error("Error fetching sectors:", error);
+          console.error("Error fetching sectors:", error);
       }
-    };
-    fetchSectors();
-  }, []);
+  };
+
+  fetchSectors();
+}, []);
 
   // Fetch category data by ID when the component mounts
   useEffect(() => {
