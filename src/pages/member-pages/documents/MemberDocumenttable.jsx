@@ -78,9 +78,9 @@ const MemberDocumenttable = () => {
               <TableRow key={document.id}>
                 <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                 <TableCell>
-                  {document.image ? (
+                  {document.file ? (
                     <img
-                      src={`${imageBaseURL}${document.image}`}
+                      src={`${imageBaseURL}${document.file}`}
                       alt="Document"
                       style={{ width: "80px", height: "auto", borderRadius: "10px" }}
                     />

@@ -180,9 +180,9 @@ const DocumentsTable = () => {
               <TableRow key={document.id}>
                 <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                 <TableCell style={{ width: 100, textAlign: "center" }}>
-                  {document.image ? (
+                  {document.file ? (
                     <img
-                      src={`${imageBaseURL}${document.image}`}
+                      src={`${imageBaseURL}${document.file}`}
                       style={{
                         width: "80px",
                         height: "auto",

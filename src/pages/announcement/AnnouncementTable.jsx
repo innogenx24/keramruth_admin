@@ -165,9 +165,9 @@ const AnnouncementTable = () => {
               <TableRow key={announcement.id}>
                 <TableCell>{startIndex + index + 1}</TableCell>
                 <TableCell style={{ width: 100, textAlign: "center" }}>
-                  {announcement.image ? (
+                  {announcement.file ? (
                     <img
-                      src={getImageURL(announcement.image)}
+                      src={getImageURL(announcement.file)}
                       alt="Announcement"
                       style={{
                         width: "80px",
