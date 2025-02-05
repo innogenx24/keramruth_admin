@@ -77,6 +77,7 @@ const SalesPage = () => {
       acc.stockAchievementPercent += parseFloat(data.stockAchievementPercent || 0);
       return acc;
     },
+    
     {
       roleName: "Company Sales:",
       totalUsers: 0,

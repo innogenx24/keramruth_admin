@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 
 const roleColors = {
-  'Company Sales': '#FFD700', // Gold
+  'Company Sales:': '#FFD700', // Gold 
   'Area Development Officer': '#01C572',  // Greenish
   'Master Distributor': '#FF9500',        // Orange
   'Super Distributor': '#8A2BE2',         // Yellow
