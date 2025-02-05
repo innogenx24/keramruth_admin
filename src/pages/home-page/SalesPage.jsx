@@ -63,6 +63,37 @@ const SalesPage = () => {
     return roleAbbreviations[roleName] || roleName;
   };
 
+  // Calculate overall sales for the company
+  const companyOverallSales = salesData.reduce(
+    (acc, data) => {
+      acc.totalUsers += data.totalUsers;
+      acc.targetAmount += data.targetAmount;
+      acc.targetStock += data.targetStock;
+      acc.totalSalesAmount += data.totalSalesAmount;
+      acc.totalStockAchieved += data.totalStockAchieved;
+      acc.pendingAmount += data.pendingAmount;
+      acc.pendingStock += data.pendingStock;
+      acc.salesAchievementPercent += parseFloat(data.salesAchievementPercent || 0);
+      acc.stockAchievementPercent += parseFloat(data.stockAchievementPercent || 0);
+      return acc;
+    },
+    {
+      roleName: "Company Sales:",
+      totalUsers: 0,
+      targetAmount: 0,
+      targetStock: 0,
+      totalSalesAmount: 0,
+      totalStockAchieved: 0,
+      pendingAmount: 0,
+      pendingStock: 0,
+      salesAchievementPercent: 0,
+      stockAchievementPercent: 0,
+    }
+  );
+
+  // Calculate average sales and stock achievement percentages
+  companyOverallSales.salesAchievementPercent /= salesData.length;
+  companyOverallSales.stockAchievementPercent /= salesData.length;
 
   return (
     <div>
@@ -70,6 +101,25 @@ const SalesPage = () => {
         {/* Left Side: Sales Cards */}
         <Grid item xs={12} md={12} lg={6}>
           <Grid container spacing={3}>
+            {/* Company Overall Sales Card */}
+            <Grid item xs={12} sm={6}>
+              <SalesCard
+                title={
+                  <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: '#333' }}>
+                      {' '} {getRoleAbbreviation(companyOverallSales.roleName)}
+                      <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
+                      {' '} ({companyOverallSales.totalUsers})
+                    </Typography>
+                  </Typography>
+                }
+                sales={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.totalSalesAmount || 0)}`}
+                target={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.targetAmount || 0)}`}
+                growth={companyOverallSales.salesAchievementPercent.toFixed(2)}
+                roleName={companyOverallSales.roleName}
+              />
+            </Grid>
+
+            {/* Sales Cards for Each Role */}
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
                 <SalesCard
@@ -83,7 +133,6 @@ const SalesPage = () => {
                     </Typography>
                   }
                   sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
-                  // Check if role is "Customer", if true, set target to null or exclude it
                   target={data.roleName === "Customer" ? null : `Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
                   growth={data.salesAchievementPercent || 0}
                   roleName={data.roleName}
@@ -91,7 +140,6 @@ const SalesPage = () => {
                 />
               </Grid>
             ))}
-
           </Grid>
         </Grid>
 
@@ -103,11 +151,9 @@ const SalesPage = () => {
 
       {/* Second Row: Charts */}
       <Grid className="charts-twos" container spacing={3} sx={{ marginTop: 3 }}>
-        {/* <Grid item xs={12} md={3}> */}
         <Grid item xs={12} md={12} lg={4}>
           <DonutChart />
         </Grid>
-        {/* <Grid item xs={12} md={9}> */}
         <Grid item xs={12} md={12} lg={8}>
           <TrentLineGraph />
         </Grid>
