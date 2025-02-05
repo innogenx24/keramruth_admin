@@ -14,16 +14,13 @@ const SalesPage = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user'));
 
   // Fetch data from the API
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
         const response = await axios.get(`${API_END_POINT}/overall_sales/rolebased_sales`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass token for authentication
-          },
+          headers: { Authorization: `Bearer ${token}` }, // Pass token for authentication
         });
 
         if (response.data.success) {
@@ -41,13 +38,8 @@ const SalesPage = () => {
     fetchSalesData();
   }, [token]);
 
-  if (loading) {
-    return <div>Loading...</div>; // Show loading state
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>; // Show error message
-  }
+  if (loading) return <div>Loading...</div>; // Show loading state
+  if (error) return <div>Error: {error}</div>; // Show error message
 
   // Mapping roles to abbreviations
   const roleAbbreviations = {
@@ -73,11 +65,17 @@ const SalesPage = () => {
       acc.totalStockAchieved += data.totalStockAchieved;
       acc.pendingAmount += data.pendingAmount;
       acc.pendingStock += data.pendingStock;
-      acc.salesAchievementPercent += parseFloat(data.salesAchievementPercent || 0);
-      acc.stockAchievementPercent += parseFloat(data.stockAchievementPercent || 0);
+
+      acc.salesAchievementPercent += isNaN(parseFloat(data.salesAchievementPercent)) 
+        ? 0 
+        : parseFloat(data.salesAchievementPercent);
+
+      acc.stockAchievementPercent += isNaN(parseFloat(data.stockAchievementPercent)) 
+        ? 0 
+        : parseFloat(data.stockAchievementPercent);
+
       return acc;
     },
-    
     {
       roleName: "Company Sales:",
       totalUsers: 0,
@@ -93,8 +91,13 @@ const SalesPage = () => {
   );
 
   // Calculate average sales and stock achievement percentages
-  companyOverallSales.salesAchievementPercent /= salesData.length;
-  companyOverallSales.stockAchievementPercent /= salesData.length;
+  companyOverallSales.salesAchievementPercent = salesData.length > 0 
+    ? (companyOverallSales.salesAchievementPercent / salesData.length).toFixed(2) 
+    : "0.00";
+
+  companyOverallSales.stockAchievementPercent = salesData.length > 0 
+    ? (companyOverallSales.stockAchievementPercent / salesData.length).toFixed(2) 
+    : "0.00";
 
   return (
     <div>
@@ -107,15 +110,15 @@ const SalesPage = () => {
               <SalesCard
                 title={
                   <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: '#333' }}>
-                      {' '} {getRoleAbbreviation(companyOverallSales.roleName)}
-                      <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
+                    {' '} {getRoleAbbreviation(companyOverallSales.roleName)}
+                    <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
                       {' '} ({companyOverallSales.totalUsers})
                     </Typography>
                   </Typography>
                 }
                 sales={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.totalSalesAmount || 0)}`}
                 target={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.targetAmount || 0)}`}
-                growth={companyOverallSales.salesAchievementPercent.toFixed(2)}
+                growth={companyOverallSales.salesAchievementPercent}
                 roleName={companyOverallSales.roleName}
               />
             </Grid>
@@ -135,7 +138,9 @@ const SalesPage = () => {
                   }
                   sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
                   target={data.roleName === "Customer" ? null : `Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
-                  growth={data.salesAchievementPercent || 0}
+                  growth={isNaN(parseFloat(data.salesAchievementPercent)) 
+                    ? "0.00" 
+                    : parseFloat(data.salesAchievementPercent).toFixed(2)}
                   roleName={data.roleName}
                   customerBuyedAmmount={data.customerBuyedAmmount}
                 />
