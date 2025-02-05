@@ -77,7 +77,7 @@ const SalesPage = () => {
       return acc;
     },
     {
-      roleName: "Company Sales:",
+      roleName: "Company Total Sales:",
       totalUsers: 0,
       targetAmount: 0,
       targetStock: 0,
@@ -122,7 +122,7 @@ const SalesPage = () => {
                 roleName={companyOverallSales.roleName}
               />
             </Grid>
-
+            
             {salesData.map((data, index) => (
               <Grid item xs={12} sm={6} key={index}>
                 <SalesCard

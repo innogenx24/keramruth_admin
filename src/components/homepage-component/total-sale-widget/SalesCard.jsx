@@ -2,24 +2,31 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 
-const colors = [
-  'linear-gradient(180deg, #01C572 0%, #187E53 100%)',
-  'var(--Colors-Orange, #FF9500)',
-  '#FFC600',
-  '#0280F5'
-];
-
-const getRandomColor = () => {
-  return colors[Math.floor(Math.random() * colors.length)];
+const roleColors = {
+  'Company Total Sales:': '#FFD700', // Gold 
+  'Area Development Officer': '#01C572',  // Greenish
+  'Master Distributor': '#FF9500',        // Orange
+  'Super Distributor': '#8A2BE2',         // Yellow
+  'Distributor': '#0280F5',               // Blue
+  'Customer': '#FF4C4C',                  // Red
 };
 
 const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyedAmmount }) => {
-  const istyle = {
-    background: getRandomColor(),
-  };
+  // Assign a constant color based on the role
+  const roleColor = roleColors[roleName] || '#0280F5';  // Default to blue if roleName is not found
 
   const displaySales = roleName === 'Customer' ? `Rs.${new Intl.NumberFormat('en-IN').format(customerBuyedAmmount || 0)}` : sales;
   const displayTarget = roleName === 'Customer' ? null : target;
+
+  // Set dynamic color based on growth value
+  let growthColor = '';
+  if (growth >= 75) {
+    growthColor = 'green';  // Green for 75-100% growth
+  } else if (growth >= 50) {
+    growthColor = 'orange'; // Orange for 50-75% growth
+  } else {
+    growthColor = 'red';    // Red for 0-50% growth
+  }
 
   return (
     <Box
@@ -80,66 +87,50 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
-        <Box
-  sx={{
-    backgroundColor: growth >= 0 ? '#01C572' : '#FF4C4C',
-    borderRadius: '10px',
-    width: '35px',
-    height: '35px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#fff',
-    mb: '1%',
-    background: istyle.background,
-    mt: roleName === 'Customer' ? '-10px' : '0px',
-  }}
->
-  {icon || <PeopleIcon sx={{ fontSize: '1.1rem' }} />}
-</Box>
+          <Box
+            sx={{
+              backgroundColor: growth >= 0 ? roleColor : '#FF4C4C',  // Use roleColor for positive growth, or red for negative
+              borderRadius: '10px',
+              width: '35px',
+              height: '35px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              mb: '1%',
+              mt: roleName === 'Customer' ? '-10px' : '0px',
+            }}
+          >
+            {icon || <PeopleIcon sx={{ fontSize: '1.1rem' }} />}
+          </Box>
 
           {roleName !== 'Customer' && (
-           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-             <Typography
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography
                 variant="body2"
                 sx={{
-                    color: growth >= 0 ? '#01C572' : '#FF4C4C',
-                    fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
-                    mr: '1%',
+                  color: growthColor, // Apply dynamic growth color
+                  fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
+                  mr: '1%',
                 }}
               >
-               {growth >= 0 ? `+${growth}%` : `${growth}%`}
+                {growth >= 0 ? `+${growth}%` : `${growth}%`}
               </Typography>
               <Typography
                 variant="body2"
                 sx={{
-                   color: '#7e84a3',
-                   fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
+                  color: '#7e84a3',
+                  fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
                 }}
               >
-               {growth >= 0 ? '↑' : '↓'}
+                {growth >= 0 ? '↑' : '↓'}
               </Typography>
             </Box>
           )}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-             <Typography
-                variant="body2"
-               
-              >
-              </Typography>
-              <Typography
-                variant="body2"
-               
-              >
-                
-              </Typography>
-            </Box>
-
         </Box>
       </Box>
     </Box>
   );
-
 };
 
 export default SalesCard;
@@ -246,7 +237,7 @@ export default SalesCard;
 //               background: istyle.background, // Random gradient
 //             }}
 //           >
-//             {icon || <PeopleIcon sx={{ fontSize: '1.1rem' }} />} {/* Smaller icon */}
+//             {icon || <PeopleIcon sx={{ fontSize: '1.1rem' }} />} {/ Smaller icon /}
 //           </Box>
 //           <Box sx={{ display: 'flex', alignItems: 'center' }}>
 //             <Typography
