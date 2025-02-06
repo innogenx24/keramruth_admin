@@ -127,6 +127,14 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
               </Typography>
             </Box>
           )}
+          <Typography
+                variant="body2"
+                sx={{
+                  color: '#7e84a3',
+                  fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
+                }}
+              >
+              </Typography>
         </Box>
       </Box>
     </Box>
@@ -134,6 +142,8 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
 };
 
 export default SalesCard;
+
+
 
 
 

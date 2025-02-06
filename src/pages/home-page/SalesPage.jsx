@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Box } from '@mui/material';
+import DatePicker from 'react-datepicker'; // Assuming you're using react-datepicker
 import SalesCard from '../../components/homepage-component/total-sale-widget/SalesCard';
 import { StockSaleBarGraph } from '../../components/homepage-component/stockSale-graph/StockSaleBarGraph';
 import DonutChart from '../../components/homepage-component/selling-products-chart/DonutChart';
 import TrentLineGraph from '../../components/homepage-component/sale-trent-linechart/TrentLineGraph';
+import 'react-datepicker/dist/react-datepicker.css'; // Add this line if you haven't already
 import './SalesPage.scss';
 
 const SalesPage = () => {
   const [salesData, setSalesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const token = localStorage.getItem('token');
@@ -66,12 +69,12 @@ const SalesPage = () => {
       acc.pendingAmount += data.pendingAmount;
       acc.pendingStock += data.pendingStock;
 
-      acc.salesAchievementPercent += isNaN(parseFloat(data.salesAchievementPercent)) 
-        ? 0 
+      acc.salesAchievementPercent += isNaN(parseFloat(data.salesAchievementPercent))
+        ? 0
         : parseFloat(data.salesAchievementPercent);
 
-      acc.stockAchievementPercent += isNaN(parseFloat(data.stockAchievementPercent)) 
-        ? 0 
+      acc.stockAchievementPercent += isNaN(parseFloat(data.stockAchievementPercent))
+        ? 0
         : parseFloat(data.stockAchievementPercent);
 
       return acc;
@@ -91,12 +94,12 @@ const SalesPage = () => {
   );
 
   // Calculate average sales and stock achievement percentages
-  companyOverallSales.salesAchievementPercent = salesData.length > 0 
-    ? (companyOverallSales.salesAchievementPercent / salesData.length).toFixed(2) 
+  companyOverallSales.salesAchievementPercent = salesData.length > 0
+    ? (companyOverallSales.salesAchievementPercent / salesData.length).toFixed(2)
     : "0.00";
 
-  companyOverallSales.stockAchievementPercent = salesData.length > 0 
-    ? (companyOverallSales.stockAchievementPercent / salesData.length).toFixed(2) 
+  companyOverallSales.stockAchievementPercent = salesData.length > 0
+    ? (companyOverallSales.stockAchievementPercent / salesData.length).toFixed(2)
     : "0.00";
 
   return (
@@ -104,13 +107,43 @@ const SalesPage = () => {
       <Grid container spacing={3}>
  
         <Grid item xs={12} md={12} lg={6}>
+          {/* Responsive Container for Title & DatePicker */}
+          <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "row" }}
+            alignItems={{ xs: "flex-start", md: "center" }}
+            justifyContent="space-between"
+            gap={{ xs: 1, md: 2 }}
+          >
+            {/* Title */}
+            <Typography
+              variant="h6"
+              sx={{ color: "#989FA9", mb: { xs: 1, md: 0 } }}
+            >
+              This Month Details
+            </Typography>
+
+            {/* DatePicker (Aligned Right on Large Screens) */}
+            <Box className="month-selector" sx={{ width: "100%", textAlign: { xs: "left", md: "right" } }}>
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                dateFormat="MMMM yyyy"
+                showMonthYearPicker
+                className="date-picker-input"
+                style={{ width: "100%", maxWidth: "200px" }} // Ensure proper width control
+              />
+            </Box>
+          </Box>
+
+          {/* Sales Cards Section */}
           <Grid container spacing={3}>
       
             <Grid item xs={12} sm={6}>
               <SalesCard
                 title={
                   <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: '#333' }}>
-                    {' '} {getRoleAbbreviation(companyOverallSales.roleName)}
+                    {' '}{getRoleAbbreviation(companyOverallSales.roleName)}
                     <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
                       {' '} ({companyOverallSales.totalUsers})
                     </Typography>
@@ -137,8 +170,8 @@ const SalesPage = () => {
                   }
                   sales={`Rs.${new Intl.NumberFormat('en-IN').format(data.totalSalesAmount || 0)}`}
                   target={data.roleName === "Customer" ? null : `Rs.${new Intl.NumberFormat('en-IN').format(data.targetAmount || 0)}`}
-                  growth={isNaN(parseFloat(data.salesAchievementPercent)) 
-                    ? "0.00" 
+                  growth={isNaN(parseFloat(data.salesAchievementPercent))
+                    ? "0.00"
                     : parseFloat(data.salesAchievementPercent).toFixed(2)}
                   roleName={data.roleName}
                   customerBuyedAmmount={data.customerBuyedAmmount}
@@ -148,7 +181,8 @@ const SalesPage = () => {
           </Grid>
         </Grid>
 
-    
+
+        {/* Right Side: Stock Sale Graph */}
         <Grid item xs={12} md={12} lg={6}>
           <StockSaleBarGraph />
         </Grid>
