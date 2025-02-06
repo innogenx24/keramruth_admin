@@ -80,45 +80,39 @@ const AddMediaNews = ({ onClose }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-
+  
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
-
-      // Check if the file type is valid (JPEG, JPG, PNG, PDF)
-      const validTypes = ["image/jpeg", "image/png", "application/pdf"];
-      if (!validTypes.includes(file.type)) {
-        setImageError("Only JPEG, JPG, PNG, and PDF files are allowed.");
-        setImageFile(null); // Clear any previously selected file
-        setImageFileName("");
-        setPreviewUrl("");
-        setFileName(""); // Clear the fileName as well
-      }
+  
       // Check if file size exceeds 5MB
-      else if (file.size > MAX_FILE_SIZE) {
+      if (file.size > MAX_FILE_SIZE) {
         setImageError("File size must be less than 5MB");
-        setImageFile(null); // Clear any previously selected file
+        setImageFile(null); 
         setImageFileName("");
         setPreviewUrl("");
-        setFileName(""); // Clear the fileName as well
+        setFileName(""); 
+        return;
+      }
+  
+      // Allow all file types (no restriction on MIME types)
+      setImageError(""); // Clear error if file is valid
+      setImageFile(file);
+      setImageFileName(file.name);
+      setFileName(file.name);
+  
+      // If the file is an image, generate a preview
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
       } else {
-        setImageError(""); // Clear error if file is valid
-        setImageFile(file);
-        setImageFileName(file.name);
-        setFileName(file.name); // Set the fileName state here
-
-        // If the file is an image, generate a preview
-        if (file.type.startsWith("image/")) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setPreviewUrl(reader.result);
-          };
-          reader.readAsDataURL(file);
-        } else {
-          setPreviewUrl(""); // Clear preview for non-image files (e.g., PDF)
-        }
+        setPreviewUrl(""); // Clear preview for non-image files
       }
     }
   };
+  
 
   const validateLink = (value) => {
     // Updated regex for validating general and specific URLs
@@ -255,7 +249,7 @@ const AddMediaNews = ({ onClose }) => {
               <input
                 name="file"
                 type="file"
-                accept="image/*,application/pdf,application/zip"
+                accept="*/*"
                 onChange={handleFileChange}
                 ref={fileInputRef}
                 style={{ display: "none" }}

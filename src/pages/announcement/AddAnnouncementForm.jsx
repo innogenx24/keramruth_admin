@@ -82,16 +82,8 @@ const AddAnnouncementDetails = ({ onClose }) => {
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
   
-      // Check if the file type is valid (JPEG, JPG, PNG, PDF)
-      const validTypes = ["image/jpeg", "image/png", "application/pdf"];
-      if (!validTypes.includes(file.type)) {
-        setImageError("Only JPEG, JPG, PNG, and PDF files are allowed.");
-        setImageFile(null); // Clear any previously selected file
-        setImageFileName("");
-        setPreviewUrl("");
-      }
-      // Check if file size exceeds 5MB
-      else if (file.size > MAX_FILE_SIZE) {
+      // Allow all image types dynamically and all file types
+      if (file.size > MAX_FILE_SIZE) {
         setImageError("File size must be less than 5MB");
         setImageFile(null); // Clear any previously selected file
         setImageFileName("");
@@ -109,11 +101,12 @@ const AddAnnouncementDetails = ({ onClose }) => {
           };
           reader.readAsDataURL(file);
         } else {
-          setPreviewUrl(""); // Clear preview for non-image files (e.g., PDF)
+          setPreviewUrl(""); // Clear preview for non-image files
         }
       }
     }
   };
+  
   
 
   const validateLink = (value) => {
@@ -249,7 +242,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
               <input
                 name="file"
                 type="file"
-                accept="image/*,application/pdf,application/zip" // Allow images, PDFs, and ZIP files
+                accept="*/*"
                 onChange={handleFileChange} // Use the updated handleFileChange
                 ref={fileInputRef}
                 style={{ display: "none" }}

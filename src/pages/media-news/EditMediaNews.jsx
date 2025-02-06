@@ -99,49 +99,39 @@ const EditMediaNews = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB size limit
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB size limit
       const fileSizeMB = file.size / (1024 * 1024); // Convert size to MB
-
-      // Validate file format (images and PDFs)
-      const validFormats = ["image/jpeg", "image/png", "application/pdf"];
-      if (!validFormats.includes(file.type)) {
-        setImageError("Only JPEG, JPG, PNG, or PDF files are allowed.");
-        setImageFile(null); // Clear selected file
-        setImageFileName("");
-        setPreviewUrl("");
-        setExistingImage(""); // Clear existing image if error occurs
-        return;
-      }
-
+  
       // Validate file size
       if (fileSizeMB > 5) {
         setImageError("File size must be less than 5MB.");
-        setImageFile(null); // Clear selected file
+        setImageFile(null); 
         setImageFileName("");
         setPreviewUrl("");
-        setExistingImage(""); // Clear existing image if error occurs
+        setExistingImage(""); 
         return;
       }
-
-      // Clear error if file is valid
+  
+      // Allow all file types
       setImageError("");
       setImageFile(file);
       setImageFileName(file.name);
-
-      // Generate image preview for image files
+  
+      // Generate preview for images
       if (file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setPreviewUrl(reader.result);
         };
         reader.readAsDataURL(file);
-        setExistingImage(""); // Clear existing image if new file is selected
-      } else if (file.type === "application/pdf") {
-        setPreviewUrl(""); // No preview for PDF
-        setExistingImage(""); // Clear any existing image
+        setExistingImage(""); 
+      } else {
+        setPreviewUrl(""); // No preview for non-image files
+        setExistingImage(""); 
       }
     }
   };
+  
 
   const validateLink = (url) => {
     const regex =
@@ -246,7 +236,7 @@ const EditMediaNews = () => {
               <input
                 type="file"
                 hidden
-                accept="image/*,application/pdf"
+                accept="*/*"
                 onChange={handleFileChange}
               />
             </IconButton>
