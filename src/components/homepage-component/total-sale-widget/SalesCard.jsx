@@ -11,13 +11,22 @@ const roleColors = {
   'Customer': '#FF4C4C',                  // Red
 };
 
-
 const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyedAmmount }) => {
   // Assign a constant color based on the role
   const roleColor = roleColors[roleName] || '#0280F5';  // Default to blue if roleName is not found
 
   const displaySales = roleName === 'Customer' ? `Rs.${new Intl.NumberFormat('en-IN').format(customerBuyedAmmount || 0)}` : sales;
   const displayTarget = roleName === 'Customer' ? null : target;
+
+  // Set dynamic color based on growth value
+  let growthColor = '';
+  if (growth >= 75) {
+    growthColor = 'green';  // Green for 75-100% growth
+  } else if (growth >= 50) {
+    growthColor = 'orange'; // Orange for 50-75% growth
+  } else {
+    growthColor = 'red';    // Red for 0-50% growth
+  }
 
   return (
     <Box
@@ -100,7 +109,7 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
               <Typography
                 variant="body2"
                 sx={{
-                  color: growth >= 0 ? roleColor : '#FF4C4C',
+                  color: growthColor, // Apply dynamic growth color
                   fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
                   mr: '1%',
                 }}
@@ -118,6 +127,14 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
               </Typography>
             </Box>
           )}
+          <Typography
+                variant="body2"
+                sx={{
+                  color: '#7e84a3',
+                  fontSize: { xs: '0.6rem', sm: '0.7rem', md: '0.75rem' },
+                }}
+              >
+              </Typography>
         </Box>
       </Box>
     </Box>
@@ -125,6 +142,7 @@ const SalesCard = ({ title, sales, target, growth, icon, roleName, customerBuyed
 };
 
 export default SalesCard;
+
 
 
 

@@ -10,48 +10,95 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import LoginImage from "../../assets/logo/LoginImage.png"; // Ensure this path is correct
-import "./style.css"; // Ensure this file contains the necessary styles
-import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg';
+import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg'; // Ensure this path is correct
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(""); // State for phone number
+  const [otp, setOtp] = useState(""); // State for OTP
+  const [otpSent, setOtpSent] = useState(false); // Flag to check if OTP has been sent
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSendOtp = async (event) => {
     event.preventDefault();
 
-    if (!email) {
-      setErrorMessage("Email is required");
+    // Ensure phone number always starts with '+'
+    const formattedPhoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
+
+    // Check if phone number is entered
+    if (!formattedPhoneNumber) {
+      setErrorMessage("Please enter your phone number");
       return;
     }
 
     try {
-      const response = await fetch(`${API_END_POINT}/forgot-password`, {
+      const response = await fetch(`${API_END_POINT}/sent-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }), // Use email in the request body
+        body: JSON.stringify({
+          phoneNumber: formattedPhoneNumber, // Send the formatted phone number
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage("Reset link sent to your email.");
+        setSuccessMessage("OTP sent successfully!");
+        setOtpSent(true); // Mark OTP as sent
         setOpenSnackbar(true); // Show success message
-        setEmail(""); // Clear the email field
         setErrorMessage(""); // Clear error message
       } else {
-        setErrorMessage(data.message || "Error sending reset link");
+        setErrorMessage(data.message || "Error sending OTP");
+      }
+    } catch (error) {
+      setErrorMessage("Error connecting to server");
+    }
+  };
+
+  const handleVerifyOtp = async (event) => {
+    event.preventDefault();
+
+    // Ensure phone number always starts with '+'
+    const formattedPhoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
+
+    // Check if OTP is entered
+    if (!otp) {
+      setErrorMessage("Please enter the OTP");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_END_POINT}/sent-otp/verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: formattedPhoneNumber, // Send the formatted phone number
+          code: otp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccessMessage("OTP verified successfully!");
+        setOpenSnackbar(true); // Show success message
+        setErrorMessage(""); // Clear error message
+        navigate(`${API_END_POINT}/craete-password`)
+      } else {
+        setErrorMessage(data.message || "Invalid OTP");
       }
     } catch (error) {
       setErrorMessage("Error connecting to server");
@@ -79,7 +126,7 @@ const ForgotPassword = () => {
           <Box>
             <img
               src={LeftSideBanner}
-              alt="Login"
+              alt="Forgot Password"
               style={{ maxWidth: "100%", height: "100%", borderRadius: "8px" }}
             />
           </Box>
@@ -105,33 +152,62 @@ const ForgotPassword = () => {
             <Typography variant="h4" gutterBottom>
               Forgot Password
             </Typography>
-            <Typography variant="body1" gutterBottom>
-              Enter your email and we'll send you instructions to reset your
-              password.
-            </Typography>
-            <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Enter Email"
-                name="email"
-                type="email"
-                variant="outlined"
-                margin="normal"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={Boolean(errorMessage)}
-                helperText={errorMessage}
-              />
-              <Button
-                color="primary"
-                variant="contained"
-                fullWidth
-                type="submit"
-                sx={{ mt: 2, backgroundColor: "#00b050", fontSize: "16px" }}
-              >
-                NEXT
-              </Button>
-            </form>
+
+            {/* If OTP is not sent yet, show phone number input */}
+            {!otpSent ? (
+              <>
+                <Typography variant="body1" gutterBottom>
+                  Enter your mobile number to receive an OTP
+                </Typography>
+                <form onSubmit={handleSendOtp}>
+                  <PhoneInput
+                    country={'in'} // Set default country code (e.g., India)
+                    value={phoneNumber}
+                    onChange={(phone) => setPhoneNumber(phone)}
+                    error={Boolean(errorMessage)}
+                    inputProps={{
+                      maxLength: 15,
+                    }}
+                  />
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    type="submit"
+                    sx={{ mt: 2, backgroundColor: "#00b050", fontSize: "16px" }}
+                  >
+                    NEXT
+                  </Button>
+                </form>
+              </>
+            ) : (
+              // If OTP is sent, show OTP input and verify button
+              <>
+                <Typography variant="body1" gutterBottom>
+                  Enter the OTP sent to {phoneNumber}
+                </Typography>
+                <form onSubmit={handleVerifyOtp}>
+                  <TextField
+                    fullWidth
+                    label="OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    error={Boolean(errorMessage)}
+                    helperText={errorMessage}
+                    inputProps={{ maxLength: 6 }}
+                  />
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    fullWidth
+                    type="submit"
+                    sx={{ mt: 2, backgroundColor: "#00b050", fontSize: "16px" }}
+                  >
+                    VERIFY OTP
+                  </Button>
+                </form>
+              </>
+            )}
 
             <Snackbar
               open={openSnackbar}
@@ -148,21 +224,19 @@ const ForgotPassword = () => {
               </Alert>
             </Snackbar>
 
-            
-
             <Box sx={{ textAlign: "right", mt: 2 }}>
-                            <Typography variant="body2">
-                              Back to Login?{" "}
-                              <Button
-                                color="secondary"
-                                variant="text"
-                                onClick={() => navigate("/signin")}
-                                sx={{ textTransform: "none" }}
-                              >
-                                Click Here
-                              </Button>
-                            </Typography>
-                          </Box>
+              <Typography variant="body2">
+                Back to Login?{" "}
+                <Button
+                  color="secondary"
+                  variant="text"
+                  onClick={() => navigate("/signin")}
+                  sx={{ textTransform: "none" }}
+                >
+                  Click Here
+                </Button>
+              </Typography>
+            </Box>
           </Box>
         </Grid>
       </Grid>
@@ -171,6 +245,9 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
+
+
+
 
 
 
