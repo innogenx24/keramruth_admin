@@ -19,13 +19,43 @@ const SalesPage = () => {
   const token = localStorage.getItem('token');
 
   // Fetch data from the API
+  // useEffect(() => {
+  //   const fetchSalesData = async () => {
+  //     try {
+  //       const response = await axios.get(`${API_END_POINT}/overall_sales/rolebased_sales`, {
+  //         headers: { Authorization: `Bearer ${token}` }, // Pass token for authentication
+  //       });
+
+  //       if (response.data.success) {
+  //         setSalesData(response.data.result);
+  //       } else {
+  //         setError(response.data.message || 'Failed to fetch data');
+  //       }
+  //     } catch (err) {
+  //       setError(err.message || 'An error occurred while fetching data');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchSalesData();
+  // }, [token]);
+
   useEffect(() => {
     const fetchSalesData = async () => {
+      if (!selectedDate) return;
+      
+      setLoading(true);
+      setError(null);
+  
+      // Convert the selected date to "YYYY-MM" format
+      const formattedMonth = selectedDate.toISOString().slice(0, 7);
+  
       try {
-        const response = await axios.get(`${API_END_POINT}/overall_sales/rolebased_sales`, {
-          headers: { Authorization: `Bearer ${token}` }, // Pass token for authentication
+        const response = await axios.get(`${API_END_POINT}/overall_sales/rolebased_sales?month=${formattedMonth}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
+  
         if (response.data.success) {
           setSalesData(response.data.result);
         } else {
@@ -37,12 +67,13 @@ const SalesPage = () => {
         setLoading(false);
       }
     };
-
+  
     fetchSalesData();
-  }, [token]);
+  }, [selectedDate, token]);
+  
 
-  if (loading) return <div>Loading...</div>; // Show loading state
-  if (error) return <div>Error: {error}</div>; // Show error message
+  // if (loading) return <div>Loading...</div>; // Show loading state
+  // if (error) return <div>Error: {error}</div>; // Show error message
 
   // Mapping roles to abbreviations
   const roleAbbreviations = {
