@@ -22,6 +22,8 @@ import { useNavigate } from "react-router-dom";
 import DeleteButton from "../../assets/actions/DeleteButton.svg"
 import EditButton from "../../assets/actions/EditButton.svg"
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
+import { FaFilePdf, FaFileArchive, FaFileExcel } from "react-icons/fa";
+
 const rowsPerPage = 10; // Number of rows per page
 
 const DocumentsTable = () => {
@@ -181,18 +183,26 @@ const DocumentsTable = () => {
                 <TableCell>{page * rowsPerPage + index + 1}</TableCell>
                 <TableCell style={{ width: 100, textAlign: "center" }}>
                   {document.image ? (
-                    <img
-                      src={`${imageBaseURL}${document.image}`}
-                      style={{
-                        width: "80px",
-                        height: "auto",
-                        objectFit: "contain",
-                        border: "1px solid #ccc",
-                        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                        borderRadius: "10px",
-                        marginRight: "10px",
-                      }}
-                    />
+                    document.image.endsWith(".pdf") ? (
+                      <FaFilePdf size={40} color="red" />
+                    ) : document.image.endsWith(".zip") ? (
+                      <FaFileArchive size={40} color="blue" />
+                    ) : document.image.endsWith(".xlsx") || document.image.endsWith(".csv") ? (
+                      <FaFileExcel size={40} color="green" />
+                    ) : (
+                      <img
+                        src={`${imageBaseURL}${document.image}`}
+                        style={{
+                          width: "80px",
+                          height: "auto",
+                          objectFit: "contain",
+                          border: "1px solid #ccc",
+                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                          borderRadius: "10px",
+                          marginRight: "10px",
+                        }}
+                      />
+                    )
                   ) : (
                     <span style={{ color: "#999" }}>No Image Available</span>
                   )}
@@ -205,7 +215,7 @@ const DocumentsTable = () => {
                   wordBreak: 'break-word',
                 }}>
                   {document.description}
-                </TableCell>                
+                </TableCell>
                 <TableCell>
                   {Array.isArray(document.receiver)
                     ? document.receiver.join(", ")

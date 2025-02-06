@@ -14,6 +14,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
+import { FaFilePdf, FaFileArchive, FaFileExcel } from "react-icons/fa";
 
 const AnnouncementTable = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -96,6 +97,8 @@ const AnnouncementTable = () => {
               <TableCell>Announcement Heading</TableCell>
               <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>Description</TableCell>
               <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>Announcement Link</TableCell>
+              <TableCell>Download File</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
@@ -104,18 +107,26 @@ const AnnouncementTable = () => {
                 <TableCell>{startIndex + index + 1}</TableCell>
                 <TableCell style={{ width: 100, textAlign: "center" }}>
                   {announcement.image ? (
-                    <img
-                      src={getImageURL(announcement.image)}
-                      alt="Announcement"
-                      style={{
-                        width: "80px",
-                        height: "auto",
-                        objectFit: "contain",
-                        border: "1px solid #ccc",
-                        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                        borderRadius: "10px",
-                      }}
-                    />
+                    announcement.image.endsWith(".pdf") ? (
+                      <FaFilePdf size={40} color="red" />
+                    ) : announcement.image.endsWith(".zip") ? (
+                      <FaFileArchive size={40} color="blue" />
+                    ) : announcement.image.endsWith(".xlsx") || announcement.image.endsWith(".csv") ? (
+                      <FaFileExcel size={40} color="green" />
+                    ) : (
+                      <img
+                        src={`${imageBaseURL}${announcement.image}`}
+                        style={{
+                          width: "80px",
+                          height: "auto",
+                          objectFit: "contain",
+                          border: "1px solid #ccc",
+                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                          borderRadius: "10px",
+                          marginRight: "10px",
+                        }}
+                      />
+                    )
                   ) : (
                     <span style={{ color: "#999" }}>No Image Available</span>
                   )}
@@ -138,6 +149,32 @@ const AnnouncementTable = () => {
                     {announcement.link}
                   </a>
                 </TableCell>
+                <TableCell>
+                  {announcement.image ? (
+                    <a
+                      href={`${API_END_POINT_IMG}/uploads/${announcement.image}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      style={{ textDecoration: "none" }}
+                    >
+                      <Button
+                        variant="contained"
+                        style={{
+                          backgroundColor: "#28a745",
+                          color: "white",
+                          fontWeight: "bold",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        Download
+                      </Button>
+                    </a>
+                  ) : (
+                    <span style={{ color: "#999" }}>No File</span>
+                  )}
+                </TableCell>
+
 
               </TableRow>
             ))}

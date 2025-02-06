@@ -98,19 +98,8 @@ const EditAnnouncementForm = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB size limit
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB size limit
       const fileSizeMB = file.size / (1024 * 1024); // Convert size to MB
-
-      // Validate file format (images and PDFs)
-      const validFormats = ["image/jpeg", "image/png", "application/pdf"];
-      if (!validFormats.includes(file.type)) {
-        setImageError("Only JPEG, JPG, PNG, or PDF files are allowed.");
-        setImageFile(null); // Clear selected file
-        setImageFileName("");
-        setPreviewUrl("");
-        setExistingImage(""); // Clear existing image if error occurs
-        return;
-      }
 
       // Validate file size
       if (fileSizeMB > 5) {
@@ -135,12 +124,13 @@ const EditAnnouncementForm = () => {
         };
         reader.readAsDataURL(file);
         setExistingImage(""); // Clear existing image if new file is selected
-      } else if (file.type === "application/pdf") {
-        setPreviewUrl(""); // No preview for PDF
+      } else {
+        setPreviewUrl(""); // No preview for non-image files
         setExistingImage(""); // Clear any existing image
       }
     }
   };
+
 
   const validateLink = (url) => {
     const regex =
@@ -242,24 +232,24 @@ const EditAnnouncementForm = () => {
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
 
-          <InputLabel>Edit Images and File</InputLabel>
+            <InputLabel>Edit Images and File</InputLabel>
 
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
               <input
                 type="file"
                 hidden
-                accept="image/*,application/pdf"
+                accept="*/*" // Allows all file types
                 onChange={handleFileChange}
               />
             </IconButton>
+
             {imageFileName && (
               <Typography variant="body2" sx={{ marginTop: "10px" }}>
                 Selected file: {imageFileName}
               </Typography>
             )}
 
-            {/* Show preview if the file is an image */}
             {previewUrl && (
               <Box sx={{ marginTop: "10px" }}>
                 <img
@@ -270,7 +260,6 @@ const EditAnnouncementForm = () => {
               </Box>
             )}
 
-            {/* Show existing image if available */}
             {existingImage && (
               <Box sx={{ marginTop: "10px" }}>
                 <img
@@ -281,7 +270,6 @@ const EditAnnouncementForm = () => {
               </Box>
             )}
 
-            {/* Display error if any */}
             {imageError && (
               <Typography
                 variant="body2"
@@ -290,6 +278,7 @@ const EditAnnouncementForm = () => {
                 {imageError}
               </Typography>
             )}
+
             <TextField
               fullWidth
               label="Announcement Heading*"

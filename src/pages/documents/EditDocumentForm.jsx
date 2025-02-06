@@ -100,45 +100,26 @@ const EditDocumentForm = () => {
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
+  
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert file size to MB
   
-      // Check if file size exceeds 2MB
-      if (fileSizeMB > 2) {
-        setImageError("File size must be less than 2MB");
-        setImage(null); // Reset file if the file is too large
-        return; // Prevent further actions
+      // Allow files up to 5MB
+      if (fileSizeMB > 5) {
+        setImageError("File size must be less than 5MB.");
+        setImage(null);
+        setImageName("");
+        return;
       } else {
         setImageError(""); // Clear error if file size is valid
       }
   
-      // Check if file type is JPEG, JPG, PNG, or PDF (without ZIP)
-      const validFileTypes = [
-        "image/jpeg",
-        "image/png",
-        "application/pdf",
-      ];
-      const validExtensions = ["pdf", "jpeg", "jpg", "png"];
-  
-      // Check file extension
-      const fileExtension = file.name.split(".").pop().toLowerCase();
-  
-      // Check if MIME type or file extension is valid (exclude ZIP files)
-      if (
-        !validFileTypes.includes(file.type) &&
-        !validExtensions.includes(fileExtension)
-      ) {
-        setImageError("Only JPEG, JPG, PNG, and PDF files are allowed (ZIP files are not allowed)");
-        setImage(null); // Reset file if the file type is not valid
-        return; // Prevent further actions
-      } else {
-        setImageError(""); // Clear error if file type is valid
-      }
-  
-      setImage(file); // Set the file
-      setImageName(file.name); // Set the file name
+      // Set file and file name
+      setImage(file);
+      setImageName(file.name);
     }
   };
+  
   
   
   
@@ -272,7 +253,7 @@ const EditDocumentForm = () => {
             <InputLabel>Edit Images and File</InputLabel>
             <IconButton color="primary" component="label">
               <AddPhotoAlternateIcon />
-              <input type="file" hidden onChange={handleFileUpload} />
+              <input type="file" hidden accept="*/*" onChange={handleFileUpload} />
             </IconButton>
             {imageName && <Typography variant="body2">{imageName}</Typography>}
 

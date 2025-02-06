@@ -124,34 +124,27 @@ const DocumentForm = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+  
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert bytes to MB
-      const validFileTypes = ["image/jpeg", "image/png", "application/pdf"];
-
-      // Check if the file is a ZIP file by extension (disallow ZIP)
-      const fileExtension = file.name.split(".").pop().toLowerCase();
-      const isZipFile = fileExtension === "zip";
-      // Check if the file type is valid (no ZIP files allowed)
-      if (!validFileTypes.includes(file.type) || isZipFile) {
-        setImageError(
-          "Only JPEG, JPG, PNG, and PDF files are allowed (ZIP files are not allowed)"
-        );
-        return;
-      }
-
-      // Check if the file size is greater than 5MB
+  
+      // Allow files up to 5MB
       if (fileSizeMB > 5) {
-        setImageError("File size must be less than 5MB");
+        setImageError("File size must be less than 5MB.");
+        setSelectedFile(null);
+        setFileName("");
+        setImagePreview("");
         return;
       } else {
-        setImageError(""); // Clear any previous errors
+        setImageError(""); // Clear error if file size is valid
       }
-
+  
+      // Set file and file name
       formik.setFieldValue("image", file.name);
       setSelectedFile(file);
-      setFileName(file.name); // Update the file name state
-
-      // Only update imagePreview if the file is an image
+      setFileName(file.name);
+  
+      // Generate image preview if the file is an image
       if (file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -159,10 +152,11 @@ const DocumentForm = () => {
         };
         reader.readAsDataURL(file);
       } else {
-        setImagePreview(""); // Clear image preview for non-image files
+        setImagePreview(""); // Clear preview for non-image files
       }
     }
   };
+  
 
   const handleSelectAllChange = () => {
     setSelectAll(!selectAll);
@@ -211,7 +205,7 @@ const DocumentForm = () => {
                 <input
                   name="file"
                   type="file"
-                  accept="image/*,application/pdf,application/zip" // Allow images, PDFs, and ZIP files
+                  accept="*/*"
                   onChange={handleFileChange} // Use the updated handleFileChange
                   ref={fileInputRef}
                   style={{ display: "none" }}

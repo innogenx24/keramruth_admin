@@ -146,6 +146,7 @@ const MediaNewsTable = () => {
                             <TableCell>Event Date</TableCell>
                             <TableCell>Media / News Link</TableCell>
                             {role === "Admin" && <TableCell>Action</TableCell>}
+                            {role !== "Admin" && <TableCell>Download File</TableCell>}
 
                         </TableRow>
                     </TableHead>
@@ -158,25 +159,30 @@ const MediaNewsTable = () => {
                                     <TableCell>{news.heading}</TableCell>
                                     <TableCell>{news.description}</TableCell>
                                     <TableCell>
-                                        {new Date(news.event_date).toLocaleDateString('en-GB', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                            year: 'numeric',
+                                        {new Date(news.event_date).toLocaleDateString("en-GB", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
                                         })}
                                     </TableCell>
                                     <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
-                                        <a href={news.link} target="_blank" rel="noopener noreferrer"
-                                            style={{ color: '#1c96c5', textDecoration: 'none' }}
-
+                                        <a
+                                            href={news.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: "#1c96c5", textDecoration: "none" }}
                                         >
                                             {news.link}
                                         </a>
                                     </TableCell>
-                                    {role === "Admin" &&
+
+                                    {role === "Admin" && (
                                         <TableCell>
                                             <div style={{ display: "flex" }}>
-
-                                                <IconButton onClick={() => handleDeleteClick(news)} sx={{ marginRight: "5px" }}>
+                                                <IconButton
+                                                    onClick={() => handleDeleteClick(news)}
+                                                    sx={{ marginRight: "5px" }}
+                                                >
                                                     <img
                                                         src={DeleteButton}
                                                         alt="Delete"
@@ -200,14 +206,47 @@ const MediaNewsTable = () => {
                                                         }}
                                                     />
                                                 </IconButton>
-
                                             </div>
                                         </TableCell>
+                                    )}
 
-                                    }
+                                    {role !== "Admin" && (
+                                        <TableCell>
+                                            {news.image ? (
+                                                <a
+                                                    href={`${API_END_POINT_IMG}/uploads/${news.image}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ textDecoration: "none" }}
+                                                >
+                                                    <Button
+                                                        variant="contained"
+                                                        style={{
+                                                            backgroundColor: "#28a745",
+                                                            color: "white",
+                                                            fontWeight: "bold",
+                                                            borderRadius: "5px",
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            window.open(
+                                                                `${API_END_POINT_IMG}/uploads/${news.image}`,
+                                                                "_blank"
+                                                            );
+                                                        }}
+                                                    >
+                                                        Download
+                                                    </Button>
+                                                </a>
+                                            ) : (
+                                                <span style={{ color: "#999" }}>No File</span>
+                                            )}
+                                        </TableCell>
+                                    )}
                                 </TableRow>
                             ))}
                     </TableBody>
+
                 </Table>
             </TableContainer>
             {renderPagination()}

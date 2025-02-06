@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
+import { FaFilePdf, FaFileArchive, FaFileExcel } from "react-icons/fa";
 
 const rowsPerPage = 10;
 
@@ -77,13 +78,28 @@ const MemberDocumenttable = () => {
             {documents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((document, index) => (
               <TableRow key={document.id}>
                 <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                <TableCell>
+                <TableCell style={{ width: 100, textAlign: "center" }}>
                   {document.image ? (
-                    <img
-                      src={`${imageBaseURL}${document.image}`}
-                      alt="PDF File"
-                      style={{ width: "80px", height: "auto", borderRadius: "10px" }}
-                    />
+                    document.image.endsWith(".pdf") ? (
+                      <FaFilePdf size={40} color="red" />
+                    ) : document.image.endsWith(".zip") ? (
+                      <FaFileArchive size={40} color="blue" />
+                    ) : document.image.endsWith(".xlsx") || document.image.endsWith(".csv") ? (
+                      <FaFileExcel size={40} color="green" />
+                    ) : (
+                      <img
+                        src={`${imageBaseURL}${document.image}`}
+                        style={{
+                          width: "80px",
+                          height: "auto",
+                          objectFit: "contain",
+                          border: "1px solid #ccc",
+                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                          borderRadius: "10px",
+                          marginRight: "10px",
+                        }}
+                      />
+                    )
                   ) : (
                     <span style={{ color: "#999" }}>No Image Available</span>
                   )}
