@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -10,19 +10,29 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg'; // Ensure this path is correct
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import LeftSideBanner from '../../assets/logo/LeftSideBanner.jpg'
+import crypto from "crypto";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState(""); // State for phone number
-  const [otp, setOtp] = useState(""); // State for OTP
-  const [otpSent, setOtpSent] = useState(false); // Flag to check if OTP has been sent
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes = 600 seconds
+  const [timerRunning, setTimerRunning] = useState(false);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+
+  // ✅ Generate Secure Token
+  const generateToken = () => {
+    return window.crypto.getRandomValues(new Uint8Array(32))
+      .reduce((acc, byte) => acc + byte.toString(16).padStart(2, "0"), "");
+  };
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -31,10 +41,10 @@ const ForgotPassword = () => {
   const handleSendOtp = async (event) => {
     event.preventDefault();
 
-    // Ensure phone number always starts with '+'
-    const formattedPhoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
+    const formattedPhoneNumber = phoneNumber.startsWith("+")
+      ? phoneNumber
+      : `+${phoneNumber}`;
 
-    // Check if phone number is entered
     if (!formattedPhoneNumber) {
       setErrorMessage("Please enter your phone number");
       return;
@@ -46,33 +56,36 @@ const ForgotPassword = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          phoneNumber: formattedPhoneNumber, // Send the formatted phone number
-        }),
+        body: JSON.stringify({ phoneNumber: formattedPhoneNumber }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         setSuccessMessage("OTP sent successfully!");
-        setOtpSent(true); // Mark OTP as sent
-        setOpenSnackbar(true); // Show success message
-        setErrorMessage(""); // Clear error message
+        setOtpSent(true);
+        setOpenSnackbar(true);
+        setErrorMessage("");
       } else {
-        setErrorMessage(data.message || "Error sending OTP");
+        if (data.message === "Mobile number is not found.") {
+          setErrorMessage("Mobile number is not found.");
+        } else {
+          setErrorMessage(data.message || "Error sending OTP");
+        }
       }
     } catch (error) {
       setErrorMessage("Error connecting to server");
     }
   };
 
+
   const handleVerifyOtp = async (event) => {
     event.preventDefault();
 
-    // Ensure phone number always starts with '+'
-    const formattedPhoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
+    const formattedPhoneNumber = phoneNumber.startsWith("+")
+      ? phoneNumber
+      : `+${phoneNumber}`;
 
-    // Check if OTP is entered
     if (!otp) {
       setErrorMessage("Please enter the OTP");
       return;
@@ -85,7 +98,7 @@ const ForgotPassword = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phoneNumber: formattedPhoneNumber, // Send the formatted phone number
+          phoneNumber: formattedPhoneNumber,
           code: otp,
         }),
       });
@@ -93,16 +106,58 @@ const ForgotPassword = () => {
       const data = await response.json();
 
       if (response.ok) {
+        const otpTimestamp = data.otpTimestamp;
+        localStorage.setItem('otp_timestamp', otpTimestamp);
+
+        const currentTime = Date.now();
+        const otpExpirationTime = 10 * 60 * 1000;
+        if (currentTime - otpTimestamp > otpExpirationTime) {
+          setErrorMessage("OTP has expired. Please request a new one.");
+          return;
+        }
+
+        const token = generateToken();
+        localStorage.setItem("jwt_token", token);
+
         setSuccessMessage("OTP verified successfully!");
-        setOpenSnackbar(true); // Show success message
-        setErrorMessage(""); // Clear error message
-        navigate(`${API_END_POINT}/craete-password`)
+        setOpenSnackbar(true);
+        setErrorMessage("");
+        setOtpVerified(true);
+
+        navigate(`/${token}/create-password`);
       } else {
         setErrorMessage(data.message || "Invalid OTP");
       }
     } catch (error) {
       setErrorMessage("Error connecting to server");
     }
+  };
+
+
+
+  useEffect(() => {
+    if (otpSent && !otpVerified) {
+      const interval = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(interval);  // Clear the interval when time runs out
+            setErrorMessage("OTP has expired. Please request a new one.");
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000); // Update every second
+      setTimerRunning(true);
+
+      return () => clearInterval(interval); // Cleanup interval on component unmount
+    }
+  }, [otpSent, otpVerified]);
+
+  // Format time left in minutes:seconds
+  const formatTimeLeft = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
   return (
@@ -161,7 +216,7 @@ const ForgotPassword = () => {
                 </Typography>
                 <form onSubmit={handleSendOtp}>
                   <PhoneInput
-                    country={'in'} // Set default country code (e.g., India)
+                    country={'in'} 
                     value={phoneNumber}
                     onChange={(phone) => setPhoneNumber(phone)}
                     error={Boolean(errorMessage)}
@@ -169,6 +224,11 @@ const ForgotPassword = () => {
                       maxLength: 15,
                     }}
                   />
+                  {errorMessage && (
+                    <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
+                      {errorMessage}
+                    </Typography>
+                  )}
                   <Button
                     color="primary"
                     variant="contained"
@@ -196,6 +256,13 @@ const ForgotPassword = () => {
                     helperText={errorMessage}
                     inputProps={{ maxLength: 6 }}
                   />
+
+                  {otpSent && !otpVerified && (
+                    <Typography variant="body2" color="error">
+                      Time left to verify OTP: {formatTimeLeft(timeLeft)}
+                    </Typography>
+                  )}
+
                   <Button
                     color="primary"
                     variant="contained"
