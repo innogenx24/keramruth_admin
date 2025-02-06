@@ -89,7 +89,7 @@ const RoutesConfig = () => {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/create-password" element={<CreateNewPassword />} />
+          <Route path="/:token/create-password" element={<CreateNewPassword />} />
 
           {/* Protected dashboard routes */}
           <Route

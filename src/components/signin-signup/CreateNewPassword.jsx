@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate,useLocation  } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -23,7 +23,7 @@ const CreateNewPassword = () => {
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
 
-  const [email, setEmail] = useState("");
+  const [mobileNumber, setMobileNumber] = useState(""); 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,19 +36,19 @@ const CreateNewPassword = () => {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const mobileRegex = /^[0-9]{10}$/; // Regex for 10-digit mobile number
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Basic validations
-    if (!email || !password || !confirmPassword) {
+    if (!mobileNumber || !password || !confirmPassword) {
       setErrorMessage("All fields are required");
       return;
     }
 
-    if (!emailRegex.test(email)) {
-      setErrorMessage("Please enter a valid email address");
+    if (!mobileRegex.test(mobileNumber)) {
+      setErrorMessage("Please enter a valid mobile number");
       return;
     }
 
@@ -71,17 +71,17 @@ const CreateNewPassword = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, token }),
+        body: JSON.stringify({ mobileNumber, password, token }),
       });
-    
+
       const data = await response.json();
-    
+
       if (response.ok) {
-        setSuccessMessage("Password updated successfully and confirmation email sent.");
+        setSuccessMessage("Password updated successfully and confirmation SMS sent.");
         setOpenSnackbar(true);
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
+        setMobileNumber(""); // Reset mobile number field
+        setPassword(""); // Reset password field
+        setConfirmPassword(""); // Reset confirm password field
         setTimeout(() => {
           navigate("/signin");
         }, 6000);
@@ -145,16 +145,16 @@ const CreateNewPassword = () => {
               Reset Your Password
             </Typography>
             <form onSubmit={handleSubmit}>
-              {/* Email Field */}
+              {/* Mobile Number Field */}
               <TextField
                 fullWidth
-                label="Email"
-                name="email"
-                type="email"
+                label="Mobile Number"
+                name="mobileNumber"
+                type="text"
                 variant="outlined"
                 margin="normal"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
               />
 
               {/* New Password Field */}
