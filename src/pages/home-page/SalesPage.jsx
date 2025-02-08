@@ -15,31 +15,10 @@ const SalesPage = () => {
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const [loginUserTotalSales, setLoginUserTotalSales] = useState(0);
 
   const token = localStorage.getItem('token');
 
-  // Fetch data from the API
-  // useEffect(() => {
-  //   const fetchSalesData = async () => {
-  //     try {
-  //       const response = await axios.get(`${API_END_POINT}/overall_sales/rolebased_sales`, {
-  //         headers: { Authorization: `Bearer ${token}` }, // Pass token for authentication
-  //       });
-
-  //       if (response.data.success) {
-  //         setSalesData(response.data.result);
-  //       } else {
-  //         setError(response.data.message || 'Failed to fetch data');
-  //       }
-  //     } catch (err) {
-  //       setError(err.message || 'An error occurred while fetching data');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchSalesData();
-  // }, [token]);
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -58,6 +37,8 @@ const SalesPage = () => {
   
         if (response.data.success) {
           setSalesData(response.data.result);
+          setLoginUserTotalSales(response.data.loginUsertotalSales); // Store login user's sales
+
         } else {
           setError(response.data.message || 'Failed to fetch data');
         }
@@ -72,10 +53,6 @@ const SalesPage = () => {
   }, [selectedDate, token]);
   
 
-  // if (loading) return <div>Loading...</div>; // Show loading state
-  // if (error) return <div>Error: {error}</div>; // Show error message
-
-  // Mapping roles to abbreviations
   const roleAbbreviations = {
     "Area Development Officer": "ADO",
     "Master Distributor": "MD",
@@ -124,15 +101,14 @@ const SalesPage = () => {
     }
   );
 
-  // Calculate average sales and stock achievement percentages
-  companyOverallSales.salesAchievementPercent = salesData.length > 0
-    ? (companyOverallSales.salesAchievementPercent / salesData.length).toFixed(2)
-    : "0.00";
+  const totalCompanySales = companyOverallSales.totalSalesAmount + loginUserTotalSales;
 
-  companyOverallSales.stockAchievementPercent = salesData.length > 0
-    ? (companyOverallSales.stockAchievementPercent / salesData.length).toFixed(2)
-    : "0.00";
-
+  const salesAchievementPercent1234 = Math.min(
+    ((totalCompanySales / companyOverallSales.targetAmount) * 100), 
+    100
+  ).toFixed(2);
+  
+  
   return (
     <div>
       <Grid container spacing={3}>
@@ -180,9 +156,9 @@ const SalesPage = () => {
                     </Typography>
                   </Typography>
                 }
-                sales={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.totalSalesAmount || 0)}`}
+                sales={`Rs.${new Intl.NumberFormat('en-IN').format(totalCompanySales || 0)}`}
                 target={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.targetAmount || 0)}`}
-                growth={companyOverallSales.salesAchievementPercent}
+                growth={salesAchievementPercent1234}
                 roleName={companyOverallSales.roleName}
               />
             </Grid>

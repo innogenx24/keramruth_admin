@@ -490,8 +490,11 @@ const BookingOrders = () => {
 
                   <Typography variant="body1">
                     ₹
-                    {orderItems
-                      .reduce(
+                    {new Intl.NumberFormat("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(
+                      orderItems.reduce(
                         (total, item) =>
                           total +
                           item.quantity *
@@ -500,9 +503,9 @@ const BookingOrders = () => {
                             0),
                         0
                       )
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{2})+(?!\d))/g, ",")} {/* Indian digit format */}
+                    )}
                   </Typography>
+
                   <Typography variant="body1" color="text.secondary">
                     Qty:{" "}
                     {orderItems
