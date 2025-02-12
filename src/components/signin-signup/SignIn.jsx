@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +19,7 @@ import { signInRequest } from "../../redux/slices/authSlice";
 import LeftSideBanner from "../../assets/logo/LeftSideBanner.jpg";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "./style.css";
+import { requestForToken } from "../../../firebase-config";
 
 import CommonLogos from "../../assets/logo/CommonLogos.png";
 
@@ -68,6 +70,8 @@ const SignIn = () => {
         navigate("/dashboard");
       }
     }
+    requestForToken(user?.id);
+
   }, [isAuthenticated, navigate, user]);
 
   // Prefill mobile_number from storage if available
@@ -120,6 +124,9 @@ const SignIn = () => {
       }
     }
   }, [error]);
+
+  
+  
 
   return (
     <Container maxWidth={false}>
