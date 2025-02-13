@@ -58,10 +58,8 @@ const SignIn = () => {
     },
   });
 
-  // Handle authentication redirect
   useEffect(() => {
     if (isAuthenticated) {
-      // Redirect based on the user role
       if (user?.role === "Admin") {
         navigate("/dashboard");
       } else if (user?.role === "Customer") {
@@ -70,11 +68,10 @@ const SignIn = () => {
         navigate("/dashboard");
       }
     }
-    requestForToken(user?.id);
+    requestForToken(user?.id, user?.role);
 
   }, [isAuthenticated, navigate, user]);
 
-  // Prefill mobile_number from storage if available
   useEffect(() => {
     const storedMobileNumber =
       localStorage.getItem("mobile_number") ||
