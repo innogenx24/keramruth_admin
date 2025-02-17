@@ -8,7 +8,7 @@ const firebaseConfig = {
   projectId: "push-notification-625ed",
   storageBucket: "push-notification-625ed.firebasestorage.app",
   messagingSenderId: "205908355450",
-  appId: "1:205908355450:web:d0a7e5ec4d447461164ec3",
+  appId: "1:205908355450:web:d0a7e5ec4d447461164ec3", 
   measurementId: "G-F2KM9RFE8H",
 };
 
@@ -85,3 +85,7 @@ export const onMessageListener = () =>
 
 // Export messaging instance
 export { messaging };
+
+
+///*******Firebase Setup & Foreground Handling*******///
+//--> Purpose: This file initializes Firebase, retrieves FCM tokens, and listens for foreground notifications when the app is open.
