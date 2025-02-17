@@ -16,6 +16,8 @@ const EditOrderLimit = () => {
     hours: '',
     days: '',
   });
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarType, setSnackbarType] = useState('success');
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
@@ -40,7 +42,6 @@ const EditOrderLimit = () => {
       }));
     }
   };
-
 
   const handleDaysChange = (e) => {
     setDays(e.target.value);
@@ -70,12 +71,9 @@ const EditOrderLimit = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; 
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    
 
     if (!validateForm()) {
       return;
@@ -83,8 +81,12 @@ const EditOrderLimit = () => {
 
     try {
       await axios.put(`${API_END_POINT}/order-limits/${limit.id}`, { hours, days });
+
+      const successMessage = `Order time limit updated successfully!`;
+      setSnackbarMessage(successMessage);
+      setSnackbarType('success');
       setOpenSnackbar(true);
-      setTimeout(() => navigate("/dashboard/orders_time_set"), 1500);
+      setTimeout(() => navigate("/dashboard/orders_time_set"), 2000);
     } catch (error) {
       console.error('Failed to update order limit:', error);
       setErrorSnackbar(true);
@@ -141,10 +143,10 @@ const EditOrderLimit = () => {
         open={openSnackbar}
         autoHideDuration={2000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          Order limit updated successfully!
+        <Alert onClose={handleCloseSnackbar} severity={snackbarType} variant="filled">
+          {snackbarMessage}
         </Alert>
       </Snackbar>
 

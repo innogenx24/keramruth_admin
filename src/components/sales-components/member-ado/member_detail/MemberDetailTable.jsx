@@ -561,9 +561,13 @@ const MemberDetailTable = () => {
                               color: "primary",
                             }}
                           >
-                            {(
-                              parseFloat(achievementAmountPercent) || 0
-                            ).toFixed(2)}
+                           
+                            {achievementAmountPercent != null &&
+                            !isNaN(achievementAmountPercent)
+                              ? parseFloat(achievementAmountPercent) === 100
+                                ? 100
+                                : parseFloat(achievementAmountPercent).toFixed(2)
+                              : 0}
                             %
                           </Typography>
                         </Box>
@@ -654,10 +658,13 @@ const MemberDetailTable = () => {
                               color: "primary",
                             }}
                           >
-                            {(parseFloat(StockAchievementPercent) || 0).toFixed(
-                              2
-                            )}
-                            % {/* Safely format */}
+                            {StockAchievementPercent != null &&
+                            !isNaN(StockAchievementPercent)
+                              ? parseFloat(StockAchievementPercent) === 100
+                                ? 100
+                                : parseFloat(StockAchievementPercent).toFixed(2)
+                              : 0}
+                            %
                           </Typography>
                         </Box>
                       </Box>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Typography } from "@mui/material";
+import { TextField, Button, Box, Typography,Snackbar,Alert } from "@mui/material";
 
 const EditClubForm = () => {
   const location = useLocation();
@@ -11,6 +11,9 @@ const EditClubForm = () => {
     club?.litre_quantity ? parseInt(club.litre_quantity, 10) : ""
   );
   const [loading, setLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarType, setSnackbarType] = useState("success");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [error, setError] = useState("");
   const [formErrors, setFormErrors] = useState({
     clubName: "",
@@ -45,46 +48,65 @@ const EditClubForm = () => {
   
   
   // Function to handle form submission
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
+ // Handle form submission
+ const handleFormSubmit = async (event) => {
+  event.preventDefault();
 
-    if (!validateFields()) {
-      return; // Stop if validation fails
-    }
+  if (!validateFields()) {
+    return; // Stop if validation fails
+  }
 
-    setLoading(true);
-    setError("");
+  setLoading(true);
+  setError("");
 
-    const updatedClubData = {
-      club_name: clubName,
-      litre_quantity: litreQuantity,
-    };
-
-    try {
-      const response = await fetch(`${API_END_POINT}/club/${club?.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedClubData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        console.log("Club updated successfully:", result.data);
-        navigate("/dashboard/club");
-      } else {
-        setError(result.message || "Club name already exists.");
-        console.error("Club name already exists", result.message);
-      }
-    } catch (error) {
-      setError("An unexpected error occurred. Please try again.");
-      console.error("Error updating club:", error);
-    } finally {
-      setLoading(false);
-    }
+  const updatedClubData = {
+    club_name: clubName,
+    litre_quantity: litreQuantity,
   };
+
+  try {
+    const response = await fetch(`${API_END_POINT}/club/${club?.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedClubData),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // Set success message for Snackbar
+      setSnackbarMessage("Club updated successfully!");
+      setSnackbarType("success");
+      setOpenSnackbar(true);
+
+      // Redirect after a short delay
+      setTimeout(() => {
+        navigate("/dashboard/club");
+      }, 2000);
+    } else {
+      setError(result.message || "Club name already exists.");
+      setSnackbarMessage(result.message || "Failed to update club.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
+      console.error("Club name already exists", result.message);
+    }
+  } catch (error) {
+    setError("An unexpected error occurred. Please try again.");
+    setSnackbarMessage("An unexpected error occurred. Please try again.");
+    setSnackbarType("error");
+    setOpenSnackbar(true);
+    console.error("Error updating club:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleCloseSnackbar = () => {
+  setOpenSnackbar(false);
+};
+
 
   return (
     <Box sx={{ padding: 2, maxWidth: 500 }}>
@@ -131,6 +153,17 @@ const EditClubForm = () => {
           </Button>
         </Box>
       </form>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarType} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -11,6 +11,7 @@ import {
   Grid,
   IconButton,
   Snackbar,
+  Alert,
   InputLabel,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -35,7 +36,6 @@ const EditAnnouncementForm = () => {
   const [existingImage, setExistingImage] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [selectAll, setSelectAll] = useState(false);
-
   // Separate error state for each field
   const [headingError, setHeadingError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -44,7 +44,9 @@ const EditAnnouncementForm = () => {
   const [imageError, setImageError] = useState(""); // Image file error state
   const [errorMessage, setErrorMessage] = useState(""); // General error message
   const [successMessage, setSuccessMessage] = useState(""); // Add this state for success messages
-
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarType, setSnackbarType] = useState("success");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const roles = [
     {
       label: "Area Development Officer (ADO)",
@@ -131,7 +133,6 @@ const EditAnnouncementForm = () => {
     }
   };
 
-
   const validateLink = (url) => {
     const regex =
       /^(https?:\/\/)?(www\.)?([a-zA-Z]+\.)?[a-zA-Z]+\.[a-z]{2,}(\/[^\s]*)?$/;
@@ -139,82 +140,65 @@ const EditAnnouncementForm = () => {
   };
 
   const validateForm = () => {
-    let isValid = true;
-
-    // Reset all error messages
-    setHeadingError("");
-    setDescriptionError("");
-    setLinkError("");
-    setReceiverError("");
-    setImageError("");
-    setErrorMessage(""); // Reset the general error message
-
-    // Validate Heading
     if (!heading) {
-      setHeadingError("Heading is required.");
-      isValid = false;
+      setSnackbarMessage("Heading is required.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
+      return false;
     }
-
-    // Validate Receiver
-    if (receiver.length === 0) {
-      setReceiverError("Please select at least one receiver.");
-      isValid = false;
-    }
-
-    // Validate Description
     if (!description.trim()) {
-      setDescriptionError("Description is required.");
-      isValid = false;
+      setSnackbarMessage("Description is required.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
+      return false;
     }
-
-    if (link.trim() && !validateLink(link)) {
-      setLinkError("Please enter a valid URL.");
-      isValid = false;
-    } else if (!link.trim()) {
-      setLink("");
+    if (receiver.length === 0) {
+      setSnackbarMessage("Please select at least one receiver.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
+      return false;
     }
-
-    return isValid;
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     const formData = new FormData();
     formData.append("documentID", documentID);
     formData.append("heading", heading);
     formData.append("description", description);
-    if (link.trim()) {
-      formData.append("link", link);
-    }
+    if (link.trim()) formData.append("link", link);
     formData.append("receiver", JSON.stringify(receiver));
-    if (imageFile) {
-      formData.append("file", imageFile);
-    }
+    if (imageFile) formData.append("file", imageFile);
 
     try {
-      const response = await fetch(
-        `${API_END_POINT}/announcements/${announcement.id}`,
-        {
-          method: "PUT",
-          body: formData,
-        }
-      );
+      const response = await fetch(`${API_END_POINT}/announcements/${announcement.id}`, {
+        method: "PUT",
+        body: formData,
+      });
 
       if (response.ok) {
-        const result = await response.json();
-        setSuccessMessage("Announcement updated successfully!");
-        navigate("/dashboard/announcement");
+        setSnackbarMessage("Announcement updated successfully!");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
+        // Delay navigation by 2 seconds
+        setTimeout(() => {
+          navigate("/dashboard/announcement");
+        }, 2000);
       } else {
         const errorText = await response.text();
-        setErrorMessage(`Failed to update announcement: ${errorText}`);
+        setSnackbarMessage(`Failed to update announcement: ${errorText}`);
+        setSnackbarType("error");
+        setOpenSnackbar(true);
       }
     } catch (error) {
-      setErrorMessage("Error updating the announcement: " + error.message);
+      setSnackbarMessage("Error updating the announcement: " + error.message);
+      setSnackbarType("error");
+      setOpenSnackbar(true);
     }
   };
 
@@ -231,7 +215,6 @@ const EditAnnouncementForm = () => {
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-
             <InputLabel>Edit Images and File</InputLabel>
 
             <IconButton color="primary" component="label">
@@ -383,6 +366,21 @@ const EditAnnouncementForm = () => {
           {errorMessage}
         </Typography>
       )}
+
+<Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarType}
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

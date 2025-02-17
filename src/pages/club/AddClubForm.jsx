@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Typography, Box, TextField, Grid } from "@mui/material";
+import { Button, Typography, Box, TextField, Grid,Snackbar,Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const AddClubForm = () => {
@@ -11,7 +11,9 @@ const AddClubForm = () => {
   const [errors, setErrors] = useState({}); // State for input field errors
   const [submitted, setSubmitted] = useState(false); // Track if form is submitted
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarType, setSnackbarType] = useState("success");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   // Validate form fields
   const validate = () => {
     let formErrors = {};
@@ -33,49 +35,68 @@ const AddClubForm = () => {
   };
   
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+ // Handle form submission
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitted(true);
 
-    // Validate inputs
-    const formErrors = validate();
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
+  // Validate inputs
+  const formErrors = validate();
+  if (Object.keys(formErrors).length > 0) {
+    setErrors(formErrors);
+    return;
+  }
 
-    setLoading(true);
-    setError("");
+  setLoading(true);
+  setError("");
 
-    const clubData = {
-      club_name: clubName,
-      litre_quantity: litreQuantity,
-    };
-
-    try {
-      const response = await fetch(`${API_END_POINT}/club/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(clubData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setClubName("");
-        setLitreQuantity("");
-        navigate("/dashboard/club");
-      } else {
-        setError(result.message || "Failed to add club.");
-      }
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  const clubData = {
+    club_name: clubName,
+    litre_quantity: litreQuantity,
   };
+
+  try {
+    const response = await fetch(`${API_END_POINT}/club/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(clubData),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // Clear form and show success message in Snackbar
+      setClubName("");
+      setLitreQuantity("");
+      setSnackbarMessage("Club created successfully!");
+      setSnackbarType("success");
+      setOpenSnackbar(true);
+
+      // Redirect after a short delay
+      setTimeout(() => {
+        navigate("/dashboard/club");
+      }, 2000);
+    } else {
+      setError(result.message || "Failed to add club.");
+      setSnackbarMessage(result.message || "Failed to add club.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
+    }
+  } catch (err) {
+    setError("An unexpected error occurred. Please try again.");
+    setSnackbarMessage("An unexpected error occurred. Please try again.");
+    setSnackbarType("error");
+    setOpenSnackbar(true);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleCloseSnackbar = () => {
+  setOpenSnackbar(false);
+};
 
   // Handle input changes and clear errors
 const handleInputChange = (setter, field) => (e) => {
@@ -163,6 +184,17 @@ const handleInputChange = (setter, field) => (e) => {
           </Box>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarType} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

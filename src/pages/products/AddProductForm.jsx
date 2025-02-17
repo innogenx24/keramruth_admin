@@ -10,6 +10,8 @@ import {
   Select,
   MenuItem,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
@@ -28,6 +30,10 @@ const AddProductForm = () => {
   const [serverError, setServerError] = useState("");
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarType, setSnackbarType] = useState("success");
+
   const currentDate = new Date().toISOString().split("T")[0]; // Current date in yyyy-mm-dd format
   const currentDateWithTimeISO = new Date().toISOString(); // Full ISO date with time
 
@@ -38,23 +44,22 @@ const AddProductForm = () => {
         const response = await fetch(`${API_END_POINT}/category`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${token}`, // Set Authorization header
-            "Content-Type": "application/json"
+            Authorization: `Bearer ${token}`, // Set Authorization header
+            "Content-Type": "application/json",
           },
         });
-  
+
         if (!response.ok) throw new Error("Network response was not ok");
-  
+
         const data = await response.json();
         setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
-  
+
     fetchCategories();
   }, []);
-  
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -129,45 +134,60 @@ const AddProductForm = () => {
 
         toDate: values.autoUpdate
           ? Yup.date()
-            .required("To Date is required")
-            .test(
-              "is-after",
-              "To Date must be after From Date",
-              function (value) {
-                const { fromDate } = this.parent;
-                return !fromDate || new Date(value) > new Date(fromDate);
-              }
-            )
+              .required("To Date is required")
+              .test(
+                "is-after",
+                "To Date must be after From Date",
+                function (value) {
+                  const { fromDate } = this.parent;
+                  return !fromDate || new Date(value) > new Date(fromDate);
+                }
+              )
           : Yup.date(),
 
         customer_price: values.autoUpdate
           ? Yup.number()
-            .min(0, "Customer price cannot be negative")
-            .lessThan(Yup.ref('price'), "Customer price must be less than the original customer price")
+              .min(0, "Customer price cannot be negative")
+              .lessThan(
+                Yup.ref("price"),
+                "Customer price must be less than the original customer price"
+              )
           : Yup.number().nullable(),
 
         distributor_price: values.autoUpdate
           ? Yup.number()
-            .min(0, "Distributor price cannot be negative")
-            .lessThan(Yup.ref('distributorPrice'), "Distributor price must be less than the original distributor price")
+              .min(0, "Distributor price cannot be negative")
+              .lessThan(
+                Yup.ref("distributorPrice"),
+                "Distributor price must be less than the original distributor price"
+              )
           : Yup.number().nullable(),
 
         SD_price: values.autoUpdate
           ? Yup.number()
-            .min(0, "SD price cannot be negative")
-            .lessThan(Yup.ref('sdPrice'), "SD price must be less than the original SD price")
+              .min(0, "SD price cannot be negative")
+              .lessThan(
+                Yup.ref("sdPrice"),
+                "SD price must be less than the original SD price"
+              )
           : Yup.number().nullable(),
 
         MD_price: values.autoUpdate
           ? Yup.number()
-            .min(0, "MD price cannot be negative")
-            .lessThan(Yup.ref('mdPrice'), "MD price must be less than the original MD price")
+              .min(0, "MD price cannot be negative")
+              .lessThan(
+                Yup.ref("mdPrice"),
+                "MD price must be less than the original MD price"
+              )
           : Yup.number().nullable(),
 
         ADO_price: values.autoUpdate
           ? Yup.number()
-            .min(0, "ADO price cannot be negative")
-            .lessThan(Yup.ref('adoPrice'), "ADO price must be less than the original ADO price")
+              .min(0, "ADO price cannot be negative")
+              .lessThan(
+                Yup.ref("adoPrice"),
+                "ADO price must be less than the original ADO price"
+              )
           : Yup.number().nullable(),
       })
     ),
@@ -191,7 +211,6 @@ const AddProductForm = () => {
       formData.append("description", values.description);
 
       if (!values.autoUpdate) {
-
         formData.delete("fromDate");
         formData.delete("toDate");
         formData.append("customer_price", "0");
@@ -218,7 +237,17 @@ const AddProductForm = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        navigate("/dashboard/products");
+
+        const successMessage = `Product created successfully.`;
+        setSuccessMessage(successMessage);
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
+        // Delay navigation by 2 seconds
+        setTimeout(() => {
+          setOpenSnackbar(false);
+          navigate("/dashboard/products");
+        }, 2000);
       } catch (error) {
         if (error.response && error.response.data.error) {
           setServerError(error.response.data.error);
@@ -228,7 +257,6 @@ const AddProductForm = () => {
       }
     },
   });
-
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -280,11 +308,12 @@ const AddProductForm = () => {
               <Typography variant="h6" gutterBottom>
                 Products Details
               </Typography>
-              <InputLabel sx={{ color: '#232428' }}>
-                Add Images
-              </InputLabel>
+              <InputLabel sx={{ color: "#232428" }}>Add Images</InputLabel>
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <IconButton color="primary" onClick={() => fileInputRef.current.click()}>
+                <IconButton
+                  color="primary"
+                  onClick={() => fileInputRef.current.click()}
+                >
                   <AddPhotoAlternateIcon />
                 </IconButton>
                 {/* Hidden file input */}
@@ -293,11 +322,15 @@ const AddProductForm = () => {
                   accept="image/*"
                   onChange={handleImageChange}
                   ref={fileInputRef}
-                  style={{ display: 'none' }} // Hide the input
+                  style={{ display: "none" }} // Hide the input
                 />
               </Box>
 
-              {selectedFile && <Typography variant="body2" sx={{ marginTop: 1 }}>{selectedFile.name}</Typography>}
+              {selectedFile && (
+                <Typography variant="body2" sx={{ marginTop: 1 }}>
+                  {selectedFile.name}
+                </Typography>
+              )}
 
               {imagePreview && (
                 <div>
@@ -321,7 +354,6 @@ const AddProductForm = () => {
                 </Typography>
               )}
 
-
               <TextField
                 fullWidth
                 variant="outlined"
@@ -332,10 +364,11 @@ const AddProductForm = () => {
                 {...formik.getFieldProps("name")}
                 error={formik.touched.name && Boolean(formik.errors.name)}
                 helperText={formik.touched.name && formik.errors.name}
-
               />
 
-              {serverError && <Typography color="error">{serverError}</Typography>}
+              {serverError && (
+                <Typography color="error">{serverError}</Typography>
+              )}
 
               <TextField
                 fullWidth
@@ -347,8 +380,13 @@ const AddProductForm = () => {
                 rows={3}
                 sx={{ marginBottom: "16px", borderRadius: "15px" }}
                 {...formik.getFieldProps("description")}
-                error={formik.touched.description && Boolean(formik.errors.description)}
-                helperText={formik.touched.description && formik.errors.description}
+                error={
+                  formik.touched.description &&
+                  Boolean(formik.errors.description)
+                }
+                helperText={
+                  formik.touched.description && formik.errors.description
+                }
               />
               <TextField
                 fullWidth
@@ -358,8 +396,13 @@ const AddProductForm = () => {
                 placeholder="Enter Product Volume (100ml, 500ml, 1L)"
                 sx={{ marginBottom: "16px" }}
                 {...formik.getFieldProps("productVolume")}
-                error={formik.touched.productVolume && Boolean(formik.errors.productVolume)}
-                helperText={formik.touched.productVolume && formik.errors.productVolume}
+                error={
+                  formik.touched.productVolume &&
+                  Boolean(formik.errors.productVolume)
+                }
+                helperText={
+                  formik.touched.productVolume && formik.errors.productVolume
+                }
               />
               <InputLabel sx={{ mt: 2 }}>Select Category*</InputLabel>
               <Select
@@ -367,7 +410,10 @@ const AddProductForm = () => {
                 name="category_name"
                 value={formik.values.category_name || ""}
                 onChange={handleCategoryChange} // Update formik values on category change
-                error={formik.touched.category_name && Boolean(formik.errors.category_name)}
+                error={
+                  formik.touched.category_name &&
+                  Boolean(formik.errors.category_name)
+                }
                 displayEmpty
               >
                 <MenuItem value="">
@@ -380,7 +426,9 @@ const AddProductForm = () => {
                     </MenuItem>
                   ))
                 ) : (
-                  <MenuItem value="" disabled>No Category Available</MenuItem>
+                  <MenuItem value="" disabled>
+                    No Category Available
+                  </MenuItem>
                 )}
               </Select>
               {formik.touched.category_name && formik.errors.category_name && (
@@ -425,7 +473,9 @@ const AddProductForm = () => {
                 placeholder="Enter ADO Price"
                 sx={{ marginBottom: "16px" }}
                 {...formik.getFieldProps("adoPrice")}
-                error={formik.touched.adoPrice && Boolean(formik.errors.adoPrice)}
+                error={
+                  formik.touched.adoPrice && Boolean(formik.errors.adoPrice)
+                }
                 helperText={formik.touched.adoPrice && formik.errors.adoPrice}
               />
               <TextField
@@ -458,8 +508,14 @@ const AddProductForm = () => {
                 placeholder="Enter Distributor Price"
                 sx={{ marginBottom: "16px" }}
                 {...formik.getFieldProps("distributorPrice")}
-                error={formik.touched.distributorPrice && Boolean(formik.errors.distributorPrice)}
-                helperText={formik.touched.distributorPrice && formik.errors.distributorPrice}
+                error={
+                  formik.touched.distributorPrice &&
+                  Boolean(formik.errors.distributorPrice)
+                }
+                helperText={
+                  formik.touched.distributorPrice &&
+                  formik.errors.distributorPrice
+                }
               />
               <TextField
                 fullWidth
@@ -469,21 +525,29 @@ const AddProductForm = () => {
                 placeholder="Enter Stock Quantity"
                 sx={{ marginBottom: "16px" }}
                 {...formik.getFieldProps("stock_quantity")}
-                error={formik.touched.stock_quantity && Boolean(formik.errors.stock_quantity)}
-                helperText={formik.touched.stock_quantity && formik.errors.stock_quantity}
+                error={
+                  formik.touched.stock_quantity &&
+                  Boolean(formik.errors.stock_quantity)
+                }
+                helperText={
+                  formik.touched.stock_quantity && formik.errors.stock_quantity
+                }
               />
               <InputLabel>Quantity Type</InputLabel>
               <Select
                 fullWidth
                 name="quantity_type"
                 value={formik.values.quantity_type}
-                onChange={(e) => formik.setFieldValue("quantity_type", e.target.value)}
-                error={formik.touched.quantity_type && Boolean(formik.errors.quantity_type)}
+                onChange={(e) =>
+                  formik.setFieldValue("quantity_type", e.target.value)
+                }
+                error={
+                  formik.touched.quantity_type &&
+                  Boolean(formik.errors.quantity_type)
+                }
                 sx={{ marginBottom: "16px", borderRadius: "20px" }}
               >
-                <MenuItem value="">Select Quantity Type
-
-                </MenuItem>
+                <MenuItem value="">Select Quantity Type</MenuItem>
                 <MenuItem value="ml">ml</MenuItem>
                 <MenuItem value="liters">Liters</MenuItem>
                 <MenuItem value="kg">Kg</MenuItem>
@@ -495,13 +559,14 @@ const AddProductForm = () => {
                 </Typography>
               )}
 
-
               <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
                 <Typography sx={{ marginRight: "8px" }}>Auto Update</Typography>
                 <Switch
                   checked={formik.values.autoUpdate}
                   name="autoUpdate"
-                  onChange={(e) => formik.setFieldValue("autoUpdate", e.target.checked)}
+                  onChange={(e) =>
+                    formik.setFieldValue("autoUpdate", e.target.checked)
+                  }
                   color="primary"
                 />
               </Box>
@@ -516,11 +581,18 @@ const AddProductForm = () => {
                         label="From Date"
                         type="date"
                         value={formik.values.fromDate}
-                        onChange={(e) => formik.setFieldValue("fromDate", e.target.value)}
+                        onChange={(e) =>
+                          formik.setFieldValue("fromDate", e.target.value)
+                        }
                         InputLabelProps={{ shrink: true }}
                         margin="normal"
-                        error={formik.touched.fromDate && Boolean(formik.errors.fromDate)}
-                        helperText={formik.touched.fromDate && formik.errors.fromDate}
+                        error={
+                          formik.touched.fromDate &&
+                          Boolean(formik.errors.fromDate)
+                        }
+                        helperText={
+                          formik.touched.fromDate && formik.errors.fromDate
+                        }
                         InputProps={{
                           inputProps: { min: currentDate }, // Disable past dates
                         }}
@@ -532,22 +604,29 @@ const AddProductForm = () => {
                         label="To Date"
                         type="date"
                         value={formik.values.toDate}
-                        onChange={(e) => formik.setFieldValue("toDate", e.target.value)}
+                        onChange={(e) =>
+                          formik.setFieldValue("toDate", e.target.value)
+                        }
                         InputLabelProps={{ shrink: true }}
                         margin="normal"
-                        error={formik.touched.toDate && Boolean(formik.errors.toDate)}
-                        helperText={formik.touched.toDate && formik.errors.toDate}
+                        error={
+                          formik.touched.toDate && Boolean(formik.errors.toDate)
+                        }
+                        helperText={
+                          formik.touched.toDate && formik.errors.toDate
+                        }
                         InputProps={{
                           inputProps: { min: currentDate }, // Disable past dates
                         }}
                       />
                     </Grid>
-
                   </Grid>
                   <Typography variant="h6">Set Price</Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
-                      <Typography variant="h6">Area Development Officer Price </Typography>
+                      <Typography variant="h6">
+                        Area Development Officer Price{" "}
+                      </Typography>
 
                       <TextField
                         fullWidth
@@ -555,30 +634,42 @@ const AddProductForm = () => {
                         name="ADO_price"
                         value={formik.values.ADO_price}
                         onChange={formik.handleChange}
-                        error={formik.touched.ADO_price && Boolean(formik.errors.ADO_price)}
-                        helperText={formik.touched.ADO_price && formik.errors.ADO_price}
-
+                        error={
+                          formik.touched.ADO_price &&
+                          Boolean(formik.errors.ADO_price)
+                        }
+                        helperText={
+                          formik.touched.ADO_price && formik.errors.ADO_price
+                        }
                       />
                     </Grid>
                     <Grid item xs={6}>
-                      <Typography variant="h6">Master Distributor Price </Typography>
+                      <Typography variant="h6">
+                        Master Distributor Price{" "}
+                      </Typography>
 
                       <TextField
                         fullWidth
                         label="Enter MD Price"
-                        name="MD_price"  // Match the key in Formik's initial values
+                        name="MD_price" // Match the key in Formik's initial values
                         value={formik.values.MD_price}
                         onChange={formik.handleChange}
-                        error={formik.touched.MD_price && Boolean(formik.errors.MD_price)}
-                        helperText={formik.touched.MD_price && formik.errors.MD_price}
+                        error={
+                          formik.touched.MD_price &&
+                          Boolean(formik.errors.MD_price)
+                        }
+                        helperText={
+                          formik.touched.MD_price && formik.errors.MD_price
+                        }
                       />
-
                     </Grid>
                     {/* Add other price fields here as needed */}
                   </Grid>
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
-                      <Typography variant="h6">Super Distributor Price </Typography>
+                      <Typography variant="h6">
+                        Super Distributor Price{" "}
+                      </Typography>
 
                       <TextField
                         fullWidth
@@ -586,12 +677,16 @@ const AddProductForm = () => {
                         name="SD_price"
                         value={formik.values.SD_price}
                         onChange={formik.handleChange}
-                        error={formik.touched.SD_price && Boolean(formik.errors.SD_price)}
-                        helperText={formik.touched.SD_price && formik.errors.SD_price}
+                        error={
+                          formik.touched.SD_price &&
+                          Boolean(formik.errors.SD_price)
+                        }
+                        helperText={
+                          formik.touched.SD_price && formik.errors.SD_price
+                        }
                       />
                     </Grid>
                     <Grid item xs={6}>
-
                       <Typography variant="h6">Distributor Price:</Typography>
 
                       <TextField
@@ -600,8 +695,14 @@ const AddProductForm = () => {
                         name="distributor_price"
                         value={formik.values.distributor_price}
                         onChange={formik.handleChange}
-                        error={formik.touched.distributor_price && Boolean(formik.errors.distributor_price)}
-                        helperText={formik.touched.distributor_price && formik.errors.distributor_price}
+                        error={
+                          formik.touched.distributor_price &&
+                          Boolean(formik.errors.distributor_price)
+                        }
+                        helperText={
+                          formik.touched.distributor_price &&
+                          formik.errors.distributor_price
+                        }
                       />
                     </Grid>
                     {/* Add other price fields here as needed */}
@@ -615,11 +716,16 @@ const AddProductForm = () => {
                         name="customer_price"
                         value={formik.values.customer_price}
                         onChange={formik.handleChange}
-                        error={formik.touched.customer_price && Boolean(formik.errors.customer_price)}
-                        helperText={formik.touched.customer_price && formik.errors.customer_price}
+                        error={
+                          formik.touched.customer_price &&
+                          Boolean(formik.errors.customer_price)
+                        }
+                        helperText={
+                          formik.touched.customer_price &&
+                          formik.errors.customer_price
+                        }
                       />
                     </Grid>
-
                   </Grid>
                 </Box>
               )}
@@ -653,6 +759,38 @@ const AddProductForm = () => {
           </Grid>
         </Grid>
       </form>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarType}
+          variant="filled"
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* Error Snackbar */}
+      {serverError && (
+        <Snackbar
+          open={true}
+          autoHideDuration={2000}
+          onClose={() => setServerError("")}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={() => setServerError("")}
+            severity="error"
+            variant="filled"
+          >
+            {serverError}
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };

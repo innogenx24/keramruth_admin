@@ -10,6 +10,8 @@ import {
   IconButton,
   FormControlLabel,
   Checkbox,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useFormik } from "formik";
@@ -30,6 +32,10 @@ const DocumentForm = () => {
   const [imageName, setImageName] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [selectAll, setSelectAll] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("success");
+  
   const roles = [
     "Area Development Officer",
     "Master Distributor",
@@ -113,14 +119,32 @@ const DocumentForm = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Success:", data);
+          // Show success message and Snackbar
+        setSnackbarMessage("Document created successfully!");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
+        // Redirect after a short delay
+        setTimeout(() => {
           navigate("/dashboard/documents");
+        }, 2000);
+
+          
         })
         .catch((error) => {
+          
           console.error("Error:", error);
+          setSnackbarMessage("Error creating document. Please try again.");
+          setSnackbarType("error");
+          setOpenSnackbar(true);
+
         });
     },
   });
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -436,6 +460,17 @@ const DocumentForm = () => {
           </Grid>
         </Grid>
       </form>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarType} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -13,6 +13,7 @@ import {
   IconButton,
   Snackbar,
   InputLabel,
+  Alert,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useNavigate } from "react-router-dom";
@@ -41,9 +42,11 @@ const AddMediaNews = ({ onClose }) => {
   const [descriptionError, setDescriptionError] = useState("");
   const [event_date, setEventDate] = useState("");
   const [imagePreview, setImagePreview] = useState("");
-
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("success");
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-
+  const [eventDateError, setEventDateError] = useState("");
   const roles = [
     {
       label: "Area Development Officer (ADO)",
@@ -80,26 +83,26 @@ const AddMediaNews = ({ onClose }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-  
+
     if (file) {
       const fileSizeMB = file.size / (1024 * 1024); // Convert size from bytes to MB
-  
+
       // Check if file size exceeds 5MB
       if (file.size > MAX_FILE_SIZE) {
         setImageError("File size must be less than 5MB");
-        setImageFile(null); 
+        setImageFile(null);
         setImageFileName("");
         setPreviewUrl("");
-        setFileName(""); 
+        setFileName("");
         return;
       }
-  
+
       // Allow all file types (no restriction on MIME types)
       setImageError(""); // Clear error if file is valid
       setImageFile(file);
       setImageFileName(file.name);
       setFileName(file.name);
-  
+
       // If the file is an image, generate a preview
       if (file.type.startsWith("image/")) {
         const reader = new FileReader();
@@ -112,7 +115,6 @@ const AddMediaNews = ({ onClose }) => {
       }
     }
   };
-  
 
   const validateLink = (value) => {
     // Updated regex for validating general and specific URLs
@@ -172,6 +174,24 @@ const AddMediaNews = ({ onClose }) => {
       setDescriptionError("");
     }
 
+    // Validate Event Date (Check if not in the past)
+    if (!event_date) {
+      setEventDateError("Event date is required.");
+      isValid = false;
+    } else {
+      const selectedDate = new Date(event_date);
+      const currentDate = new Date();
+
+      // Compare dates, ensure selected date is not in the past
+      if (selectedDate < currentDate.setHours(0, 0, 0, 0)) {
+        // Comparing date without time
+        setEventDateError("Event date cannot be in the past.");
+        isValid = false;
+      } else {
+        setEventDateError(""); // Clear error if date is valid
+      }
+    }
+
     return isValid;
   };
 
@@ -183,7 +203,7 @@ const AddMediaNews = ({ onClose }) => {
     setDocumentID(randomDocumentID);
 
     if (!validateForm()) {
-      return;
+      return; // Prevent form submission if validation fails
     }
 
     const formData = new FormData();
@@ -191,9 +211,9 @@ const AddMediaNews = ({ onClose }) => {
     formData.append("heading", heading);
     formData.append("description", description);
     formData.append("event_date", event_date);
-
     formData.append("link", link);
     formData.append("receiver", JSON.stringify(receiver));
+
     if (imageFile) {
       formData.append("file", imageFile);
     }
@@ -205,8 +225,17 @@ const AddMediaNews = ({ onClose }) => {
       });
 
       if (response.ok) {
-        setSuccessMessage("Media/News created successfully!");
-        navigate("/dashboard/media-news");
+        // Show success message in Snackbar
+        setSnackbarMessage("Media/News created successfully!");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          navigate("/dashboard/media-news");
+        }, 2000);
+
+        // Reset form state
         setDocumentID("");
         setHeading("");
         setDescription("");
@@ -222,7 +251,15 @@ const AddMediaNews = ({ onClose }) => {
       }
     } catch (error) {
       setErrorMessage("Error submitting the form: " + error.message);
+      // Show error message in Snackbar
+      setSnackbarMessage("Error submitting the form. Please try again.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -347,7 +384,18 @@ const AddMediaNews = ({ onClose }) => {
                 name="event_date"
                 onChange={(e) => setEventDate(e.target.value)}
                 sx={{ marginTop: 1 }}
+                error={!!eventDateError} // Error state for the field
               />
+
+              {eventDateError && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  sx={{ marginTop: "10px" }}
+                >
+                  {eventDateError}
+                </Typography>
+              )}
             </Box>
           </Box>
         </Grid>
@@ -409,6 +457,21 @@ const AddMediaNews = ({ onClose }) => {
           </Box>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarType}
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

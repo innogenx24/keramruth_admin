@@ -12,6 +12,7 @@ import {
   IconButton,
   Snackbar,
   InputLabel,
+  Alert,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -35,6 +36,7 @@ const EditMediaNews = () => {
   const [existingImage, setExistingImage] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [selectAll, setSelectAll] = useState(false);
+  const [eventDateError, setEventDateError] = useState("");
 
   // Separate error state for each field
   const [headingError, setHeadingError] = useState("");
@@ -44,6 +46,9 @@ const EditMediaNews = () => {
   const [imageError, setImageError] = useState(""); // Image file error state
   const [errorMessage, setErrorMessage] = useState(""); // General error message
   const [successMessage, setSuccessMessage] = useState(""); // Add this state for success messages
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("success");
 
   const roles = [
     {
@@ -141,7 +146,7 @@ const EditMediaNews = () => {
 
   const validateForm = () => {
     let isValid = true;
-
+  
     // Reset all error messages
     setHeadingError("");
     setDescriptionError("");
@@ -149,40 +154,60 @@ const EditMediaNews = () => {
     setReceiverError("");
     setImageError("");
     setErrorMessage(""); // Reset the general error message
-
+    setEventDateError(""); // Reset event date error
+  
     // Validate Heading
     if (!heading) {
       setHeadingError("Heading is required.");
       isValid = false;
     }
-
+  
     // Validate Receiver
     if (receiver.length === 0) {
       setReceiverError("Please select at least one receiver.");
       isValid = false;
     }
-
+  
     // Validate Description
     if (!description.trim()) {
       setDescriptionError("Description is required.");
       isValid = false;
     }
-
+  
+    // Validate Link
     if (link.trim() && !validateLink(link)) {
       setLinkError("Please enter a valid URL.");
       isValid = false;
     } else if (!link.trim()) {
       setLink("");
     }
-
+  
+    // Validate Event Date (ensure it is not in the past)
+    if (!event_date) {
+      setEventDateError("Event date is required.");
+      isValid = false;
+    } else {
+      const selectedDate = new Date(event_date);
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0); // Set to the beginning of today (midnight)
+  
+      if (selectedDate < currentDate) {
+        setEventDateError("Event date cannot be in the past.");
+        isValid = false;
+      } else {
+        setEventDateError(""); // Clear error if date is valid
+      }
+    }
+  
     return isValid;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
-      return;
+      return; // Prevent form submission if validation fails
     }
 
     const formData = new FormData();
@@ -204,17 +229,39 @@ const EditMediaNews = () => {
       });
 
       if (response.ok) {
+        // Set success message and show Snackbar
+        setSnackbarMessage("Media/News updated successfully!");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
         const result = await response.json();
-        setSuccessMessage("Media / News updated successfully!");
-        navigate("/dashboard/media-news");
+        console.log("Updated Media/News:", result);
+
+        // Redirect to Media/News page after a short delay
+        setTimeout(() => {
+          navigate("/dashboard/media-news");
+        }, 2000);
       } else {
         const errorText = await response.text();
         setErrorMessage(`Failed to update Media / News: ${errorText}`);
+        // Show error message in Snackbar
+        setSnackbarMessage(`Failed to update: ${errorText}`);
+        setSnackbarType("error");
+        setOpenSnackbar(true);
       }
     } catch (error) {
       setErrorMessage("Error updating the Media / News: " + error.message);
+      // Show error message in Snackbar
+      setSnackbarMessage("Error updating the Media / News. Please try again.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
     }
   };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
 
   return (
     <Box
@@ -326,19 +373,29 @@ const EditMediaNews = () => {
               </Typography>
             )}
             <Box sx={{ marginTop: "10px" }}>
-              <InputLabel>Date Of Event (Published)</InputLabel>
-              <TextField
-                label="Event Date"
-                type="date"
-                value={event_date}
-                onChange={(e) => setEventDate(e.target.value)}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-            </Box>
+  <InputLabel>Date Of Event (Published)</InputLabel>
+  <TextField
+    label="Event Date"
+    type="date"
+    value={event_date}
+    onChange={(e) => setEventDate(e.target.value)}
+    fullWidth
+    margin="normal"
+    InputLabelProps={{
+      shrink: true,
+    }}
+    error={!!eventDateError} // Show error if eventDateError exists
+  />
+  {eventDateError && (
+    <Typography
+      variant="body2"
+      sx={{ color: "red", marginTop: "10px" }}
+    >
+      {eventDateError}
+    </Typography>
+  )}
+</Box>
+
           </Box>
         </Grid>
 
@@ -395,6 +452,17 @@ const EditMediaNews = () => {
           {errorMessage}
         </Typography>
       )}
+
+<Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarType} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -12,6 +12,8 @@ import {
   InputLabel,
   IconButton,
   Switch,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -44,6 +46,11 @@ const EditDocumentForm = () => {
   const [imageName, setImageName] = useState("");
   const [selectAll, setSelectAll] = useState(true);
   const [imageError, setImageError] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("success");
+  const [loading, setLoading] = useState(false);
+
   const [errors, setErrors] = useState({
     heading: "",
     description: "",
@@ -195,51 +202,67 @@ const EditDocumentForm = () => {
     setErrors(formErrors);
     return isValid;
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ // Handle form submission
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return; // Prevent form submission if validation fails
+  if (!validateForm()) {
+    return; // Prevent form submission if validation fails
+  }
+
+  const formData = new FormData();
+  formData.append("documentID", documentID);
+  formData.append("heading", heading);
+  formData.append("description", description);
+  formData.append("link", link);
+  formData.append("receiver", JSON.stringify(receiver));
+  formData.append("autoUpdate", autoUpdate);
+  formData.append("activateStatus", activateStatus);
+  formData.append("fromDate", fromDate);
+  formData.append("toDate", toDate);
+
+  if (file) {
+    formData.append("file", file);
+  }
+
+  setLoading(true);
+  try {
+    const response = await fetch(`${API_END_POINT}/documents/${document.id}`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update document");
     }
 
-    const formData = new FormData();
-    formData.append("documentID", documentID);
-    formData.append("heading", heading);
-    formData.append("description", description);
-    formData.append("link", link);
+    const result = await response.json();
+    console.log("Document updated:", result);
 
-    // Send the receiver array as a JSON string
-    formData.append("receiver", JSON.stringify(receiver));
+    // Set Snackbar message and show success
+    setSnackbarMessage("Document updated successfully!");
+    setSnackbarType("success");
+    setOpenSnackbar(true);
 
-    formData.append("autoUpdate", autoUpdate);
-    formData.append("activateStatus", activateStatus);
-    formData.append("fromDate", fromDate);
-    formData.append("toDate", toDate);
-
-    if (file) {
-      formData.append("file", file);
-    }
-
-    try {
-      const response = await fetch(
-        `${API_END_POINT}/documents/${document.id}`,
-        {
-          method: "PUT",
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update document");
-      }
-
-      const result = await response.json();
-      console.log("Document updated:", result);
+    // Redirect after a short delay
+    setTimeout(() => {
       navigate("/dashboard/documents");
-    } catch (error) {
-      console.error("Error updating document:", error);
-    }
-  };
+    }, 2000);
+  } catch (error) {
+    console.error("Error updating document:", error);
+
+    // Set Snackbar message for error
+    setSnackbarMessage("Error updating document. Please try again.");
+    setSnackbarType("error");
+    setOpenSnackbar(true);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleCloseSnackbar = () => {
+  setOpenSnackbar(false);
+};
 
   return (
     <Box p={3} component="form" onSubmit={handleSubmit}>
@@ -418,6 +441,19 @@ const EditDocumentForm = () => {
           </Box>
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarType} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
+
     </Box>
   );
 };

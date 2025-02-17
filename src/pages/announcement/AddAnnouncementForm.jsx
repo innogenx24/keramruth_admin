@@ -12,6 +12,7 @@ import {
   Grid,
   IconButton,
   Snackbar,
+  Alert,
   InputLabel,
 } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -41,6 +42,8 @@ const AddAnnouncementDetails = ({ onClose }) => {
   const [descriptionError, setDescriptionError] = useState(""); // Add descriptionError state
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const [imagePreview, setImagePreview] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarType, setSnackbarType] = useState("success");
 
   const roles = [
     {
@@ -172,14 +175,11 @@ const AddAnnouncementDetails = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const randomDocumentID = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+
+    const randomDocumentID = Math.floor(100000 + Math.random() * 900000).toString();
     setDocumentID(randomDocumentID);
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     const formData = new FormData();
     formData.append("documentID", randomDocumentID);
@@ -188,7 +188,7 @@ const AddAnnouncementDetails = ({ onClose }) => {
     formData.append("link", link);
     formData.append("receiver", JSON.stringify(receiver));
     if (imageFile) {
-      formData.append("file", imageFile); 
+      formData.append("file", imageFile);
     }
 
     try {
@@ -199,7 +199,16 @@ const AddAnnouncementDetails = ({ onClose }) => {
 
       if (response.ok) {
         setSuccessMessage("Announcement created successfully!");
-        navigate("/dashboard/announcement");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
+        // Delay navigation by 2 seconds
+        setTimeout(() => {
+          setOpenSnackbar(false);
+          navigate("/dashboard/announcement");
+        }, 2000);
+
+        // Reset form fields
         setDocumentID("");
         setHeading("");
         setDescription("");
@@ -212,9 +221,13 @@ const AddAnnouncementDetails = ({ onClose }) => {
       } else {
         const errorText = await response.text();
         setErrorMessage(`Failed to save announcement: ${errorText}`);
+        setSnackbarType("error");
+        setOpenSnackbar(true);
       }
     } catch (error) {
       setErrorMessage("Error submitting the form: " + error.message);
+      setSnackbarType("error");
+      setOpenSnackbar(true);
     }
   };
 
@@ -412,6 +425,20 @@ const AddAnnouncementDetails = ({ onClose }) => {
           </Box>
         </Grid>
       </Grid>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarType}
+          variant="filled"
+        >
+          {successMessage || errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Grid, TextField, Select, MenuItem, Button, Card, CardContent, Typography } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Snackbar,
+  Alert,
+  Box,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -10,55 +22,112 @@ export default function EditSalesTarget() {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   const [targetData, setTargetData] = useState({
-    role_name: selectedRow.role_name || '',
-    target: selectedRow.target || '',
-    stock_target: selectedRow.stock_target || '',
-    duration: selectedRow.duration || '',
+    role_name: selectedRow.role_name || "",
+    target: selectedRow.target ? parseInt(selectedRow.target) : "",
+    stock_target: selectedRow.stock_target ? parseInt(selectedRow.stock_target) : "",
+    duration: selectedRow.duration || "",
   });
 
-  const roles = ["Area Development Officer", "Master Distributor", "Super Distributor", "Distributor"]; // Example role list
+  const [errors, setErrors] = useState({
+    target: "",
+    stock_target: "",
+  });
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("success");
+
+  const formatIndianCurrency = (value) => {
+    if (!value) return value;
+
+    const [integer, decimal] = value.toString().split(".");
+    const integerPart = integer.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+    return decimal ? `${integerPart}.${decimal}` : integerPart;
+  };
 
   const handleChange = (field, value) => {
+    // Remove commas for correct numeric storage
+    const numericValue = value.replace(/,/g, "");
+
+    if (field === "target" || field === "stock_target") {
+      if (!/^\d*$/.test(numericValue)) {
+        setErrors((prev) => ({
+          ...prev,
+          [field]: "This field must only contain numbers",
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          [field]: "",
+        }));
+      }
+    }
+
     setTargetData((prevData) => ({
       ...prevData,
-      [field]: value,
+      [field]: numericValue,
     }));
   };
 
   const handleSubmit = async () => {
+    // Check for errors before submitting
+    if (errors.target || errors.stock_target) {
+      setSnackbarMessage("Please correct the errors before submitting.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
+      return;
+    }
+
     try {
       const { role_name, target, stock_target, duration } = targetData;
-  
+
       // Send PUT request to update the sales target in the backend
-      const response = await axios.put(`${API_END_POINT}/salestarget/${role_name}`, {
-        target,
-        stock_target,
-        duration,
-      });
-  
+      const response = await axios.put(
+        `${API_END_POINT}/salestarget/${role_name}`,
+        {
+          target,
+          stock_target,
+          duration,
+        }
+      );
+
       // Check if the response indicates success
       if (response.data.success) {
-        // Optionally, update the UI with the updated data
-        setTargetData((prevData) => ({
-          ...prevData,
-          target: response.data.target || prevData.target,
-          stock_target: response.data.stock_target || prevData.stock_target,
-          duration: response.data.duration || prevData.duration,
-        }));
-        
-        navigate("/dashboard/sales-target-form"); // Redirect to the sales target list after update
+        setSnackbarMessage("Sales target updated successfully!");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          navigate("/dashboard/sales-target-form"); // Redirect to the sales target list after update
+        }, 2000);
       } else {
-        alert("Failed to update sales target.");
+        setSnackbarMessage("Failed to update sales target.");
+        setSnackbarType("error");
+        setOpenSnackbar(true);
       }
     } catch (error) {
       console.error("Error updating sales target:", error);
-      alert("Failed to update sales target.");
+      setSnackbarMessage("Failed to update sales target.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
     }
   };
-  
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <Box
+      sx={{
+        padding: "20px",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        backgroundColor: "#f5f5f5",
+        borderRadius: "8px",
+      }}
+    >
       <Typography variant="h4" gutterBottom>
         Edit Sales Target
       </Typography>
@@ -86,8 +155,10 @@ export default function EditSalesTarget() {
                   <TextField
                     label="Sales Target"
                     fullWidth
-                    value={targetData.target}
+                    value={formatIndianCurrency(targetData.target)} // Indian number format
                     onChange={(e) => handleChange("target", e.target.value)}
+                    error={!!errors.target}
+                    helperText={errors.target}
                   />
                 </Grid>
 
@@ -95,8 +166,12 @@ export default function EditSalesTarget() {
                   <TextField
                     label="Stock Target"
                     fullWidth
-                    value={targetData.stock_target}
-                    onChange={(e) => handleChange("stock_target", e.target.value)}
+                    value={formatIndianCurrency(targetData.stock_target)} // Indian number format
+                    onChange={(e) =>
+                      handleChange("stock_target", e.target.value)
+                    }
+                    error={!!errors.stock_target}
+                    helperText={errors.stock_target}
                   />
                 </Grid>
 
@@ -113,7 +188,8 @@ export default function EditSalesTarget() {
                 </Grid>
               </Grid>
 
-              {/* <Button
+              <Button
+                type="submit"
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
@@ -124,32 +200,29 @@ export default function EditSalesTarget() {
                   padding: "8px",
                 }}
               >
-                Update Sales Target
-              </Button> */}
-
-
-              <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-
-              
-              sx={{ marginTop: "24px",    width: "50%",
-                borderRadius: "15px", padding: "8px" }}
-            >
-              Save
-            </Button>
+                Save
+              </Button>
             </CardContent>
           </Card>
         </Grid>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={2000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarType}
+            variant="filled"
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Grid>
-    </div>
+    </Box>
   );
 }
-
-
-
 
 
 // import React, { useState, useEffect } from "react";
@@ -408,11 +481,3 @@ export default function EditSalesTarget() {
 //     </div>
 //   );
 // }
-
-
-
-
-
-
-
-
