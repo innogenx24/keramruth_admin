@@ -57,7 +57,12 @@ const AddMemberForm = () => {
       if (success) {
         setErrorMessage("Member added successfully!");
         setOpenSnackbar(true);
-        navigate("/dashboard/members");
+
+        // Wait for 2 seconds before navigating
+        setTimeout(() => {
+          setOpenSnackbar(false);
+          navigate("/dashboard/members");
+        }, 2000);
       }
     }
   }, [error, success]);
@@ -869,23 +874,19 @@ const AddMemberForm = () => {
         </Grid>
       </form>
       <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
+      open={openSnackbar}
+      autoHideDuration={2000} // Auto-hide after 2 seconds
+      onClose={() => setOpenSnackbar(false)}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position
+    >
+      <Alert
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        severity={success ? "success" : "error"}
+        variant="filled"
       >
-        <Alert
-          onClose={() => setOpenSnackbar(false)}
-          severity={error ? "error" : "success"}
-          sx={{
-            width: "100%",
-            background: error ? "red" : "green",
-            color: "white",
-          }}
-        >
-          {errorMessage || "An error occurred while updating member data."}
-        </Alert>
-      </Snackbar>
+        {errorMessage}
+      </Alert>
+    </Snackbar>
     </Box>
   );
 };

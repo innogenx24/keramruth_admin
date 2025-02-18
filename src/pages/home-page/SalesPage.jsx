@@ -1,113 +1,126 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Grid, Typography, Box } from '@mui/material';
-import DatePicker from 'react-datepicker'; // Assuming you're using react-datepicker
-import SalesCard from '../../components/homepage-component/total-sale-widget/SalesCard';
-import { StockSaleBarGraph } from '../../components/homepage-component/stockSale-graph/StockSaleBarGraph';
-import DonutChart from '../../components/homepage-component/selling-products-chart/DonutChart';
-import TrentLineGraph from '../../components/homepage-component/sale-trent-linechart/TrentLineGraph';
-import 'react-datepicker/dist/react-datepicker.css'; // Add this line if you haven't already
-import './SalesPage.scss';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Grid, Typography, Box } from "@mui/material";
+import DatePicker from "react-datepicker";
+import SalesCard from "../../components/homepage-component/total-sale-widget/SalesCard";
+import { StockSaleBarGraph } from "../../components/homepage-component/stockSale-graph/StockSaleBarGraph";
+import DonutChart from "../../components/homepage-component/selling-products-chart/DonutChart";
+import TrentLineGraph from "../../components/homepage-component/sale-trent-linechart/TrentLineGraph";
+import "react-datepicker/dist/react-datepicker.css";
+import "./SalesPage.scss";
 
 const SalesPage = () => {
   const [salesData, setSalesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const [loginUserTotalSales, setLoginUserTotalSales] = useState(0);
 
-  const token = localStorage.getItem('token');
-
+  const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchSalesData = async () => {
-      if (!selectedDate) return;
-      
-      setLoading(true);
-      setError(null);
-  
-      // Convert the selected date to "YYYY-MM" format
-      const formattedMonth = selectedDate.toISOString().slice(0, 7);
-  
-      try {
-        const response = await axios.get(`${API_END_POINT}/overall_sales/rolebased_sales?month=${formattedMonth}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
-        if (response.data.success) {
-          setSalesData(response.data.result);
-          setLoginUserTotalSales(response.data.loginUsertotalSales); // Store login user's sales
+        if (!selectedDate) return;
 
-        } else {
-          setError(response.data.message || 'Failed to fetch data');
+        setLoading(true);
+        setError(null);
+
+        const formattedMonth = selectedDate.toISOString().slice(0, 7);
+
+        try {
+            const response = await axios.get(
+                `${API_END_POINT}/overall_sales/rolebased_sales?month=${formattedMonth}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.data.success) {
+                setSalesData(response.data.result);
+
+                // Store logged-in user's sales
+                setLoginUserTotalSales(response.data.loginUsertotalSales); 
+
+                // Extract customer sales data and store it separately
+                const customerData = response.data.result.find(item => item.roleName === "Customer");
+
+                if (customerData) {
+                    setCustomerBuyedAmount(customerData.customerBuyedAmmount || 0);
+                }
+            } else {
+                setError(response.data.message || "Failed to fetch data");
+            }
+        } catch (err) {
+            setError(err.message || "An error occurred while fetching data");
+        } finally {
+            setLoading(false);
         }
-      } catch (err) {
-        setError(err.message || 'An error occurred while fetching data');
-      } finally {
-        setLoading(false);
-      }
     };
-  
+
     fetchSalesData();
-  }, [selectedDate, token]);
-  
+}, [selectedDate, token]);
+
+
 
   const roleAbbreviations = {
     "Area Development Officer": "ADO",
     "Master Distributor": "MD",
     "Super Distributor": "SD",
     "Distributor": "D",
-    "Customer": "C"
+    "Customer": "C",
   };
 
-  // Utility function to get the abbreviation
   const getRoleAbbreviation = (roleName) => {
     return roleAbbreviations[roleName] || roleName;
   };
 
-  // Calculate overall sales for the company
+  // Calculate overall company sales correctly (FIXED)
   const companyOverallSales = salesData.reduce(
     (acc, data) => {
-      acc.totalUsers += data.totalUsers;
-      acc.targetAmount += data.targetAmount;
-      acc.targetStock += data.targetStock;
-      acc.totalSalesAmount += data.totalSalesAmount;
-      acc.totalStockAchieved += data.totalStockAchieved;
-      acc.pendingAmount += data.pendingAmount;
-      acc.pendingStock += data.pendingStock;
+        acc.totalUsers += data.totalUsers;
+        acc.targetAmount += data.targetAmount;
+        acc.targetStock += data.targetStock;
+        acc.totalSalesAmount += data.totalSalesAmount;
+        acc.totalStockAchieved += data.totalStockAchieved;
+        acc.pendingAmount += data.pendingAmount;
+        acc.pendingStock += data.pendingStock;
 
-      acc.salesAchievementPercent += isNaN(parseFloat(data.salesAchievementPercent))
-        ? 0
-        : parseFloat(data.salesAchievementPercent);
+        acc.salesAchievementPercent += isNaN(parseFloat(data.salesAchievementPercent))
+            ? 0
+            : parseFloat(data.salesAchievementPercent);
 
-      acc.stockAchievementPercent += isNaN(parseFloat(data.stockAchievementPercent))
-        ? 0
-        : parseFloat(data.stockAchievementPercent);
+        acc.stockAchievementPercent += isNaN(parseFloat(data.stockAchievementPercent))
+            ? 0
+            : parseFloat(data.stockAchievementPercent);
 
-      return acc;
+        // **NEW: Include customerBuyedAmmount in the overall calculation**
+        acc.customerBuyedAmmount += data.customerBuyedAmmount || 0;
+
+        return acc;
     },
     {
-      roleName: "Company Total Sales:",
-      totalUsers: 0,
-      targetAmount: 0,
-      targetStock: 0,
-      totalSalesAmount: 0,
-      totalStockAchieved: 0,
-      pendingAmount: 0,
-      pendingStock: 0,
-      salesAchievementPercent: 0,
-      stockAchievementPercent: 0,
+        roleName: "Company Total Sales:",
+        totalUsers: 0,
+        targetAmount: 0,
+        targetStock: 0,
+        totalSalesAmount: 0,
+        totalStockAchieved: 0,
+        pendingAmount: 0,
+        pendingStock: 0,
+        salesAchievementPercent: 0,
+        stockAchievementPercent: 0,
+        customerBuyedAmmount: 0,
     }
-  );
+);
 
-  const totalCompanySales = companyOverallSales.totalSalesAmount + loginUserTotalSales;
+
+  // FIX: Remove double counting of loginUserTotalSales
+  const totalCompanySales = companyOverallSales.totalSalesAmount + companyOverallSales.customerBuyedAmmount;
 
   const salesAchievementPercent1234 = Math.min(
-    ((totalCompanySales / companyOverallSales.targetAmount) * 100), 
+    (totalCompanySales / companyOverallSales.targetAmount) * 100,
     100
   ).toFixed(2);
-  
+
   
   return (
     <div>

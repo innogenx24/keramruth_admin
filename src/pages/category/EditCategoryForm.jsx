@@ -9,6 +9,8 @@ import {
   Select,
   MenuItem,
   FormHelperText,
+  Snackbar,
+  Alert 
 } from "@mui/material";
 import axios from "axios";
 
@@ -16,6 +18,9 @@ const EditCategoryForm = ({ onCancel }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { club } = location.state || {}; // Get the club data from location state
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarType, setSnackbarType] = useState("success");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const [sectors, setSectors] = useState([]); // State to store fetched sectors
   const [category, setCategory] = useState({
@@ -91,32 +96,30 @@ useEffect(() => {
 
   const validateFields = () => {
     const newErrors = {};
-  
+
     if (!category.category_name.trim()) {
       newErrors.category_name = "Category name is required.";
-    } 
-    else if (!/^[a-zA-Z0-9 ]*$/.test(category.category_name)) {
-      newErrors.category_name = "Special characters is not allowed.";
+    } else if (!/^[a-zA-Z0-9 ]*$/.test(category.category_name)) {
+      newErrors.category_name = "Special characters are not allowed.";
     }
-  
+
     if (!category.sector_name.trim()) {
       newErrors.sector_name = "Sector selection is required.";
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; 
   };
-  
 
   // Handle form submission (update logic)
   const handleFormSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
     if (!validateFields()) {
       return; // Stop submission if validation fails
     }
 
-    const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
+    const token = localStorage.getItem("token");
 
     try {
       const response = await axios.put(
@@ -128,6 +131,7 @@ useEffect(() => {
           },
         }
       );
+
       // Reset the form on successful update
       setCategory({
         id: "",
@@ -136,7 +140,14 @@ useEffect(() => {
         sector_name: "",
       });
       setErrors({});
-      navigate("/dashboard/category");
+      setSnackbarMessage("Category updated successfully!");
+      setSnackbarType("success");
+      setOpenSnackbar(true);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        navigate("/dashboard/category");
+      }, 2000);
     } catch (error) {
       if (error.response && error.response.data.error === "Category with this name already exists") {
         setServerError("Category with this name already exists.");
@@ -144,7 +155,15 @@ useEffect(() => {
         console.error("Error updating category:", error);
         setServerError("An error occurred while updating the category.");
       }
+
+      setSnackbarMessage(serverError || "An error occurred.");
+      setSnackbarType("error");
+      setOpenSnackbar(true);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -204,6 +223,17 @@ useEffect(() => {
           Save Changes
         </Button>
       </Box>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarType} variant="filled">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

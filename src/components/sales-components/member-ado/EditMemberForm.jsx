@@ -36,7 +36,7 @@ const EditMemberForm = () => {
   const [imageError, setImageError] = useState(""); // Store image error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
+  const [snackbarType, setSnackbarType] = useState("success");
   const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState(""); // Role dropdown value
@@ -309,21 +309,17 @@ const EditMemberForm = () => {
   // Save updated member data
 
   const handleSave = () => {
-
-
-    // Only proceed if the image is valid
-    if (imageError) {
-      return;
-    }
+    if (imageError) return;
 
     const isValid = validateForm();
     if (!isValid) return;
+
     const token = localStorage.getItem("token");
 
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data", // Required for image upload
+        "Content-Type": "multipart/form-data",
       },
     };
 
@@ -332,26 +328,29 @@ const EditMemberForm = () => {
       data.append(key, formData[key]);
     }
     if (image) {
-      data.append("image", image); // Attach the image file
+      data.append("image", image);
     }
 
     axios
-      // .put(`${API_END_POINT}/api/user/update/${memberId}`, data, config)
       .put(`${API_END_POINT}/user/update/${memberId}`, data, config)
       .then(() => {
-        navigate(`/dashboard/members`);
+        setErrorMessage("Member updated successfully!");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+
+        // Delay navigation by 2 seconds
+        setTimeout(() => {
+          setOpenSnackbar(false);
+          navigate(`/dashboard/members`);
+        }, 2000);
       })
       .catch((error) => {
         console.error("Error updating member data", error);
 
-        // Check if the error response contains a message and set the error message
-        if (error.response && error.response.data && error.response.data.error) {
-          setErrorMessage(error.response.data.error); // Extract the error message
-        } else {
-          setErrorMessage("An unknown error occurred.");
-        }
-
-        // Open Snackbar to display the error message
+        const errorMsg =
+          error.response?.data?.error || "An unknown error occurred.";
+        setErrorMessage(errorMsg);
+        setSnackbarType("error");
         setOpenSnackbar(true);
       });
   };
@@ -679,15 +678,16 @@ const EditMemberForm = () => {
       </Grid>
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        autoHideDuration={2000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
         <Alert
-          onClose={handleCloseSnackbar}
-          severity="error"
-          sx={{ width: "100%", background: 'red', color: 'white' }}
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarType}
+          variant="filled"
         >
-          {errorMessage || "An error occurred while updating member data."}
+          {errorMessage}
         </Alert>
       </Snackbar>
     </Box>

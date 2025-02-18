@@ -1,5 +1,13 @@
-import { useState, useEffect } from "react"; 
-import { Button, Typography, Box, TextField, Grid } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Button,
+  Typography,
+  Box,
+  TextField,
+  Grid,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +19,9 @@ const AddOrEditSector = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [sector, setSector] = useState(null);
   const [error, setError] = useState(""); // State to hold the error message
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // Message for snackbar
+  const [snackbarType, setSnackbarType] = useState("success"); // Success or error type
+  const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar visibility
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
@@ -28,7 +39,7 @@ const AddOrEditSector = () => {
     validationSchema: Yup.object({
       sector_name: Yup.string()
         .required("Sector name is required.")
-        .matches(/^[a-zA-Z0-9 ]*$/, "Special characters is not allowed."), // Regex validation
+        .matches(/^[a-zA-Z0-9 ]*$/, "Special characters are not allowed."), // Regex validation
     }),
     onSubmit: async (values) => {
       try {
@@ -44,20 +55,37 @@ const AddOrEditSector = () => {
         });
 
         if (response.ok) {
-          navigate("/dashboard/sector");
+          setSnackbarMessage(
+            isEditMode
+              ? `Sector updated successfully!`
+              : `Sector created successfully!`
+          );
+          setSnackbarType("success");
+          setOpenSnackbar(true);
+          setTimeout(() => {
+            navigate("/dashboard/sector");
+          }, 2000);
+
         } else {
           const data = await response.json();
           if (data.message === "Sector name already exists") {
-            setError("Sector name already exists."); // Set error message
+            setError("Sector name already exists.");
           } else {
             alert("An error occurred while saving the sector.");
           }
         }
       } catch (error) {
         console.error("Error saving sector:", error);
+        setSnackbarMessage("An error occurred while saving the sector.");
+        setSnackbarType("error");
+        setOpenSnackbar(true);
       }
     },
   });
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   return (
     <Box p={3}>
@@ -74,19 +102,43 @@ const AddOrEditSector = () => {
                 label="Sector Name*"
                 value={formik.values.sector_name}
                 onChange={formik.handleChange}
-                error={formik.touched.sector_name && Boolean(formik.errors.sector_name)}
-                helperText={formik.touched.sector_name && formik.errors.sector_name}
+                error={
+                  formik.touched.sector_name &&
+                  Boolean(formik.errors.sector_name)
+                }
+                helperText={
+                  formik.touched.sector_name && formik.errors.sector_name
+                }
                 sx={{ mb: 2 }}
               />
-              {error && <Typography color="error">{error}</Typography>} {/* Display the error message */}
-
-              <Button type="submit" variant="contained" color="primary" fullWidth>
+              {error && <Typography color="error">{error}</Typography>}{" "}
+              {/* Display the error message */}
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
                 {isEditMode ? "Update" : "Save"}
               </Button>
             </form>
           </Box>
         </Grid>
       </Grid>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarType}
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
