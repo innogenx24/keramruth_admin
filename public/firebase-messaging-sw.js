@@ -1,3 +1,4 @@
+//** These Link allow the service worker to communicate with Firebase Cloud Messaging (FCM).
 importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js");
 
@@ -24,4 +25,7 @@ messaging.onBackgroundMessage((payload) => {
     icon: payload.notification.icon,
   });
 });
+
+//*****Service Worker for Background Notifications******///
+//--> Purpose: This file handles background push notifications when the web app is closed or in the background.
 

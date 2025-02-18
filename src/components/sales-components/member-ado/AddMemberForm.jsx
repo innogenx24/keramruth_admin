@@ -576,105 +576,105 @@ const AddMemberForm = () => {
 
             {/* {/ Address Section /} */}
             <Box mt={3} sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-      <InputLabel>Address</InputLabel>
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="pincode"
-            label="Pincode*"
-            value={formik.values.pincode}
-            onChange={handlePincodeChange}
-            error={formik.touched.pincode && Boolean(formik.errors.pincode)}
-            helperText={formik.touched.pincode && formik.errors.pincode}
-          />
-          {loading && <CircularProgress size={20} />}
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="country"
-            label="Country*"
-            value={formik.values.country}
-            InputProps={{
-              readOnly: true,
-            }}
-            error={formik.touched.country && Boolean(formik.errors.country)}
-            helperText={formik.touched.country && formik.errors.country}
-          />
-        </Grid>
+              <InputLabel>Address</InputLabel>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="pincode"
+                    label="Pincode*"
+                    value={formik.values.pincode}
+                    onChange={handlePincodeChange}
+                    error={formik.touched.pincode && Boolean(formik.errors.pincode)}
+                    helperText={formik.touched.pincode && formik.errors.pincode}
+                  />
+                  {loading && <CircularProgress size={20} />}
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="country"
+                    label="Country*"
+                    value={formik.values.country}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    error={formik.touched.country && Boolean(formik.errors.country)}
+                    helperText={formik.touched.country && formik.errors.country}
+                  />
+                </Grid>
 
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="state"
-            label="State*"
-            value={formik.values.state}
-            InputProps={{
-              readOnly: true, // State is auto-filled based on PIN code
-            }}
-            error={formik.touched.state && Boolean(formik.errors.state)}
-            helperText={formik.touched.state && formik.errors.state}
-          />
-        </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="state"
+                    label="State*"
+                    value={formik.values.state}
+                    InputProps={{
+                      readOnly: true, // State is auto-filled based on PIN code
+                    }}
+                    error={formik.touched.state && Boolean(formik.errors.state)}
+                    helperText={formik.touched.state && formik.errors.state}
+                  />
+                </Grid>
 
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="district"
-            label="District*"
-            value={formik.values.district}
-            InputProps={{
-              readOnly: true, // District is auto-filled based on PIN code
-            }}
-            error={formik.touched.district && Boolean(formik.errors.district)}
-            helperText={formik.touched.district && formik.errors.district}
-          />
-        </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="district"
+                    label="District*"
+                    value={formik.values.district}
+                    InputProps={{
+                      readOnly: true, // District is auto-filled based on PIN code
+                    }}
+                    error={formik.touched.district && Boolean(formik.errors.district)}
+                    helperText={formik.touched.district && formik.errors.district}
+                  />
+                </Grid>
 
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="city"
-            label="City / Place"
-            {...formik.getFieldProps("city")}
-            error={formik.touched.city && Boolean(formik.errors.city)}
-            helperText={formik.touched.city && formik.errors.city}
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="street_name"
-            label="Street Name"
-            {...formik.getFieldProps("street_name")}
-            error={
-              formik.touched.street_name &&
-              Boolean(formik.errors.street_name)
-            }
-            helperText={
-              formik.touched.street_name && formik.errors.street_name
-            }
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="building_no_name"
-            label="Building No / Name"
-            {...formik.getFieldProps("building_no_name")}
-            error={
-              formik.touched.building_no_name &&
-              Boolean(formik.errors.building_no_name)
-            }
-            helperText={
-              formik.touched.building_no_name &&
-              formik.errors.building_no_name
-            }
-          />
-        </Grid>
-      </Grid>
-    </Box>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="city"
+                    label="City / Place"
+                    {...formik.getFieldProps("city")}
+                    error={formik.touched.city && Boolean(formik.errors.city)}
+                    helperText={formik.touched.city && formik.errors.city}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="street_name"
+                    label="Street Name"
+                    {...formik.getFieldProps("street_name")}
+                    error={
+                      formik.touched.street_name &&
+                      Boolean(formik.errors.street_name)
+                    }
+                    helperText={
+                      formik.touched.street_name && formik.errors.street_name
+                    }
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    name="building_no_name"
+                    label="Building No / Name"
+                    {...formik.getFieldProps("building_no_name")}
+                    error={
+                      formik.touched.building_no_name &&
+                      Boolean(formik.errors.building_no_name)
+                    }
+                    helperText={
+                      formik.touched.building_no_name &&
+                      formik.errors.building_no_name
+                    }
+                  />
+                </Grid>
+              </Grid>
+            </Box>
           </Grid>
 
           {/* {/ Right Side: Club & Superior Distributors /} */}
@@ -722,7 +722,7 @@ const AddMemberForm = () => {
                       <MenuItem value="">Select Admin</MenuItem>
                       {allmembers?.Admins?.map((item) => (
                         <MenuItem key={item?.id} value={item?.id}>
-                          {item?.username}
+                          {item?.full_name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -751,7 +751,7 @@ const AddMemberForm = () => {
                         )}
                         {allmembers?.ADOs?.map((item) => (
                           <MenuItem key={item?.id} value={item?.id}>
-                            {item?.username}
+                            {item.full_name}{` (${item.username})`}
                           </MenuItem>
                         ))}
                       </Select>
@@ -784,7 +784,7 @@ const AddMemberForm = () => {
                         {mds.length > 0 ? (
                           mds.map((item) => (
                             <MenuItem key={item.id} value={item.id}>
-                              {item.username}
+                              {item.full_name}{` (${item.username})`}
                             </MenuItem>
                           ))
                         ) : (
@@ -816,7 +816,7 @@ const AddMemberForm = () => {
                         {sds.length > 0 ? (
                           sds?.map((item) => (
                             <MenuItem key={item.id} value={item.id}>
-                              {item.username}
+                              {item.full_name}{` (${item.username})`}
                             </MenuItem>
                           ))
                         ) : (
@@ -845,7 +845,7 @@ const AddMemberForm = () => {
                       {ds.length > 0 ? (
                         ds?.map((item) => (
                           <MenuItem key={item.id} value={item.id}>
-                            {item.username}
+                            {item.full_name}{` (${item.username})`}
                           </MenuItem>
                         ))
                       ) : (
