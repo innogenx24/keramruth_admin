@@ -169,8 +169,8 @@ const SalesPage = () => {
                   </Typography>
                 }
                 sales={`Rs.${new Intl.NumberFormat('en-IN').format(totalCompanySales || 0)}`}
-                target={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.targetAmount || 0)}`}
-                growth={salesAchievementPercent1234}
+                // target={`Rs.${new Intl.NumberFormat('en-IN').format(companyOverallSales.targetAmount || 0)}`}
+                // growth={salesAchievementPercent1234}
                 roleName={companyOverallSales.roleName}
               />
             </Grid>
