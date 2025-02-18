@@ -76,7 +76,14 @@ const FeedbackTable = () => {
   };
 
   const renderPagination = () => (
-    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "right",
+        alignItems: "center",
+        gap: "15px",
+      }}
+    >
       <Button
         onClick={() => setPage(page - 1)}
         disabled={page === 0}
@@ -84,7 +91,10 @@ const FeedbackTable = () => {
       >
         Previous
       </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+      <Typography
+        variant="body1"
+        style={{ minWidth: "60px", textAlign: "center" }}
+      >
         Page {page + 1}
       </Typography>
       <Button
@@ -97,7 +107,10 @@ const FeedbackTable = () => {
     </div>
   );
 
-  const currentFeedbacks = filteredFeedbacks.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+  const currentFeedbacks = filteredFeedbacks.slice(
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage
+  );
 
   return (
     <Box padding={2}>
@@ -122,85 +135,95 @@ const FeedbackTable = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow style={{ whiteSpace: 'nowrap' }}>
+            <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
               <TableCell>User Details</TableCell>
               <TableCell>Product Name</TableCell>
               <TableCell>Order ID</TableCell>
               <TableCell>Quantity</TableCell>
-              {/* <TableCell>Booking Date</TableCell>
-              <TableCell>Delivered Date</TableCell> */}
               <TableCell>Total Amount</TableCell>
               <TableCell>Comments</TableCell>
               <TableCell>Rating</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentFeedbacks.map((feedback, index) => (
-              <TableRow key={feedback.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>
-                  <Box display="flex" alignItems="center">
-                    <Avatar
-                      src={
-                        feedback.user.image
-                          ? `${API_END_POINT_IMG}/uploads/${feedback.user.image}`
-                          : undefined
-                      }
-                      alt={feedback.user.full_name}
-                      style={{ marginRight: "10px" }}
-                    />
-                    <Typography>{feedback.user.full_name}</Typography>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Box display="flex" alignItems="center">
-                    {feedback.product.image && (
-                      <img
-                        src={`${API_END_POINT_IMG}/uploads/${feedback.product.image}`}
-                        alt={feedback.product.name}
-                        style={{
-                          width: "60px",
-                          height: "auto",
-                          objectFit: "contain",
-                          border: "1px solid #ccc",
-                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                          borderRadius: "10px",
-                          marginRight: "10px",
-                        }}
-                      />
-                    )}
-                    <Typography>{feedback.product.name}</Typography>
-                  </Box>
-                </TableCell>
-                <TableCell>{feedback.order.order_id}</TableCell>
-                <TableCell>
-                  {new Intl.NumberFormat('en-IN').format(Number(feedback.order.total_order_quantity))}
-                </TableCell>
-                <TableCell>
-                  {/* <TableCell>
-                  {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.order.createdAt))}
-                </TableCell>
-                <TableCell>
-                  {new Intl.DateTimeFormat("en-GB").format(new Date(feedback.feedback_date))}
-                </TableCell> */}
-                  Rs {new Intl.NumberFormat("en-IN").format(feedback.order.total_amount || 0)}
-                </TableCell>
-                <TableCell sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, wordBreak: 'break-word' }}>
-                  {feedback.comments}
-                </TableCell>
-                <TableCell>
-                  <Rating value={feedback.rating} precision={0.5} readOnly />
+            {/* Check if data is available */}
+            {currentFeedbacks.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} style={{ textAlign: "center" }}>
+                  No Feedback Data Available
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              currentFeedbacks.map((feedback, index) => (
+                <TableRow key={feedback.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      <Avatar
+                        src={
+                          feedback.user.image
+                            ? `${API_END_POINT_IMG}/uploads/${feedback.user.image}`
+                            : undefined
+                        }
+                        alt={feedback.user.full_name}
+                        style={{ marginRight: "10px" }}
+                      />
+                      <Typography>{feedback.user.full_name}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      {feedback.product.image && (
+                        <img
+                          src={`${API_END_POINT_IMG}/uploads/${feedback.product.image}`}
+                          alt={feedback.product.name}
+                          style={{
+                            width: "60px",
+                            height: "auto",
+                            objectFit: "contain",
+                            border: "1px solid #ccc",
+                            boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                            borderRadius: "10px",
+                            marginRight: "10px",
+                          }}
+                        />
+                      )}
+                      <Typography>{feedback.product.name}</Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>{feedback.order.order_id}</TableCell>
+                  <TableCell>
+                    {new Intl.NumberFormat("en-IN").format(
+                      Number(feedback.order.total_order_quantity)
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    Rs{" "}
+                    {new Intl.NumberFormat("en-IN").format(
+                      feedback.order.total_amount || 0
+                    )}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 2,
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {feedback.comments}
+                  </TableCell>
+                  <TableCell>
+                    <Rating value={feedback.rating} precision={0.5} readOnly />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
 
-      <div style={{ marginTop: "10px" }}>
-        {renderPagination()}
-      </div>
+      <div style={{ marginTop: "10px" }}>{renderPagination()}</div>
     </Box>
   );
 };
