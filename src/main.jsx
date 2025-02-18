@@ -11,6 +11,8 @@ console.log = function () {};
 //***This function is essential for handling background push notifications in your React web app.**///
 //***It ensures users receive notifications even when the app is closed or minimized.***//
 //***The file must be inside the public/ folder and registered in main.jsx.***//
+
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
     .register("/firebase-messaging-sw.js")
