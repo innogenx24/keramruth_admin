@@ -127,7 +127,7 @@ const SalesPage = () => {
       <Grid container spacing={3}>
  
         <Grid item xs={12} md={12} lg={6}>
-          {/* Responsive Container for Title & DatePicker */}
+      
           <Box
             display="flex"
             flexDirection={{ xs: "column", md: "row" }}
@@ -135,7 +135,7 @@ const SalesPage = () => {
             justifyContent="space-between"
             gap={{ xs: 1, md: 2 }}
           >
-            {/* Title */}
+   
             <Typography
               variant="h6"
               sx={{ color: "#989FA9", mb: { xs: 1, md: 0 } }}
@@ -143,7 +143,6 @@ const SalesPage = () => {
               This Month Details
             </Typography>
 
-            {/* DatePicker (Aligned Right on Large Screens) */}
             <Box className="month-selector" sx={{ width: "100%", textAlign: { xs: "left", md: "right" } }}>
               <DatePicker
                 selected={selectedDate}
@@ -156,7 +155,7 @@ const SalesPage = () => {
             </Box>
           </Box>
 
-          {/* Sales Cards Section */}
+  
           <Grid container spacing={3}>
       
             <Grid item xs={12} sm={6}>
@@ -202,7 +201,6 @@ const SalesPage = () => {
         </Grid>
 
 
-        {/* Right Side: Stock Sale Graph */}
         <Grid item xs={12} md={12} lg={6}>
           <StockSaleBarGraph />
         </Grid>

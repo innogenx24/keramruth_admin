@@ -390,8 +390,8 @@ const EditMemberForm = () => {
             <MenuItem value="">Select {label}</MenuItem>
             {options.map((item) => (
               <MenuItem key={item?.id} value={item?.id}>
-                {item?.full_name}
-              </MenuItem>
+                              {item.full_name}{` (${item.username})`}
+                              </MenuItem>
             ))}
           </Select>
         </Grid>

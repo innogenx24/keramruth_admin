@@ -10,7 +10,7 @@ import {
   Select,
   MenuItem,
   Snackbar,
-  
+  Alert,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
@@ -22,12 +22,17 @@ const EditUserProfile = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
 
-  const [selectedImage, setSelectedImage] = useState("/static/images/avatar/1.jpg");
+  const [selectedImage, setSelectedImage] = useState(
+    "/static/images/avatar/1.jpg"
+  );
   const [imageFile, setImageFile] = useState(null);
   const [imageError, setImageError] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState(""); // To hold the error message for display
+  const [successMessage, setSuccessMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarType, setSnackbarType] = useState("success");
 
   const [user, setUser] = useState({
     full_name: "",
@@ -44,19 +49,20 @@ const EditUserProfile = () => {
   const [cities, setCities] = useState([]);
   const [users, setUsers] = useState(null); // Add users state
 
-
-
   // Fetch user data from API (replace with actual API call)
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
         // const response = await axios.get(`${API_END_POINT}/api/admin/admin-details`, {
-        const response = await axios.get(`${API_END_POINT}/admin/admin-details`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `${API_END_POINT}/admin/admin-details`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setUsers(response.data); // Store fetched data
       } catch (error) {
         console.error("Error fetching user data", error);
@@ -67,71 +73,6 @@ const EditUserProfile = () => {
   }, []); // Run once on component mount
 
   // State to City mapping
-  const stateCityMap = {
-    "Andhra Pradesh": [
-      "Anakapalli", "Anantapur", "Bapatla", "Chittoor", "East Godavari", "Eluru",
-      "Guntur", "Kakinada", "Konaseema", "Krishna", "Kurnool", "Nandyal", "Nellore",
-      "Parvathipuram Manyam", "Prakasam", "Sri Potti Sriramulu Nellore", "Sri Sathya Sai",
-      "Srikakulam", "Tirupati", "Visakhapatnam", "Vizianagaram", "West Godavari",
-      "YSR Kadapa", "Alluri Sitharama Raju", "NTR", "Palnadu"
-    ],
-    "Arunachal Pradesh": [
-      "Anjaw", "Changlang", "Dibang Valley", "East Kameng", "East Siang", "Kamle", "Kra Daadi", "Kurung Kumey", "Lepa Rada",
-      "Lohit", "Longding", "Lower Dibang Valley", "Lower Siang", "Lower Subansiri", "Namsai", "Pakke Kessang", "Papum Pare",
-      "Shi-Yomi", "Siang", "Tawang", "Tirap", "Upper Siang", "Upper Subansiri", "West Kameng", "West Siang"
-    ],
-    "Assam": [
-      "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", "Chirang",
-      "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", "Goalpara", "Golaghat",
-      "Hailakandi", "Hojai", "Jorhat", "Kamrup", "Kamrup Metropolitan", "Karbi Anglong",
-      "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", "Morigaon", "Nagaon", "Nalbari",
-      "Sivasagar", "Sonitpur", "South Salmara-Mankachar", "Tinsukia", "Udalguri",
-      "West Karbi Anglong"
-    ],
-    "Bihar": [
-      "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar",
-      "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur",
-      "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger",
-      "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur",
-      "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"
-    ],
-    "Chhattisgarh": [
-      "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", "Bilaspur",
-      "Dantewada", "Dhamtari", "Durg", "Gariaband", "Gaurela-Pendra-Marwahi", "Janjgir-Champa",
-      "Jashpur", "Kabirdham", "Kanker", "Kondagaon", "Korba", "Korea", "Mahasamund", "Mungeli",
-      "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", "Surajpur", "Surguja"
-    ],
-    "Goa": ["North Goa", "South Goa", "Panaji", "Vasco da Gama", "Margao"],
-    "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Junagadh", "Kheda", "Mehsana", "Patan", "Sabarkantha", "Anand", "Banaskantha", "Dahod", "Narmada", "Porbandar", "Chhota Udepur", "Gir Somnath", "Mahisagar", "Morbi", "Navajo", "Surendranagar", "Tapi", "Valsad"],
-    "Haryana": ["Chandigarh", "Faridabad", "Gurugram", "Ambala", "Hisar", "Karnal", "Panipat", "Rewari", "Sonipat", "Yamunanagar", "Bhiwani", "Rohtak", "Sirsa", "Jhajjar", "Mahendragarh", "Nuh", "Panchkula", "Fatehabad", "Palwal", "Kaithal"],
-    "Himachal Pradesh": ["Shimla", "Manali", "Kullu", "Dharamsala", "Kangra", "Solan", "Mandi", "Bilaspur", "Hamirpur", "Una", "Sirmaur", "Chamba", "Kullu", "Lahaul and Spiti", "Una"],
-    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Hazaribagh", "Bokaro", "Deoghar", "Giridih", "Dumka", "Khunti", "Pakur", "Sahebganj", "Ramgarh", "Godda", "Latehar", "Palamu", "Simdega", "Chatra", "Garhwa", "Koderma", "Saraikela Kharsawan"],
-    "Karnataka": ["Bangalore", "Mysuru", "Mangalore", "Hubli", "Belgaum", "Bidar", "Chikkaballapur", "Chikkamagaluru", "Davanagere", "Hassan", "Hubli", "Kolar", "Koppal", "Mandya", "Raichur", "Ramanagara", "Shivamogga", "Tumkur", "Udupi", "Ballari", "Chitradurga", "Dakshina Kannada", "Gadag", "Haveri", "Kodagu", "Bagalkot", "Yadgir"],
-    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Kottayam", "Alappuzha", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Malappuram", "Palakkad", "Pathanamthitta", "Pernakulam", "Thrissur", "Wayanad"],
-    "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Ujjain", "Jabalpur", "Sagar", "Rewa", "Satna", "Dewas", "Ratlam", "Shivpuri", "Sehore", "Shahdol", "Chhindwara", "Mandla", "Tikamgarh", "Panna", "Khargone", "Burhanpur", "Neemuch", "Mandsaur", "Balaghat", "Betul", "Hoshangabad", "Khandwa", "Alirajpur", "Anuppur", "Ashoknagar", "Chhatarpur", "Dindori", "Harda", "Jhabua", "Katni", "Narsinghpur", "Seoni", "Shivpuri", "Singrauli", "Umaria"],
-    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Thane", "Solapur", "Sangli", "Ratnagiri", "Jalgaon", "Satara", "Kolhapur", "Latur", "Nanded", "Amravati", "Akola", "Yavatmal", "Buldhana", "Hingoli", "Wardha", "Washim", "Chandrapur", "Gadchiroli", "Bhandara", "Sindhudurg", "Palghar"],
-    "Manipur": ["Imphal", "Thoubal", "Kangpokpi", "Bishnupur", "Churachandpur", "Senapati", "Ukhrul", "Tamenglong", "Noney", "Peren"],
-    "Meghalaya": ["East Khasi Hills", "West Khasi Hills", "Ri-Bhoi", "West Jaintia Hills", "East Jaintia Hills", "South Garo Hills", "North Garo Hills", "West Garo Hills"],
-    "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Kolasib", "Mamit", "Serchhip", "Lawngtlai", "Hnahthial", "Siaha"],
-    "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Mon", "Phek", "Tuensang", "Zunheboto"],
-    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Balasore", "Baripada", "Bargarh", "Jagatsinghpur", "Jajpur", "Kendrapara", "Khurda", "Koraput", "Nayagarh", "Puri", "Sambalpur", "Sundargarh", "Angul", "Ganjam", "Kalahandi", "Dhenkanal", "Deogarh", "Nuapada", "Malkangiri", "Rayagada", "Mayurbhanj"],
-    "Punjab": ["Chandigarh", "Amritsar", "Ludhiana", "Jalandhar", "Patiala", "Bathinda", "Firozpur", "Hoshiarpur", "Rupnagar", "Moga", "Faridkot", "Barnala", "Sangrur", "Mansa", "Muktsar", "Kapurthala", "Tarn Taran", "Shaheed Bhagat Singh Nagar", "Fatehgarh Sahib", "Sri Muktsar Sahib"],
-    "Rajasthan": ["Jaipur", "Udaipur", "Jodhpur", "Ajmer", "Kota", "Alwar", "Bikaner", "Bundi", "Churu", "Dausa", "Hanumangarh", "Jhunjhunu", "Jhalawar", "Nagaur", "Pali", "Rajsamand", "Sikar", "Sirohi", "Tonk", "Barmer", "Banswara", "Baran", "Bhilwara", "Dholpur", "Dungarpur", "Karauli", "Pali", "Pratapgarh", "Rajasmand", "Sawai Madhopur", "Shri Ganganagar"],
-    "Sikkim": ["Gangtok", "Namchi", "Pakyong", "Mangan", "Rangpo"],
-    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Trichy", "Salem", "Tirunelveli", "Erode", "Vellore", "Tirupur", "Dharmapuri", "Cuddalore", "Kanchipuram", "Nagapattinam", "Karur", "Pudukkottai", "Thanjavur", "Villupuram", "Dindigul", "Kanyakumari", "Ramanathapuram", "Thoothukudi", "Virudhunagar", "Sivaganga", "Krishnagiri", "Ariyalur", "Perambalur", "Tiruvarur"],
-    "Telangana": ["Hyderabad", "Warangal", "Khammam", "Adilabad", "Nalgonda", "Karimnagar", "Mahabubnagar", "Nizamabad", "Medak", "Khammam", "Rangareddy", "Siddipet", "Jangaon", "Peddapalli", "Suryapet", "Warangal Rural", "Warangal Urban", "Mancherial", "Bhupalpally", "Mulugu", "Jayashankar", "Jogulamba Gadwal"],
-    "Tripura": ["Agartala", "Udaipur", "Belonia", "Kailashahar", "Dharmanagar", "Ambassa", "Sabroom", "Khowai", "Teliamura", "Jolaibari"],
-    "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Allahabad", "Gorakhpur", "Noida", "Meerut", "Mathura", "Firozabad", "Jhansi", "Ghaziabad", "Aligarh", "Bareilly", "Shahjahanpur", "Rampur", "Bijnor", "Moradabad", "Muzaffarnagar", "Saharanpur", "Jaunpur", "Sitapur", "Etawah", "Mau", "Azamgarh", "Ballia"],
-    "Uttarakhand": ["Dehradun", "Haridwar", "Nainital", "Rishikesh", "Almora", "Bageshwar", "Chamoli", "Champawat", "Haldwani", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
-    "West Bengal": ["Kolkata", "Darjeeling", "Siliguri", "Asansol", "Howrah", "Bardhaman", "Malda", "Purulia", "Hooghly", "North 24 Parganas", "South 24 Parganas", "Maldah", "Birbhum", "Jalpaiguri", "Murshidabad", "Nadia", "Bankura", "Cooch Behar", "Purba Medinipur", "Paschim Medinipur"],
-    "Andaman and Nicobar Islands": ["Port Blair"],
-    "Chandigarh": ["Chandigarh"],
-    "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
-    "Lakshadweep": ["Kavaratti"],
-    "Delhi": ["New Delhi", "Old Delhi", "Dwarka", "Rohini"],
-    "Puducherry": ["Puducherry", "Auroville", "Mahe"],
-  };
-
 
 
   useEffect(() => {
@@ -151,18 +92,14 @@ const EditUserProfile = () => {
       });
 
       if (!imageFile && users.image) {
-        setSelectedImage(users.image.includes("http") ? users.image : `${imageBaseURL}${users.image}`);
+        setSelectedImage(
+          users.image.includes("http")
+            ? users.image
+            : `${imageBaseURL}${users.image}`
+        );
       }
     }
   }, [users, imageFile]);
-
-  useEffect(() => {
-    if (user.state && stateCityMap[user.state]) {
-      setCities(stateCityMap[user.state]);
-    } else {
-      setCities([]);
-    }
-  }, [user.state]);
 
   const validateFields = () => {
     const newErrors = {};
@@ -184,36 +121,37 @@ const EditUserProfile = () => {
     const { name, value } = event.target;
     setUser({
       ...user,
-      [name]: value
+      [name]: value,
     });
 
-    if (name === 'pincode' && value.length === 6) {
+    if (name === "pincode" && value.length === 6) {
       fetchStateAndDistrict(value);
     }
   };
 
   const fetchStateAndDistrict = async (pincode) => {
     try {
-      const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
+      const response = await axios.get(
+        `https://api.postalpincode.in/pincode/${pincode}`
+      );
       const data = response.data[0];
 
-      if (data.Status === 'Success') {
+      if (data.Status === "Success") {
         const { State, District } = data.PostOffice[0];
 
         // Update the state and district fields
         setUser((prevUser) => ({
           ...prevUser,
           state: State,
-          city: District
+          city: District,
         }));
       } else {
-        alert('Invalid Pincode!');
+        alert("Invalid Pincode!");
       }
     } catch (error) {
-      console.error('Error fetching pincode data:', error);
+      console.error("Error fetching pincode data:", error);
     }
   };
-
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -239,7 +177,6 @@ const EditUserProfile = () => {
       setImageError(""); // Clear error message if the file is valid
     }
   };
-
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -271,13 +208,25 @@ const EditUserProfile = () => {
     try {
       const token = localStorage.getItem("token"); // Get the token from localStorage
       // const response = await axios.put(`${API_END_POINT}/api/admin/update`, formData, {
-      const response = await axios.put(`${API_END_POINT}/admin/update`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.put(
+        `${API_END_POINT}/admin/update`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      navigate("/dashboard/profile");
+      const successMessage = `Profile updated successfully.`;
+      setSuccessMessage(successMessage);
+      setSnackbarType("success");
+      setOpenSnackbar(true);
+
+      setTimeout(() => {
+        setOpenSnackbar(false);
+        navigate("/dashboard/profile");
+      }, 2000);
     } catch (error) {
       console.error("Error updating member data", error);
 
@@ -309,7 +258,13 @@ const EditUserProfile = () => {
         <Grid container spacing={2}>
           {/* Left Section: Profile Details */}
           <Grid item xs={12} md={6}>
-            <Box sx={{ padding: "20px", backgroundColor: "#fff", borderRadius: "10px" }}>
+            <Box
+              sx={{
+                padding: "20px",
+                backgroundColor: "#fff",
+                borderRadius: "10px",
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 User Details: Profile
               </Typography>
@@ -378,86 +333,86 @@ const EditUserProfile = () => {
 
               {/* Pincode */}
               <TextField
-        fullWidth
-        label="Pincode"
-        name="pincode"
-        value={user.pincode}
-        onChange={handleInputChange}
-        margin="normal"
-        error={!!errors.pincode}
-        helperText={errors.pincode}
-      />
+                fullWidth
+                label="Pincode"
+                name="pincode"
+                value={user.pincode}
+                onChange={handleInputChange}
+                margin="normal"
+                error={!!errors.pincode}
+                helperText={errors.pincode}
+              />
 
-      <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <FormControl fullWidth>
-            <InputLabel>Country</InputLabel>
-            <Select
-              name="country"
-              value="India"  // Setting the default value to "India"
-              disabled
-              label="Country"
-            >
-              <MenuItem value="India">India</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Country</InputLabel>
+                    <Select
+                      name="country"
+                      value="India" // Setting the default value to "India"
+                      disabled
+                      label="Country"
+                    >
+                      <MenuItem value="India">India</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-        <Grid item xs={6}>
-          <FormControl fullWidth>
-            <InputLabel>State</InputLabel>
-            <Select
-              name="state"
-              value={user.state}
-              onChange={handleInputChange}
-              label="State"
-              disabled
-            >
-              <MenuItem value={user.state}>{user.state}</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
+                <Grid item xs={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>State</InputLabel>
+                    <Select
+                      name="state"
+                      value={user.state}
+                      onChange={handleInputChange}
+                      label="State"
+                      disabled
+                    >
+                      <MenuItem value={user.state}>{user.state}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
 
-      <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-        <Grid item xs={6}>
-          <FormControl fullWidth>
-            <InputLabel>District</InputLabel>
-            <Select
-              name="city"
-              value={user.city}
-              onChange={handleInputChange}
-              label="District"
-              disabled={!user.state}
-            >
-              <MenuItem value={user.city}>{user.city}</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+              <Grid container spacing={2} sx={{ marginTop: "10px" }}>
+                <Grid item xs={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>District</InputLabel>
+                    <Select
+                      name="city"
+                      value={user.city}
+                      onChange={handleInputChange}
+                      label="District"
+                      disabled={!user.state}
+                    >
+                      <MenuItem value={user.city}>{user.city}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
 
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="Street Name"
-            variant="outlined"
-            name="street_name"
-            value={user.street_name}
-            onChange={handleInputChange}
-          />
-        </Grid>
-      </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Street Name"
+                    variant="outlined"
+                    name="street_name"
+                    value={user.street_name}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+              </Grid>
 
-      <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="Building Name/No"
-            name="building_no_name"
-            value={user.building_no_name}
-            onChange={handleInputChange}
-          />
-        </Grid>
-      </Grid>
+              <Grid container spacing={2} sx={{ marginTop: "10px" }}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Building Name/No"
+                    name="building_no_name"
+                    value={user.building_no_name}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+              </Grid>
               {/* Save Changes Button */}
               <Button
                 fullWidth
@@ -470,13 +425,25 @@ const EditUserProfile = () => {
               </Button>
             </Box>
           </Grid>
-
-
         </Grid>
       </form>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarType}
+          variant="filled"
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
-
 };
 
 export default EditUserProfile;

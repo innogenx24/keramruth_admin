@@ -722,7 +722,7 @@ const AddMemberForm = () => {
                       <MenuItem value="">Select Admin</MenuItem>
                       {allmembers?.Admins?.map((item) => (
                         <MenuItem key={item?.id} value={item?.id}>
-                          {item.full_name}{` (${item.username})`}
+                          {item?.full_name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -874,19 +874,19 @@ const AddMemberForm = () => {
         </Grid>
       </form>
       <Snackbar
-        open={openSnackbar}
-        autoHideDuration={2000} // Auto-hide after 2 seconds
+      open={openSnackbar}
+      autoHideDuration={2000} // Auto-hide after 2 seconds
+      onClose={() => setOpenSnackbar(false)}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position
+    >
+      <Alert
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position
+        severity={success ? "success" : "error"}
+        variant="filled"
       >
-        <Alert
-          onClose={() => setOpenSnackbar(false)}
-          severity={success ? "success" : "error"}
-          variant="filled"
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+        {errorMessage}
+      </Alert>
+    </Snackbar>
     </Box>
   );
 };
