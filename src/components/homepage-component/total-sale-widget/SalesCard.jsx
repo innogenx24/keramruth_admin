@@ -78,7 +78,7 @@ const SalesCard = ({
               whiteSpace: "nowrap",
               textAlign: "left",
             }}
-            title={title}
+            // title={title}
           >
             {title}
           </Typography>
