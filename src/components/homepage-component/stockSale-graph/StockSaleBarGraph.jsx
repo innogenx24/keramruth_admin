@@ -11,7 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import './StockSaleBarGraph.scss';
+import "./StockSaleBarGraph.scss";
 
 ChartJS.register(
   CategoryScale,
@@ -27,36 +27,47 @@ export function StockSaleBarGraph() {
     labels: [],
     datasets: [],
   });
-  const [totalTarget, setTotalTarget] = useState(0);
-  const [totalSoldStockAmount, setTotalSoldStockAmount] = useState(0);
-  const chartRef = useRef(null);
 
+  const chartRef = useRef(null);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
   useEffect(() => {
     const fetchStockDetails = async () => {
       try {
-        const response = await axios.get(`${API_END_POINT}/overall_sales/stock_over_detail`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.get(
+          `${API_END_POINT}/overall_sales/stock_over_detail`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         if (response.data.success) {
           const result = response.data.result;
-          const sortedResult = result.sort((a, b) => new Date(a.month) - new Date(b.month));
-          const months = sortedResult.map(item => item.month);
-          const soldStockAmount = sortedResult.map(item => item.totalSoldStockAmount);
-          const targetStock = sortedResult.map(item => item.totalTargetStock);
+          const sortedResult = result.sort(
+            (a, b) => new Date(a.month) - new Date(b.month)
+          );
 
-          // Ensure unsold stock is never negative
-          const unsoldStock = targetStock.map((stock, index) =>
-            soldStockAmount[index] >= stock ? 0 : stock - soldStockAmount[index]
+          const months = sortedResult.map((item) => item.month);
+          const soldStockAmount = sortedResult.map(
+            (item) => item.totalSoldStockAmount
+          );
+          const pendingSoldStockAmount = sortedResult.map(
+            (item) => item.totalTargetStock - item.totalSoldStockAmount
+          );
+
+          const achievedAmount = sortedResult.map(
+            (item) => item.AchievementAmount
+          );
+          const pendingAchievedAmount = sortedResult.map(
+            (item) => item.MonthlyTargetAmount - item.AchievementAmount
           );
 
           const chart = chartRef.current;
           if (chart) {
             const ctx = chart.ctx;
+
             const greenGradient = ctx.createLinearGradient(0, 0, 0, 400);
             greenGradient.addColorStop(0, "rgba(102, 255, 153, 1)");
             greenGradient.addColorStop(1, "rgba(51, 204, 102, 0.8)");
@@ -69,33 +80,22 @@ export function StockSaleBarGraph() {
               labels: months,
               datasets: [
                 {
-                  label: "Sold Stock Amount",
-                  data: soldStockAmount,
+                  label: "Stock Achieved Amount",
+                  data: achievedAmount,
                   backgroundColor: greenGradient,
                   barThickness: 25,
-                  borderRadius: {
-                    bottomLeft: 0,
-                    bottomRight: 0,
-                  },
+                  borderRadius: 4,
                 },
                 {
-                  label: "Unsold Stock",
-                  data: unsoldStock,
+                  label: "Stock Target Amount",
+                  data: soldStockAmount,
                   backgroundColor: redGradient,
                   barThickness: 25,
-                  borderRadius: {
-                    topLeft: 4,
-                    topRight: 4,
-                    bottomLeft: 4,
-                    bottomRight: 4,
-                  },
+                  borderRadius: 4,
                 },
               ],
             });
           }
-
-          setTotalTarget(targetStock.reduce((total, current) => total + current, 0));
-          setTotalSoldStockAmount(soldStockAmount.reduce((total, current) => total + current, 0));
         }
       } catch (error) {
         console.error("Error fetching stock details:", error);
@@ -111,13 +111,11 @@ export function StockSaleBarGraph() {
     plugins: {
       legend: {
         display: true,
-        position: 'top',
+        position: "top",
         labels: {
           usePointStyle: true,
-          pointStyle: 'circle',
           font: {
-            size: 10,
-            weight: 'normal',
+            size: 12,
           },
         },
       },
@@ -134,35 +132,27 @@ export function StockSaleBarGraph() {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Stock Volume',
+          text: "Stock Volume",
         },
         ticks: {
           callback: function (value) {
             return new Intl.NumberFormat("en-US").format(value);
           },
         },
-        grid: {
-          display: true,
-          color: 'rgba(0, 0, 0, 0.1)',
-          lineWidth: 1,
-        },
-        stacked: true,
       },
       x: {
         title: {
           display: true,
-          text: 'Months',
+          text: "Months",
         },
-        stacked: true,
       },
     },
   };
 
   return (
-    <div className="bar_chart_containr">
-      <div className="slaes_dotimg">
+    <div className="bar_chart_container">
+      <div className="sales_dotimg">
         <div>Stock / Sales</div>
-        <div>Total Sold Stock Amount: {new Intl.NumberFormat("en-IN").format(totalSoldStockAmount)}</div>
       </div>
       <div className="bar_chart">
         <Bar data={chartData} options={options} ref={chartRef} />
@@ -170,32 +160,6 @@ export function StockSaleBarGraph() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -278,7 +242,7 @@ export function StockSaleBarGraph() {
 //           generateLabels: (chart) => {
 //             const uniqueColors = [];
 //             const datasets = chart.data.datasets;
-  
+
 //             // Loop through each dataset and ensure unique colors for the legend
 //             datasets.forEach(dataset => {
 //               dataset.backgroundColor.forEach(color => {
@@ -287,7 +251,7 @@ export function StockSaleBarGraph() {
 //                 }
 //               });
 //             });
-  
+
 //             // Create unique legend labels
 //             return uniqueColors.map(color => ({
 //               text: color === "#FFC600" || color === "rgba(1, 197, 114, 1)" || color === "#FF3535" ? "Sold Stock" : "Unsold Stock",
@@ -341,7 +305,7 @@ export function StockSaleBarGraph() {
 //       },
 //     },
 //   };
-  
+
 //   useEffect(() => {
 //     // Fetch data from API
 //     const fetchStockDetails = async () => {
@@ -353,18 +317,18 @@ export function StockSaleBarGraph() {
 //         });
 //         if (response.data.success) {
 //           const result = response.data.result;
-  
+
 //           // Sort the result by month in ascending order
 //           const sortedResult = result.sort((a, b) => new Date(a.month) - new Date(b.month));
-  
+
 //           // Prepare labels and datasets for each month
 //           const months = sortedResult.map(item => item.month); // Extract sorted months
 //           const soldStock = sortedResult.map(item => item.totalSoldStock); // Extract sold stock
 //           const targetStock = sortedResult.map(item => item.totalTargetStock); // Extract total stock
-  
+
 //           // Calculate unsold stock for each month
 //           const unsoldStock = targetStock.map((stock, index) => stock - soldStock[index]);
-  
+
 //           // Update chart data dynamically
 //           setChartData({
 //             labels: months, // Sorted months as labels
@@ -387,7 +351,7 @@ export function StockSaleBarGraph() {
 //               ], },
 //             ],
 //           });
-  
+
 //           setTotalTarget(targetStock.reduce((total, current) => total + current, 0));
 //           setTotalSold(soldStock.reduce((total, current) => total + current, 0));
 //         }
@@ -395,10 +359,9 @@ export function StockSaleBarGraph() {
 //         console.error("Error fetching stock details:", error);
 //       }
 //     };
-  
+
 //     fetchStockDetails();
 //   }, []);
-  
 
 //   return (
 //     <div className="bar_chart_containr">
@@ -414,20 +377,6 @@ export function StockSaleBarGraph() {
 //     </div>
 //   );
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // 'use client';
 // import React from "react";
