@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import "./StockSaleBarGraph.scss";
+import { StockSaleBarGraphAdmin } from "./AdminSalesgraph";
 
 ChartJS.register(
   CategoryScale,
@@ -27,6 +28,10 @@ export function StockSaleBarGraph() {
     labels: [],
     datasets: [],
   });
+
+  const CurrentUser = JSON.parse(localStorage.getItem('user')); 
+  const CurrentUserRole = CurrentUser ? CurrentUser.role : null; 
+
 
   const chartRef = useRef(null);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
@@ -156,14 +161,29 @@ export function StockSaleBarGraph() {
   };
 
   return (
-    <div className="bar_chart_container" style={{ height: "500px" }}>
-      <div className="sales_dotimg">
-        <div>Stock / Sales</div>
-      </div>
-      <div className="bar_chart" style={{ height: "40%" }}>
-        <Bar data={chartData} options={options} ref={chartRef} height={50} />
-      </div>
-    </div>
+      <>
+        {CurrentUserRole === 'Admin' ? (
+          <StockSaleBarGraphAdmin />
+        ) : (
+          <div className="bar_chart_container" style={{ height: "500px" }}>
+            <div className="sales_dotimg">
+              <div>Stock / Sales</div>
+            </div>
+            <div className="bar_chart" style={{ height: "60%" }}>
+              <Bar data={chartData} options={options} ref={chartRef} height={50} />
+            </div>
+          </div>
+        )}
+      </>
+
+    // <div className="bar_chart_container" style={{ height: "500px" }}>
+    //   <div className="sales_dotimg">
+    //     <div>Stock / Sales</div>
+    //   </div>
+    //   <div className="bar_chart" style={{ height: "40%" }}>
+    //     <Bar data={chartData} options={options} ref={chartRef} height={50} />
+    //   </div>
+    // </div>
   );
 }
 
@@ -366,7 +386,7 @@ export function StockSaleBarGraph() {
 //   return (
 //     <div className="bar_chart_containr">
 //       <div className="slaes_dotimg">
-//         {/ <div>Total Stock: {new Intl.NumberFormat("en-US").format(totalTarget)}</div> /}
+//         {/* <div>Total Stock: {new Intl.NumberFormat("en-US").format(totalTarget)}</div> */}
 //         <div>Stock / Sales</div>
 //         <div>Sold Stock: {new Intl.NumberFormat("en-IN").format(totalSold)}</div>
 //         </div>

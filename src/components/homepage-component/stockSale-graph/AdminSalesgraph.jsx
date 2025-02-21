@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-export function StockSaleBarGraph() {
+export function StockSaleBarGraphAdmin() {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
@@ -135,7 +135,7 @@ export function StockSaleBarGraph() {
   };
 
   return (
-    <div className="bar_chart_container">
+    <div className="bar_chart_container" style={{ height: "500px" }}>
       <div className="sales_dotimg">
         <div>Stock / Sales</div>
       </div>
