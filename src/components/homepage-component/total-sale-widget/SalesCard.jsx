@@ -74,7 +74,6 @@ const SalesCard = ({
               fontSize: { xs: "0.7rem", sm: "0.75rem", md: "0.85rem" },
               overflow: "hidden",
               textOverflow: "ellipsis",
-              cursor: "pointer",
               whiteSpace: "nowrap",
               textAlign: "left",
             }}
