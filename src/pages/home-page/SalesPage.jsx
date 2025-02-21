@@ -114,7 +114,8 @@ const SalesPage = () => {
 
 
   // FIX: Remove double counting of loginUserTotalSales
-  const totalCompanySales = companyOverallSales.totalSalesAmount + companyOverallSales.customerBuyedAmmount;
+  // const totalCompanySales = companyOverallSales.totalSalesAmount + companyOverallSales.customerBuyedAmmount;
+  const totalCompanySales =   loginUserTotalSales;
 
   const salesAchievementPercent1234 = Math.min(
     (totalCompanySales / companyOverallSales.targetAmount) * 100,
