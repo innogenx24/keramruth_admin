@@ -366,7 +366,7 @@ export function StockSaleBarGraph() {
 //   return (
 //     <div className="bar_chart_containr">
 //       <div className="slaes_dotimg">
-//         {/* <div>Total Stock: {new Intl.NumberFormat("en-US").format(totalTarget)}</div> */}
+//         {/ <div>Total Stock: {new Intl.NumberFormat("en-US").format(totalTarget)}</div> /}
 //         <div>Stock / Sales</div>
 //         <div>Sold Stock: {new Intl.NumberFormat("en-IN").format(totalSold)}</div>
 //         </div>
