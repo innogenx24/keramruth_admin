@@ -120,21 +120,24 @@ const MediaNewsTable = () => {
             <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
                 Media / News
             </Typography>
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddMediaNewsClick}
-                    style={{
-                        backgroundColor: "#28a745",
-                        color: "white",
-                        fontWeight: "bold",
-                        borderRadius: "5px",
-                    }}
-                >
-                    Add Media / News
-                </Button>
-            </Box>
+            {role === 'Admin' && (
+                <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddMediaNewsClick}
+                        style={{
+                            backgroundColor: "#28a745",
+                            color: "white",
+                            fontWeight: "bold",
+                            borderRadius: "5px",
+                        }}
+                    >
+                        Add Media / News
+                    </Button>
+                </Box>
+            )}
+
 
             <TableContainer component={Paper}>
                 <Table>
