@@ -54,18 +54,14 @@ export function StockSaleBarGraph() {
             (item) => item.totalSoldStockAmount
           );
           const pendingSoldStockAmount = sortedResult.map(
-            (item) => item.totalTargetStock - item.totalSoldStockAmount
+            (item) => Math.max(0, item.totalTargetStock - item.totalSoldStockAmount)
           );
 
           const achievedAmount = sortedResult.map(
             (item) => item.AchievementAmount
           );
           const pendingAchievedAmount = sortedResult.map(
-            (item) => item.MonthlyTargetAmount - item.AchievementAmount
-          );
-
-          const maxValue = Math.max(
-            ...sortedResult.map((item) => item.MonthlyTargetAmount)
+            (item) => Math.max(0, item.MonthlyTargetAmount - item.AchievementAmount)
           );
 
           setChartData({
@@ -82,7 +78,8 @@ export function StockSaleBarGraph() {
               {
                 label: "Sales Target",
                 data: pendingAchievedAmount,
-                backgroundColor: "rgba(144, 238, 144, 1)", // Light Green
+                backgroundColor: (context) =>
+                  context.raw === 0 ? "rgba(1, 197, 114, 1)" : "rgba(144, 238, 144, 1)", // Extend color
                 stack: "amount",
                 barThickness: 25,
                 borderRadius: 4,
@@ -98,7 +95,8 @@ export function StockSaleBarGraph() {
               {
                 label: "Stock Target",
                 data: pendingSoldStockAmount,
-                backgroundColor: "#FF7F7F", // Light Red
+                backgroundColor: (context) =>
+                  context.raw === 0 ? "#FF3535" : "#FF7F7F", // Extend color
                 stack: "stock",
                 barThickness: 25,
                 borderRadius: 4,
@@ -156,11 +154,9 @@ export function StockSaleBarGraph() {
       },
     },
   };
-  
+
   return (
     <div className="bar_chart_container" style={{ height: "500px" }}>
-      {" "}
-      {/* Adjust height */}
       <div className="sales_dotimg">
         <div>Stock / Sales</div>
       </div>
