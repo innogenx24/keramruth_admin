@@ -18,6 +18,8 @@ import {
 import { Doughnut } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const TargetPage = () => {
   const [targetData, setTargetData] = useState(null);
@@ -25,6 +27,7 @@ const TargetPage = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const navigate = useNavigate();
   const { users } = useSelector((state) => state.users);
@@ -32,29 +35,18 @@ const TargetPage = () => {
   const roleName = users?.role_name;
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
-  // Helper to get current month and year if none is selected.
-  const getCurrentMonthYear = () => {
-    const now = new Date();
-    return {
-      month: now.getMonth() + 1, // JavaScript months are 0-indexed
-      year: now.getFullYear(),
-    };
-  };
+  const getMonthYear = (date) => ({
+    month: date.getMonth() + 1,
+    year: date.getFullYear(),
+  });
 
-  // When component mounts, set the dropdowns to current month and year if they are empty.
-  useEffect(() => {
-    if (!selectedMonth || !selectedYear) {
-      const { month, year } = getCurrentMonthYear();
-      setSelectedMonth(month);
-      setSelectedYear(year);
-    }
-  }, []);
 
   // Fetch target data whenever user, role, or the selected month/year changes.
   const fetchTargetData = async (month, year) => {
     setLoading(true);
     setErrorMsg("");
     const token = localStorage.getItem("token");
+
     if (!token) {
       setErrorMsg("Token not found");
       setLoading(false);
@@ -62,7 +54,6 @@ const TargetPage = () => {
     }
 
     try {
-      // Pass the month and year as query parameters.
       const response = await axios.get(
         `${API_END_POINT}/user_sales_detail/sales_achievementWeb/${roleName}/${userId}?month=${month}&year=${year}`,
         {
@@ -85,23 +76,32 @@ const TargetPage = () => {
       setLoading(false);
     }
   };
-
   // Trigger data fetch when user/role or selectedMonth/selectedYear changes.
   useEffect(() => {
-    if (userId && roleName && selectedMonth && selectedYear) {
-      fetchTargetData(selectedMonth, selectedYear);
+    if (userId && roleName && selectedDate) {
+      const { month, year } = getMonthYear(selectedDate);
+      fetchTargetData(month, year);
     }
-  }, [userId, roleName, selectedMonth, selectedYear]);
+  }, [userId, roleName, selectedDate]);
 
-  // Dropdown change handlers.
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
-  };
 
-  const handleYearChange = (event) => {
-    setSelectedYear(event.target.value);
-  };
 
+// List of months and years for dropdowns
+  const months = [
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" },
+  ];
+  
   // If loading or error
   if (loading) {
     return (
@@ -210,31 +210,14 @@ const TargetPage = () => {
     navigate("view-member-targets");
   };
 
-  // List of months and years for dropdowns
-  const months = [
-    { value: 1, label: "January" },
-    { value: 2, label: "February" },
-    { value: 3, label: "March" },
-    { value: 4, label: "April" },
-    { value: 5, label: "May" },
-    { value: 6, label: "June" },
-    { value: 7, label: "July" },
-    { value: 8, label: "August" },
-    { value: 9, label: "September" },
-    { value: 10, label: "October" },
-    { value: 11, label: "November" },
-    { value: 12, label: "December" },
-  ];
 
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let y = 2022; y <= currentYear + 1; y++) {
-    years.push(y);
-  }
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h6" sx={{ mb: 3, color: "#989FA9", fontSize: "1rem" }}>
+      <Typography
+        variant="h6"
+        sx={{ mb: 3, color: "#989FA9", fontSize: "1rem" }}
+      >
         Sales-Target Report
       </Typography>
 
@@ -243,7 +226,12 @@ const TargetPage = () => {
           <Button
             variant="contained"
             onClick={handleViewMembersTarget}
-            sx={{ backgroundColor: "#28a745", color: "white", textTransform: "none", fontSize: "0.85rem" }}
+            sx={{
+              backgroundColor: "#28a745",
+              color: "white",
+              textTransform: "none",
+              fontSize: "0.85rem",
+            }}
           >
             View Members Target
           </Button>
@@ -252,38 +240,14 @@ const TargetPage = () => {
 
       {/* Dropdown Filters */}
       <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-        <FormControl sx={{ minWidth: 120, fontSize: "0.85rem" }}>
-          <InputLabel id="select-month-label">Month</InputLabel>
-          <Select
-            labelId="select-month-label"
-            value={selectedMonth}
-            label="Month"
-            onChange={handleMonthChange}
-            size="small"
-          >
-            {months.map((m) => (
-              <MenuItem key={m.value} value={m.value}>
-                {m.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl sx={{ minWidth: 120, fontSize: "0.85rem" }}>
-          <InputLabel id="select-year-label">Year</InputLabel>
-          <Select
-            labelId="select-year-label"
-            value={selectedYear}
-            label="Year"
-            onChange={handleYearChange}
-            size="small"
-          >
-            {years.map((yr) => (
-              <MenuItem key={yr} value={yr}>
-                {yr}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          dateFormat="MMMM yyyy"
+          showMonthYearPicker
+          className="date-picker-input"
+          style={{ width: "100%", maxWidth: "200px" }}
+        />
       </Box>
 
       {/* Main Card */}
@@ -301,17 +265,22 @@ const TargetPage = () => {
             <Box sx={{ flex: 1, p: 2 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <Typography   variant="h6"
-  gutterBottom
-  sx={{
-    fontSize: "20px",
-    fontFamily: '"Inter500", "Roboto", sans-serif',
-    color: "#232428",
-    marginBottom: "10px",
-  }}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{
+                      fontSize: "20px",
+                      fontFamily: '"Inter500", "Roboto", sans-serif',
+                      color: "#232428",
+                      marginBottom: "10px",
+                    }}
+                  >
                     Sales Target Amount
                   </Typography>
-                  <Typography variant="h5" sx={{ color: "black", fontSize: "1.2rem" }}>
+                  <Typography
+                    variant="h5"
+                    sx={{ color: "black", fontSize: "1.2rem" }}
+                  >
                     Rs.{" "}
                     {new Intl.NumberFormat("en-IN").format(
                       Number(data.MonthlyTargetAmount) || 0
@@ -334,7 +303,11 @@ const TargetPage = () => {
                   item
                   xs={12}
                   sm={6}
-                  sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
                   <Box sx={{ width: 140, height: 140 }}>
                     <Doughnut data={doughnutData} options={doughnutOptions} />
@@ -343,15 +316,25 @@ const TargetPage = () => {
               </Grid>
               {/* Sales Progress */}
               <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle2" gutterBottom sx={{
-    fontSize: "0.85rem",
-    fontFamily: '"Inter500", "Roboto", sans-serif',
-    color: "#232428",
-    marginBottom: "10px",
-  }}>
-                  {months.find((m) => m.value === Number(selectedMonth))?.label} {selectedYear} - Sales Progress
+                <Typography
+                  variant="subtitle2"
+                  gutterBottom
+                  sx={{
+                    fontSize: "0.85rem",
+                    fontFamily: '"Inter500", "Roboto", sans-serif',
+                    color: "#232428",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {months.find((m) => m.value === Number(selectedMonth))?.label}{" "}
+                  {selectedYear} Sales Progress
                 </Typography>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mb={1}
+                >
                   <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
                     {data.achievementAmountPercent}%
                   </Typography>
@@ -376,25 +359,32 @@ const TargetPage = () => {
             </Box>
 
             {/* Divider Between Sales and Stock */}
-            <Divider orientation="vertical" flexItem sx={{ display: { xs: "none", md: "block" } }} />
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ display: { xs: "none", md: "block" } }}
+            />
 
             {/* Right Side: Stock Target */}
             <Box sx={{ flex: 1, p: 2 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <Typography
-  variant="h6"
-  gutterBottom
-  sx={{
-    fontSize: "20px",
-    fontFamily: '"Inter500", "Roboto", sans-serif',
-    color: "#232428",
-    marginBottom: "10px",
-  }}
->
-  Stock Target Amount
-</Typography>
-                  <Typography variant="h5" sx={{ color: "black", fontSize: "1.2rem" }}>
+                    variant="h6"
+                    gutterBottom
+                    sx={{
+                      fontSize: "20px",
+                      fontFamily: '"Inter500", "Roboto", sans-serif',
+                      color: "#232428",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Stock Target Amount
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{ color: "black", fontSize: "1.2rem" }}
+                  >
                     Rs.{" "}
                     {new Intl.NumberFormat("en-IN").format(
                       Number(data.StockTarget) || 0
@@ -417,24 +407,41 @@ const TargetPage = () => {
                   item
                   xs={12}
                   sm={6}
-                  sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
                   <Box sx={{ width: 140, height: 140 }}>
-                    <Doughnut data={stockDoughnutData} options={stockDoughnutOption} />
+                    <Doughnut
+                      data={stockDoughnutData}
+                      options={stockDoughnutOption}
+                    />
                   </Box>
                 </Grid>
               </Grid>
               {/* Stock Progress */}
               <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle2" gutterBottom  sx={{
-    fontSize: "0.85rem",
-    fontFamily: '"Inter500", "Roboto", sans-serif',
-    color: "#232428",
-    marginBottom: "10px",
-  }}>
-                  {months.find((m) => m.value === Number(selectedMonth))?.label} {selectedYear} - Stock Progress
+                <Typography
+                  variant="subtitle2"
+                  gutterBottom
+                  sx={{
+                    fontSize: "0.85rem",
+                    fontFamily: '"Inter500", "Roboto", sans-serif',
+                    color: "#232428",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {months.find((m) => m.value === Number(selectedMonth))?.label}{" "}
+                  {selectedYear} Stock Progress
                 </Typography>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mb={1}
+                >
                   <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>
                     {data.StockAchievementPercent}%
                   </Typography>
@@ -465,25 +472,6 @@ const TargetPage = () => {
 };
 
 export default TargetPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
@@ -933,24 +921,6 @@ export default TargetPage;
 
 // export default TargetPage;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import React, { useEffect, useState } from "react";
 // import axios from "axios";
 // import {
@@ -976,8 +946,6 @@ export default TargetPage;
 //   const userId = users?.id;
 //   const roleName = users?.role_name;
 //   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
-
-
 
 //   const fetchTargetData = async () => {
 //     const token = localStorage.getItem("token");
@@ -1074,14 +1042,11 @@ export default TargetPage;
 //     },
 //   };
 
-
 //   /////
-
 
 //   const stockachievementPercentage = parseFloat(targetData.StockAchievementPercent);
 //   const StockAchievementPercent = parseFloat(targetData.StockAchievementPercent);
 //   const StockUnachievementPercent = parseFloat(targetData.StockUnachievementPercent);
-
 
 //   // Doughnut chart data
 //   const stockDoughnutData = {
@@ -1129,7 +1094,6 @@ export default TargetPage;
 //     },
 //   };
 
-
 //   const handleViewMembersTarget = () => {
 //     navigate("view-member-targets");
 //   };
@@ -1151,7 +1115,6 @@ export default TargetPage;
 //           </Button>
 //         </Box>
 //       )}
-
 
 //       {/* Main Card */}
 //       <Card elevation={3} sx={{ p: 3 }}>

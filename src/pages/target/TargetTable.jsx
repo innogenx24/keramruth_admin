@@ -47,12 +47,14 @@ const TargetTable = () => {
           `${API_END_POINT}/user_sales_detail/getLowHierarchySalesDetails/${userId}/${selectedMonthYear}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        console.log("API Response:", response.data); // Debugging
         if (response.data.success) {
           setData(response.data.result);
-          // Filter the data initially to show only Target Achieved (50% & Above)
           const filtered = response.data.result.filter(
-            (item) => item.monthlyDetails[0].achievementAmountPercent >= 50
+            (item) =>
+              parseFloat(item.monthlyDetails.achievementAmountPercent) >= 50
           );
+
           setFilteredData(filtered);
         }
       } catch (error) {
@@ -63,26 +65,32 @@ const TargetTable = () => {
     };
 
     fetchData();
-  }, [userId, selectedMonthYear]); // Added selectedMonthYear to the dependency array
+  }, [userId, selectedMonthYear]);
 
   const handleSearchChange = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    setFilteredData(data.filter((item) => item.full_name.toLowerCase().includes(query)));
+    setFilteredData(
+      data.filter((item) => item.full_name.toLowerCase().includes(query))
+    );
   };
 
-  // Filter data based on achievement percentage
   const filterAchieved = () => {
-    const filtered = data.filter((item) => item.monthlyDetails[0].achievementAmountPercent >= 50);
+    const filtered = data.filter(
+      (item) => parseFloat(item.monthlyDetails.achievementAmountPercent) >= 50
+    );
     setFilteredData(filtered);
   };
 
   const filterNotAchieved = () => {
-    const filtered = data.filter((item) => item.monthlyDetails[0].unachievementAmountPercent >= 50);
+    const filtered = data.filter(
+      (item) => parseFloat(item.monthlyDetails.achievementAmountPercent) < 50
+    );
     setFilteredData(filtered);
   };
 
-  const formatNumber = (number) => new Intl.NumberFormat("en-IN").format(number);
+  const formatNumber = (number) =>
+    new Intl.NumberFormat("en-IN").format(number);
 
   if (loading) return <CircularProgress />;
 
@@ -91,7 +99,13 @@ const TargetTable = () => {
 
     return (
       <Box position="relative" display="inline-flex" mr={2}>
-        <CircularProgress variant="determinate" value={100} size={80} thickness={5} style={{ color: "#e0e0e0" }} />
+        <CircularProgress
+          variant="determinate"
+          value={100}
+          size={80}
+          thickness={5}
+          style={{ color: "#e0e0e0" }}
+        />
         <CircularProgress
           variant="determinate"
           value={percent}
@@ -99,8 +113,17 @@ const TargetTable = () => {
           thickness={5}
           style={{ position: "absolute", color: color }}
         />
-        <Box position="absolute" top="50%" left="50%" sx={{ transform: "translate(-50%, -50%)" }}>
-          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: "1.08rem !important", color: "primary" }}>
+        <Box
+          position="absolute"
+          top="50%"
+          left="50%"
+          sx={{ transform: "translate(-50%, -50%)" }}
+        >
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            sx={{ fontSize: "1.08rem !important", color: "primary" }}
+          >
             {`${(parseFloat(percent) || 0).toFixed(2)}%`}
           </Typography>
         </Box>
@@ -125,14 +148,23 @@ const TargetTable = () => {
         <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
       </Box>
 
-      {/* Date Picker */}
-
-
-      {/* Buttons */}
-      <Box sx={{ marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      {/* Buttons & Date Picker */}
+      <Box
+        sx={{
+          marginBottom: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         {/* Buttons on the Left */}
         <Box>
-          <Button variant="contained" color="success" onClick={filterAchieved} sx={{ marginRight: "10px" }}>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={filterAchieved}
+            sx={{ marginRight: "10px" }}
+          >
             Target Achieved (50% & Above)
           </Button>
           <Button variant="contained" color="error" onClick={filterNotAchieved}>
@@ -153,7 +185,6 @@ const TargetTable = () => {
         </Box>
       </Box>
 
-
       {/* Table */}
       <TableContainer component={Paper}>
         <Table>
@@ -162,7 +193,7 @@ const TargetTable = () => {
               <TableCell>No.</TableCell>
               <TableCell>User Name</TableCell>
               <TableCell>Role</TableCell>
-              <TableCell>Month/Year</TableCell>
+              {/* <TableCell>Month/Year</TableCell> */}
               <TableCell>Total Monthly Target</TableCell>
               <TableCell>Achievement Amount</TableCell>
               <TableCell>Pending Amount</TableCell>
@@ -171,30 +202,55 @@ const TargetTable = () => {
           </TableHead>
           <TableBody>
             {filteredData.length > 0 ? (
-              filteredData.map((row, index) => (
-                <TableRow key={row.user_id}>
+              filteredData.map((item, index) => (
+                <TableRow key={item.user_id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Avatar
-                        src={row?.image ? `${imageBaseURL}${row.image}` : "/path/to/default-image.jpg"}
+                        src={
+                          item?.image
+                            ? `${imageBaseURL}${item.image}`
+                            : "/path/to/default-image.jpg"
+                        }
                         sx={{ width: 40, height: 40 }}
                       />
-                      <Typography sx={{ marginLeft: "10px" }}>{row.full_name}</Typography>
+                      <Typography sx={{ marginLeft: "10px" }}>
+                        {item.full_name}
+                      </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell>{row.monthlyDetails[0].roleName}</TableCell>
-                  <TableCell>{`${row.monthlyDetails[0].month}/${row.monthlyDetails[0].year}`}</TableCell>
-                  <TableCell>Rs. {formatNumber(row.monthlyDetails[0].totalMonthlyTarget)}</TableCell>
-                  <TableCell>Rs. {formatNumber(row.monthlyDetails[0].totalAchievementAmount)}</TableCell>
-                  <TableCell>Rs. {formatNumber(row.monthlyDetails[0].pendingAmount)}</TableCell>
-                  <TableCell>{renderCircularProgress(row.monthlyDetails[0].achievementAmountPercent || 0)}</TableCell>
+                  <TableCell>
+                    {item.monthlyDetails?.roleName || "N/A"}
+                  </TableCell>
+                  {/* <TableCell>
+                    {item.monthlyDetails?.month && item.monthlyDetails?.year
+                      ? `${item.monthlyDetails.month} ${item.monthlyDetails.year}`
+                      : "N/A"}
+                  </TableCell> */}
+
+                  <TableCell>
+                    {formatNumber(item.monthlyDetails?.totalMonthlyTarget || 0)}
+                  </TableCell>
+                  <TableCell>
+                    {formatNumber(
+                      item.monthlyDetails?.totalAchievementAmount || 0
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {formatNumber(item.monthlyDetails?.pendingAmount || 0)}
+                  </TableCell>
+                  <TableCell>
+                    {renderCircularProgress(
+                      item.monthlyDetails?.achievementAmountPercent || 0
+                    )}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell colSpan={8} align="center">
-                  No data found 50% more than.
+                  No data found.
                 </TableCell>
               </TableRow>
             )}

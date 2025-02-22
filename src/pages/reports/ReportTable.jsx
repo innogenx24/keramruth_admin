@@ -42,12 +42,16 @@ export default function ReportTable() {
         const response = await fetch(`${API_END_POINT}/user/${userId}`);
         const data = await response.json();
         const userAreas = [
-          ...(data.mdUsers || []).map((user) => user.city),
-          ...(data.sdUsers || []).map((user) => user.city),
-          ...(data.distributorUsers || []).map((user) => user.city),
-          ...(data.adoUsers || []).map((user) => user.city),
+          ...(data.mdUsers || []).map((user) => user.city.trim().toLowerCase()),
+          ...(data.sdUsers || []).map((user) => user.city.trim().toLowerCase()),
+          ...(data.distributorUsers || []).map((user) =>
+            user.city.trim().toLowerCase()
+          ),
+          ...(data.adoUsers || []).map((user) =>
+            user.city.trim().toLowerCase()
+          ),
         ];
-        setAreas([...new Set(userAreas)]); // Remove duplicates
+        setAreas([...new Set(userAreas)]);
       } catch (error) {
         console.error("Error fetching area data:", error);
       }
@@ -115,36 +119,38 @@ export default function ReportTable() {
   useEffect(() => {
     const fetchSalesDataForFilteredRoleAndArea = async () => {
       setIsLoading(true);
-  
+
       // Filter rows based on role, area, and name filter
       const filteredRows = rows.filter(
         (user) =>
           (roleFilter === "" || user.role_name === roleFilter) &&
           (areaFilter === "" || user.city === areaFilter) &&
-          (nameFilter === "" || user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
+          (nameFilter === "" ||
+            user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
       );
-  
+
       // Enrich filtered rows with sales data
       const enrichedRows = await Promise.all(
         filteredRows.map(async (user) => {
-          const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
+          const salesAchievement = await fetchSalesAchievement(
+            user.role_name,
+            user.id
+          );
           return {
             ...user,
             salesAchievement: salesAchievement || null,
           };
         })
       );
-  
+
       setSalesData(enrichedRows);
       setIsLoading(false);
     };
-  
+
     if (rows.length > 0) {
       fetchSalesDataForFilteredRoleAndArea();
     }
   }, [roleFilter, areaFilter, nameFilter, rows]); // Add `rows` as a dependency
-  
-  
 
   const fetchSalesAchievement = async (roleId, userId) => {
     try {
@@ -159,12 +165,9 @@ export default function ReportTable() {
     }
   };
 
-
   useEffect(() => {
     fetchUserCounts();
   }, []);
-
- 
 
   const handleFilterChange = () => {
     console.log("Filters applied with:", roleFilter, areaFilter);
@@ -174,7 +177,7 @@ export default function ReportTable() {
 
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
-     if (name === "role") {
+    if (name === "role") {
       setRoleFilter(value);
       setPage(0);
     } else if (name === "area") {
@@ -183,18 +186,20 @@ export default function ReportTable() {
     }
   };
 
-
   const handleSearchChangeName = (e) => {
     const { value } = e.target;
-    setNameFilter(value); 
+    setNameFilter(value);
   };
-  
-
-
-
 
   const renderPagination = (page, setPage, totalRows) => (
-    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "right",
+        alignItems: "center",
+        gap: "15px",
+      }}
+    >
       <Button
         onClick={() => setPage(page - 1)}
         disabled={page === 0}
@@ -202,7 +207,10 @@ export default function ReportTable() {
       >
         Previous
       </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+      <Typography
+        variant="body1"
+        style={{ minWidth: "60px", textAlign: "center" }}
+      >
         Page {page + 1} of {Math.ceil(totalRows / rowsPerPage)}
       </Typography>
       <Button
@@ -226,7 +234,6 @@ export default function ReportTable() {
       </TableCell>
     </TableRow>
   );
-
 
   // const renderCircularProgress = (percent) => {
   //   const color = getColor(percent);
@@ -270,13 +277,11 @@ export default function ReportTable() {
   //   return 'red';
   // };
 
-
   return (
     <Box p={3}>
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         All Reports
       </Typography>
-
 
       <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
         <TextField
@@ -295,8 +300,6 @@ export default function ReportTable() {
       </Box>
       <Box display="flex" flexDirection="column" gap="20px" mb={3}>
         <Box display="flex" gap="20px" position="relative">
-
-
           <Select
             value={roleFilter}
             onChange={(e) => handleSearchChange(e)}
@@ -332,14 +335,16 @@ export default function ReportTable() {
             }}
           >
             <MenuItem value="">All Areas</MenuItem>
-            {areas.map((area) => (
-              <MenuItem key={area} value={area}>
-                {area}
-              </MenuItem>
-            ))}
+            {areas
+              .slice() // Create a copy to avoid mutating the original array
+              .sort((a, b) => a.localeCompare(b)) // Sort alphabetically
+              .map((area) => (
+                <MenuItem key={area} value={area}>
+                  {area.charAt(0).toUpperCase() + area.slice(1)}{" "}
+                  {/* Capitalize first letter */}
+                </MenuItem>
+              ))}
           </Select>
-
-
 
           {/* <Box display="flex" alignItems="center" position="relative">
             <Box
@@ -385,15 +390,23 @@ export default function ReportTable() {
               </Box>
             )}
           </Box> */}
-
-
         </Box>
       </Box>
 
-      <TableContainer component={Paper} sx={{ maxHeight: 500, overflowY: 'auto' }}>
+      <TableContainer
+        component={Paper}
+        sx={{ maxHeight: 500, overflowY: "auto" }}
+      >
         <Table>
-          <TableHead sx={{ backgroundColor: "#DCDCDC", position: 'sticky', top: 0, zIndex: 1 }}>
-            <TableRow style={{ whiteSpace: 'nowrap' }}>
+          <TableHead
+            sx={{
+              backgroundColor: "#DCDCDC",
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+            }}
+          >
+            <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
               <TableCell>Username</TableCell>
               <TableCell>Name</TableCell>
@@ -405,27 +418,26 @@ export default function ReportTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {isLoading ? (
-              renderLoadingState()
-            ) : (
-              paginatedData.map((row, index) => (
-                <TableRow key={row.id}>
-                  <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
-                  <TableCell>{row.username}</TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Avatar
-                        alt={row.full_name}
-                        src={`${API_END_POINT_IMG}/uploads/${row.image}`}
-                        sx={{ width: 40, height: 40, marginRight: 2 }}
-                      />
-                      {row.full_name}
-                    </Box>
-                  </TableCell>
-                  <TableCell>{row.role_name}</TableCell>
-                  <TableCell>{row.city}</TableCell>
+            {isLoading
+              ? renderLoadingState()
+              : paginatedData.map((row, index) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                    <TableCell>{row.username}</TableCell>
+                    <TableCell>
+                      <Box display="flex" alignItems="center">
+                        <Avatar
+                          alt={row.full_name}
+                          src={`${API_END_POINT_IMG}/uploads/${row.image}`}
+                          sx={{ width: 40, height: 40, marginRight: 2 }}
+                        />
+                        {row.full_name}
+                      </Box>
+                    </TableCell>
+                    <TableCell>{row.role_name}</TableCell>
+                    <TableCell>{row.city}</TableCell>
 
-                  {/* <TableCell>
+                    {/* <TableCell>
                     <Box display="flex" alignItems="center" justifyContent="center">
                       {renderCircularProgress(
                         row.salesAchievement?.monthlyDetails?.[0]?.achievementAmountPercent || 0
@@ -436,35 +448,59 @@ export default function ReportTable() {
                     </Box>
                   </TableCell> */}
 
-                  <TableCell>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.MonthlyTargetAmount || 0)}
-                      <span style={{ fontSize: "1.5em", margin: "0 3px" }}>/</span>
-                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.AchievementAmount || 0)}
-                    </div>
-                  </TableCell>
+                    <TableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.MonthlyTargetAmount || 0
+                        )}
+                        <span style={{ fontSize: "1.5em", margin: "0 3px" }}>
+                          /
+                        </span>
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.AchievementAmount || 0
+                        )}
+                      </div>
+                    </TableCell>
 
-                  {/* Stock QTY / Achievement QTY */}
-                  <TableCell>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.StockTarget || 0)}
-                      <span style={{ fontSize: "1.5em", margin: "0 3px" }}>/</span>
-                      {new Intl.NumberFormat('en-IN').format(row.salesAchievement?.monthlyDetails?.[0]?.StockAchievement || 0)}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+                    {/* Stock QTY / Achievement QTY */}
+                    <TableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.StockTarget || 0
+                        )}
+                        <span style={{ fontSize: "1.5em", margin: "0 3px" }}>
+                          /
+                        </span>
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.StockAchievement || 0
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-
       <div style={{ marginTop: "10px" }}>
         {renderPagination(page, setPage, salesData.length)}
       </div>
-
-
     </Box>
   );
 }

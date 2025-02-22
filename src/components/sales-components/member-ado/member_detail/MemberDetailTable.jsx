@@ -578,22 +578,19 @@ const MemberDetailTable = () => {
                           Target Amount
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Rs.{" "}
-                          {new Intl.NumberFormat("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(MonthlyTargetAmount) || 0)}
+                          Rs:{" "}
+                          {new Intl.NumberFormat("en-IN").format(
+                            parseFloat(MonthlyTargetAmount) || 0
+                          )}
                         </Typography>
 
                         <Typography
                           variant="body2"
                           sx={{ color: "green", fontWeight: "bold" }}
                         >
-                          Achieved: Rs.{" "}
-                          {new Intl.NumberFormat("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(AchievementAmount) || 0)}
+                          Achieved: Rs. {new Intl.NumberFormat("en-IN").format(
+                            parseFloat(AchievementAmount) || 0
+                          )}
                         </Typography>
 
                         <Typography
@@ -601,11 +598,9 @@ const MemberDetailTable = () => {
                           color="error"
                           fontWeight="bold"
                         >
-                          Pending: Rs.{" "}
-                          {new Intl.NumberFormat("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(pendingAmount) || 0)}
+                          Pending: Rs. {new Intl.NumberFormat("en-IN").format(
+                            parseFloat(pendingAmount) || 0
+                          )}
                         </Typography>
                       </Box>
                     </Box>
@@ -683,11 +678,9 @@ const MemberDetailTable = () => {
                           variant="body2"
                           sx={{ color: "green", fontWeight: "bold" }}
                         >
-                          Stock Achieved:{" "}
-                          {new Intl.NumberFormat("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(StockAchievement) || 0)}
+                          Stock Achieved: {new Intl.NumberFormat("en-IN").format(
+                            parseFloat(StockAchievement) || 0
+                          )}
                         </Typography>
 
                         <Typography
@@ -695,11 +688,9 @@ const MemberDetailTable = () => {
                           color="error"
                           fontWeight="bold"
                         >
-                          Stock Pending:{" "}
-                          {new Intl.NumberFormat("en-IN", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parseFloat(PendingStockTarget) || 0)}
+                          Stock Pending: {new Intl.NumberFormat("en-IN").format(
+                            parseFloat(PendingStockTarget) || 0
+                          )}
                         </Typography>
                       </Box>
                     </Box>
