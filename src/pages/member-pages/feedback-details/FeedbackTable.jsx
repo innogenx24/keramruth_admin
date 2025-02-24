@@ -150,7 +150,10 @@ const FeedbackTable = () => {
             {/* Check if data is available */}
             {currentFeedbacks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} style={{ textAlign: "center" }}>
+                <TableCell
+                  colSpan={8}
+                  style={{ textAlign: "center", color: "#999" }}
+                >
                   No Feedback Data Available
                 </TableCell>
               </TableRow>
@@ -204,15 +207,19 @@ const FeedbackTable = () => {
                       feedback.order.total_amount || 0
                     )}
                   </TableCell>
+
                   <TableCell
                     sx={{
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 2,
                       wordBreak: "break-word",
+                      whiteSpace: "normal",
+                      overflow: "visible",
+                      maxWidth: "none",
+                      minWidth: "250px",
                     }}
                   >
                     {feedback.comments}
                   </TableCell>
+
                   <TableCell>
                     <Rating value={feedback.rating} precision={0.5} readOnly />
                   </TableCell>

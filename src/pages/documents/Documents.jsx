@@ -19,8 +19,8 @@ import {
 import { Delete, Edit, Add as AddIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import DeleteButton from "../../assets/actions/DeleteButton.svg"
-import EditButton from "../../assets/actions/EditButton.svg"
+import DeleteButton from "../../assets/actions/DeleteButton.svg";
+import EditButton from "../../assets/actions/EditButton.svg";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import { FaFilePdf, FaFileArchive, FaFileExcel } from "react-icons/fa";
 
@@ -101,7 +101,9 @@ const DocumentsTable = () => {
       });
       setDocuments((prevDocuments) =>
         prevDocuments.map((doc) =>
-          doc.id === document.id ? { ...doc, activateStatus: updatedStatus } : doc
+          doc.id === document.id
+            ? { ...doc, activateStatus: updatedStatus }
+            : doc
         )
       );
     } catch (error) {
@@ -110,7 +112,15 @@ const DocumentsTable = () => {
   };
 
   const renderPagination = () => (
-    <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "15px", padding: "15px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        gap: "15px",
+        padding: "15px",
+      }}
+    >
       <Button
         onClick={() => setPage((prev) => prev - 1)}
         disabled={page === 0}
@@ -118,7 +128,10 @@ const DocumentsTable = () => {
       >
         Previous
       </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+      <Typography
+        variant="body1"
+        style={{ minWidth: "60px", textAlign: "center" }}
+      >
         Page {page + 1}
       </Typography>
       <Button
@@ -139,7 +152,10 @@ const DocumentsTable = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <TableContainer component={Paper} style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}>
+      <TableContainer
+        component={Paper}
+        style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
+      >
         <div
           style={{
             display: "flex",
@@ -149,7 +165,10 @@ const DocumentsTable = () => {
             borderBottom: "1px solid #ddd",
           }}
         >
-          <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+          <Typography
+            variant="h6"
+            sx={{ marginBottom: "20px", color: "#989FA9" }}
+          >
             Documents
           </Typography>
           <Button
@@ -167,8 +186,8 @@ const DocumentsTable = () => {
           </Button>
         </div>
         <Table>
-          <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
-            <TableRow style={{ whiteSpace: 'nowrap' }}>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
+            <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
               <TableCell>Document Image</TableCell>
               <TableCell>Heading</TableCell>
@@ -187,7 +206,8 @@ const DocumentsTable = () => {
                       <FaFilePdf size={40} color="red" />
                     ) : document.image.endsWith(".zip") ? (
                       <FaFileArchive size={40} color="blue" />
-                    ) : document.image.endsWith(".xlsx") || document.image.endsWith(".csv") ? (
+                    ) : document.image.endsWith(".xlsx") ||
+                      document.image.endsWith(".csv") ? (
                       <FaFileExcel size={40} color="green" />
                     ) : (
                       <img
@@ -208,19 +228,25 @@ const DocumentsTable = () => {
                   )}
                 </TableCell>
                 <TableCell>{document.heading}</TableCell>
-                <TableCell sx={{
-
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 2,
-                  wordBreak: 'break-word',
-                }}>
+                <TableCell
+                  sx={{
+                    wordBreak: "break-word",
+                    whiteSpace: "normal",
+                    overflow: "visible",
+                    maxWidth: "none",
+                    minWidth: "250px",
+                  }}
+                >
                   {document.description}
                 </TableCell>
                 <TableCell>
                   {Array.isArray(document.receiver)
                     ? document.receiver.join(", ")
-                    : (document.receiver && typeof document.receiver === 'string' && document.receiver.startsWith('[') ? JSON.parse(document.receiver).join(", ") : document.receiver)
-                  }
+                    : document.receiver &&
+                      typeof document.receiver === "string" &&
+                      document.receiver.startsWith("[")
+                    ? JSON.parse(document.receiver).join(", ")
+                    : document.receiver}
                 </TableCell>
                 <TableCell>
                   <div style={{ display: "flex" }}>
@@ -228,7 +254,6 @@ const DocumentsTable = () => {
                       onClick={() => handleDeleteOpen(document)}
                       color="secondary"
                       style={{ marginRight: "5px" }}
-
                     >
                       <img
                         src={DeleteButton}
@@ -256,26 +281,21 @@ const DocumentsTable = () => {
                         }}
                       />
                     </IconButton>
-
-
                   </div>
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={{ padding: "0px" }}>
-        {renderPagination()}
-
-      </div>
+      <div style={{ padding: "0px" }}>{renderPagination()}</div>
 
       <Dialog open={deleteModalOpen} onClose={handleDeleteClose}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete the document with ID "{documentToDelete?.id}" and heading "{documentToDelete?.heading}"?
+            Are you sure you want to delete the document with ID "
+            {documentToDelete?.id}" and heading "{documentToDelete?.heading}"?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

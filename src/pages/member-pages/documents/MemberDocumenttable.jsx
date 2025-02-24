@@ -62,7 +62,10 @@ const MemberDocumenttable = () => {
         Documents
       </Typography>
 
-      <TableContainer component={Paper} style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}>
+      <TableContainer
+        component={Paper}
+        style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
+      >
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow>
@@ -75,71 +78,100 @@ const MemberDocumenttable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {documents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((document, index) => (
-              <TableRow key={document.id}>
-                <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                <TableCell style={{ width: 100, textAlign: "center" }}>
-                  {document.image ? (
-                    document.image.endsWith(".pdf") ? (
-                      <FaFilePdf size={40} color="red" />
-                    ) : document.image.endsWith(".zip") ? (
-                      <FaFileArchive size={40} color="blue" />
-                    ) : document.image.endsWith(".xlsx") || document.image.endsWith(".csv") ? (
-                      <FaFileExcel size={40} color="green" />
-                    ) : (
-                      <img
-                        src={`${imageBaseURL}${document.image}`}
-                        style={{
-                          width: "80px",
-                          height: "auto",
-                          objectFit: "contain",
-                          border: "1px solid #ccc",
-                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                          borderRadius: "10px",
-                          marginRight: "10px",
-                        }}
-                      />
-                    )
-                  ) : (
-                    <span style={{ color: "#999" }}>No Image Available</span>
-                  )}
-                </TableCell>
-                <TableCell>{document.heading}</TableCell>
-                <TableCell>{document.description}</TableCell>
-                <TableCell>
-                  <a href={document.link} target="_blank" rel="noopener noreferrer" style={{ color: "#1c96c5" }}>
-                    {document.link}
-                  </a>
-                </TableCell>
-                <TableCell>
-                  {document.image ? (
-                    <a
-                      href={`${API_END_POINT_IMG}/uploads/${document.image}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download
-                      style={{ textDecoration: "none" }}
+            {documents.length > 0 ? (
+              documents
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((document, index) => (
+                  <TableRow key={document.id}>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                    <TableCell style={{ width: 100, textAlign: "center" }}>
+                      {document.image ? (
+                        document.image.endsWith(".pdf") ? (
+                          <FaFilePdf size={40} color="red" />
+                        ) : document.image.endsWith(".zip") ? (
+                          <FaFileArchive size={40} color="blue" />
+                        ) : document.image.endsWith(".xlsx") ||
+                          document.image.endsWith(".csv") ? (
+                          <FaFileExcel size={40} color="green" />
+                        ) : (
+                          <img
+                            src={`${imageBaseURL}${document.image}`}
+                            style={{
+                              width: "80px",
+                              height: "auto",
+                              objectFit: "contain",
+                              border: "1px solid #ccc",
+                              boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                              borderRadius: "10px",
+                              marginRight: "10px",
+                            }}
+                          />
+                        )
+                      ) : (
+                        <span style={{ color: "#999" }}>
+                          No Image Available
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>{document.heading}</TableCell>
+                    <TableCell
+                      sx={{
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                        overflow: "visible",
+                        maxWidth: "none",
+                        minWidth: "250px",
+                      }}
                     >
-                      <Button
-                        variant="contained"
-                        style={{
-                          backgroundColor: "#28a745",
-                          color: "white",
-                          fontWeight: "bold",
-                          borderRadius: "5px",
-                        }}
+                      {document.description}
+                    </TableCell>
+                    <TableCell>
+                      <a
+                        href={document.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#1c96c5" }}
                       >
-                        Download
-                      </Button>
-                    </a>
-                  ) : (
-                    <span style={{ color: "#999" }}>No File</span>
-                  )}
+                        {document.link}
+                      </a>
+                    </TableCell>
+                    <TableCell>
+                      {document.image ? (
+                        <a
+                          href={`${API_END_POINT_IMG}/uploads/${document.image}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download
+                          style={{ textDecoration: "none" }}
+                        >
+                          <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#28a745",
+                              color: "white",
+                              fontWeight: "bold",
+                              borderRadius: "5px",
+                            }}
+                          >
+                            Download
+                          </Button>
+                        </a>
+                      ) : (
+                        <span style={{ color: "#999" }}>No File</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  style={{ textAlign: "center", color: "#999" }}
+                >
+                  No Document Data Available
                 </TableCell>
-
-
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

@@ -121,7 +121,7 @@ export function StockSaleBarGraphAdmin() {
         },
         ticks: {
           callback: function (value) {
-            return new Intl.NumberFormat("en-US").format(value);
+            return new Intl.NumberFormat("en-IN").format(value);
           },
         },
       },

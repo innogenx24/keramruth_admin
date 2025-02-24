@@ -42,13 +42,13 @@ export default function ReportTable() {
         const response = await fetch(`${API_END_POINT}/user/${userId}`);
         const data = await response.json();
         const userAreas = [
-          ...(data.mdUsers || []).map((user) => user.city.trim().toLowerCase()),
-          ...(data.sdUsers || []).map((user) => user.city.trim().toLowerCase()),
+          ...(data.mdUsers || []).map((user) => user.district.trim().toLowerCase()),
+          ...(data.sdUsers || []).map((user) => user.district.trim().toLowerCase()),
           ...(data.distributorUsers || []).map((user) =>
-            user.city.trim().toLowerCase()
+            user.district.trim().toLowerCase()
           ),
           ...(data.adoUsers || []).map((user) =>
-            user.city.trim().toLowerCase()
+            user.district.trim().toLowerCase()
           ),
         ];
         setAreas([...new Set(userAreas)]);
@@ -120,26 +120,17 @@ export default function ReportTable() {
     const fetchSalesDataForFilteredRoleAndArea = async () => {
       setIsLoading(true);
 
-      // Filter rows based on role, area, and name filter
       const filteredRows = rows.filter(
         (user) =>
           (roleFilter === "" || user.role_name === roleFilter) &&
-          (areaFilter === "" || user.city === areaFilter) &&
-          (nameFilter === "" ||
-            user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
+          (areaFilter === "" || user.district.trim().toLowerCase() === areaFilter.trim().toLowerCase()) &&
+          (nameFilter === "" || user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
       );
 
-      // Enrich filtered rows with sales data
       const enrichedRows = await Promise.all(
         filteredRows.map(async (user) => {
-          const salesAchievement = await fetchSalesAchievement(
-            user.role_name,
-            user.id
-          );
-          return {
-            ...user,
-            salesAchievement: salesAchievement || null,
-          };
+          const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
+          return { ...user, salesAchievement: salesAchievement || null };
         })
       );
 
@@ -150,7 +141,7 @@ export default function ReportTable() {
     if (rows.length > 0) {
       fetchSalesDataForFilteredRoleAndArea();
     }
-  }, [roleFilter, areaFilter, nameFilter, rows]); // Add `rows` as a dependency
+  }, [roleFilter, areaFilter, nameFilter, rows]);
 
   const fetchSalesAchievement = async (roleId, userId) => {
     try {
@@ -411,7 +402,7 @@ export default function ReportTable() {
               <TableCell>Username</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Role</TableCell>
-              <TableCell>City</TableCell>
+              <TableCell>District</TableCell>
               {/* <TableCell>Target/Stock(%)</TableCell> */}
               <TableCell>Sales Target / Achievement (Rs)</TableCell>
               <TableCell>Stock Target / Achievement (QTY)</TableCell>
@@ -435,7 +426,7 @@ export default function ReportTable() {
                       </Box>
                     </TableCell>
                     <TableCell>{row.role_name}</TableCell>
-                    <TableCell>{row.city}</TableCell>
+                    <TableCell>{row.district}</TableCell>
 
                     {/* <TableCell>
                     <Box display="flex" alignItems="center" justifyContent="center">
