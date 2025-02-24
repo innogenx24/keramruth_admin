@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   Grid,
@@ -19,7 +18,7 @@ import axios from "axios";
 import { fetchAllMembersRequest } from "../../../redux/slices/member-slice/GetAllmemberSlices";
 import { useDispatch, useSelector } from "react-redux";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import { Snackbar, Alert } from '@mui/material';
+import { Snackbar, Alert } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
@@ -35,7 +34,7 @@ const EditMemberForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [imageError, setImageError] = useState(""); // Store image error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [snackbarType, setSnackbarType] = useState("success");
   const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -75,7 +74,6 @@ const EditMemberForm = () => {
     password: "",
     street_name: "",
     building_no_name: "",
-
   });
 
   // Fetch all members on mount
@@ -83,12 +81,9 @@ const EditMemberForm = () => {
     dispatch(fetchAllMembersRequest());
   }, [dispatch]);
 
-
-
   const [stateDistrictMapping, setStateDistrictMapping] = useState({});
 
   const [districts, setDistricts] = useState([]);
-
 
   useEffect(() => {
     // Automatically fetch state and district data when editing an existing address based on PIN code
@@ -100,7 +95,9 @@ const EditMemberForm = () => {
   const fetchStateAndDistrict = async (pincode) => {
     setLoading(true);
     try {
-      const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+      const response = await fetch(
+        `https://api.postalpincode.in/pincode/${pincode}`
+      );
       const data = await response.json();
 
       if (data[0].Status === "Success") {
@@ -117,8 +114,6 @@ const EditMemberForm = () => {
       setLoading(false);
     }
   };
-
-  
 
   // Update districts when state changes
   useEffect(() => {
@@ -301,7 +296,6 @@ const EditMemberForm = () => {
       isValid = false;
     }
 
-
     setErrors(validationErrors);
     return isValid;
   };
@@ -363,17 +357,19 @@ const EditMemberForm = () => {
     setShowPassword((prev) => !prev);
   };
 
-
   // Filter dropdown options based on the role
   const renderDropdownOptions = () => {
     if (!selectedRole) return null;
 
     const roleDropdownMap = {
-      2: { label: "Admin", options: allmembers?.Admins || [] },
-      3: { label: "Area Development Officer", options: allmembers?.ADOs || [] },
-      4: { label: "Master Distributor", options: allmembers?.MDs || [] },
-      5: { label: "Super Distributor", options: allmembers?.SDs || [] },
-      6: { label: "Distributor", options: allmembers?.Ds || [] },
+      2: { label: "Select Admin", options: allmembers?.Admins || [] },
+      3: {
+        label: "Select Area Development Officer",
+        options: allmembers?.ADOs || [],
+      },
+      4: { label: "Select Master Distributor", options: allmembers?.MDs || [] },
+      5: { label: "Select Super Distributor", options: allmembers?.SDs || [] },
+      6: { label: "Select Distributor", options: allmembers?.Ds || [] },
     };
 
     return Object.entries(roleDropdownMap)
@@ -387,11 +383,11 @@ const EditMemberForm = () => {
             value={formData.superior_id}
             onChange={handleChange}
           >
-            <MenuItem value="">Select {label}</MenuItem>
             {options.map((item) => (
               <MenuItem key={item?.id} value={item?.id}>
-                              {item.full_name}{` (${item.username})`}
-                              </MenuItem>
+                {item.full_name}
+                {` (${item.username})`}
+              </MenuItem>
             ))}
           </Select>
         </Grid>
@@ -400,14 +396,18 @@ const EditMemberForm = () => {
 
   return (
     <Box p={3}>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Member Details{" "}
+      </Typography>
       <Grid container spacing={3}>
         {/* Left Section */}
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Member Details</InputLabel>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <InputLabel>Member Role*</InputLabel>
+                <InputLabel>
+                  Select Member Role*
+                </InputLabel>
                 <Select
                   fullWidth
                   value={formData.role_id}
@@ -421,15 +421,20 @@ const EditMemberForm = () => {
                   <MenuItem value="6">Customer</MenuItem>
                 </Select>
               </Grid>
+
               <Grid item xs={12}>
                 <InputLabel>Edit Image</InputLabel>
                 <IconButton color="primary" component="label">
                   <AddPhotoAlternateIcon />
                   <input type="file" hidden onChange={handleImageUpload} />
                 </IconButton>
-                {imageName && <Typography variant="body2">{imageName}</Typography>}
+                {imageName && (
+                  <Typography variant="body2">{imageName}</Typography>
+                )}
                 {imageError && (
-                  <Typography variant="body2" color="error">{imageError}</Typography>
+                  <Typography variant="body2" color="error">
+                    {imageError}
+                  </Typography>
                 )}
                 <Box mt={2}>
                   {image ? (
@@ -498,7 +503,7 @@ const EditMemberForm = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="password"
@@ -523,140 +528,137 @@ const EditMemberForm = () => {
                     ),
                   }}
                 />
-              </Grid>
-
+              </Grid> */}
             </Grid>
           </Box>
 
-          <Box mt={3} sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-      <InputLabel>Address</InputLabel>
-      <Grid container spacing={2}>
-        {/* Pincode Field */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="pincode"
-            label="Pincode*"
-            value={formData.pincode}
-            onChange={handleChange}
-            error={!!errors.pincode}
-            helperText={errors.pincode}
-          />
-          {loading && <CircularProgress size={20} />}
-        </Grid>
+          <Box
+            mt={3}
+            sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}
+          >
+            <InputLabel>Address</InputLabel>
+            <Grid container spacing={2}>
+              {/* Pincode Field */}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  name="pincode"
+                  label="Pincode*"
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  error={!!errors.pincode}
+                  helperText={errors.pincode}
+                />
+                {loading && <CircularProgress size={20} />}
+              </Grid>
 
-        {/* Country Field */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="country"
-            label="Country*"
-            value="India" // Set constant value for country
-            disabled
-            InputProps={{
-              readOnly: true, // Ensure the field is read-only
-            }}
-          />
-        </Grid>
+              {/* Country Field */}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  name="country"
+                  label="Country*"
+                  value="India" // Set constant value for country
+                  disabled
+                  InputProps={{
+                    readOnly: true, // Ensure the field is read-only
+                  }}
+                />
+              </Grid>
 
-        {/* State Field */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="state"
-            label="State*"
-            value={formData.state}
-            error={!!errors.state}
-            helperText={errors.state}
-          />
-        </Grid>
+              {/* State Field */}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  name="state"
+                  label="State*"
+                  value={formData.state}
+                  error={!!errors.state}
+                  helperText={errors.state}
+                />
+              </Grid>
 
-        {/* District Field */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="district"
-            label="District*"
-            value={formData.district}
-            error={!!errors.district}
-            helperText={errors.district}
-          />
-        </Grid>
-        {/* City Field */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="city"
-            label="City / Place"
-            value={formData.city}
-            onChange={handleChange}
-            error={!!errors.city}
-            helperText={errors.city}
-          />
-        </Grid>
+              {/* District Field */}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  name="district"
+                  label="District*"
+                  value={formData.district}
+                  error={!!errors.district}
+                  helperText={errors.district}
+                />
+              </Grid>
+              {/* City Field */}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  name="city"
+                  label="City / Place"
+                  value={formData.city}
+                  onChange={handleChange}
+                  error={!!errors.city}
+                  helperText={errors.city}
+                />
+              </Grid>
 
-        {/* Street Name Field */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="street_name"
-            label="Street Name"
-            value={formData.street_name}
-            onChange={handleChange}
-            error={!!errors.street_name}
-            helperText={errors.street_name}
-          />
-        </Grid>
+              {/* Street Name Field */}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  name="street_name"
+                  label="Street Name"
+                  value={formData.street_name}
+                  onChange={handleChange}
+                  error={!!errors.street_name}
+                  helperText={errors.street_name}
+                />
+              </Grid>
 
-        {/* Building No / Name Field */}
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            name="building_no_name"
-            label="Building No / Name"
-            value={formData.building_no_name}
-            onChange={handleChange}
-            error={!!errors.building_no_name}
-            helperText={errors.building_no_name}
-          />
-        </Grid>
-      </Grid>
-    </Box>
-
-
-
+              {/* Building No / Name Field */}
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  name="building_no_name"
+                  label="Building No / Name"
+                  value={formData.building_no_name}
+                  onChange={handleChange}
+                  error={!!errors.building_no_name}
+                  helperText={errors.building_no_name}
+                />
+              </Grid>
+            </Grid>
+          </Box>
         </Grid>
 
         {/* Right Section */}
         <Grid item xs={12} md={6}>
           <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-            <InputLabel>Hierarchy & Club</InputLabel>
             <Grid container spacing={2}>
-
-
-              {(formData.role_id !== "6" && formData.role_id !== "2") && (selectedRole !== "6" && selectedRole !== "2") && (
-                 (String(selectedRole) !== "6" && String(selectedRole) !== "2") && (
-
-                <Grid item xs={12}>
-                  <InputLabel>Club*</InputLabel>
-                  <Select
-                    fullWidth
-                    value={formData.club_name}
-                    name="club_name"
-                    onChange={handleChange}
-                  >
-                    <MenuItem value="">Select Club</MenuItem>
-                    {clubs.map((club) => (
-                      <MenuItem key={club.id} value={club.club_name}>
-                        {club.club_name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Grid>
-              ))}
+              {formData.role_id !== "6" &&
+                formData.role_id !== "2" &&
+                selectedRole !== "6" &&
+                selectedRole !== "2" &&
+                String(selectedRole) !== "6" &&
+                String(selectedRole) !== "2" && (
+                  <Grid item xs={12}>
+                    <InputLabel>Select Club*</InputLabel>
+                    <Select
+                      fullWidth
+                      value={formData.club_name}
+                      name="club_name"
+                      onChange={handleChange}
+                    >
+                      {clubs.map((club) => (
+                        <MenuItem key={club.id} value={club.club_name}>
+                          {club.club_name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
+                )}
 
               {renderDropdownOptions()}
-
             </Grid>
             <Grid item xs={12}>
               <Button
@@ -674,7 +676,6 @@ const EditMemberForm = () => {
         </Grid>
 
         {/* Save Button */}
-
       </Grid>
       <Snackbar
         open={openSnackbar}

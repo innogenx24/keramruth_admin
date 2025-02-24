@@ -36,7 +36,9 @@ const AnnouncementTable = () => {
       });
 
       // Sort announcements by ID in descending order
-      const sortedAnnouncements = response.data.data.sort((a, b) => b.id - a.id);
+      const sortedAnnouncements = response.data.data.sort(
+        (a, b) => b.id - a.id
+      );
       setAnnouncements(sortedAnnouncements);
     } catch (error) {
       console.error("Error fetching announcements:", error);
@@ -47,11 +49,11 @@ const AnnouncementTable = () => {
     fetchAnnouncements();
   }, []);
 
-
-
   const getImageURL = (imagePath) => {
     if (!imagePath) return "";
-    const imageName = imagePath.includes("\\") ? imagePath.split("\\").pop() : imagePath;
+    const imageName = imagePath.includes("\\")
+      ? imagePath.split("\\").pop()
+      : imagePath;
     return `${imageBaseURL}${imageName}`;
   };
 
@@ -61,7 +63,14 @@ const AnnouncementTable = () => {
   const paginatedAnnouncements = announcements.slice(startIndex, endIndex);
 
   const renderPagination = (page, setPage, totalRows) => (
-    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "right",
+        alignItems: "center",
+        gap: "15px",
+      }}
+    >
       <Button
         onClick={() => setPage(page - 1)}
         disabled={page === 0}
@@ -69,7 +78,10 @@ const AnnouncementTable = () => {
       >
         Previous
       </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+      <Typography
+        variant="body1"
+        style={{ minWidth: "60px", textAlign: "center" }}
+      >
         Page {page + 1}
       </Typography>
       <Button
@@ -83,101 +95,121 @@ const AnnouncementTable = () => {
   );
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <TableContainer component={Paper}>
-        <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        <Typography
+          variant="h6"
+          sx={{ marginBottom: "20px", color: "#989FA9" }}
+        >
           Announcements
         </Typography>
 
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
-            <TableRow style={{ whiteSpace: 'nowrap' }}>
+            <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
               <TableCell>Announcement Image</TableCell>
               <TableCell>Announcement Heading</TableCell>
-              <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>Description</TableCell>
-              <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>Announcement Link</TableCell>
+              <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>
+                Description
+              </TableCell>
+              <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
+                Announcement Link
+              </TableCell>
               <TableCell>Download File</TableCell>
-
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedAnnouncements.map((announcement, index) => (
-              <TableRow key={announcement.id}>
-                <TableCell>{startIndex + index + 1}</TableCell>
-                <TableCell style={{ width: 100, textAlign: "center" }}>
-                  {announcement.image ? (
-                    announcement.image.endsWith(".pdf") ? (
-                      <FaFilePdf size={40} color="red" />
-                    ) : announcement.image.endsWith(".zip") ? (
-                      <FaFileArchive size={40} color="blue" />
-                    ) : announcement.image.endsWith(".xlsx") || announcement.image.endsWith(".csv") ? (
-                      <FaFileExcel size={40} color="green" />
+            {paginatedAnnouncements.length > 0 ? (
+              paginatedAnnouncements.map((announcement, index) => (
+                <TableRow key={announcement.id}>
+                  <TableCell>{startIndex + index + 1}</TableCell>
+                  <TableCell style={{ width: 100, textAlign: "center" }}>
+                    {announcement.image ? (
+                      announcement.image.endsWith(".pdf") ? (
+                        <FaFilePdf size={40} color="red" />
+                      ) : announcement.image.endsWith(".zip") ? (
+                        <FaFileArchive size={40} color="blue" />
+                      ) : announcement.image.endsWith(".xlsx") ||
+                        announcement.image.endsWith(".csv") ? (
+                        <FaFileExcel size={40} color="green" />
+                      ) : (
+                        <img
+                          src={`${imageBaseURL}${announcement.image}`}
+                          style={{
+                            width: "80px",
+                            height: "auto",
+                            objectFit: "contain",
+                            border: "1px solid #ccc",
+                            boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                            borderRadius: "10px",
+                            marginRight: "10px",
+                          }}
+                        />
+                      )
                     ) : (
-                      <img
-                        src={`${imageBaseURL}${announcement.image}`}
-                        style={{
-                          width: "80px",
-                          height: "auto",
-                          objectFit: "contain",
-                          border: "1px solid #ccc",
-                          boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
-                          borderRadius: "10px",
-                          marginRight: "10px",
-                        }}
-                      />
-                    )
-                  ) : (
-                    <span style={{ color: "#999" }}>No Image Available</span>
-                  )}
-                </TableCell>
-                <TableCell>{announcement.heading}</TableCell>
-                <TableCell
-                  sx={{
-                    WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 4,
-                    wordBreak: 'break-word',
-                    maxWidth: '250px'
-                  }}
-                >
-                  {announcement.description}
-                </TableCell>
-                <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
-                  <a href={announcement.link} target="_blank" rel="noopener noreferrer"
-                    style={{ color: '#1c96c5', textDecoration: 'none' }}
+                      <span style={{ color: "#999" }}>No Image Available</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{announcement.heading}</TableCell>
+                  <TableCell
+                    sx={{
+                      wordBreak: "break-word",
+                      whiteSpace: "normal",
+                      overflow: "visible",
+                      maxWidth: "none",
+                      minWidth: "250px",
+                    }}
                   >
-                    {announcement.link}
-                  </a>
-                </TableCell>
-                <TableCell>
-                  {announcement.image ? (
+                    {announcement.description}
+                  </TableCell>
+                  <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
                     <a
-                      href={`${API_END_POINT_IMG}/uploads/${announcement.image}`}
+                      href={announcement.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      download
-                      style={{ textDecoration: "none" }}
+                      style={{ color: "#1c96c5", textDecoration: "none" }}
                     >
-                      <Button
-                        variant="contained"
-                        style={{
-                          backgroundColor: "#28a745",
-                          color: "white",
-                          fontWeight: "bold",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        Download
-                      </Button>
+                      {announcement.link}
                     </a>
-                  ) : (
-                    <span style={{ color: "#999" }}>No File</span>
-                  )}
+                  </TableCell>
+                  <TableCell>
+                    {announcement.image ? (
+                      <a
+                        href={`${API_END_POINT_IMG}/uploads/${announcement.image}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        style={{ textDecoration: "none" }}
+                      >
+                        <Button
+                          variant="contained"
+                          style={{
+                            backgroundColor: "#28a745",
+                            color: "white",
+                            fontWeight: "bold",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          Download
+                        </Button>
+                      </a>
+                    ) : (
+                      <span style={{ color: "#999" }}>No File</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  style={{ textAlign: "center", color: "#999" }}
+                >
+                  No Announcement Data Available
                 </TableCell>
-
-
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

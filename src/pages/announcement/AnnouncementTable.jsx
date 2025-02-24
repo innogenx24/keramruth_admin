@@ -21,8 +21,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import DeleteButton from "../../assets/actions/DeleteButton.svg"
-import EditButton from "../../assets/actions/EditButton.svg"
+import DeleteButton from "../../assets/actions/DeleteButton.svg";
+import EditButton from "../../assets/actions/EditButton.svg";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
 import { FaFilePdf, FaFileArchive, FaFileExcel } from "react-icons/fa";
 
@@ -48,7 +48,9 @@ const AnnouncementTable = () => {
       });
 
       // Sort announcements by ID in descending order
-      const sortedAnnouncements = response.data.data.sort((a, b) => b.id - a.id);
+      const sortedAnnouncements = response.data.data.sort(
+        (a, b) => b.id - a.id
+      );
       setAnnouncements(sortedAnnouncements);
     } catch (error) {
       console.error("Error fetching announcements:", error);
@@ -72,8 +74,14 @@ const AnnouncementTable = () => {
   const confirmDelete = async () => {
     if (announcementToDelete) {
       try {
-        await axios.delete(`${API_END_POINT}/announcements/${announcementToDelete.id}`);
-        setAnnouncements(announcements.filter((announcement) => announcement.id !== announcementToDelete.id));
+        await axios.delete(
+          `${API_END_POINT}/announcements/${announcementToDelete.id}`
+        );
+        setAnnouncements(
+          announcements.filter(
+            (announcement) => announcement.id !== announcementToDelete.id
+          )
+        );
         handleDeleteClose();
       } catch (error) {
         console.error("Error deleting announcement:", error);
@@ -89,15 +97,20 @@ const AnnouncementTable = () => {
     navigate("add-announcement");
   };
 
-
-
   // Pagination logic
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const paginatedAnnouncements = announcements.slice(startIndex, endIndex);
 
   const renderPagination = (page, setPage, totalRows) => (
-    <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "right",
+        alignItems: "center",
+        gap: "15px",
+      }}
+    >
       <Button
         onClick={() => setPage(page - 1)}
         disabled={page === 0}
@@ -105,7 +118,10 @@ const AnnouncementTable = () => {
       >
         Previous
       </Button>
-      <Typography variant="body1" style={{ minWidth: "60px", textAlign: "center" }}>
+      <Typography
+        variant="body1"
+        style={{ minWidth: "60px", textAlign: "center" }}
+      >
         Page {page + 1}
       </Typography>
       <Button
@@ -129,7 +145,10 @@ const AnnouncementTable = () => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+          <Typography
+            variant="h6"
+            sx={{ marginBottom: "20px", color: "#989FA9" }}
+          >
             Announcements
           </Typography>
 
@@ -147,13 +166,17 @@ const AnnouncementTable = () => {
           </Button>
         </div>
         <Table>
-          <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
-            <TableRow style={{ whiteSpace: 'nowrap' }}>
+          <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
+            <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
               <TableCell>Announcement Image</TableCell>
               <TableCell>Announcement Heading</TableCell>
-              <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>Description</TableCell>
-              <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>Applying on</TableCell>
+              <TableCell style={{ maxWidth: 300, wordWrap: "break-word" }}>
+                Description
+              </TableCell>
+              <TableCell>
+                Applying on
+              </TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -167,7 +190,8 @@ const AnnouncementTable = () => {
                       <FaFilePdf size={40} color="red" />
                     ) : announcement.image.endsWith(".zip") ? (
                       <FaFileArchive size={40} color="blue" />
-                    ) : announcement.image.endsWith(".xlsx") || announcement.image.endsWith(".csv") ? (
+                    ) : announcement.image.endsWith(".xlsx") ||
+                      announcement.image.endsWith(".csv") ? (
                       <FaFileExcel size={40} color="green" />
                     ) : (
                       <img
@@ -190,50 +214,54 @@ const AnnouncementTable = () => {
                 <TableCell>{announcement.heading}</TableCell>
                 <TableCell
                   sx={{
-                    WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 4,
-                    wordBreak: 'break-word',
-                    maxWidth: '250px'
+                    wordBreak: "break-word",
+                    whiteSpace: "normal",
+                    overflow: "visible",
+                    maxWidth: "none",
+                    minWidth: "250px",
                   }}
                 >
                   {announcement.description}
                 </TableCell>
-                <TableCell style={{ maxWidth: 200, wordWrap: "break-word" }}>
+
+                <TableCell>
                   {announcement.receiver.join(", ")}
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleDeleteOpen(announcement)} color="secondary" style={{ marginRight: "5px" }}
-                  >
-                    <img
-                      src={DeleteButton}
-                      alt="Delete"
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        objectFit: "contain",
-                        transform: "scale(1.5)",
-                      }}
-                    />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleEditClick(announcement)}
-                    color="primary"
-                  >
-                    <img
-                      src={EditButton}
-                      alt="Edit"
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        objectFit: "contain",
-                        transform: "scale(1.5)",
-                      }}
-                    />
-                  </IconButton>
-
-
+                  <div style={{ display: "flex" }}>
+                    <IconButton
+                      onClick={() => handleDeleteOpen(announcement)}
+                      color="secondary"
+                      style={{ marginRight: "5px" }}
+                    >
+                      <img
+                        src={DeleteButton}
+                        alt="Delete"
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          objectFit: "contain",
+                          transform: "scale(1.5)",
+                        }}
+                      />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleEditClick(announcement)}
+                      color="primary"
+                    >
+                      <img
+                        src={EditButton}
+                        alt="Edit"
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          objectFit: "contain",
+                          transform: "scale(1.5)",
+                        }}
+                      />
+                    </IconButton>
+                  </div>
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
@@ -241,7 +269,6 @@ const AnnouncementTable = () => {
       </TableContainer>
       <div style={{ marginTop: "10px" }}>
         {renderPagination(page, setPage, announcements.length)}
-
       </div>
 
       <Dialog open={deleteModalOpen} onClose={handleDeleteClose}>

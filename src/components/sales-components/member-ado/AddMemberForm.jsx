@@ -413,15 +413,17 @@ const AddMemberForm = () => {
 
   return (
     <Box p={3}>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
+        Member Details{" "}
+      </Typography>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={3}>
           {/* {/ Left Side: Member Details /} */}
           <Grid item xs={12} md={6}>
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-              <InputLabel>Member Details</InputLabel>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <InputLabel>Member Role*</InputLabel>
+                  <InputLabel>Select Member Role*</InputLabel>
                   <Select
                     fullWidth
                     defaultValue=""
@@ -680,11 +682,10 @@ const AddMemberForm = () => {
           {/* {/ Right Side: Club & Superior Distributors /} */}
           <Grid item xs={12} md={6}>
             <Box sx={{ backgroundColor: "#f5f5f5", p: 2, borderRadius: 2 }}>
-              <InputLabel>Club & Superior Distributors</InputLabel>
               <Grid container spacing={2}>
                 {!(selectedRole === "6" || selectedRole === "2") && (
                   <Grid item xs={12}>
-                    <InputLabel>Club*</InputLabel>
+                    <InputLabel>Select Club*</InputLabel>
                     <Select
                       fullWidth
                       name="club_name"
@@ -712,7 +713,7 @@ const AddMemberForm = () => {
 
                 {selectedRole === "2" ? (
                   <Grid item xs={12}>
-                    <InputLabel>Admin</InputLabel>
+                    <InputLabel>Select Admin</InputLabel>
                     <Select
                       fullWidth
                       name="superior_id"
@@ -736,7 +737,7 @@ const AddMemberForm = () => {
                     selectedRole === "6" ? (
 
                     <Grid item xs={12}>
-                      <InputLabel>Area Development Officer (ADO)</InputLabel>
+                      <InputLabel>Select Area Development Officer (ADO)</InputLabel>
                       <Select
                         fullWidth
                         name="superior_id"
@@ -764,7 +765,7 @@ const AddMemberForm = () => {
                     selectedRole === "5" ||
                     selectedRole === "6" ? (
                     <Grid item xs={12}>
-                      <InputLabel>Master Distributor (MD)</InputLabel>
+                      <InputLabel>Select Master Distributor (MD)</InputLabel>
                       <Select
                         fullWidth
                         name="superior_id"
@@ -800,7 +801,7 @@ const AddMemberForm = () => {
                 {user?.role !== "Distributor" && (
                   selectedRole === "5" || selectedRole === "6" ? (
                     <Grid item xs={12}>
-                      <InputLabel>Super Distributor (SD)</InputLabel>
+                      <InputLabel>Select Super Distributor (SD)</InputLabel>
                       <Select
                         fullWidth
                         name="superior_id"
@@ -829,7 +830,7 @@ const AddMemberForm = () => {
 
                 {selectedRole === "6" ? (
                   <Grid item xs={12}>
-                    <InputLabel>Distributor (D)</InputLabel>
+                    <InputLabel>Select Distributor (D)</InputLabel>
                     <Select
                       fullWidth
                       name="superior_id"

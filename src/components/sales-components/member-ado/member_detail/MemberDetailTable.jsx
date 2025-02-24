@@ -561,12 +561,13 @@ const MemberDetailTable = () => {
                               color: "primary",
                             }}
                           >
-                           
                             {achievementAmountPercent != null &&
                             !isNaN(achievementAmountPercent)
                               ? parseFloat(achievementAmountPercent) === 100
                                 ? 100
-                                : parseFloat(achievementAmountPercent).toFixed(2)
+                                : parseFloat(achievementAmountPercent).toFixed(
+                                    2
+                                  )
                               : 0}
                             %
                           </Typography>
@@ -575,10 +576,10 @@ const MemberDetailTable = () => {
 
                       <Box>
                         <Typography variant="h6" fontWeight="bold" mb={0.5}>
-                          Target Amount
+                          Sales Target{" "}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Rs:{" "}
+                          Rs.{" "}
                           {new Intl.NumberFormat("en-IN").format(
                             parseFloat(MonthlyTargetAmount) || 0
                           )}
@@ -588,7 +589,8 @@ const MemberDetailTable = () => {
                           variant="body2"
                           sx={{ color: "green", fontWeight: "bold" }}
                         >
-                          Achieved: Rs. {new Intl.NumberFormat("en-IN").format(
+                          Achieved:{" "}
+                          {new Intl.NumberFormat("en-IN").format(
                             parseFloat(AchievementAmount) || 0
                           )}
                         </Typography>
@@ -598,7 +600,8 @@ const MemberDetailTable = () => {
                           color="error"
                           fontWeight="bold"
                         >
-                          Pending: Rs. {new Intl.NumberFormat("en-IN").format(
+                          Pending:{" "}
+                          {new Intl.NumberFormat("en-IN").format(
                             parseFloat(pendingAmount) || 0
                           )}
                         </Typography>
@@ -665,10 +668,10 @@ const MemberDetailTable = () => {
                       </Box>
                       <Box>
                         <Typography variant="h6" fontWeight="bold" mb={0.5}>
-                          Sales Stock
+                          Stock Target{" "}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Stock:{" "}
+                          Rs.{" "}
                           {new Intl.NumberFormat("en-IN").format(
                             parseFloat(StockTarget) || 0
                           )}
@@ -678,7 +681,8 @@ const MemberDetailTable = () => {
                           variant="body2"
                           sx={{ color: "green", fontWeight: "bold" }}
                         >
-                          Stock Achieved: {new Intl.NumberFormat("en-IN").format(
+                          Achieved:{" "}
+                          {new Intl.NumberFormat("en-IN").format(
                             parseFloat(StockAchievement) || 0
                           )}
                         </Typography>
@@ -688,7 +692,8 @@ const MemberDetailTable = () => {
                           color="error"
                           fontWeight="bold"
                         >
-                          Stock Pending: {new Intl.NumberFormat("en-IN").format(
+                          Pending:{" "}
+                          {new Intl.NumberFormat("en-IN").format(
                             parseFloat(PendingStockTarget) || 0
                           )}
                         </Typography>
