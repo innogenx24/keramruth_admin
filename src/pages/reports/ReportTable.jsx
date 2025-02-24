@@ -405,7 +405,7 @@ export default function ReportTable() {
               <TableCell>District</TableCell>
               {/* <TableCell>Target/Stock(%)</TableCell> */}
               <TableCell>Sales Target / Achievement (Rs)</TableCell>
-              <TableCell>Stock Target / Achievement (QTY)</TableCell>
+              <TableCell>Stock Target / Achievement (Rs)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
