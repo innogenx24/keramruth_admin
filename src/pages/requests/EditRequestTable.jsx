@@ -150,7 +150,7 @@ const MemberTable = () => {
           fetchEditRequests();
 
           // Reload the page after success
-          window.location.reload();
+          // window.location.reload();
         } else {
           console.error("Failed to approve request:", data.message);
         }
@@ -410,9 +410,9 @@ const MemberTable = () => {
               {/* <TableCell>Date Of Joining</TableCell> */}
               {/* <TableCell>Mobile No</TableCell> */}
 
-              <TableCell>New Mobile Number</TableCell>
-              <TableCell>New Email ID</TableCell>
-              <TableCell>New Address</TableCell>
+              <TableCell>Mobile Number</TableCell>
+              <TableCell>Email ID</TableCell>
+              <TableCell>Address</TableCell>
               <TableCell>Request Reason</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>

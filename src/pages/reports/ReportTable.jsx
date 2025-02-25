@@ -34,6 +34,7 @@ export default function ReportTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [nameFilter, setNameFilter] = useState("");
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
+  const [showNoDataMessage, setShowNoDataMessage] = useState(false);
 
   useEffect(() => {
     // Fetch areas dynamically from API based on user data
@@ -226,6 +227,19 @@ export default function ReportTable() {
     </TableRow>
   );
 
+
+  useEffect(() => {
+    if (paginatedData && paginatedData.length === 0) {
+      const timer = setTimeout(() => {
+        setShowNoDataMessage(true);
+      }, 1 * 1000); // 2-second delay
+  
+      return () => clearTimeout(timer); // Cleanup the timer
+    } else {
+      setShowNoDataMessage(false); // Reset message if data comes in
+    }
+  }, [paginatedData]);
+
   // const renderCircularProgress = (percent) => {
   //   const color = getColor(percent);
 
@@ -405,10 +419,95 @@ export default function ReportTable() {
               <TableCell>District</TableCell>
               {/* <TableCell>Target/Stock(%)</TableCell> */}
               <TableCell>Sales Target / Achievement (Rs)</TableCell>
-              <TableCell>Stock Target / Achievement (QTY)</TableCell>
+              <TableCell>Stock Target / Achievement (Rs)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
+            {paginatedData && paginatedData.length > 0 ? (
+              paginatedData.map((row, index) => (
+                <TableRow key={row.id}>
+                  <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                  <TableCell>{row.username}</TableCell>
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      <Avatar
+                        alt={row.full_name}
+                        src={`${API_END_POINT_IMG}/uploads/${row.image}`}
+                        sx={{ width: 40, height: 40, marginRight: 2 }}
+                      />
+                      {row.full_name}
+                    </Box>
+                  </TableCell>
+                  <TableCell>{row.role_name}</TableCell>
+                  <TableCell>{row.district}</TableCell>
+
+                  {/* <TableCell>
+                    <Box display="flex" alignItems="center" justifyContent="center">
+                      {renderCircularProgress(
+                        row.salesAchievement?.monthlyDetails?.[0]?.achievementAmountPercent || 0
+                      )}
+                      {renderCircularProgress(
+                        row.salesAchievement?.monthlyDetails?.[0]?.StockAchievementPercent || 0
+                      )}
+                    </Box>
+                  </TableCell> */}
+
+                  {/* Sales Target / Achievement */}
+                  <TableCell>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {new Intl.NumberFormat("en-IN").format(
+                        row.salesAchievement?.monthlyDetails?.[0]
+                          ?.MonthlyTargetAmount || 0
+                      )}
+                      <span style={{ fontSize: "1.5em", margin: "0 3px" }}>
+                        /
+                      </span>
+                      {new Intl.NumberFormat("en-IN").format(
+                        row.salesAchievement?.monthlyDetails?.[0]
+                          ?.AchievementAmount || 0
+                      )}
+                    </div>
+                  </TableCell>
+
+                  {/* Stock QTY / Achievement QTY */}
+                  <TableCell>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {new Intl.NumberFormat("en-IN").format(
+                        row.salesAchievement?.monthlyDetails?.[0]
+                          ?.StockTarget || 0
+                      )}
+                      <span style={{ fontSize: "1.5em", margin: "0 3px" }}>
+                        /
+                      </span>
+                      {new Intl.NumberFormat("en-IN").format(
+                        row.salesAchievement?.monthlyDetails?.[0]
+                          ?.StockAchievement || 0
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : showNoDataMessage ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  🚫 No Members Available
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+          {/* <TableBody>
             {isLoading
               ? renderLoadingState()
               : paginatedData.map((row, index) => (
@@ -428,16 +527,7 @@ export default function ReportTable() {
                     <TableCell>{row.role_name}</TableCell>
                     <TableCell>{row.district}</TableCell>
 
-                    {/* <TableCell>
-                    <Box display="flex" alignItems="center" justifyContent="center">
-                      {renderCircularProgress(
-                        row.salesAchievement?.monthlyDetails?.[0]?.achievementAmountPercent || 0
-                      )}
-                      {renderCircularProgress(
-                        row.salesAchievement?.monthlyDetails?.[0]?.StockAchievementPercent || 0
-                      )}
-                    </Box>
-                  </TableCell> */}
+                    
 
                     <TableCell>
                       <div
@@ -461,7 +551,6 @@ export default function ReportTable() {
                       </div>
                     </TableCell>
 
-                    {/* Stock QTY / Achievement QTY */}
                     <TableCell>
                       <div
                         style={{
@@ -485,7 +574,7 @@ export default function ReportTable() {
                     </TableCell>
                   </TableRow>
                 ))}
-          </TableBody>
+          </TableBody> */}
         </Table>
       </TableContainer>
 
