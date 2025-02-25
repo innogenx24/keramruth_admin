@@ -43,12 +43,8 @@ export default function ReportTable() {
         const response = await fetch(`${API_END_POINT}/user/${userId}`);
         const data = await response.json();
         const userAreas = [
-          ...(data.mdUsers || []).map((user) =>
-            user.district.trim().toLowerCase()
-          ),
-          ...(data.sdUsers || []).map((user) =>
-            user.district.trim().toLowerCase()
-          ),
+          ...(data.mdUsers || []).map((user) => user.district.trim().toLowerCase()),
+          ...(data.sdUsers || []).map((user) => user.district.trim().toLowerCase()),
           ...(data.distributorUsers || []).map((user) =>
             user.district.trim().toLowerCase()
           ),
@@ -128,19 +124,13 @@ export default function ReportTable() {
       const filteredRows = rows.filter(
         (user) =>
           (roleFilter === "" || user.role_name === roleFilter) &&
-          (areaFilter === "" ||
-            user.district.trim().toLowerCase() ===
-              areaFilter.trim().toLowerCase()) &&
-          (nameFilter === "" ||
-            user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
+          (areaFilter === "" || user.district.trim().toLowerCase() === areaFilter.trim().toLowerCase()) &&
+          (nameFilter === "" || user.full_name.toLowerCase().includes(nameFilter.toLowerCase()))
       );
 
       const enrichedRows = await Promise.all(
         filteredRows.map(async (user) => {
-          const salesAchievement = await fetchSalesAchievement(
-            user.role_name,
-            user.id
-          );
+          const salesAchievement = await fetchSalesAchievement(user.role_name, user.id);
           return { ...user, salesAchievement: salesAchievement || null };
         })
       );
@@ -237,17 +227,19 @@ export default function ReportTable() {
     </TableRow>
   );
 
+
   useEffect(() => {
     if (paginatedData && paginatedData.length === 0) {
       const timer = setTimeout(() => {
         setShowNoDataMessage(true);
-      }, 2000); // 2-second delay
-
+      }, 1 * 1000); // 2-second delay
+  
       return () => clearTimeout(timer); // Cleanup the timer
     } else {
       setShowNoDataMessage(false); // Reset message if data comes in
     }
   }, [paginatedData]);
+
   // const renderCircularProgress = (percent) => {
   //   const color = getColor(percent);
 
@@ -515,6 +507,74 @@ export default function ReportTable() {
               </TableRow>
             ) : null}
           </TableBody>
+          {/* <TableBody>
+            {isLoading
+              ? renderLoadingState()
+              : paginatedData.map((row, index) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                    <TableCell>{row.username}</TableCell>
+                    <TableCell>
+                      <Box display="flex" alignItems="center">
+                        <Avatar
+                          alt={row.full_name}
+                          src={`${API_END_POINT_IMG}/uploads/${row.image}`}
+                          sx={{ width: 40, height: 40, marginRight: 2 }}
+                        />
+                        {row.full_name}
+                      </Box>
+                    </TableCell>
+                    <TableCell>{row.role_name}</TableCell>
+                    <TableCell>{row.district}</TableCell>
+
+                    
+
+                    <TableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.MonthlyTargetAmount || 0
+                        )}
+                        <span style={{ fontSize: "1.5em", margin: "0 3px" }}>
+                          /
+                        </span>
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.AchievementAmount || 0
+                        )}
+                      </div>
+                    </TableCell>
+
+                    <TableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.StockTarget || 0
+                        )}
+                        <span style={{ fontSize: "1.5em", margin: "0 3px" }}>
+                          /
+                        </span>
+                        {new Intl.NumberFormat("en-IN").format(
+                          row.salesAchievement?.monthlyDetails?.[0]
+                            ?.StockAchievement || 0
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+          </TableBody> */}
         </Table>
       </TableContainer>
 
