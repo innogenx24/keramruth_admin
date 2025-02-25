@@ -503,7 +503,7 @@ const EditMemberForm = () => {
                 />
               </Grid>
 
-              {/* <Grid item xs={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="password"
@@ -528,7 +528,7 @@ const EditMemberForm = () => {
                     ),
                   }}
                 />
-              </Grid> */}
+              </Grid>
             </Grid>
           </Box>
 
