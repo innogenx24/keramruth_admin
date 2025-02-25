@@ -350,12 +350,16 @@ export default function AdminDashboard() {
       path: "/dashboard/media-news",
       icon: <PiNewspaperClippingFill />,
     },
-    {
-      text: "Member Reports",
-      path: "/dashboard/report",
-      icon: <ReportIcon />,
-
-    },
+     // Conditionally render "Member Reports"
+  ...(loginUserRole !== "Distributor"
+    ? [
+        {
+          text: "Member Reports",
+          path: "/dashboard/report",
+          icon: <ReportIcon />,
+        },
+      ]
+    : []),
     {
       text: "My Report",
       path: "/dashboard/targets",
@@ -698,7 +702,7 @@ export default function AdminDashboard() {
             component="div"
             sx={{ flexGrow: 1, color: "#989FA9" }}
           >
-            {loginUserRole === "Admin" ? "Admin Dashboard" : "User Dashboard"}
+            {/* {loginUserRole === "Admin" ? "Admin Dashboard" : "User Dashboard"} */}
           </Typography>
 
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
