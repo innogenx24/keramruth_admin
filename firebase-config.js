@@ -51,7 +51,7 @@ export const requestForToken = async (userId, role) => {
     
     if (permission === "granted") {
       const token = await getToken(messaging, {
-        vapidKey: "BEfBD1VZRFIXzBNG-dZO3wKKqjaRiAF-Kt5QjxPz2D-TEa66I7dSJQZMomVL5xXnHTpNXEKzrft_VfXUvzuhb04",
+        vapidKey: "BDJqESe65YjYN_Jzptg_j1hMCHnTz037EczmnKQvmupLGigPWd6c3Xo0ax1q6f_-Ano1sS6VQ5GtHhvzkOdE-1w",
       });
 
       if (token) {

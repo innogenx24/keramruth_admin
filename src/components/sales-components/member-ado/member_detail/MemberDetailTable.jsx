@@ -557,7 +557,7 @@ const MemberDetailTable = () => {
                             variant="h6"
                             fontWeight="bold"
                             sx={{
-                              fontSize: "0.8rem !important",
+                              fontSize: "1.08rem !important",
                               color: "primary",
                             }}
                           >
