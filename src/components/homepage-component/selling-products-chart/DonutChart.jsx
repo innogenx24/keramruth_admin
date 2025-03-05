@@ -93,7 +93,7 @@ const DonutChart = () => {
         });
 
         const data = response.data.mostSellingProducts;
-        const labels = data.map(item => `${item.productName} (₹${formatIndianCurrency(item.sales)})`); // Show sales in label with Indian currency
+        const labels = data.map(item => `${item.productName} (₹${item.sales.toLocaleString('en-IN')})`);
         const salesData = data.map(item => item.sales); // Use sales data directly
         const dynamicColors = generateColors(data.length); // Generate unique colors for each item
 

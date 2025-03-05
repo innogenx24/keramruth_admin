@@ -20,7 +20,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 const TargetPage = () => {
   const [targetData, setTargetData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +38,6 @@ const TargetPage = () => {
     month: date.getMonth() + 1,
     year: date.getFullYear(),
   });
-
 
   // Fetch target data whenever user, role, or the selected month/year changes.
   const fetchTargetData = async (month, year) => {
@@ -84,9 +82,7 @@ const TargetPage = () => {
     }
   }, [userId, roleName, selectedDate]);
 
-
-
-// List of months and years for dropdowns
+  // List of months and years for dropdowns
   const months = [
     { value: 1, label: "January" },
     { value: 2, label: "February" },
@@ -101,7 +97,7 @@ const TargetPage = () => {
     { value: 11, label: "November" },
     { value: 12, label: "December" },
   ];
-  
+
   // If loading or error
   if (loading) {
     return (
@@ -210,8 +206,6 @@ const TargetPage = () => {
     navigate("view-member-targets");
   };
 
-
-
   return (
     <Box sx={{ p: 3 }}>
       <Typography
@@ -222,19 +216,20 @@ const TargetPage = () => {
       </Typography>
 
       {users?.role_name !== "Distributor" && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
           <Button
             variant="contained"
+            color="primary"
             onClick={handleViewMembersTarget}
-            sx={{
+            style={{
               backgroundColor: "#28a745",
               color: "white",
-              textTransform: "none",
-              fontSize: "0.85rem",
+              fontWeight: "bold",
+              borderRadius: "5px",
             }}
           >
             View Members Target
-          </Button>
+            </Button>
         </Box>
       )}
 
@@ -246,7 +241,6 @@ const TargetPage = () => {
           dateFormat="MMMM yyyy"
           showMonthYearPicker
           className="date-picker-input"
-          style={{ width: "100%", maxWidth: "200px" }}
         />
       </Box>
 
