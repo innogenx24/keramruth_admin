@@ -105,55 +105,9 @@ const MemberDetailTable = () => {
 
   const handleMouseUp = () => {
     setTimeout(() => {
-      isScrolling.current = false;
+      isScrolling.current = false; // Reset after mouse interaction ends
     }, 150);
   };
-
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1;
-  const currentYear = currentDate.getFullYear();
-  const [achievementDetailsData, setAchievementDetailsData] = useState([0]);
-  const [error, setError] = useState(null);
-
-  const roleIdToRoleNameMap = {
-    3: "Area Development Officer",
-    4: "Master Distributor",
-    5: "Super Distributor",
-    6: "Distributor",
-    7: "Customer",
-  };
-
-  const rolesIDTOroleName = roleIdToRoleNameMap[rolesID] || "Unknown Role";
-
-  useEffect(() => {
-    const fetchAchievementDetailsData = async () => {
-      try {
-        setLoading(true);
-        const apiURL = `http://localhost:4000/api/user_sales_detail/sales_achievementWeb/${rolesIDTOroleName}/${memberID}?month=${currentMonth}&year=${currentYear}`;
-        const response = await axios.get(apiURL);
-
-        console.log("API Response Data:", response.data);
-
-        if (response.data?.monthlyDetails) {
-          setAchievementDetailsData(response.data.monthlyDetails);
-        } else {
-          setAchievementDetailsData(null);
-        }
-      } catch (error) {
-        console.error("API Fetch Error:", error);
-        setError(
-          error.response?.data?.message ||
-            "Failed to fetch achievement details."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (rolesID && memberID && rolesIDTOroleName !== "Unknown Role") {
-      fetchAchievementDetailsData();
-    }
-  }, [rolesID, memberID, rolesIDTOroleName]);
 
   useEffect(() => {
     if (role) {
@@ -172,7 +126,7 @@ const MemberDetailTable = () => {
 
       setRoleToUse(calculatedRoleToUse); // Set roleToUse here
     }
-  }, [role]);
+  }, [role]); // Ensure this effect runs on role change
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -441,15 +395,15 @@ const MemberDetailTable = () => {
   const newMemberID = memberID || newMemberId;
 
   const {
-    MonthlyTargetAmount = 0,
-    achievementAmountPercent = "0.00",
-    StockAchievementPercent = "0.00",
-    AchievementAmount = 0,
-    pendingAmount = 0,
-    StockTarget = 0,
-    StockAchievement = 0,
-    PendingStockTarget = 0,
-  } = achievementDetailsData || {};
+    MonthlyTargetAmount,
+    achievementAmountPercent,
+    StockAchievementPercent,
+    AchievementAmount,
+    pendingAmount,
+    StockTarget,
+    StockAchievement,
+    PendingStockTarget,
+  } = salesData[0];
 
   const renderPagination = (page, setPage, totalRows) => {
     const totalPages = Math.ceil(totalRows / rowsPerPage);
