@@ -4,9 +4,9 @@ import App from "./App.jsx";
 import "./index.css";
 
 //*** Disable all console errors ***//
-// console.warn = function () {};
-// console.error = function () {};
-// console.log = function () {};
+console.warn = function () {};
+console.error = function () {};
+console.log = function () {};
 
 //***This function is essential for handling background push notifications in your React web app.**///
 //***It ensures users receive notifications even when the app is closed or minimized.***//

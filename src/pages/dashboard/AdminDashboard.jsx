@@ -722,9 +722,9 @@ export default function AdminDashboard() {
             <Typography
               variant="body1"
               sx={{
-                color: "#989FA9",
+                color: "black",
                 fontWeight: 500,
-                fontSize: "1rem", // Adjusted font size for better visibility
+                fontSize: "1rem", 
               }}
             >
               {users?.full_name}

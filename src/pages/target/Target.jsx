@@ -215,7 +215,7 @@ const TargetPage = () => {
         Sales-Target Report
       </Typography>
 
-      {users?.role_name !== "Distributor" && (
+      {/* {users?.role_name !== "Distributor" && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
           <Button
             variant="contained"
@@ -231,7 +231,7 @@ const TargetPage = () => {
             View Members Target
             </Button>
         </Box>
-      )}
+      )} */}
 
       {/* Dropdown Filters */}
       <Box sx={{ display: "flex", gap: 2, mb: 3 }}>

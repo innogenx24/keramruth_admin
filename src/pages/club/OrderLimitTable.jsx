@@ -70,7 +70,7 @@ const OrderLimitsTable = () => {
   return (
     <>
       <TableContainer component={Paper}>
-        {/* <div
+        <div
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -86,7 +86,7 @@ const OrderLimitsTable = () => {
           >
             Add Time
           </Button>
-        </div> */}
+        </div>
         <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
           Masters / Set Role Order Timings
         </Typography>

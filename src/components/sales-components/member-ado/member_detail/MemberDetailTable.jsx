@@ -35,6 +35,7 @@ import { LocationOn, Phone, Mail } from "@mui/icons-material";
 
 // import { fetchMembersRequest, clearMembers } from "../../../redux/slices/member-slice/MemberGetSlice";
 // import { deleteMemberRequest } from "../../../redux/slices/member-slice/MemberDeleteSlice";
+import { deleteMemberRequest } from "../../../../redux/slices/member-slice/MemberDeleteSlice";
 import AddMemberForm from ".././AddMemberForm";
 import EditMemberForm from ".././EditMemberForm";
 // import SearchBox from "../../../search-box/SearchBox";
@@ -245,13 +246,20 @@ const MemberDetailTable = () => {
 
   const fetchUserCounts = async () => {
     try {
-      // const response = await axios.get(`${API_END_POINT}/api/user/${memberID}`);
-      const response = await axios.get(`${API_END_POINT}/user/${memberID}`);
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(`${API_END_POINT}/user/${memberID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
       setRoleCounts(response.data);
     } catch (error) {
       console.error("Error fetching role counts:", error);
     }
-  };
+};
 
   useEffect(() => {
     if (memberID) {
