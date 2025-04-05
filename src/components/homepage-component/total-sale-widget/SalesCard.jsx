@@ -2,6 +2,9 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 
+
+
+
 const roleColors = {
   "Company Total Sales:": "#FFD700", // Gold
   "Area Development Officer": "#01C572", // Greenish

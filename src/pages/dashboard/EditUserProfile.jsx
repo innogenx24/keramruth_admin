@@ -11,16 +11,22 @@ import {
   MenuItem,
   Snackbar,
   Alert,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { signOut } from "../../redux/slices/authSlice";
 
 const EditUserProfile = () => {
   const navigate = useNavigate();
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
+  const dispatch = useDispatch();
 
   const [selectedImage, setSelectedImage] = useState(
     "/static/images/avatar/1.jpg"
@@ -33,6 +39,7 @@ const EditUserProfile = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarType, setSnackbarType] = useState("success");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [user, setUser] = useState({
     full_name: "",
@@ -44,6 +51,7 @@ const EditUserProfile = () => {
     state: "",
     country: "",
     image: "",
+    password: "",
   });
 
   const [cities, setCities] = useState([]);
@@ -74,7 +82,6 @@ const EditUserProfile = () => {
 
   // State to City mapping
 
-
   useEffect(() => {
     if (users) {
       setUser({
@@ -89,6 +96,7 @@ const EditUserProfile = () => {
         building_no_name: users.building_no_name || "",
         username: users.username || "",
         image: users.image || "",
+        password: users.password || "",
       });
 
       if (!imageFile && users.image) {
@@ -198,6 +206,7 @@ const EditUserProfile = () => {
     formData.append("city", user.city);
     formData.append("state", user.state);
     formData.append("country", user.country);
+    formData.append("password", user.password);
 
     if (imageFile) {
       formData.append("image", imageFile);
@@ -224,8 +233,17 @@ const EditUserProfile = () => {
       setOpenSnackbar(true);
 
       setTimeout(() => {
-        setOpenSnackbar(false);
-        navigate("/dashboard/profile");
+        const isPasswordChanged =
+          user.password.trim() !== "" && user.password !== users.password;
+
+        if (isPasswordChanged) {
+          dispatch(signOut());
+          setOpenSnackbar(false);
+          navigate("/signin");
+        } else {
+          setOpenSnackbar(false);
+          navigate("/dashboard/profile");
+        }
       }, 2000);
     } catch (error) {
       console.error("Error updating member data", error);
@@ -250,6 +268,10 @@ const EditUserProfile = () => {
         setErrorMessage("An unknown error occurred.");
       }
     }
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -313,19 +335,46 @@ const EditUserProfile = () => {
                 helperText={errors.mobile_number}
               />
 
-              {/* Email */}
-              <TextField
-                fullWidth
-                label="Email ID"
-                variant="outlined"
-                name="email"
-                value={user.email}
-                onChange={handleInputChange}
-                required
-                margin="normal"
-                error={!!errors.email}
-                helperText={errors.email}
-              />
+              <Box mb={2}>
+                <TextField
+                  fullWidth
+                  label="Email ID"
+                  variant="outlined"
+                  name="email"
+                  value={user.email}
+                  onChange={handleInputChange}
+                  required
+                  margin="normal"
+                  error={!!errors.email}
+                  helperText={errors.email}
+                />
+              </Box>
+
+              <Box>
+                <TextField
+                  fullWidth
+                  name="password"
+                  label="Password*"
+                  type={showPassword ? "text" : "password"}
+                  value={user.password}
+                  onChange={handleInputChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleTogglePasswordVisibility}
+                          edge="end"
+                          aria-label="toggle password visibility"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
 
               <Typography variant="h6" gutterBottom sx={{ marginTop: "20px" }}>
                 Address

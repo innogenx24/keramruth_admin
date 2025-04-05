@@ -32,6 +32,7 @@ const EditMemberForm = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const [showPassword, setShowPassword] = useState(false);
+  
   const [imageError, setImageError] = useState(""); // Store image error message
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");

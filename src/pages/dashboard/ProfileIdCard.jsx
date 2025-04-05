@@ -1,70 +1,74 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Card, CardContent, Typography, Avatar, Box, Button } from '@mui/material';
-import { styled } from '@mui/system';
-import backgroundImg from '../../assets/profile-id.png';
-
+import {
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Box,
+  Button,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import backgroundImg from "../../assets/profile-id.png";
 
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
-import html2canvas from 'html2canvas';
+import html2canvas from "html2canvas";
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  width: '350px',
-  height: '555px',
-  margin: 'auto',
-  borderRadius: '15px',
-  position: 'relative',
-  overflow: 'hidden',
-  backgroundColor: 'transparent',
-  boxShadow: 'none',
+  width: "350px",
+  height: "555px",
+  margin: "auto",
+  borderRadius: "15px",
+  position: "relative",
+  overflow: "hidden",
+  backgroundColor: "transparent",
+  boxShadow: "none",
   backgroundImage: `url(${backgroundImg})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
+  backgroundSize: "cover",
+  backgroundPosition: "center",
 }));
 
 const ProfileImageContainer = styled(Box)({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: '-60px',
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: "-60px",
 });
 
 const ProfileImage = styled(Avatar)({
-  marginTop: '74px',
-  width: '152px',
-  height: '150px',
-  border: '3px solid #90EE90',
+  marginTop: "74px",
+  width: "152px",
+  height: "150px",
+  border: "3px solid #90EE90",
 });
 
 const InfoBox = styled(Box)(({ theme }) => ({
-  marginTop: '-5px',
-  padding: '26px',
-  borderRadius: '10px',
-  textAlign: 'center',
+  marginTop: "-5px",
+  padding: "26px",
+  borderRadius: "10px",
+  textAlign: "center",
 }));
 
 const FullName = styled(Typography)({
-  marginTop: '-20px',
+  marginTop: "-20px",
 
-  fontSize: '1.2rem',
-  fontWeight: 'bold',
-  color: 'black',
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  color: "black",
 });
 
 const RoleName = styled(Typography)({
-  fontSize: '1rem',
-  fontStyle: 'italic',
-  color: 'black',
+  fontSize: "1rem",
+  fontStyle: "italic",
+  color: "black",
 });
-
 
 const UserName = styled(Typography)({
-  fontSize: '1rem',
-  fontStyle: 'italic',
-  color: 'black',
+  fontSize: "1rem",
+  fontStyle: "italic",
+  color: "black",
 });
-
 
 export default function ProfileCard() {
   const dispatch = useDispatch();
@@ -92,10 +96,10 @@ export default function ProfileCard() {
   // Download function using html2canvas
   const handleDownload = () => {
     if (cardRef.current) {
-      html2canvas(cardRef.current).then(canvas => {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = 'profile-id-card.png';
+      html2canvas(cardRef.current).then((canvas) => {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "profile-id-card.png";
         link.click();
       });
     }
@@ -110,11 +114,11 @@ export default function ProfileCard() {
           <Typography
             variant="h6"
             sx={{
-              textAlign: 'center',
-              marginTop: '60px', 
+              textAlign: "center",
+              marginTop: "60px",
             }}
           >
-            {users.role_name === 'Admin' ? 'Admin ID':'Distributor ID'}
+            {users.role_name === "Admin" ? "Admin ID" : "Distributor ID"}
           </Typography>
           <ProfileImageContainer>
             <ProfileImage
@@ -129,79 +133,114 @@ export default function ProfileCard() {
             <RoleName>{users?.role_name}</RoleName>
           </Box>
 
-          <InfoBox >
-
-
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', marginLeft: '35px' }}>
-              <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginRight: '8px' }}>
-                M:
-              </Typography>
-              <Typography variant="body2" style={{ fontStyle: 'italic' }}>
-                +91 {users?.mobile_number}
-              </Typography>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', marginLeft: '35px' }}>
-              <Typography variant="body2" style={{ fontStyle: 'italic', fontWeight: 'bold', marginRight: '8px' }}>
-                E:
-              </Typography>
-              <Typography variant="body2" style={{ fontStyle: 'italic' }}>
-                {users?.email}
-              </Typography>
-            </div>
-
-            <div style={{ marginBottom: '8px', marginLeft: '35px' }}>
+          <InfoBox>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "8px",
+                marginLeft: "35px",
+              }}
+            >
               <Typography
                 variant="body2"
                 style={{
-                  fontStyle: 'italic',
-                  fontWeight: 'bold',
-                  marginBottom: '4px',
-                  marginLeft: '-167px'
+                  fontStyle: "italic",
+                  fontWeight: "bold",
+                  marginRight: "8px",
                 }}
               >
+                M:
               </Typography>
-              <div style={{ marginLeft: '-10px', display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="body2" style={{ fontStyle: "italic" }}>
+                +91 {users?.mobile_number}
+              </Typography>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "8px",
+                marginLeft: "35px",
+              }}
+            >
+              <Typography
+                variant="body2"
+                style={{
+                  fontStyle: "italic",
+                  fontWeight: "bold",
+                  marginRight: "8px",
+                }}
+              >
+                E:
+              </Typography>
+              <Typography variant="body2" style={{ fontStyle: "italic" }}>
+                {users?.email || "N/A"}
+              </Typography>
+            </div>
+
+            <div style={{ marginBottom: "8px", marginLeft: "35px" }}>
+              <Typography
+                variant="body2"
+                style={{
+                  fontStyle: "italic",
+                  fontWeight: "bold",
+                  marginBottom: "4px",
+                  marginLeft: "-167px",
+                }}
+              ></Typography>
+              <div
+                style={{
+                  marginLeft: "-10px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 <Typography
                   variant="body2"
                   style={{
-                    fontStyle: 'italic',
+                    fontStyle: "italic",
                     lineHeight: 1.6,
-                    marginTop: '5px',
-                    marginRight: '22px'
+                    marginTop: "5px",
+                    marginRight: "22px",
                   }}
                 >
-                  {users?.district ? users.district : users?.street_name}, {users?.city}, {users?.state}, {users?.pincode}.
-
+                  {users?.district ? users.district : users?.street_name},{" "}
+                  {users?.city}, {users?.state}, {users?.pincode}.
                 </Typography>
-                
               </div>
             </div>
 
-            <Typography variant="body2" style={{ fontStyle: 'italic', color: '#1E90FF', marginTop: '30px' }}>
-            <a 
-              href={website} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <Typography
+              variant="body2"
               style={{
-               fontStyle: 'italic',
-               color: '#1E90FF',
-               marginTop: '30px',
-               textDecoration: 'none' 
+                fontStyle: "italic",
+                color: "#1E90FF",
+                marginTop: "30px",
               }}
             >
-             {website}
-            </a>
-
+              <a
+                href={website}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontStyle: "italic",
+                  color: "#1E90FF",
+                  marginTop: "30px",
+                  textDecoration: "none",
+                }}
+              >
+                {website}
+              </a>
             </Typography>
           </InfoBox>
         </CardContent>
-
       </StyledCard>
 
       <Box textAlign="center" mt={3}>
         <Button
           variant="contained"
-          sx={{ backgroundColor: 'green' }}
+          sx={{ backgroundColor: "green" }}
           onClick={handleDownload}
         >
           Download ID Card
@@ -210,10 +249,6 @@ export default function ProfileCard() {
     </Box>
   );
 }
-
-
-
-
 
 // import React, { useEffect, useState, useRef } from "react";
 // import { Card, CardContent, Typography, Avatar, Box, Button } from '@mui/material';
@@ -274,13 +309,11 @@ export default function ProfileCard() {
 //   color: 'black',
 // });
 
-
 // const UserName = styled(Typography)({
 //   fontSize: '1rem',
 //   fontStyle: 'italic',
 //   color: 'black',
 // });
-
 
 // export default function ProfileCard() {
 //   const dispatch = useDispatch();
@@ -317,7 +350,6 @@ export default function ProfileCard() {
 //     }
 //   };
 //   const website = "www.keramruth.com";
-
 
 //   return (
 //     <Box>
@@ -364,7 +396,7 @@ export default function ProfileCard() {
 //                 +91 {users?.mobile_number}
 //               </Typography>
 //             </div>
-            
+
 //             <Typography variant="body2" style={{ fontStyle: 'italic', padding: '20px', width: '92%', marginTop: '-20px' }}>
 //               {users?.street_name}, {users?.city}, {users?.state}, {users?.pincode}.
 //             </Typography>

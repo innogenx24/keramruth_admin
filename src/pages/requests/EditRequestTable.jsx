@@ -20,21 +20,22 @@ import { fetchAllMembersRequest } from "../../redux/slices/member-slice/GetAllme
 import ClearIcon from "@mui/icons-material/Clear";
 import CheckIcon from "@mui/icons-material/Check";
 import IconButton from "@mui/material/IconButton";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
+
 const MemberTable = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize the navigate hook
+  const navigate = useNavigate();
   const { allmembers, loading, error } = useSelector(
     (state) => state.allmembers
   );
   const [editRequests, setEditRequests] = useState([]);
   const [loadingEditRequests, setLoadingEditRequests] = useState(true);
   const [editRequestError, setEditRequestError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(""); // Success message state
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
-  const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
+  const [successMessage, setSuccessMessage] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" });
   const [sortedEditRequests, setSortedEditRequests] = useState([]);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
 
@@ -43,6 +44,18 @@ const MemberTable = () => {
   const rowsPerPage = 10;
 
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
+
+  const user = JSON.parse(localStorage.getItem("user")); 
+  const role = user?.role;
+  const roleId = role === "Admin"? 1 : 2;
+
+  // Filter edit requests based on role
+  const filterEditRequests = (requests) => {
+    if (role === "Area Development Officer") {
+      return requests.filter(request => request.role_id !== 2);
+    }
+    return requests;
+  };
 
   // Sort data by updated_at in descending order (initial sort)
   useEffect(() => {
@@ -93,7 +106,9 @@ const MemberTable = () => {
           }
         );
 
-        setEditRequests(sortedRequests);
+        // Apply role-based filtering
+        const filteredRequests = filterEditRequests(sortedRequests);
+        setEditRequests(filteredRequests);
       } else {
         throw new Error("Failed to fetch edit requests");
       }
@@ -120,18 +135,19 @@ const MemberTable = () => {
       console.error("Request not found:", memberId);
       return;
     }
+    const oldData = combinedMembers.find((member) => member.id === memberId);
 
     const updatedData = {
-      mobile_number: requestToApprove.new_mobile_number,
-      email: requestToApprove.new_email_id,
-      state: requestToApprove.new_address.state,
-      city: requestToApprove.new_address.city,
-      street_name: requestToApprove.new_address.street,
-      pincode: requestToApprove.new_address.zip,
+      roleName: role,
+      mobile_number: requestToApprove.new_mobile_number || oldData?.mobile_number,
+      email: requestToApprove.new_email_id || oldData?.email,
+      state: requestToApprove.new_address.state || oldData?.state,
+      city: requestToApprove.new_address.district || oldData?.city,
+      street_name: requestToApprove.new_address.street || oldData?.street_name,
+      pincode: requestToApprove.new_address.zip || oldData?.pincode,
     };
 
     try {
-      // const response = await fetch(`${API_END_POINT}/api/member-update/update/${memberId}`, {
       const response = await fetch(
         `${API_END_POINT}/member-update/update/${memberId}`,
         {
@@ -148,9 +164,6 @@ const MemberTable = () => {
           setSuccessMessage("Update successful!");
           setSnackbarOpen(true);
           fetchEditRequests();
-
-          // Reload the page after success
-          // window.location.reload();
         } else {
           console.error("Failed to approve request:", data.message);
         }
@@ -165,14 +178,14 @@ const MemberTable = () => {
   const handleReject = async (requestId) => {
     try {
       const response = await fetch(
-        `${API_END_POINT}/edit-requests/reject/${requestId}`,
+        `${API_END_POINT}/edit-requests/reject/${requestId}/${roleId}`,
         {
-          method: "DELETE", // Change from POST to DELETE to match your server-side API
+          method: "DELETE",
         }
       );
       const data = await response.json();
       if (data.success) {
-        fetchEditRequests(); // Fetch the updated list after the request is deleted
+        fetchEditRequests();
       } else {
         console.error("Failed to reject request:", data.message);
       }
@@ -189,7 +202,6 @@ const MemberTable = () => {
     setImageModal({ open: false, imageUrl: "" });
   };
 
-  // Function to close the snackbar
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -232,7 +244,6 @@ const MemberTable = () => {
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>
               <TableCell>Role</TableCell>
-              {/* <TableCell>Date Of Joining</TableCell> */}
               <TableCell>Mobile No</TableCell>
               <TableCell>New Mobile Number</TableCell>
               <TableCell>New Email ID</TableCell>
@@ -243,18 +254,14 @@ const MemberTable = () => {
           </TableHead>
           <TableBody>
             {paginatedPending.map((request, index) => {
-              // Skip rows if the status is not "Pending"
               if (request.status !== "Pending") return null;
 
-              // Find the corresponding member from combinedMembers
               const member = combinedMembers.find(
                 (member) => member.id === request.user_id
               );
 
-              // If member is not found or if the member's approval is pending, skip rendering
               if (!member || member.approved === "Pending") return null;
 
-              // Check if the existing and new data are the same
               const isMobileSame =
                 member?.mobile_number === request.new_mobile_number;
               const isEmailSame = member?.email === request.new_email_id;
@@ -264,7 +271,6 @@ const MemberTable = () => {
                 member?.state === request.new_address.state &&
                 member?.pincode === request.new_address.zip;
 
-              // Only display the row if any of the mobile number, email, or address fields differ
               if (!isMobileSame || !isEmailSame || !isAddressSame) {
                 currentIndex++;
                 return (
@@ -288,9 +294,6 @@ const MemberTable = () => {
                     </TableCell>
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{member.role_name}</TableCell>
-                    {/* <TableCell>
-                      {new Date(member.createdAt).toLocaleDateString()}
-                    </TableCell> */}
                     <TableCell>{member.mobile_number}</TableCell>
                     <TableCell>
                       {isMobileSame ? "-" : request.new_mobile_number}
@@ -304,7 +307,7 @@ const MemberTable = () => {
                     >
                       {isEmailSame ? "-" : request.new_email_id}
                     </TableCell>
-                    <TableCell>{`${request.new_address.street}, ${request.new_address.city}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
+                    <TableCell>{`${request.new_address.street}, ${request.new_address.district}, ${request.new_address.state}, ${request.new_address.zip}`}</TableCell>
                     <TableCell>{request.request_reason}</TableCell>
                     <TableCell>
                       <div
@@ -390,26 +393,20 @@ const MemberTable = () => {
         </Button>
       </div>
 
-      {/* Spacer */}
       <div style={{ margin: "20px 0" }} />
 
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Accepted / Rejected Data
       </Typography>
 
-      {/* Previous Data Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
             <TableRow style={{ whiteSpace: "nowrap" }}>
               <TableCell>No.</TableCell>
-
               <TableCell>ID Proof</TableCell>
               <TableCell>Member Name</TableCell>
               <TableCell>Role</TableCell>
-              {/* <TableCell>Date Of Joining</TableCell> */}
-              {/* <TableCell>Mobile No</TableCell> */}
-
               <TableCell>Mobile Number</TableCell>
               <TableCell>Email ID</TableCell>
               <TableCell>Address</TableCell>
@@ -424,18 +421,13 @@ const MemberTable = () => {
               );
               if (!member) return null;
 
-              // Only show completed requests (Accepted / Rejected)
-              if (
-                request.status === "Completed" ||
-                request.status === "Rejected"
-              ) {
+              if (request.status === "Completed" || request.status === "Rejected") {
                 completedIndex++;
                 return (
                   <TableRow key={request.id}>
                     <TableCell>
                       {currentPageCompleted * rowsPerPage + index + 1}
                     </TableCell>
-
                     <TableCell>
                       {request.image ? (
                         <img
@@ -451,11 +443,7 @@ const MemberTable = () => {
                     </TableCell>
                     <TableCell>{member.full_name}</TableCell>
                     <TableCell>{member.role_name}</TableCell>
-                    {/* <TableCell>
-                      {new Date(member.createdAt).toLocaleDateString()}
-                    </TableCell> */}
                     <TableCell>{request.new_mobile_number}</TableCell>
-
                     <TableCell
                       sx={{
                         WebkitBoxOrient: "vertical",
@@ -548,7 +536,6 @@ const MemberTable = () => {
         </Box>
       </Modal>
 
-      {/* Snackbar for success message */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}

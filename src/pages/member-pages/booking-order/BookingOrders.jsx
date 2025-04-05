@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Modal, Typography, DialogContent, DialogActions } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Box,
+  Modal,
+  Typography,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import axios from "axios";
 import { useSelector } from "react-redux"; // Import useSelector
 import { useLocation } from "react-router-dom";
-import AppLogo from '../../../assets/logo/AppLogo'
+import AppLogo from "../../../assets/logo/AppLogo";
 
-import CommonLogos from '../../../assets/logo/CommonLogos.png'
+import CommonLogos from "../../../assets/logo/CommonLogos.png";
 
-import "./style.css"
-import SearchProducts from "./SearchProducts"
+import "./style.css";
+import SearchProducts from "./SearchProducts";
 import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 const BookingOrders = () => {
   const [products, setProducts] = useState([]);
@@ -21,7 +35,6 @@ const BookingOrders = () => {
   const imageBaseURL = `${API_END_POINT_IMG}/uploads/`;
   const [imageModal, setImageModal] = useState({ open: false, imageUrl: "" }); // Modal state for images
 
-
   const { users } = useSelector((state) => state.users);
   const userId = users?.id;
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,9 +43,9 @@ const BookingOrders = () => {
     if (orderConfirmation) {
       const timer = setTimeout(() => {
         setOrderConfirmation(false);
-      }, 2 * 1000);
+      }, 2000); 
 
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer); 
     }
   }, [orderConfirmation]);
 
@@ -80,11 +93,12 @@ const BookingOrders = () => {
   const incrementQuantity = (productId) => {
     setOrderItems((prevOrderItems) => {
       const updatedItems = [...prevOrderItems];
-      const existingItem = updatedItems.find((item) => item.product_id === productId);
+      const existingItem = updatedItems.find(
+        (item) => item.product_id === productId
+      );
       if (existingItem) {
         // Ensure quantity is treated as a number
         existingItem.quantity = parseInt(existingItem.quantity, 10) + 1;
-
       } else {
         updatedItems.push({ product_id: productId, quantity: 1 });
       }
@@ -92,25 +106,28 @@ const BookingOrders = () => {
     });
   };
 
-  const totalQuantity = orderItems.reduce((total, item) => total + item.quantity, 0);
-
+  const totalQuantity = orderItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   const decrementQuantity = (productId) => {
     setOrderItems((prevOrderItems) => {
       const updatedItems = [...prevOrderItems];
-      const existingItem = updatedItems.find(item => item.product_id === productId);
+      const existingItem = updatedItems.find(
+        (item) => item.product_id === productId
+      );
       if (existingItem) {
         if (existingItem.quantity > 1) {
-          existingItem.quantity -= 1;  // Decrease quantity
+          existingItem.quantity -= 1; // Decrease quantity
         } else {
           // If quantity is 1, remove the item from the order
-          return updatedItems.filter(item => item.product_id !== productId);
+          return updatedItems.filter((item) => item.product_id !== productId);
         }
       }
       return updatedItems;
     });
   };
-
 
   const handleConfirmOrder = async () => {
     const token = localStorage.getItem("token");
@@ -120,18 +137,22 @@ const BookingOrders = () => {
     }
 
     if (orderItems.length === 0) {
-      alert("Please select products and set quantities before placing an order.");
+      alert(
+        "Please select products and set quantities before placing an order."
+      );
       return;
     }
 
     // Calculate the total amount based on the order items and product prices
-    const totalAmount = orderItems.reduce((total, item) => {
-      const product = products.find((p) => p.id === item.product_id);
-      if (product) {
-        total += item.quantity * (product.super1 ?? product.originalPrice);
-      }
-      return total;
-    }, 0).toFixed(2); // Round to 2 decimal places
+    const totalAmount = orderItems
+      .reduce((total, item) => {
+        const product = products.find((p) => p.id === item.product_id);
+        if (product) {
+          total += item.quantity * (product.super1 ?? product.originalPrice);
+        }
+        return total;
+      }, 0)
+      .toFixed(2); // Round to 2 decimal places
 
     const orderData = {
       user_id: userId, // Ensure you're passing the correct user ID here
@@ -163,12 +184,9 @@ const BookingOrders = () => {
     setOpenPopup(false);
   };
 
-
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-
 
   const handleImageClick = (imageUrl, product) => {
     setImageModal({
@@ -179,11 +197,9 @@ const BookingOrders = () => {
     });
   };
 
-
   const handleImageModalClose = () => {
     setImageModal({ open: false, imageUrl: "" });
   };
-
 
   return (
     <div style={{ position: "relative", height: "100vh" }}>
@@ -200,29 +216,32 @@ const BookingOrders = () => {
           marginBottom: "10px",
         }}
       >
+        <div>
+          {orderConfirmation && (
+            <Box
+              position="fixed"
+              bottom="85%"
+              left="50%"
+              transform="translateX(-50%)"
+              bgcolor="green"
+              color="white"
+              padding="10px 20px"
+              borderRadius="5px"
+            >
+              Order placed successfully! <br />
+            </Box>
+          )}
+        </div>
 
-        {orderConfirmation && (
-          <Box
-            position="fixed"
-            bottom="85%"
-            left="50%"
-            transform="translateX(-50%)"
-            bgcolor="green"
-            color="white"
-            padding="10px 20px"
-            borderRadius="5px"
-          >
-            Order placed successfully! <br />
-
-          </Box>
-        )}
-
-        <TableContainer component={Paper} sx={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <TableContainer
+          component={Paper}
+          sx={{ maxHeight: "400px", overflowY: "auto" }}
+        >
           <Table>
             <TableHead
               sx={{
-                backgroundColor: '	#DCDCDC',
-                position: 'sticky',
+                backgroundColor: "	#DCDCDC",
+                position: "sticky",
                 top: 0,
                 zIndex: 1,
               }}
@@ -237,61 +256,85 @@ const BookingOrders = () => {
             <TableBody>
               {filteredProducts.map((product) => {
                 const currentQuantity =
-                  orderItems.find((item) => item.product_id === product.id)?.quantity || 0;
+                  orderItems.find((item) => item.product_id === product.id)
+                    ?.quantity || 0;
 
                 return (
                   <TableRow key={product.id}>
                     <TableCell align="center">
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
                         <img
                           src={
                             product.image
                               ? `${imageBaseURL}${product.image}`
-                              : '/path/to/default-image.jpg'
+                              : "/path/to/default-image.jpg"
                           }
                           // onClick={() => handleImageClick(`${imageBaseURL}${product.image}`, product)}
-                          alt={product.name || 'Product Image'}
+                          alt={product.name || "Product Image"}
                           style={{
                             // cursor: "pointer",
-                            width: '100px',
-                            height: 'auto',
-                            objectFit: 'contain',
-                            boxShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
-                            borderRadius: '10px',
+                            width: "100px",
+                            height: "auto",
+                            objectFit: "contain",
+                            boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                            borderRadius: "10px",
                           }}
                         />
-
                       </div>
                     </TableCell>
 
                     <TableCell align="center">{product.name}</TableCell>
 
                     <TableCell align="center">
-                      {product.super1 && product.super1 !== '0.00' ? (
+                      {product.super1 && product.super1 !== "0.00" ? (
                         <>
-                          <span style={{ textDecoration: 'line-through', color: 'red', marginLeft: '5px' }}>
-                            Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.originalPrice))}
+                          <span
+                            style={{
+                              textDecoration: "line-through",
+                              color: "red",
+                              marginLeft: "5px",
+                            }}
+                          >
+                            Rs.{" "}
+                            {new Intl.NumberFormat("en-IN", {
+                              maximumFractionDigits: 2,
+                            }).format(parseFloat(product.originalPrice))}
                           </span>
-                          <span style={{ color: 'green', fontWeight: 'bold' }}>
-                            Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.super1))}
+                          <span style={{ color: "green", fontWeight: "bold" }}>
+                            Rs.{" "}
+                            {new Intl.NumberFormat("en-IN", {
+                              maximumFractionDigits: 2,
+                            }).format(parseFloat(product.super1))}
                           </span>
                         </>
                       ) : (
                         <span>
-                          Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(product.originalPrice))}
+                          Rs.{" "}
+                          {new Intl.NumberFormat("en-IN", {
+                            maximumFractionDigits: 2,
+                          }).format(parseFloat(product.originalPrice))}
                         </span>
                       )}
                     </TableCell>
 
-
                     {/* Quantity Buttons and Input Box */}
                     <TableCell align="center">
-                      <Box display="flex" alignItems="center" justifyContent="center">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
                         <Button
                           variant="outlined"
                           size="small"
                           onClick={() => decrementQuantity(product.id)}
-                          style={{ marginRight: '10px' }}
+                          style={{ marginRight: "10px" }}
                         >
                           -
                         </Button>
@@ -301,7 +344,7 @@ const BookingOrders = () => {
                           value={currentQuantity}
                           onChange={(e) => {
                             let value = e.target.value;
-                            value = value.replace(/^0+/, '') || '0';
+                            value = value.replace(/^0+/, "") || "0";
 
                             const numericValue = parseInt(value, 10) || 0;
 
@@ -309,12 +352,12 @@ const BookingOrders = () => {
                           }}
                           min="0"
                           style={{
-                            width: '70px',
-                            textAlign: 'center',
-                            margin: '0 10px',
-                            padding: '10px !important',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px',
+                            width: "70px",
+                            textAlign: "center",
+                            margin: "0 10px",
+                            padding: "10px !important",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
                           }}
                         />
 
@@ -322,7 +365,7 @@ const BookingOrders = () => {
                           variant="outlined"
                           size="small"
                           onClick={() => incrementQuantity(product.id)}
-                          style={{ marginLeft: '10px' }}
+                          style={{ marginLeft: "10px" }}
                         >
                           +
                         </Button>
@@ -334,7 +377,6 @@ const BookingOrders = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
 
         <Modal open={imageModal.open} onClose={handleImageModalClose}>
           <Box
@@ -349,7 +391,7 @@ const BookingOrders = () => {
               display: "flex", // Flexbox for layout
               gap: 2, // Space between image and text
               alignItems: "center", // Align items vertically
-              padding: '0px'
+              padding: "0px",
             }}
           >
             <Box sx={{ flex: 1 }}>
@@ -375,11 +417,6 @@ const BookingOrders = () => {
             </Box>
           </Box>
         </Modal>
-
-
-
-
-
       </div>
 
       {/* Order Summary Popup */}
@@ -399,7 +436,6 @@ const BookingOrders = () => {
           }}
         >
           <DialogContent sx={{ maxHeight: "500px", overflowY: "auto" }}>
-
             <Box
               sx={{
                 display: "flex",
@@ -410,12 +446,20 @@ const BookingOrders = () => {
             >
               <Typography
                 variant="h6"
-                sx={{ textAlign: "center", marginBottom: "20px", fontWeight: "bold" }}
+                sx={{
+                  textAlign: "center",
+                  marginBottom: "20px",
+                  fontWeight: "bold",
+                }}
               >
                 Order Summary
               </Typography>
               <Box sx={{ height: "60px" }}>
-                <img src={CommonLogos} alt="Keramruth Logo" style={{ height: "150%", marginTop: '-30px' }} />
+                <img
+                  src={CommonLogos}
+                  alt="Keramruth Logo"
+                  style={{ height: "150%", marginTop: "-30px" }}
+                />
               </Box>
             </Box>
             {/* Order Items */}
@@ -436,7 +480,11 @@ const BookingOrders = () => {
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Box
                       component="img"
-                      src={product.image ? `${imageBaseURL}${product.image}` : '/path/to/default-image.jpg'}
+                      src={
+                        product.image
+                          ? `${imageBaseURL}${product.image}`
+                          : "/path/to/default-image.jpg"
+                      }
                       alt={product?.name || "Product Image"}
                       sx={{
                         height: "60px",
@@ -449,17 +497,18 @@ const BookingOrders = () => {
                       }}
                     />
                     <Box>
-                      <Typography variant="body1" >
-                        {product?.name}
-                      </Typography>
-
+                      <Typography variant="body1">{product?.name}</Typography>
                     </Box>
                   </Box>
                   <Box>
                     <Typography variant="body2">
                       ₹{" "}
-                      {Number(product?.super1 || product?.originalPrice)
-                        .toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {Number(
+                        product?.super1 || product?.originalPrice
+                      ).toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Qty: {item.quantity.toLocaleString("en-IN")}
@@ -469,8 +518,13 @@ const BookingOrders = () => {
               );
             })}
             {/* Total Section */}
-            <Box sx={{ marginTop: "20px", borderTop: "1px solid #ddd", paddingTop: "10px" }}>
-
+            <Box
+              sx={{
+                marginTop: "20px",
+                borderTop: "1px solid #ddd",
+                paddingTop: "10px",
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -478,7 +532,9 @@ const BookingOrders = () => {
                   marginBottom: "10px",
                 }}
               >
-                <Typography variant="body1" fontWeight="bold">Total Amount:</Typography>
+                <Typography variant="body1" fontWeight="bold">
+                  Total Amount:
+                </Typography>
                 <Box
                   sx={{
                     display: "flex",
@@ -486,8 +542,6 @@ const BookingOrders = () => {
                     marginBottom: "10px",
                   }}
                 >
-
-
                   <Typography variant="body1">
                     ₹
                     {new Intl.NumberFormat("en-IN", {
@@ -498,9 +552,11 @@ const BookingOrders = () => {
                         (total, item) =>
                           total +
                           item.quantity *
-                          (products.find((p) => p.id === item.product_id)?.super1 ||
-                            products.find((p) => p.id === item.product_id)?.originalPrice ||
-                            0),
+                            (products.find((p) => p.id === item.product_id)
+                              ?.super1 ||
+                              products.find((p) => p.id === item.product_id)
+                                ?.originalPrice ||
+                              0),
                         0
                       )
                     )}
@@ -516,17 +572,26 @@ const BookingOrders = () => {
               </Box>
             </Box>
           </DialogContent>
-          <DialogActions sx={{ justifyContent: "space-between", padding: "20px" }}>
-            <Button onClick={closeOrderSummaryPopup} variant="outlined" color="secondary">
+          <DialogActions
+            sx={{ justifyContent: "space-between", padding: "20px" }}
+          >
+            <Button
+              onClick={closeOrderSummaryPopup}
+              variant="outlined"
+              color="secondary"
+            >
               Modify Order
             </Button>
-            <Button onClick={handleConfirmOrder} variant="contained" color="primary">
+            <Button
+              onClick={handleConfirmOrder}
+              variant="contained"
+              color="primary"
+            >
               Confirm Order
             </Button>
           </DialogActions>
         </Box>
       </Modal>
-
 
       <div
         style={{
@@ -555,7 +620,6 @@ const BookingOrders = () => {
         >
           Book Order
         </Button>
-
       </div>
     </div>
   );

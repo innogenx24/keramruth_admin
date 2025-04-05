@@ -26,16 +26,19 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchMembersRequest, clearMembers } from "../../../redux/slices/member-slice/MemberGetSlice";
+import {
+  fetchMembersRequest,
+  clearMembers,
+} from "../../../redux/slices/member-slice/MemberGetSlice";
 import { deleteMemberRequest } from "../../../redux/slices/member-slice/MemberDeleteSlice";
 import AddMemberForm from "./AddMemberForm";
 import EditMemberForm from "./EditMemberForm";
 import SearchBox from "../../../search-box/SearchBox";
-import axios from 'axios';
+import axios from "axios";
 import { HiMiniUserGroup } from "react-icons/hi2";
-import React, { useRef } from 'react';
-import DeleteButton from "../../../assets/actions/DeleteButton.svg"
-import EditButton from "../../../assets/actions/EditButton.svg"
+import React, { useRef } from "react";
+import DeleteButton from "../../../assets/actions/DeleteButton.svg";
+import EditButton from "../../../assets/actions/EditButton.svg";
 import { API_END_POINT_IMG } from "../../../constants/ApiConstant";
 
 const MemberAdoTable = () => {
@@ -66,22 +69,28 @@ const MemberAdoTable = () => {
   const { users } = useSelector((state) => state.users);
   const UserId = users?.id;
 
+
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role;
 
   useEffect(() => {
     if (role) {
-      const initialRole = role === "Admin" ? "2" :
-        role === "Area Development Officer" ? "3" :
-          role === "Master Distributor" ? "4" :
-            role === "Super Distributor" ? "5" :
-              role === "Distributor" ? "6" : "3";
+      const initialRole =
+        role === "Admin"
+          ? "2"
+          : role === "Area Development Officer"
+          ? "3"
+          : role === "Master Distributor"
+          ? "4"
+          : role === "Super Distributor"
+          ? "5"
+          : role === "Distributor"
+          ? "6"
+          : "3";
       setSelectedRole(initialRole);
       setCurrentPage(1);
     }
   }, [role]);
-
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -192,12 +201,15 @@ const MemberAdoTable = () => {
     setSearchQuery(query);
   };
 
-  const filteredMembersList = membersList.filter((member) =>
-    member?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    member?.mobile_number.toLowerCase().includes(searchQuery.toLowerCase())  // Add search for mobile_number
+  const filteredMembersList = membersList.filter(
+    (member) =>
+      member?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member?.mobile_number.toLowerCase().includes(searchQuery.toLowerCase()) // Add search for mobile_number
   );
 
-  const sortedMembersList = [...filteredMembersList].sort((a, b) => b.id - a.id);
+  const sortedMembersList = [...filteredMembersList].sort(
+    (a, b) => b.id - a.id
+  );
 
   const handleAddMemberClick = () => {
     setEditMember(null);
@@ -223,7 +235,7 @@ const MemberAdoTable = () => {
   };
 
   const handleChangePage = (event, newPage) => {
-    setCurrentPage(newPage + 1);  // Fix page index starting from 1
+    setCurrentPage(newPage + 1); // Fix page index starting from 1
   };
 
   const currentMembers = sortedMembersList.slice(
@@ -233,7 +245,6 @@ const MemberAdoTable = () => {
 
   ///////
   const handleRowClick = (memberId, roleId) => {
-
     // If the current roleId is greater than or equal to 6, navigate to the customer details page
     if (roleId >= 6) {
       navigate(`/dashboard/customer_details/${memberId}/${roleId}`);
@@ -248,9 +259,6 @@ const MemberAdoTable = () => {
       navigate(`/dashboard/members/${memberId}/${nextRoleId}`);
     }
   };
-
-
-
 
   const isScrolling = useRef(false); // Flag to track scrolling
 
@@ -267,9 +275,6 @@ const MemberAdoTable = () => {
       isScrolling.current = false; // Reset after mouse interaction ends
     }, 150);
   };
-
-
-
 
   const renderPagination = (page, setPage, totalRows) => {
     const totalPages = Math.ceil(totalRows / rowsPerPage);
@@ -305,31 +310,44 @@ const MemberAdoTable = () => {
     );
   };
 
-
-
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography variant="h6" sx={{ marginBottom: '20px', color: '#989FA9' }}>
+    <Box sx={{ width: "100%" }}>
+      <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         All Members
       </Typography>
 
       {showTable ? (
         <>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <Box sx={{ width: '100%', marginTop: 2 }}>
-              <SearchBox value={searchQuery} onSearchChange={handleSearchChange} />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <Box sx={{ width: "100%", marginTop: 2 }}>
+              <SearchBox
+                value={searchQuery}
+                onSearchChange={handleSearchChange}
+              />
             </Box>
             <Box sx={{ mb: 2 }}>
-              <Typography sx={{ marginBottom: '16px' }}>Select Role</Typography>
+              <Typography sx={{ marginBottom: "16px" }}>Select Role</Typography>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 {/* Select Role Dropdown */}
-                <FormControl style={{ width: '30%' }}>
+                <FormControl style={{ width: "30%" }}>
                   <Select
                     labelId="role-dropdown-label"
                     value={selectedRole}
                     onChange={(e) => handleChange(e.target.value)}
-                    sx={{ borderRadius: '20px' }}
+                    sx={{ borderRadius: "20px" }}
                   >
                     {roleOptions.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
@@ -340,31 +358,37 @@ const MemberAdoTable = () => {
                 </FormControl>
 
                 {/* Role Count */}
-                <Box sx={{ display: 'flex', alignItems: 'center', mr: 100 }}>
-                  <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
-                    <HiMiniUserGroup size={30} style={{ marginRight: '8px' }} />
-                    {selectedRole === '2' && roleCounts.adoCount}
-                    {selectedRole === '3' && roleCounts.mdCount}
-                    {selectedRole === '4' && roleCounts.sdCount}
-                    {selectedRole === '5' && roleCounts.distributorCount}
-                    {selectedRole === '6' && roleCounts.customerCount}
+                <Box sx={{ display: "flex", alignItems: "center", mr: 100 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    <HiMiniUserGroup size={30} style={{ marginRight: "8px" }} />
+                    {selectedRole === "2" && roleCounts.adoCount}
+                    {selectedRole === "3" && roleCounts.mdCount}
+                    {selectedRole === "4" && roleCounts.sdCount}
+                    {selectedRole === "5" && roleCounts.distributorCount}
+                    {selectedRole === "6" && roleCounts.customerCount}
                   </Typography>
                 </Box>
               </Box>
             </Box>
-
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", p: 2 }}>
             <Button
               variant="contained"
               color="primary"
               onClick={handleAddMemberClick}
               style={{
-                backgroundColor: '#28a745',
-                color: 'white',
-                fontWeight: 'bold',
-                borderRadius: '5px',
+                backgroundColor: "#28a745",
+                color: "white",
+                fontWeight: "bold",
+                borderRadius: "5px",
               }}
             >
               + Add Member
@@ -378,15 +402,32 @@ const MemberAdoTable = () => {
             onMouseUp={handleMouseUp}
           >
             <Table stickyHeader aria-label="Member ADO Table">
-              <TableHead sx={{ backgroundColor: '#DCDCDC' }}>
+              <TableHead sx={{ backgroundColor: "#DCDCDC" }}>
                 <TableRow>
-                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>No.</TableCell>
-                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Username</TableCell>
-                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Full Name</TableCell>
-                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Mobile No.</TableCell>
-                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Role</TableCell>
-                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>Email</TableCell>
-                  {role === 'Admin' && <TableCell style={{ backgroundColor: "#DCDCDC" }}>Action</TableCell>}
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>
+                    No.
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>
+                    Username
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>
+                    Full Name
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>
+                    Mobile No.
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>
+                    Role
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#DCDCDC" }}>
+                    Email
+                  </TableCell>
+                  {(role === "Admin" ||
+                    role === "Area Development Officer") && (
+                    <TableCell style={{ backgroundColor: "#DCDCDC" }}>
+                      Action
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -398,24 +439,32 @@ const MemberAdoTable = () => {
                         handleRowClick(member.id, member.role_id);
                       }
                     }}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                   >
-                    <TableCell>{(currentPage - 1) * rowsPerPage + index + 1}</TableCell>
                     <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                      {(currentPage - 1) * rowsPerPage + index + 1}
+                    </TableCell>
+                    <TableCell>
+                      <div style={{ display: "flex", alignItems: "center" }}>
                         <Avatar
-                          src={member?.image ? `${imageBaseURL}${member.image}` : '/path/to/default-image.jpg'}
+                          src={
+                            member?.image
+                              ? `${imageBaseURL}${member.image}`
+                              : "/path/to/default-image.jpg"
+                          }
                         />
-                        <Typography style={{ marginLeft: '10px' }}>{member?.username}</Typography>
+                        <Typography style={{ marginLeft: "10px" }}>
+                          {member?.username}
+                        </Typography>
                       </div>
                     </TableCell>
                     <TableCell>{member?.full_name}</TableCell>
                     <TableCell>{member?.mobile_number}</TableCell>
                     <TableCell>{member?.role_name}</TableCell>
                     <TableCell>{member?.email}</TableCell>
-                    {role === 'Admin' && (
-                      <TableCell>
-
+                    <TableCell>
+                      {/* Show Delete button only for Admin */}
+                      {role === "Admin" && (
                         <IconButton
                           color="secondary"
                           onClick={(e) => {
@@ -423,7 +472,6 @@ const MemberAdoTable = () => {
                             handleDeleteOpen(member);
                           }}
                           style={{ marginRight: "5px" }}
-
                         >
                           <img
                             src={DeleteButton}
@@ -436,7 +484,11 @@ const MemberAdoTable = () => {
                             }}
                           />
                         </IconButton>
+                      )}
 
+                      {/* Show Edit button for both Admin and Area Development Officer */}
+                      {(role === "Admin" ||
+                        role === "Area Development Officer") && (
                         <IconButton
                           color="primary"
                           onClick={(e) => {
@@ -455,8 +507,8 @@ const MemberAdoTable = () => {
                             }}
                           />
                         </IconButton>
-                      </TableCell>
-                    )}
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -464,10 +516,12 @@ const MemberAdoTable = () => {
           </TableContainer>
 
           <div style={{ marginTop: "10px" }}>
-            {renderPagination(currentPage, setCurrentPage, sortedMembersList.length)}
+            {renderPagination(
+              currentPage,
+              setCurrentPage,
+              sortedMembersList.length
+            )}
           </div>
-
-
         </>
       ) : editMember ? (
         <EditMemberForm member={editMember} />

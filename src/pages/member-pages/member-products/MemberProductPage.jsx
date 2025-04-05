@@ -73,7 +73,7 @@ const MemberProductPage = () => {
     { id: 'no', label: 'No.' },
     { id: 'image', label: 'Product Image' },
     { id: 'name', label: 'Product Name' },
-    { id: 'stock_quantity', label: 'Stock Quantity' },
+    { id: 'stock_quantity', label: 'Stock Available Quantity' },
     { id: 'category_name', label: 'Category Name' },
     { id: 'productVolume', label: 'Product Volume' },
     { id: 'price', label: 'MRP' },

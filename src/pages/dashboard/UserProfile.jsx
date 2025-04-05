@@ -76,7 +76,7 @@ function UserProfile() {
             </Typography>
             <Box mt={2}>
               <Typography variant="body2" align="center">
-                {users?.building_no_name}, {users?.street_name}, {users?.city},
+                {users?.building_no_name}, {users?.street_name}, {users?.district},
                 <br /> {users?.state}, {users?.pincode}
               </Typography>
               <Typography variant="body2" align="center">

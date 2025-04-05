@@ -19,6 +19,12 @@ const SalesPage = () => {
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const token = localStorage.getItem("token");
 
+  
+const user = JSON.parse(localStorage.getItem("user"));
+const role = user?.role;
+
+const salesTitle = role === "Admin" ? "Company Total Sales:" : "My Total Sales:";
+
   useEffect(() => {
     const fetchSalesData = async () => {
         if (!selectedDate) return;
@@ -163,7 +169,7 @@ const SalesPage = () => {
               <SalesCard
                 title={
                   <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.85rem' }, color: '#333' }}>
-                    {' '}{getRoleAbbreviation(companyOverallSales.roleName)}
+                    {' '}{getRoleAbbreviation(salesTitle)}
                     <Typography variant="caption" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, color: '#7e84a3' }}>
                       {' '} ({companyOverallSales.totalUsers})
                     </Typography>

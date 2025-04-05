@@ -59,18 +59,22 @@ const SignIn = () => {
   });
 
   useEffect(() => {
-    if (isAuthenticated) {
-      if (user?.role === "Admin") {
+    if (isAuthenticated && user) {
+      if (user.role === "Admin") {
         navigate("/dashboard");
-      } else if (user?.role === "Customer") {
+      } else if (user.role === "Customer") {
         navigate("/dashboard/book-orders");
       } else {
         navigate("/dashboard");
       }
+  
+      // Request push notification token only for non-admin users
+      if (user.id && user.role !== "Admin") {
+        requestForToken(user.id, user.role);
+      }
     }
-    requestForToken(user?.id, user?.role);
-
   }, [isAuthenticated, navigate, user]);
+  
 
   useEffect(() => {
     const storedMobileNumber =

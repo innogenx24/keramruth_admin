@@ -11,7 +11,12 @@ import {
   Typography,
   Button,
   Box,
-  TextField
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -21,23 +26,29 @@ const OrderDetails = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cancellingOrderId, setCancellingOrderId] = useState(null);
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
+  const [orderToCancel, setOrderToCancel] = useState(null);
   const navigate = useNavigate();
   const { users } = useSelector((state) => state.users);
-  const userId = users?.id; // Assuming the user ID is stored in the state.users object
-  const roleId = users?.role_id; // Assuming the user's role_id is stored in the users object
-  const [page, setPage] = useState(0); // Current page state
+  const userId = users?.id;
+  const roleId = users?.role_id;
+  const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(10);
   const API_END_POINT = import.meta.env.VITE_API_ENDPOINT;
   const [orderIdFilter, setorderIdFilter] = useState("");
 
   useEffect(() => {
+    fetchOrders();
+  }, [userId]);
+
+  const fetchOrders = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Token not found. Please log in.");
       return;
     }
 
-    // Fetch orders for the user
     axios
       .get(`${API_END_POINT}/orders/get-order/${userId}`, {
         headers: {
@@ -45,7 +56,7 @@ const OrderDetails = () => {
         },
       })
       .then((response) => {
-        const sortedOrders = response.data.orders.sort((a, b) => b.id - a.id); // Sort orders by ID in descending order
+        const sortedOrders = response.data.orders.sort((a, b) => b.id - a.id);
         setOrders(sortedOrders);
         setLoading(false);
       })
@@ -53,9 +64,8 @@ const OrderDetails = () => {
         console.error("Error fetching orders:", error);
         setLoading(false);
       });
-  }, [userId]);
+  };
 
-  // Handle row click to toggle product details
   const handleRowClick = (orderId) => {
     setSelectedOrderId(selectedOrderId === orderId ? null : orderId);
   };
@@ -71,14 +81,54 @@ const OrderDetails = () => {
         },
       });
     } else {
-      // No product found
       console.log("No product found in this order:", order);
       alert("No product found in this order.");
     }
   };
 
+  const handleOpenCancelDialog = (orderId, e) => {
+    e.stopPropagation();
+    setOrderToCancel(orderId);
+    setOpenCancelDialog(true);
+  };
 
+  const handleCloseCancelDialog = () => {
+    setOpenCancelDialog(false);
+    setOrderToCancel(null);
+  };
 
+  const handleCancelOrder = () => {
+    if (!orderToCancel) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Token not found. Please log in.");
+      return;
+    }
+
+    setCancellingOrderId(orderToCancel);
+    
+    axios
+      .put(
+        `${API_END_POINT}/orders/cancel-order/${orderToCancel}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        fetchOrders(); // Refresh the orders list
+      })
+      .catch((error) => {
+        console.error("Error cancelling order:", error);
+      })
+      .finally(() => {
+        setCancellingOrderId(null);
+        handleCloseCancelDialog();
+      });
+  };
 
   const renderPagination = (page, setPage, totalRows) => (
     <div style={{ display: "flex", justifyContent: "right", alignItems: "center", gap: "15px" }}>
@@ -103,15 +153,13 @@ const OrderDetails = () => {
   );
 
   const filteredOrders = orderIdFilter
-  ? orders.filter((order) =>
-      order.order_id && order.order_id.toString().includes(orderIdFilter.trim())
-    )
-  : orders;
+    ? orders.filter((order) =>
+        order.order_id && order.order_id.toString().includes(orderIdFilter.trim())
+      )
+    : orders;
 
+  const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
-const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
-
-  
   const handleSearchOrderId = (e) => {
     const { value } = e.target;
     setorderIdFilter(value); 
@@ -122,6 +170,34 @@ const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * ro
       <Typography variant="h6" sx={{ marginBottom: "20px", color: "#989FA9" }}>
         Order Details
       </Typography>
+
+      {/* Cancel Order Confirmation Dialog */}
+      <Dialog
+        open={openCancelDialog}
+        onClose={handleCloseCancelDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Cancellation</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to cancel this order?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCancelDialog} color="primary">
+            No
+          </Button>
+          <Button 
+            onClick={handleCancelOrder} 
+            color="error"
+            autoFocus
+            disabled={cancellingOrderId === orderToCancel}
+          >
+            {cancellingOrderId === orderToCancel ? "Cancelling..." : "Yes, Cancel"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
         <TextField
@@ -149,14 +225,13 @@ const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * ro
               <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Total Order Quantity</TableCell>
               <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Order Date</TableCell>
               <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Status</TableCell>
+              <TableCell sx={{ backgroundColor: '#DCDCDC' }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-
-
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={7} align="center">
                   Loading...
                 </TableCell>
               </TableRow>
@@ -172,13 +247,11 @@ const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * ro
                     <TableCell>
                       Rs. {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(parseFloat(order.total_amount).toFixed(2))}
                     </TableCell>
-
                     <TableCell>
                       {new Intl.NumberFormat('en-IN').format(
                         order.OrderItems?.reduce((total, item) => total + item.quantity, 0)
                       ) || "0"}
                     </TableCell>
-
                     <TableCell>
                       {order.createdAt}
                     </TableCell>
@@ -196,11 +269,24 @@ const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * ro
                     >
                       {order.status}
                     </TableCell>
+                    <TableCell>
+                      {order.status === "Pending" && (
+                        <Button
+                          variant="contained"
+                          color="error"
+                          size="small"
+                          onClick={(e) => handleOpenCancelDialog(order.id, e)}
+                          disabled={cancellingOrderId === order.id}
+                        >
+                          {cancellingOrderId === order.id ? "Cancelling..." : "Cancel Order"}
+                        </Button>
+                      )}
+                    </TableCell> 
                   </TableRow>
 
                   {/* Product Details Collapse */}
                   <TableRow>
-                    <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                    <TableCell colSpan={7} style={{ paddingBottom: 0, paddingTop: 0 }}>
                       <Collapse in={selectedOrderId === order.id} timeout="auto" unmountOnExit>
                         <Table size="small">
                           <TableHead
@@ -256,10 +342,8 @@ const paginatedOrders = filteredOrders.slice(page * rowsPerPage, (page + 1) * ro
                                       </Button>
                                     )}
                                   </TableCell>
-
                                 )}
                               </TableRow>
-
                             ))}
                           </TableBody>
                         </Table>

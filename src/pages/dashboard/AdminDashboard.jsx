@@ -27,23 +27,23 @@ import { signOut } from "../../redux/slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUsersRequest } from "../../redux/slices/user-profile-slice/UserGetSlice";
 import { FaCodePullRequest } from "react-icons/fa6";
-import PendingActionsIcon from '@mui/icons-material/PendingActions';
-import DescriptionIcon from '@mui/icons-material/Description';
-import EditNoteIcon from '@mui/icons-material/EditNote'; // If you want an edit note icon
-import NotificationsIcon from '@mui/icons-material/Notifications'; // Bell style icon
-import TrackChangesIcon from '@mui/icons-material/TrackChanges'; // Target icon
-import GroupsIcon from '@mui/icons-material/Groups'; // Represents a community or club
-import CategoryIcon from '@mui/icons-material/Category'; // Icon for categories
-import BusinessIcon from '@mui/icons-material/Business'; // Business sector
-import TimerIcon from '@mui/icons-material/Timer'; // Specific timer icon
-import { FaUserTie } from 'react-icons/fa';  // FontAwesome Role Icon (Professional Role)
+import PendingActionsIcon from "@mui/icons-material/PendingActions";
+import DescriptionIcon from "@mui/icons-material/Description";
+import EditNoteIcon from "@mui/icons-material/EditNote"; // If you want an edit note icon
+import NotificationsIcon from "@mui/icons-material/Notifications"; // Bell style icon
+import TrackChangesIcon from "@mui/icons-material/TrackChanges"; // Target icon
+import GroupsIcon from "@mui/icons-material/Groups"; // Represents a community or club
+import CategoryIcon from "@mui/icons-material/Category"; // Icon for categories
+import BusinessIcon from "@mui/icons-material/Business"; // Business sector
+import TimerIcon from "@mui/icons-material/Timer"; // Specific timer icon
+import { FaUserTie } from "react-icons/fa"; // FontAwesome Role Icon (Professional Role)
 import { RiFeedbackFill } from "react-icons/ri";
 import { BiBook } from "react-icons/bi";
 import { FaBook } from "react-icons/fa";
-import { FaHeadset } from 'react-icons/fa';
+import { FaHeadset } from "react-icons/fa";
 // import HomeIcon from "@mui/icons-material/Home";
-import { Home as HomeIcon } from '@mui/icons-material'; // Import the HomeIcon from MUI
-import { FaShoppingCart, FaCheckCircle } from 'react-icons/fa'; // Importing shopping cart icon
+import { Home as HomeIcon } from "@mui/icons-material"; // Import the HomeIcon from MUI
+import { FaShoppingCart, FaCheckCircle } from "react-icons/fa"; // Importing shopping cart icon
 import ReportIcon from "@mui/icons-material/Assessment";
 import { fetchNotificationsStart } from "../../redux/slices/notification-slice/notificationsSlice";
 import { API_END_POINT_IMG } from "../../constants/ApiConstant";
@@ -152,9 +152,9 @@ export default function AdminDashboard() {
     dispatch(fetchUsersRequest());
   }, [dispatch]);
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     dispatch(signOut());
-    navigate('/signin');
+    navigate("/signin");
   };
 
   React.useEffect(() => {
@@ -194,9 +194,10 @@ export default function AdminDashboard() {
     }));
 
     // Determine which menu array to use based on the role
-    const selectedMenu = loginUserRole === "Admin"
-      ? menuItems
-      : loginUserRole === "Customer"
+    const selectedMenu =
+      loginUserRole === "Admin"
+        ? menuItems
+        : loginUserRole === "Customer"
         ? customermenuItems
         : menuItemsUsers;
 
@@ -227,26 +228,21 @@ export default function AdminDashboard() {
     navigate(path);
   };
 
-  let loginUser = JSON.parse(localStorage.getItem('user'));
+  let loginUser = JSON.parse(localStorage.getItem("user"));
   let loginUserRole = loginUser ? loginUser.role : null;
-
-
-
 
   /////**********Notification count Logics***********/////
 
   const loginUserID = loginUser ? loginUser.id : null;
 
   const handleNotificationClick = () => {
-    navigate('/dashboard/notification')
+    navigate("/dashboard/notification");
   };
-
 
   // Fetch notifications using Redux
   const { notifications, loading, error } = useSelector(
     (state) => state.notifications
   );
-
 
   useEffect(() => {
     if (loginUserRole) {
@@ -255,14 +251,11 @@ export default function AdminDashboard() {
   }, [loginUserRole, dispatch]);
 
   // Calculate unread notifications count
-  const unreadCount = notifications.filter((notification) => !notification.is_read).length;
-
-
-
-
+  const unreadCount = notifications.filter(
+    (notification) => !notification.is_read
+  ).length;
 
   const customermenuItems = [
-
     {
       text: "Book Order",
       path: "/dashboard/book-orders",
@@ -294,8 +287,7 @@ export default function AdminDashboard() {
       path: "/dashboard/customer-support",
       icon: <FaHeadset />,
     },
-  ]
-
+  ];
 
   const menuItemsUsers = [
     {
@@ -329,6 +321,22 @@ export default function AdminDashboard() {
       path: "/dashboard/place-orders",
       icon: <FaCheckCircle />,
     },
+    ...(loginUserRole === "Area Development Officer"
+      ? [
+          {
+            text: "Requests",
+            icon: <FaCodePullRequest />,
+            subItems: [
+              {
+                text: "Edit Request",
+                path: "/dashboard/edit-request",
+                default: true,
+                icon: <EditNoteIcon />,
+              },
+            ],
+          },
+        ]
+      : []),
     {
       text: "Feedback",
       path: "/dashboard/feedback",
@@ -350,22 +358,22 @@ export default function AdminDashboard() {
       path: "/dashboard/media-news",
       icon: <PiNewspaperClippingFill />,
     },
-     // Conditionally render "Member Reports"
-  ...(loginUserRole !== "Distributor"
-    ? [
-        {
-          text: "Member Reports",
-          path: "/dashboard/report",
-          icon: <ReportIcon />,
-        },
-      ]
-    : []),
+    // Conditionally render "Member Reports"
+    ...(loginUserRole !== "Distributor"
+      ? [
+          {
+            text: "Member Reports",
+            path: "/dashboard/report",
+            icon: <ReportIcon />,
+          },
+        ]
+      : []),
     {
       text: "My Report",
       path: "/dashboard/targets",
       icon: <TrackChangesIcon />,
     },
-  ]
+  ];
   const menuItems = [
     {
       text: "HomePage",
@@ -412,7 +420,6 @@ export default function AdminDashboard() {
       text: "Reports",
       path: "/dashboard/report",
       icon: <ReportIcon />,
-
     },
     {
       text: "Requests",
@@ -435,7 +442,8 @@ export default function AdminDashboard() {
     {
       text: "Masters",
       icon: <AdminPanelSettingsIcon />,
-      subItems: [,
+      subItems: [
+        ,
         // {
         //   text: "Sales Target",
         //   path: "/dashboard/sales-target",
@@ -447,7 +455,11 @@ export default function AdminDashboard() {
           icon: <TrackChangesIcon />,
         },
         { text: "Club", path: "/dashboard/club", icon: <GroupsIcon /> },
-        { text: "Category", path: "/dashboard/category", icon: <CategoryIcon /> },
+        {
+          text: "Category",
+          path: "/dashboard/category",
+          icon: <CategoryIcon />,
+        },
         {
           text: "Sector",
           path: "/dashboard/sector",
@@ -578,7 +590,8 @@ export default function AdminDashboard() {
   }) => {
     const isActive = location.pathname === item.path; // Active if exact path matches
     const isParentActive =
-      item.subItems && item.subItems.some((sub) => location.pathname === sub.path);
+      item.subItems &&
+      item.subItems.some((sub) => location.pathname === sub.path);
 
     return (
       <React.Fragment>
@@ -589,10 +602,11 @@ export default function AdminDashboard() {
             "&:hover": { backgroundColor: "transparent" },
             ...(isActive || isParentActive || openExpand[item.text]
               ? {
-                background: "linear-gradient(90deg, #01C572 0%, #187E53 100%)",
-                color: "#000",
-                borderRadius: "4px 4px 0 0",
-              }
+                  background:
+                    "linear-gradient(90deg, #01C572 0%, #187E53 100%)",
+                  color: "#000",
+                  borderRadius: "4px 4px 0 0",
+                }
               : {}),
           }}
         >
@@ -612,7 +626,11 @@ export default function AdminDashboard() {
             </ListItemIcon>
             <ListItemText primary={item.text} />
             {item.subItems ? (
-              openExpand[item.text] ? <ExpandLess /> : <ExpandMore />
+              openExpand[item.text] ? (
+                <ExpandLess />
+              ) : (
+                <ExpandMore />
+              )
             ) : null}
           </ListItemButton>
         </ListItem>
@@ -666,7 +684,9 @@ export default function AdminDashboard() {
                         fontWeight: 500,
                         fontSize: "16px",
                         color:
-                          location.pathname === subItem.path ? "#000" : "#2a2a2a",
+                          location.pathname === subItem.path
+                            ? "#000"
+                            : "#2a2a2a",
                       }}
                     />
                   </ListItemButton>
@@ -678,7 +698,6 @@ export default function AdminDashboard() {
       </React.Fragment>
     );
   };
-
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -724,16 +743,14 @@ export default function AdminDashboard() {
               sx={{
                 color: "black",
                 fontWeight: 500,
-                fontSize: "1rem", 
+                fontSize: "1rem",
               }}
             >
               {users?.full_name}
             </Typography>
 
             {/* Notifications Icon */}
-            <IconButton
-              onClick={handleNotificationClick}
-            >
+            <IconButton onClick={handleNotificationClick}>
               <Badge
                 badgeContent={unreadCount > 0 ? unreadCount : null}
                 color="primary"
@@ -765,15 +782,11 @@ export default function AdminDashboard() {
               Logout
             </Typography>
           </div>
-
-
         </Toolbar>
       </AppBar>
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          
-
           <Box
             sx={{
               display: "flex",
@@ -804,8 +817,7 @@ export default function AdminDashboard() {
             )}
           </IconButton>
         </DrawerHeader>
-        <List sx={{ padding: '15px',marginTop:'10px' }}>
-
+        <List sx={{ padding: "15px", marginTop: "10px" }}>
           {/* {menuItems.map((item) => (
             <MenuItem
               key={item.text}
@@ -817,44 +829,38 @@ export default function AdminDashboard() {
             />
           ))} */}
 
-          {loginUserRole === 'Admin' ? (
-            menuItems.map((item) => (
-              <MenuItem
-                key={item.text}
-                item={item}
-                openExpand={openExpand}
-                handleClick={handleClick}
-                handleItemClick={handleItemClick}
-                location={location}
-              />
-            ))
-          ) : loginUserRole === 'Customer' ? (
-            customermenuItems.map((item) => (
-              <MenuItem
-                key={item.text}
-                item={item}
-                openExpand={openExpand}
-                handleClick={handleClick}
-                handleItemClick={handleItemClick}
-                location={location}
-              />
-            ))
-          ) : (
-            menuItemsUsers.map((item) => (
-              <MenuItem
-                key={item.text}
-                item={item}
-                openExpand={openExpand}
-                handleClick={handleClick}
-                handleItemClick={handleItemClick}
-                location={location}
-              />
-            ))
-          )}
-
-
-
-
+          {loginUserRole === "Admin"
+            ? menuItems.map((item) => (
+                <MenuItem
+                  key={item.text}
+                  item={item}
+                  openExpand={openExpand}
+                  handleClick={handleClick}
+                  handleItemClick={handleItemClick}
+                  location={location}
+                />
+              ))
+            : loginUserRole === "Customer"
+            ? customermenuItems.map((item) => (
+                <MenuItem
+                  key={item.text}
+                  item={item}
+                  openExpand={openExpand}
+                  handleClick={handleClick}
+                  handleItemClick={handleItemClick}
+                  location={location}
+                />
+              ))
+            : menuItemsUsers.map((item) => (
+                <MenuItem
+                  key={item.text}
+                  item={item}
+                  openExpand={openExpand}
+                  handleClick={handleClick}
+                  handleItemClick={handleItemClick}
+                  location={location}
+                />
+              ))}
         </List>
       </Drawer>
       <Box

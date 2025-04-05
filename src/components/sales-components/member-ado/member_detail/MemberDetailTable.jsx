@@ -259,7 +259,7 @@ const MemberDetailTable = () => {
     } catch (error) {
       console.error("Error fetching role counts:", error);
     }
-};
+  };
 
   useEffect(() => {
     if (memberID) {
@@ -837,8 +837,9 @@ const MemberDetailTable = () => {
                   <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
                     Email
                   </TableCell>
-                  {role === "Admin" && (
-                    <TableCell sx={{ backgroundColor: "#DCDCDC" }}>
+                  {(role === "Admin" ||
+                    role === "Area Development Officer") && (
+                    <TableCell style={{ backgroundColor: "#DCDCDC" }}>
                       Action
                     </TableCell>
                   )}
@@ -896,50 +897,53 @@ const MemberDetailTable = () => {
                         <TableCell>{member?.mobile_number}</TableCell>
                         <TableCell>{member?.role_name}</TableCell>
                         <TableCell>{member?.email}</TableCell>
-                        {role === "Admin" && (
-                          <TableCell>
-                            <div style={{ display: "flex" }}>
-                              <IconButton
-                                color="secondary"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleDeleteOpen(member);
+                        <TableCell>
+                          {/* Show Delete button only for Admin */}
+                          {role === "Admin" && (
+                            <IconButton
+                              color="secondary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteOpen(member);
+                              }}
+                              style={{ marginRight: "5px" }}
+                            >
+                              <img
+                                src={DeleteButton}
+                                alt="Delete"
+                                style={{
+                                  width: "30px",
+                                  height: "30px",
+                                  objectFit: "contain",
+                                  transform: "scale(1.5)",
                                 }}
-                                style={{ marginRight: "5px" }}
-                              >
-                                <img
-                                  src={DeleteButton}
-                                  alt="Delete"
-                                  style={{
-                                    width: "30px",
-                                    height: "30px",
-                                    objectFit: "contain",
-                                    transform: "scale(1.5)",
-                                  }}
-                                />
-                              </IconButton>
+                              />
+                            </IconButton>
+                          )}
 
-                              <IconButton
-                                color="primary"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleEditMemberClick(member);
+                          {/* Show Edit button for both Admin and Area Development Officer */}
+                          {(role === "Admin" ||
+                            role === "Area Development Officer") && (
+                            <IconButton
+                              color="primary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditMemberClick(member);
+                              }}
+                            >
+                              <img
+                                src={EditButton}
+                                alt="Edit"
+                                style={{
+                                  width: "30px",
+                                  height: "30px",
+                                  objectFit: "contain",
+                                  transform: "scale(1.5)",
                                 }}
-                              >
-                                <img
-                                  src={EditButton}
-                                  alt="Edit"
-                                  style={{
-                                    width: "30px",
-                                    height: "30px",
-                                    objectFit: "contain",
-                                    transform: "scale(1.5)",
-                                  }}
-                                />
-                              </IconButton>
-                            </div>
-                          </TableCell>
-                        )}
+                              />
+                            </IconButton>
+                          )}
+                        </TableCell>
                       </TableRow>
                     ))
                 )}
