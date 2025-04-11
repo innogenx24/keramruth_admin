@@ -43,9 +43,9 @@ const BookingOrders = () => {
     if (orderConfirmation) {
       const timer = setTimeout(() => {
         setOrderConfirmation(false);
-      }, 2000); 
+      }, 2000);
 
-      return () => clearTimeout(timer); 
+      return () => clearTimeout(timer);
     }
   }, [orderConfirmation]);
 
@@ -233,7 +233,7 @@ const BookingOrders = () => {
           )}
         </div>
 
-        <TableContainer
+        {/* <TableContainer
           component={Paper}
           sx={{ maxHeight: "400px", overflowY: "auto" }}
         >
@@ -275,10 +275,144 @@ const BookingOrders = () => {
                               ? `${imageBaseURL}${product.image}`
                               : "/path/to/default-image.jpg"
                           }
-                          // onClick={() => handleImageClick(`${imageBaseURL}${product.image}`, product)}
                           alt={product.name || "Product Image"}
                           style={{
-                            // cursor: "pointer",
+                            width: "100px",
+                            height: "auto",
+                            objectFit: "contain",
+                            boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.2)",
+                            borderRadius: "10px",
+                          }}
+                        />
+                      </div>
+                    </TableCell>
+
+                    <TableCell align="center">{product.name}</TableCell>
+
+                    <TableCell align="center">
+                      {product.super1 && product.super1 !== "0.00" ? (
+                        <>
+                          <span
+                            style={{
+                              textDecoration: "line-through",
+                              color: "red",
+                              marginLeft: "5px",
+                            }}
+                          >
+                            Rs.{" "}
+                            {new Intl.NumberFormat("en-IN", {
+                              maximumFractionDigits: 2,
+                            }).format(parseFloat(product.originalPrice))}
+                          </span>
+                          <span style={{ color: "green", fontWeight: "bold" }}>
+                            Rs.{" "}
+                            {new Intl.NumberFormat("en-IN", {
+                              maximumFractionDigits: 2,
+                            }).format(parseFloat(product.super1))}
+                          </span>
+                        </>
+                      ) : (
+                        <span>
+                          Rs.{" "}
+                          {new Intl.NumberFormat("en-IN", {
+                            maximumFractionDigits: 2,
+                          }).format(parseFloat(product.originalPrice))}
+                        </span>
+                      )}
+                    </TableCell>
+
+                    <TableCell align="center">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => decrementQuantity(product.id)}
+                          style={{ marginRight: "10px" }}
+                        >
+                          -
+                        </Button>
+
+                        <input
+                          type="text"
+                          value={currentQuantity}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            value = value.replace(/^0+/, "") || "0";
+
+                            const numericValue = parseInt(value, 10) || 0;
+
+                            handleQuantityChange(product.id, numericValue);
+                          }}
+                          min="0"
+                          style={{
+                            width: "70px",
+                            textAlign: "center",
+                            margin: "0 10px",
+                            padding: "10px !important",
+                            border: "1px solid #ccc",
+                            borderRadius: "4px",
+                          }}
+                        />
+
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => incrementQuantity(product.id)}
+                          style={{ marginLeft: "10px" }}
+                        >
+                          +
+                        </Button>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer> */}
+
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead
+              sx={{
+                backgroundColor: "#DCDCDC",
+              }}
+            >
+              <TableRow>
+                <TableCell align="center">Image</TableCell>
+                <TableCell align="center">Product Name</TableCell>
+                <TableCell align="center">Price</TableCell>
+                <TableCell align="center">Quantity</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredProducts.map((product) => {
+                const currentQuantity =
+                  orderItems.find((item) => item.product_id === product.id)
+                    ?.quantity || 0;
+
+                return (
+                  <TableRow key={product.id}>
+                    <TableCell align="center">
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img
+                          src={
+                            product.image
+                              ? `${imageBaseURL}${product.image}`
+                              : "/path/to/default-image.jpg"
+                          }
+                          alt={product.name || "Product Image"}
+                          style={{
                             width: "100px",
                             height: "auto",
                             objectFit: "contain",

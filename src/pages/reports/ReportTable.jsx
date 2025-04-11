@@ -127,7 +127,7 @@
 //         `${API_END_POINT}/user_sales_detail/sales_achievement/${roleId}/${userId}`
 //       );
 //       const data = await response.json();
-      
+
 //       // Ensure we always return an object with monthlyDetails array
 //       return {
 //         ...data,
@@ -165,7 +165,7 @@
 //     // Find data for the selected month/year
 //     const selectedMonth = format(selectedDate, 'MMMM');
 //     const selectedYear = selectedDate.getFullYear();
-    
+
 //     const matchingData = monthlyDetails.find(
 //       detail => detail.month === selectedMonth && detail.year === selectedYear
 //     );
@@ -544,7 +544,7 @@
 //                       {new Intl.NumberFormat("en-IN").format(
 //                         monthlyData.AchievementAmount || 0
 //                       )}
-                      
+
 //                     </TableCell>
 //                     <TableCell sx={{ whiteSpace: "nowrap" }}>
 //                       {new Intl.NumberFormat("en-IN").format(
@@ -554,7 +554,7 @@
 //                       {new Intl.NumberFormat("en-IN").format(
 //                         monthlyData.StockAchievement || 0
 //                       )}
-                     
+
 //                     </TableCell>
 //                   </TableRow>
 //                 );
@@ -578,11 +578,6 @@
 //     </Box>
 //   );
 // }
-
-
-
-
-
 
 // import React, { useState, useEffect } from "react";
 // import {
@@ -714,7 +709,7 @@
 //         `${API_END_POINT}/user_sales_detail/sales_achievement/${roleId}/${userId}`
 //       );
 //       const data = await response.json();
-      
+
 //       return {
 //         ...data,
 //         monthlyDetails: data.monthlyDetails || []
@@ -748,7 +743,7 @@
 
 //     const selectedMonth = format(selectedDate, 'MMMM');
 //     const selectedYear = selectedDate.getFullYear();
-    
+
 //     const matchingData = monthlyDetails.find(
 //       detail => detail.month === selectedMonth && detail.year === selectedYear
 //     );
@@ -775,13 +770,13 @@
 //     try {
 //       const response = await fetch(`${API_END_POINT}/user/reports/${userId}`);
 //       const data = await response.json();
-      
+
 //       // Check if any data exists in any of the user arrays
-//       const hasData = data.mdUsers?.length > 0 || 
-//                      data.sdUsers?.length > 0 || 
-//                      data.distributorUsers?.length > 0 || 
+//       const hasData = data.mdUsers?.length > 0 ||
+//                      data.sdUsers?.length > 0 ||
+//                      data.distributorUsers?.length > 0 ||
 //                      data.adoUsers?.length > 0;
-      
+
 //       if (!hasData) {
 //         setRows([]);
 //         setFilteredData([]);
@@ -941,8 +936,8 @@
 //           {fetchError || "No data available for the selected criteria"}
 //         </Typography>
 //         {fetchError && (
-//           <Button 
-//             variant="outlined" 
+//           <Button
+//             variant="outlined"
 //             sx={{ mt: 2 }}
 //             onClick={fetchUserCounts}
 //           >
@@ -1176,10 +1171,6 @@
 //     </Box>
 //   );
 // }
-
-
-
-
 
 import React, { useState, useEffect } from "react";
 import {
@@ -1747,123 +1738,120 @@ export default function ReportTable() {
           />
         </FormGroup>
       </Box>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <TableContainer sx={{ maxHeight: 500, overflowY: "auto" }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead sx={{ backgroundColor: "#DCDCDC" }} >
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold", backgroundColor: "#DCDCDC"}}>No.</TableCell>
+                <TableCell sx={{ fontWeight: "bold", backgroundColor: "#DCDCDC" }}>Username</TableCell>
+                <TableCell sx={{ fontWeight: "bold", backgroundColor: "#DCDCDC" }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: "bold", backgroundColor: "#DCDCDC" }}>Role</TableCell>
+                <TableCell sx={{ fontWeight: "bold", backgroundColor: "#DCDCDC" }}>District</TableCell>
+                <TableCell sx={{ fontWeight: "bold", backgroundColor: "#DCDCDC" }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: "bold", backgroundColor: "#DCDCDC", whiteSpace: "nowrap" }}>
+                  Sales Target/Achievement (Rs)
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold", whiteSpace: "nowrap", backgroundColor: "#DCDCDC" }}>
+                  Stock Target/Achievement (Rs)
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {isLoading
+                ? renderLoadingState()
+                : filteredData.length === 0
+                ? renderNoDataState()
+                : paginatedData.map((row, index) => {
+                    const monthlyData = row.salesAchievement?.monthlyData || [];
+                    const isExpanded = expandedRows[row.id] || false;
 
-      <TableContainer
-        component={Paper}
-        sx={{ maxHeight: 500, overflowY: "auto" }}
-      >
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead
-            sx={{ backgroundColor: "#DCDCDC", position: "sticky", top: 0 }}
-          >
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>No.</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Username</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Role</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>District</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: "bold", whiteSpace: "nowrap" }}>
-                Sales Target/Achievement (Rs)
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", whiteSpace: "nowrap" }}>
-                Stock Target/Achievement (Rs)
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {isLoading
-              ? renderLoadingState()
-              : filteredData.length === 0
-              ? renderNoDataState()
-              : paginatedData.map((row, index) => {
-                  const monthlyData = row.salesAchievement?.monthlyData || [];
-                  const isExpanded = expandedRows[row.id] || false;
+                    // Calculate totals
+                    const totals = monthlyData.reduce(
+                      (acc, monthData) => ({
+                        MonthlyTargetAmount:
+                          acc.MonthlyTargetAmount +
+                          (monthData.MonthlyTargetAmount || 0),
+                        AchievementAmount:
+                          acc.AchievementAmount +
+                          (monthData.AchievementAmount || 0),
+                        StockTarget:
+                          acc.StockTarget + (monthData.StockTarget || 0),
+                        StockAchievement:
+                          acc.StockAchievement +
+                          (monthData.StockAchievement || 0),
+                      }),
+                      {
+                        MonthlyTargetAmount: 0,
+                        AchievementAmount: 0,
+                        StockTarget: 0,
+                        StockAchievement: 0,
+                      }
+                    );
 
-                  // Calculate totals
-                  const totals = monthlyData.reduce(
-                    (acc, monthData) => ({
-                      MonthlyTargetAmount:
-                        acc.MonthlyTargetAmount +
-                        (monthData.MonthlyTargetAmount || 0),
-                      AchievementAmount:
-                        acc.AchievementAmount +
-                        (monthData.AchievementAmount || 0),
-                      StockTarget:
-                        acc.StockTarget + (monthData.StockTarget || 0),
-                      StockAchievement:
-                        acc.StockAchievement +
-                        (monthData.StockAchievement || 0),
-                    }),
-                    {
-                      MonthlyTargetAmount: 0,
-                      AchievementAmount: 0,
-                      StockTarget: 0,
-                      StockAchievement: 0,
-                    }
-                  );
-
-                  return (
-                    <React.Fragment key={row.id}>
-                      <TableRow hover>
-                       
-                        <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
-                        <TableCell>
-                          <Box display="flex" alignItems="center">
-                            <Avatar
-                              alt={row.full_name}
-                              src={`${API_END_POINT_IMG}/uploads/${row.image}`}
-                              sx={{ width: 40, height: 40, marginRight: 2 }}
-                            />
-                            {row.username}
-                          </Box>
-                        </TableCell>
-                        <TableCell sx={{ whiteSpace: "nowrap" }}>
-                          {row.full_name}
-                        </TableCell>
-                        <TableCell sx={{ whiteSpace: "nowrap" }}>
-                          {row.role_name}
-                        </TableCell>
-                        <TableCell sx={{ whiteSpace: "nowrap" }}>
-                          {row.district}
-                        </TableCell>
-                        <TableCell>
-                          <Typography
-                            color={
-                              row.status === "Active"
-                                ? "success.main"
-                                : "error.main"
-                            }
-                            sx={{ fontWeight: "bold" }}
-                          >
-                            {row.status === "Deleted" ? "Dropped" : "Active"}
-                          </Typography>
-                        </TableCell>
-                        <TableCell sx={{ whiteSpace: "nowrap" }}>
-                          {new Intl.NumberFormat("en-IN").format(
-                            totals.MonthlyTargetAmount
-                          )}
-                          <span style={{ margin: "0 4px" }}>/</span>
-                          {new Intl.NumberFormat("en-IN").format(
-                            totals.AchievementAmount
-                          )}
-                        </TableCell>
-                        <TableCell sx={{ whiteSpace: "nowrap" }}>
-                          {new Intl.NumberFormat("en-IN").format(
-                            totals.StockTarget
-                          )}
-                          <span style={{ margin: "0 4px" }}>/</span>
-                          {new Intl.NumberFormat("en-IN").format(
-                            totals.StockAchievement
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  );
-                })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                    return (
+                      <React.Fragment key={row.id}>
+                        <TableRow hover>
+                          <TableCell>
+                            {index + 1 + page * rowsPerPage}
+                          </TableCell>
+                          <TableCell>
+                            <Box display="flex" alignItems="center">
+                              <Avatar
+                                alt={row.full_name}
+                                src={`${API_END_POINT_IMG}/uploads/${row.image}`}
+                                sx={{ width: 40, height: 40, marginRight: 2 }}
+                              />
+                              {row.username}
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ whiteSpace: "nowrap" }}>
+                            {row.full_name}
+                          </TableCell>
+                          <TableCell sx={{ whiteSpace: "nowrap" }}>
+                            {row.role_name}
+                          </TableCell>
+                          <TableCell sx={{ whiteSpace: "nowrap" }}>
+                            {row.district}
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              color={
+                                row.status === "Active"
+                                  ? "success.main"
+                                  : "error.main"
+                              }
+                              sx={{ fontWeight: "bold" }}
+                            >
+                              {row.status === "Deleted" ? "Dropped" : "Active"}
+                            </Typography>
+                          </TableCell>
+                          <TableCell sx={{ whiteSpace: "nowrap" }}>
+                            {new Intl.NumberFormat("en-IN").format(
+                              totals.MonthlyTargetAmount
+                            )}
+                            <span style={{ margin: "0 4px" }}>/</span>
+                            {new Intl.NumberFormat("en-IN").format(
+                              totals.AchievementAmount
+                            )}
+                          </TableCell>
+                          <TableCell sx={{ whiteSpace: "nowrap" }}>
+                            {new Intl.NumberFormat("en-IN").format(
+                              totals.StockTarget
+                            )}
+                            <span style={{ margin: "0 4px" }}>/</span>
+                            {new Intl.NumberFormat("en-IN").format(
+                              totals.StockAchievement
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      </React.Fragment>
+                    );
+                  })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
 
       {filteredData.length > 0 && (
         <Box mt={2}>{renderPagination(page, setPage, filteredData.length)}</Box>
